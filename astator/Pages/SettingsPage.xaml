@@ -1,0 +1,89 @@
+﻿<ContentPage
+    x:Class="astator.Pages.SettingsPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:m="clr-namespace:astator.Pages"
+    xmlns:v="clr-namespace:astator.Views"
+    NavigationPage.HasNavigationBar="False">
+
+    <Grid BackgroundColor="{DynamicResource PageBackgroundColor}">
+        <Grid HeightRequest="55" VerticalOptions="Start">
+            <Label
+                Margin="20,0"
+                FontAttributes="Bold"
+                FontSize="Title"
+                HorizontalOptions="Start"
+                Text="设置"
+                VerticalOptions="Center" />
+        </Grid>
+        <VerticalStackLayout Margin="0,0,0,80" VerticalOptions="EndAndExpand">
+            <Grid Margin="30,6">
+                <Image
+                    HeightRequest="26"
+                    HorizontalOptions="Start"
+                    Source="press.png"
+                    VerticalOptions="Center"
+                    WidthRequest="26" />
+                <Label
+                    Margin="45,0"
+                    FontAttributes="Bold"
+                    FontSize="17"
+                    HorizontalOptions="Start"
+                    Text="无障碍服务"
+                    VerticalOptions="Center" />
+                <Switch
+                    x:Name="AccessibilityService"
+                    HorizontalOptions="End"
+                    OnColor="#bbd8ff"
+                    ThumbColor="#5d85a3"
+                    VerticalOptions="Center" />
+            </Grid>
+            <Grid Margin="30,6">
+                <Image
+                    HeightRequest="26"
+                    HorizontalOptions="Start"
+                    Source="broadcast.png"
+                    VerticalOptions="Center"
+                    WidthRequest="26" />
+                <Label
+                    Margin="45,0"
+                    FontAttributes="Bold"
+                    FontSize="17"
+                    HorizontalOptions="Start"
+                    Text="调试服务"
+                    VerticalOptions="Center" />
+                <Switch
+                    x:Name="Connect"
+                    BindingContext=""
+                    HorizontalOptions="End"
+                    OnColor="#bbd8ff"
+                    ThumbColor="#5d85a3"
+                    Toggled="Connect_Toggled"
+                    VerticalOptions="Center" />
+            </Grid>
+            <Grid Margin="30,6">
+                <Image
+                    HeightRequest="26"
+                    HorizontalOptions="Start"
+                    Source="about.png"
+                    VerticalOptions="Center"
+                    WidthRequest="26" />
+                <Label
+                    Margin="45,0"
+                    FontAttributes="Bold"
+                    FontSize="17"
+                    HorizontalOptions="Start"
+                    Text="关于"
+                    VerticalOptions="Center">
+                    <!--<Label.GestureRecognizers>
+                        <TapGestureRecognizer NumberOfTapsRequired="2" Tapped="Test" />
+                    </Label.GestureRecognizers>-->
+                </Label>
+            </Grid>
+        </VerticalStackLayout>
+        <v:NavBarView
+            x:Name="NavBar"
+            HeightRequest="55"
+            VerticalOptions="End" />
+    </Grid>
+</ContentPage>
