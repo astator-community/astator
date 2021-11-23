@@ -11,7 +11,7 @@ using View = Android.Views.View;
 
 namespace astator.Core.UI
 {
-    public class UIManager : IManager
+    public class UiManager : IManager
     {
         public static int CreateCount = 0;
 
@@ -40,7 +40,7 @@ namespace astator.Core.UI
             }
         }
 
-        public UIManager(Activity activity, string directory)
+        public UiManager(Activity activity, string directory)
         {
             CreateCount = 0;
             this.activity = activity;
@@ -49,7 +49,7 @@ namespace astator.Core.UI
 
         public View ParseXml(string xml)
         {
-            return UIXml.Parse(this, xml);
+            return UiXml.Parse(this, xml);
         }
 
         public void Show(View view)
@@ -57,22 +57,7 @@ namespace astator.Core.UI
             this.activity.SetContentView(view);
         }
 
-        public void Run(Action func)
-        {
-            Device.InvokeOnMainThreadAsync(() =>
-            {
-                func.Invoke();
-            });
-        }
-
-        public void SetStatusBarColor(string color)
-        {
-            this.activity.Window?.ClearFlags(WindowManagerFlags.TranslucentStatus);
-            this.activity.Window?.AddFlags(WindowManagerFlags.DrawsSystemBarBackgrounds);
-            this.activity.Window?.SetStatusBarColor(Color.ParseColor(color));
-        }
-
-        public View Create(string type, UIArgs args)
+        public View Create(string type, UiArgs args)
         {
             View view;
             switch (type)
@@ -113,7 +98,7 @@ namespace astator.Core.UI
             return view;
         }
 
-        public ScriptScrollView CreateScrollView(UIArgs args = null)
+        public ScriptScrollView CreateScrollView(UiArgs args = null)
         {
             var result = new ScriptScrollView(this.activity, args);
             if (this.globalListeners.ContainsKey("scroll"))
@@ -126,7 +111,7 @@ namespace astator.Core.UI
             return result;
         }
 
-        public ScriptWebView CreateWebView(UIArgs args = null)
+        public ScriptWebView CreateWebView(UiArgs args = null)
         {
             var result = new ScriptWebView(this.activity, args);
             if (this.globalListeners.ContainsKey("web"))
@@ -139,7 +124,7 @@ namespace astator.Core.UI
             return result;
         }
 
-        public ScriptSwitch CreateSwitch(UIArgs args = null)
+        public ScriptSwitch CreateSwitch(UiArgs args = null)
         {
             var result = new ScriptSwitch(this.activity, args);
             if (this.globalListeners.ContainsKey("switch"))
@@ -152,7 +137,7 @@ namespace astator.Core.UI
             return result;
         }
 
-        public ScriptCheckBox CreateCheckBox(UIArgs args = null)
+        public ScriptCheckBox CreateCheckBox(UiArgs args = null)
         {
             var result = new ScriptCheckBox(this.activity, args);
             if (this.globalListeners.ContainsKey("check"))
@@ -165,7 +150,7 @@ namespace astator.Core.UI
             return result;
         }
 
-        public ScriptImageView CreateImageView(UIArgs args = null)
+        public ScriptImageView CreateImageView(UiArgs args = null)
         {
             var result = new ScriptImageView(this.activity, this.directory, args);
             if (this.globalListeners.ContainsKey("img"))
@@ -178,7 +163,7 @@ namespace astator.Core.UI
             return result;
         }
 
-        public ScriptButton CreateButton(UIArgs args = null)
+        public ScriptButton CreateButton(UiArgs args = null)
         {
             var result = new ScriptButton(this.activity, args);
             if (this.globalListeners.ContainsKey("btn"))
@@ -191,7 +176,7 @@ namespace astator.Core.UI
             return result;
         }
 
-        public ScriptLinearLayout CreateLinearLayout(UIArgs args = null)
+        public ScriptLinearLayout CreateLinearLayout(UiArgs args = null)
         {
             var result = new ScriptLinearLayout(this.activity, args);
             if (this.globalListeners.ContainsKey("linear"))
@@ -204,7 +189,7 @@ namespace astator.Core.UI
             return result;
         }
 
-        public ScriptFrameLayout CreateFrameLayout(UIArgs args = null)
+        public ScriptFrameLayout CreateFrameLayout(UiArgs args = null)
         {
             var result = new ScriptFrameLayout(this.activity, args);
             if (this.globalListeners.ContainsKey("frame"))
@@ -217,7 +202,7 @@ namespace astator.Core.UI
             return result;
         }
 
-        public ScriptEditText CreateEditText(UIArgs args = null)
+        public ScriptEditText CreateEditText(UiArgs args = null)
         {
             var result = new ScriptEditText(this.activity, args);
             if (this.globalListeners.ContainsKey("edit"))
@@ -230,7 +215,7 @@ namespace astator.Core.UI
             return result;
         }
 
-        public ScriptTextView CreateTextView(UIArgs args = null)
+        public ScriptTextView CreateTextView(UiArgs args = null)
         {
             var result = new ScriptTextView(this.activity, args);
             if (this.globalListeners.ContainsKey("text"))
@@ -243,12 +228,12 @@ namespace astator.Core.UI
             return result;
         }
 
-        public ScriptSpinner CreateSpinner(UIArgs args = null)
+        public ScriptSpinner CreateSpinner(UiArgs args = null)
         {
             var result = new ScriptSpinner(this.activity, args);
-            if (this.globalListeners.ContainsKey("text"))
+            if (this.globalListeners.ContainsKey("spinner"))
             {
-                foreach (var listener in this.globalListeners["text"])
+                foreach (var listener in this.globalListeners["spinner"])
                 {
                     result.On(listener.Key, listener.Value);
                 }
@@ -256,12 +241,12 @@ namespace astator.Core.UI
             return result;
         }
 
-        public ScriptViewPager CreateViewPager(UIArgs args = null)
+        public ScriptViewPager CreateViewPager(UiArgs args = null)
         {
             var result = new ScriptViewPager(this.activity, args);
-            if (this.globalListeners.ContainsKey("text"))
+            if (this.globalListeners.ContainsKey("viewPager"))
             {
-                foreach (var listener in this.globalListeners["text"])
+                foreach (var listener in this.globalListeners["viewPager"])
                 {
                     result.On(listener.Key, listener.Value);
                 }
@@ -269,12 +254,12 @@ namespace astator.Core.UI
             return result;
         }
 
-        public ScriptRadioGroup CreateRadioGroup(UIArgs args = null)
+        public ScriptRadioGroup CreateRadioGroup(UiArgs args = null)
         {
             var result = new ScriptRadioGroup(this.activity, args);
-            if (this.globalListeners.ContainsKey("text"))
+            if (this.globalListeners.ContainsKey("radioGroup"))
             {
-                foreach (var listener in this.globalListeners["text"])
+                foreach (var listener in this.globalListeners["radioGroup"])
                 {
                     result.On(listener.Key, listener.Value);
                 }
@@ -282,12 +267,12 @@ namespace astator.Core.UI
             return result;
         }
 
-        public ScriptRadioButton CreateRadioButton(UIArgs args = null)
+        public ScriptRadioButton CreateRadioButton(UiArgs args = null)
         {
             var result = new ScriptRadioButton(this.activity, args);
-            if (this.globalListeners.ContainsKey("text"))
+            if (this.globalListeners.ContainsKey("radio"))
             {
-                foreach (var listener in this.globalListeners["text"])
+                foreach (var listener in this.globalListeners["radio"])
                 {
                     result.On(listener.Key, listener.Value);
                 }
@@ -295,12 +280,12 @@ namespace astator.Core.UI
             return result;
         }
 
-        public ScriptCardView CreateCardView(UIArgs args = null)
+        public ScriptCardView CreateCardView(UiArgs args = null)
         {
             var result = new ScriptCardView(this.activity, args);
-            if (this.globalListeners.ContainsKey("text"))
+            if (this.globalListeners.ContainsKey("card"))
             {
-                foreach (var listener in this.globalListeners["text"])
+                foreach (var listener in this.globalListeners["card"])
                 {
                     result.On(listener.Key, listener.Value);
                 }

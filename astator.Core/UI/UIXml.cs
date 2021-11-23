@@ -5,7 +5,7 @@ using System.Xml.Linq;
 
 namespace astator.Core.UI
 {
-    internal static class UIXml
+    internal static class UiXml
     {
         internal static ViewGroup Parse(IManager manager, string xml)
         {
@@ -31,7 +31,7 @@ namespace astator.Core.UI
 
         private static View ParseElement(IManager manager, XElement element)
         {
-            var args = new UIArgs();
+            var args = new UiArgs();
             foreach (var attr in element.Attributes())
             {
                 args[attr.Name.ToString()] = attr.Value;
@@ -48,7 +48,7 @@ namespace astator.Core.UI
             return view;
         }
 
-        private static View Create(IManager manager, string type, UIArgs args)
+        private static View Create(IManager manager, string type, UiArgs args)
         {
             View view = type switch
             {

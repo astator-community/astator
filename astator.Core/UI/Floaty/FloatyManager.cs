@@ -39,17 +39,20 @@ namespace astator.Core.UI.Floaty
             this.context = context;
             this.directory = directory;
         }
+
         public FloatWindow Show(View view, int x = 0, int y = 0)
         {
             FloatWindow floaty = new(view, x, y);
             this.Floatys.Add(floaty);
             return floaty;
         }
+
         public void Hide(FloatWindow floaty)
         {
             floaty.Hide();
             this.Floatys.Remove(floaty);
         }
+
         public void HideAll()
         {
             foreach (var floaty in this.Floatys)
@@ -58,7 +61,8 @@ namespace astator.Core.UI.Floaty
             }
             this.Floatys.Clear();
         }
-        public ScriptScrollView CreateScrollView(UIArgs args = null)
+
+        public ScriptScrollView CreateScrollView(UiArgs args = null)
         {
             var result = new ScriptScrollView(this.context, args);
             if (this.staticListeners.ContainsKey("scroll"))
@@ -70,7 +74,8 @@ namespace astator.Core.UI.Floaty
             }
             return result;
         }
-        public ScriptWebView CreateWebView(UIArgs args = null)
+
+        public ScriptWebView CreateWebView(UiArgs args = null)
         {
             var result = new ScriptWebView(this.context, args);
             if (this.staticListeners.ContainsKey("web"))
@@ -82,7 +87,8 @@ namespace astator.Core.UI.Floaty
             }
             return result;
         }
-        public ScriptSwitch CreateSwitch(UIArgs args = null)
+
+        public ScriptSwitch CreateSwitch(UiArgs args = null)
         {
             var result = new ScriptSwitch(this.context, args);
             if (this.staticListeners.ContainsKey("switch"))
@@ -94,7 +100,8 @@ namespace astator.Core.UI.Floaty
             }
             return result;
         }
-        public ScriptCheckBox CreateCheckBox(UIArgs args = null)
+
+        public ScriptCheckBox CreateCheckBox(UiArgs args = null)
         {
             var result = new ScriptCheckBox(this.context, args);
             if (this.staticListeners.ContainsKey("check"))
@@ -106,7 +113,8 @@ namespace astator.Core.UI.Floaty
             }
             return result;
         }
-        public ScriptImageView CreateImageView(UIArgs args = null)
+
+        public ScriptImageView CreateImageView(UiArgs args = null)
         {
             var result = new ScriptImageView(this.context, this.directory, args);
             if (this.staticListeners.ContainsKey("img"))
@@ -118,7 +126,8 @@ namespace astator.Core.UI.Floaty
             }
             return result;
         }
-        public ScriptButton CreateButton(UIArgs args = null)
+
+        public ScriptButton CreateButton(UiArgs args = null)
         {
             var result = new ScriptButton(this.context, args);
             if (this.staticListeners.ContainsKey("btn"))
@@ -130,7 +139,8 @@ namespace astator.Core.UI.Floaty
             }
             return result;
         }
-        public ScriptLinearLayout CreateLinearLayout(UIArgs args = null)
+
+        public ScriptLinearLayout CreateLinearLayout(UiArgs args = null)
         {
             var result = new ScriptLinearLayout(this.context, args);
             if (this.staticListeners.ContainsKey("linear"))
@@ -142,7 +152,8 @@ namespace astator.Core.UI.Floaty
             }
             return result;
         }
-        public ScriptFrameLayout CreateFrameLayout(UIArgs args = null)
+
+        public ScriptFrameLayout CreateFrameLayout(UiArgs args = null)
         {
             var result = new ScriptFrameLayout(this.context, args);
             if (this.staticListeners.ContainsKey("frame"))
@@ -154,7 +165,8 @@ namespace astator.Core.UI.Floaty
             }
             return result;
         }
-        public ScriptEditText CreateEditText(UIArgs args = null)
+
+        public ScriptEditText CreateEditText(UiArgs args = null)
         {
             var result = new ScriptEditText(this.context, args);
             if (this.staticListeners.ContainsKey("edit"))
@@ -166,7 +178,8 @@ namespace astator.Core.UI.Floaty
             }
             return result;
         }
-        public ScriptTextView CreateTextView(UIArgs args = null)
+
+        public ScriptTextView CreateTextView(UiArgs args = null)
         {
             var result = new ScriptTextView(this.context, args);
             if (this.staticListeners.ContainsKey("text"))
@@ -178,7 +191,8 @@ namespace astator.Core.UI.Floaty
             }
             return result;
         }
-        public ScriptSpinner CreateSpinner(UIArgs args = null)
+
+        public ScriptSpinner CreateSpinner(UiArgs args = null)
         {
             var result = new ScriptSpinner(this.context, args);
             if (this.staticListeners.ContainsKey("text"))
@@ -191,22 +205,22 @@ namespace astator.Core.UI.Floaty
             return result;
         }
 
-        public ScriptViewPager CreateViewPager(UIArgs args = null)
+        public ScriptViewPager CreateViewPager(UiArgs args = null)
         {
             throw new NotImplementedException();
         }
 
-        public ScriptRadioGroup CreateRadioGroup(UIArgs args = null)
+        public ScriptRadioGroup CreateRadioGroup(UiArgs args = null)
         {
             throw new NotImplementedException();
         }
 
-        public ScriptRadioButton CreateRadioButton(UIArgs args = null)
+        public ScriptRadioButton CreateRadioButton(UiArgs args = null)
         {
             throw new NotImplementedException();
         }
 
-        public ScriptCardView CreateCardView(UIArgs args = null)
+        public ScriptCardView CreateCardView(UiArgs args = null)
         {
             throw new NotImplementedException();
         }

@@ -17,7 +17,7 @@
                 VerticalOptions="Center" />
         </Grid>
         <VerticalStackLayout Margin="0,0,0,80" VerticalOptions="EndAndExpand">
-            <Grid Margin="30,6">
+            <Grid Margin="30,0">
                 <Image
                     HeightRequest="26"
                     HorizontalOptions="Start"
@@ -38,7 +38,7 @@
                     ThumbColor="#5d85a3"
                     VerticalOptions="Center" />
             </Grid>
-            <Grid Margin="30,6">
+            <Grid Margin="30,0">
                 <Image
                     HeightRequest="26"
                     HorizontalOptions="Start"
@@ -61,7 +61,7 @@
                     Toggled="Connect_Toggled"
                     VerticalOptions="Center" />
             </Grid>
-            <Grid Margin="30,6">
+            <Grid Margin="30,0">
                 <Image
                     HeightRequest="26"
                     HorizontalOptions="Start"

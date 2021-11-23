@@ -6,20 +6,20 @@ namespace astator.Core.UI
     internal interface IManager
     {
         public object this[string key] { get; set; }
-        public ScriptScrollView CreateScrollView(UIArgs args);
-        public ScriptWebView CreateWebView(UIArgs args);
-        public ScriptSwitch CreateSwitch(UIArgs args);
-        public ScriptCheckBox CreateCheckBox(UIArgs args);
-        public ScriptImageView CreateImageView(UIArgs args);
-        public ScriptButton CreateButton(UIArgs args);
-        public ScriptLinearLayout CreateLinearLayout(UIArgs args);
-        public ScriptFrameLayout CreateFrameLayout(UIArgs args);
-        public ScriptEditText CreateEditText(UIArgs args);
-        public ScriptTextView CreateTextView(UIArgs args);
-        public ScriptSpinner CreateSpinner(UIArgs args);
-        public ScriptViewPager CreateViewPager(UIArgs args);
-        public ScriptRadioGroup CreateRadioGroup(UIArgs args);
-        public ScriptRadioButton CreateRadioButton(UIArgs args);
-        public ScriptCardView CreateCardView(UIArgs args);
+        public ScriptScrollView CreateScrollView(UiArgs args);
+        public ScriptWebView CreateWebView(UiArgs args);
+        public ScriptSwitch CreateSwitch(UiArgs args);
+        public ScriptCheckBox CreateCheckBox(UiArgs args);
+        public ScriptImageView CreateImageView(UiArgs args);
+        public ScriptButton CreateButton(UiArgs args);
+        public ScriptLinearLayout CreateLinearLayout(UiArgs args);
+        public ScriptFrameLayout CreateFrameLayout(UiArgs args);
+        public ScriptEditText CreateEditText(UiArgs args);
+        public ScriptTextView CreateTextView(UiArgs args);
+        public ScriptSpinner CreateSpinner(UiArgs args);
+        public ScriptViewPager CreateViewPager(UiArgs args);
+        public ScriptRadioGroup CreateRadioGroup(UiArgs args);
+        public ScriptRadioButton CreateRadioButton(UiArgs args);
+        public ScriptCardView CreateCardView(UiArgs args);
     }
 }

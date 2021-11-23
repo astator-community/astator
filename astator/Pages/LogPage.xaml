@@ -34,11 +34,9 @@
         <ScrollView
             x:Name="LogScrollView"
             Margin="0,55"
+            Padding="15,5,15,30"
             VerticalOptions="FillAndExpand">
-            <StackLayout
-                x:Name="LogLayout"
-                Padding="15,5,15,30"
-                ChildAdded="LogLayout_ChildAdded">
+            <StackLayout x:Name="LogLayout" ChildAdded="LogLayout_ChildAdded">
                 <StackLayout.Resources>
                     <Style TargetType="Label">
                         <Setter Property="FontSize" Value="16" />

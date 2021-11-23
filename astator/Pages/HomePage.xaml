@@ -16,7 +16,12 @@
                 Text="工作台"
                 VerticalOptions="Center" />
         </Grid>
-        <VerticalStackLayout />
+        <VerticalStackLayout Margin="15,55">
+            <HorizontalStackLayout />
+            <Button x:Name="btn"  Clicked="Click"/>
+
+
+        </VerticalStackLayout>
         <v:NavBarView
             x:Name="NavBar"
             HeightRequest="55"

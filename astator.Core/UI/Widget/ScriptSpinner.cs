@@ -46,7 +46,7 @@ namespace astator.Core.UI.Widget
             base.OnAttachedToWindow();
             this.onAttachedListener?.OnAttached(this);
         }
-        public ScriptSpinner(Android.Content.Context context, UIArgs args) : base(context)
+        public ScriptSpinner(Android.Content.Context context, UiArgs args) : base(context)
         {
             this.LayoutParameters = new MarginLayoutParams(this.LayoutParameters ?? new(LayoutParams.MatchParent, LayoutParams.MatchParent));
             if (args is null)
@@ -57,8 +57,8 @@ namespace astator.Core.UI.Widget
             if (args["textSize"] is null) args["textSize"] = DefaultValue.TextSize;
             if (args["id"] is null)
             {
-                this.Id = $"{ GetType().Name }-{ UIManager.CreateCount }";
-                UIManager.CreateCount++;
+                this.Id = $"{ GetType().Name }-{ UiManager.CreateCount }";
+                UiManager.CreateCount++;
             }
             foreach (var item in args)
             {

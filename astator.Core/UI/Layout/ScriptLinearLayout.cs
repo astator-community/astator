@@ -20,7 +20,7 @@ namespace astator.Core.UI.Layout
             base.AddView(child);
             return this;
         }
-        public ScriptLinearLayout(Android.Content.Context context, UIArgs args) : base(context)
+        public ScriptLinearLayout(Android.Content.Context context, UiArgs args) : base(context)
         {
             if (args is null)
             {
@@ -28,8 +28,8 @@ namespace astator.Core.UI.Layout
             }
             if (args["id"] is null)
             {
-                this.Id = $"{ GetType().Name }-{ UIManager.CreateCount }";
-                UIManager.CreateCount++;
+                this.Id = $"{ GetType().Name }-{ UiManager.CreateCount }";
+                UiManager.CreateCount++;
             }
             foreach (var item in args)
             {

@@ -42,7 +42,7 @@ namespace astator.Core.UI.Layout
             this._pages.Add(view);
             return this;
         }
-        public ScriptViewPager(Android.Content.Context context, UIArgs args) : base(context)
+        public ScriptViewPager(Android.Content.Context context, UiArgs args) : base(context)
         {
             if (args is null)
             {
@@ -50,8 +50,8 @@ namespace astator.Core.UI.Layout
             }
             if (args["id"] is null)
             {
-                this.Id = $"{ GetType().Name }-{ UIManager.CreateCount }";
-                UIManager.CreateCount++;
+                this.Id = $"{ GetType().Name }-{ UiManager.CreateCount }";
+                UiManager.CreateCount++;
             }
             foreach (var item in args)
             {

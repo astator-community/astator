@@ -1,13 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
+using System;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 
-namespace astator.Script
+namespace astator.Controllers
 {
 
     public struct NodeType
@@ -24,18 +24,26 @@ namespace astator.Script
         [JsonPropertyName("key")]
         public string Key { get; set; }
 
-        [JsonPropertyName("body")]
-        public NodeType Body { get; set; }
+        [JsonPropertyName("description")]
+        public string Description { get; set; }
+
+        [JsonPropertyName("buffer")]
+        public NodeType Buffer { get; set; }
+
+        private JsonSerializerSettings serializerSettings = new JsonSerializerSettings
+        {
+            ContractResolver = new CamelCasePropertyNamesContractResolver()
+        };
 
         public byte[] ToBytes()
         {
-            var result = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(this));
+            var result = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(this, this.serializerSettings));
             return result;
         }
 
         public override string ToString()
         {
-            var bytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(this));
+            var bytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(this, this.serializerSettings));
             var result = Encoding.UTF8.GetString(bytes);
             return result;
         }
@@ -43,40 +51,52 @@ namespace astator.Script
 
     public static class Stick
     {
-        public static PackData MakePackData(string key, object body)
+        public static byte[] MakePackData(string key, object body)
         {
-            var data = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(body));
+            var pack = new PackData
+            {
+                Key = key,
+                Buffer = new NodeType
+                {
+                    Type = "Buffer",
+                    Data = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(body))
+                }
+            };
+
+            var data = pack.ToBytes();
 
             var header = Int2Bytes(data.Length);
 
-            var result = new PackData
-            {
-                Key = key,
-                Body = new NodeType
-                {
-                    Type = "Buffer",
-                    Data = header.Concat(data).ToArray()
-                }
-            };
+            var result = header.Concat(data).ToArray();
 
             return result;
         }
 
-        public static PackData MakePackData(string key, string body)
+        public static byte[] MakePackData(string key, string body)
         {
-            var data = Encoding.UTF8.GetBytes(body);
-
-            var header = Int2Bytes(data.Length);
-
-            var result = new PackData
+            var pack = new PackData
             {
                 Key = key,
-                Body = new NodeType
-                {
-                    Type = "Buffer",
-                    Data = header.Concat(data).ToArray()
-                }
+                Description = body
             };
+
+            var data = pack.ToBytes();
+            var header = Int2Bytes(data.Length);
+            var result = header.Concat(data).ToArray();
+
+            return result;
+        }
+
+        public static byte[] MakePackData(string key)
+        {
+            var pack = new PackData
+            {
+                Key = key
+            };
+
+            var data = pack.ToBytes();
+            var header = Int2Bytes(data.Length);
+            var result = header.Concat(data).ToArray();
 
             return result;
         }
@@ -110,13 +130,10 @@ namespace astator.Script
 
                 return result;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                Console.WriteLine(ex.ToString());
                 throw;
             }
-
-
         }
 
 

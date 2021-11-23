@@ -19,12 +19,12 @@ namespace astator.Pages
             InitializeComponent();
             this.NavBar.ActiveTab = "log";
             this.logger = ScriptLogger.Instance;
-            this.logger.Actions.Add((value) => AddLogText(value));
+            this.logger.Callbacks.Add("logPage", (value) => AddLogText(value));
             InitLogList();
         }
         private void InitLogList()
         {
-            var path = Path.Combine(MauiApplication.Current.FilesDir.AbsolutePath, "Log", "log.txt");
+            var path = Path.Combine(MauiApplication.Current.GetExternalFilesDir("Log").ToString(), "log.txt");
             var logList = new List<string>();
             if (File.Exists(path))
             {
@@ -51,46 +51,45 @@ namespace astator.Pages
                         {
                             label.TextColor = Colors.Red;
                         }
-                        this.LogLayout.Children.Add(label);
-                        this.LogScrollView.ScrollToAsync(0, this.LogLayout.Height, false);
+                        this.LogLayout.Add(label);
                     }
+                    File.WriteAllLines(path, logList);
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine(ex.Message);
                 }
-                File.WriteAllLines(path, logList);
+                this.LogScrollView.ScrollToAsync(0, this.LogLayout.Height, false);
             }
         }
         public void AddLogText(LogArgs message)
         {
-            Device.InvokeOnMainThreadAsync(async() => {
-                var label = new Label
-                {
-                    Text = $"{message.Time:MM-dd HH:mm:ss.fff}  {message.Message}"
-                };
-                if (message.Level == LogLevel.Warn)
-                {
-                    label.TextColor = Color.FromRgb(0xf0, 0xdc, 0x0c);
-                }
-                else if (message.Level == LogLevel.Error || message.Level == LogLevel.Fatal)
-                {
-                    label.TextColor = Colors.Red;
-                }
-                this.LogLayout.Children.Add(label);
-                await this.LogScrollView.ScrollToAsync(0, this.LogLayout.Height, false);
-            });
+            _ = Device.InvokeOnMainThreadAsync(() =>
+              {
+                  var label = new Label
+                  {
+                      Text = $"{message.Time:MM-dd HH:mm:ss.fff}  {message.Message}"
+                  };
+                  if (message.Level == LogLevel.Warn)
+                  {
+                      label.TextColor = Color.FromRgb(0xf0, 0xdc, 0x0c);
+                  }
+                  else if (message.Level == LogLevel.Error || message.Level == LogLevel.Fatal)
+                  {
+                      label.TextColor = Colors.Red;
+                  }
+                  this.LogLayout.Add(label);
+                  this.LogScrollView.ScrollToAsync(0, this.LogLayout.Height, false);
+              });
         }
         public async void Delete_Clicked(object sender, EventArgs e)
         {
-
-
-           // this.logger.Error("test");
-           //Manager.Instance.Initialize("/sdcard/Download/Examples/test-1.csproj");
-           //if (await DisplayAlert("清空日志", "确认清空吗?", "确认", "取消"))
-           //{
-           //    this.LogLayout.Children.Clear();
-           //}
+            if (await DisplayAlert("清空日志", "确认清空吗?", "确认", "取消"))
+            {
+                var path = Path.Combine(MauiApplication.Current.GetExternalFilesDir("Log").ToString(), "log.txt");
+                this.LogLayout.Clear();
+                File.WriteAllText(path, string.Empty);
+            }
         }
 
         private async void LogLayout_ChildAdded(object sender, ElementEventArgs e)

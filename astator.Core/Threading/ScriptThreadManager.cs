@@ -5,16 +5,14 @@ using System.Threading;
 
 namespace astator.Core.Threading
 {
-    public class ScriptThreads
+    public class ScriptThreadManager
     {
+        public Action<int> ScriptExitCallback { get; set; }
+
+        public bool ScriptExitSignal { get; set; } = false;
+
         private readonly List<Thread> threads = new();
 
-        private readonly Action exitCallback;
-
-        public ScriptThreads(Action callback)
-        {
-            this.exitCallback = callback;
-        }
         public Thread Start(Action action)
         {
             Thread thread = new(() =>
@@ -23,16 +21,21 @@ namespace astator.Core.Threading
                 {
                     action.Invoke();
                 }
-                catch (ThreadInterruptedException) { }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    ScriptLogger.Instance.Error(ex);
+                    if (!this.ScriptExitSignal)
+                    {
+                        throw;
+                    }
                 }
                 finally
                 {
-                    if (IsLastAlive())
+                    if (this.ScriptExitSignal)
                     {
-                        this.exitCallback?.Invoke();
+                        if (IsLastAlive())
+                        {
+                            this.ScriptExitCallback?.Invoke(1);
+                        }
                     }
                 }
             });
@@ -52,6 +55,18 @@ namespace astator.Core.Threading
                 }
             }
             return num <= 1;
+        }
+
+        public bool IsAlive()
+        {
+            foreach (var thread in this.threads)
+            {
+                if (thread.IsAlive)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         public void Interrupt()

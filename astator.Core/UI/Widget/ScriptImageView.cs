@@ -27,7 +27,7 @@ namespace astator.Core.UI.Widget
             canvas.ClipPath(path);
             base.OnDraw(canvas);
         }
-        public ScriptImageView(Android.Content.Context context, string workingDirectory, UIArgs args) : base(context)
+        public ScriptImageView(Android.Content.Context context, string workingDirectory, UiArgs args) : base(context)
         {
             this.LayoutParameters = new MarginLayoutParams(this.LayoutParameters ?? new(LayoutParams.WrapContent, LayoutParams.WrapContent));
             if (args is null)
@@ -37,8 +37,8 @@ namespace astator.Core.UI.Widget
             this._workingDirectory = workingDirectory;
             if (args["id"] is null)
             {
-                this.Id = $"{ GetType().Name }-{ UIManager.CreateCount }";
-                UIManager.CreateCount++;
+                this.Id = $"{ GetType().Name }-{ UiManager.CreateCount }";
+                UiManager.CreateCount++;
             }
             foreach (var item in args)
             {

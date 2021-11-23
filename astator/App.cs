@@ -12,7 +12,7 @@ namespace astator
         {
             Build();
 
-            MainPage = new MainPage();
+            this.MainPage = new MainPage();
         }
 
         private void Build()

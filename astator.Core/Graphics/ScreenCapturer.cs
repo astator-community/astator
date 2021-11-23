@@ -19,9 +19,13 @@ namespace astator.Core.Graphics
     public class ScreenCapturer : Service, IDisposable
     {
         public static ScreenCapturer Instance { get; set; }
+
         private MediaProjection mediaProjection;
+
         private ImageReader imageReader;
+
         private VirtualDisplay virtualDisplay;
+
         public Image AcquireLatestImage()
         {
             return this.imageReader?.AcquireLatestImage();

@@ -1,11 +1,11 @@
-﻿
-
-using Android.App;
-using Android.Content;
+﻿using Android.Content;
 using Android.OS;
 using Android.Views;
+using astator.Core;
 using astator.Core.UI;
 using astator.Engine;
+using Microsoft.Maui;
+using Microsoft.Maui.Controls;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -13,19 +13,22 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using Application = Android.App.Application;
 
-namespace astator.Core.Script
+namespace astator.Controllers
 {
-    public class Manager
+    public class ScriptManager
     {
-        private static Manager instance;
-        public static Manager Instance
+        private static ScriptManager instance;
+
+        private ScriptLogger logger = ScriptLogger.Instance;
+        public static ScriptManager Instance
         {
             get
             {
                 if (instance is null)
                 {
-                    instance = new Manager();
+                    instance = new ScriptManager();
                 }
                 return instance;
             }
@@ -35,7 +38,8 @@ namespace astator.Core.Script
         public Dictionary<string, ScriptRuntime> Runtimes = new();
 
         private int step = 0;
-        public void Initialize(string path, string id = null)
+
+        public void GetId(ref string id)
         {
             if (id is null)
             {
@@ -47,15 +51,6 @@ namespace astator.Core.Script
             }
 
             this.step++;
-
-            if (path.EndsWith(".csproj"))
-            {
-                RunProject(path, id);
-            }
-            else if (path.EndsWith(".cs"))
-            {
-                RunScript(path, id);
-            }
         }
 
         private void RunScript(string path, string id)
@@ -63,25 +58,33 @@ namespace astator.Core.Script
             throw new NotImplementedException();
         }
 
-        public async void RunProject(string path, string id)
+        public async void RunProject(string directory, string id)
         {
-            var xd = XDocument.Load(path);
+            var csprojPath = Directory.GetFiles(directory, "*.csproj", SearchOption.AllDirectories)[0];
+
+            GetId(ref id);
+
+            var xd = XDocument.Load(csprojPath);
 
             var config = xd.Descendants("ScriptConfig");
             var uiMode = Convert.ToBoolean(config.Select(x => x.Element("UIMode")).First()?.Value);
-            var mainType = config.Select(x => x.Element("MainType")).First()?.Value ?? "Main";
+            var entryType = config.Select(x => x.Element("EntryType")).First()?.Value ?? string.Empty;
+
+            if (entryType == string.Empty)
+            {
+                this.logger.Error("脚本未指定EntryType!");
+                return;
+            }
 
             var itemGroup = xd.Descendants("ItemGroup");
             var references = from element in itemGroup.Elements()
                              where element.Name == "Reference"
                              from attr in element.Attributes()
                              where attr.Value.EndsWith(".dll")
-                             where !attr.Value.EndsWith("astator.Core.dll")
                              select attr.Value;
 
-            var directory = Path.GetDirectoryName(path);
 
-            var engine = new ScriptEngine();
+            var engine = new ScriptEngine(Path.Combine(MauiApplication.Current.FilesDir.AbsolutePath, "Resources", "References"));
 
             foreach (var reference in references)
             {
@@ -90,14 +93,13 @@ namespace astator.Core.Script
                     var absolutePath = Path.Combine(directory, reference);
                     if (File.Exists(absolutePath))
                     {
-                        engine.LoadFromAssemblyPath(absolutePath);
+                        engine.LoadReference(absolutePath);
                     }
                 }
                 else
                 {
-                    engine.LoadFromAssemblyPath(reference);
+                    engine.LoadReference(reference);
                 }
-
             }
 
             var scripts = Directory.GetFiles(directory, "*.cs", SearchOption.AllDirectories);
@@ -113,39 +115,46 @@ namespace astator.Core.Script
             {
                 foreach (var item in emitResult.Diagnostics)
                 {
-                    ScriptLogger.Instance.Error("编译失败: " + item.ToString());
+                    this.logger.Error("编译失败: " + item.ToString());
                 }
                 return;
             }
+
+            this.logger.Log("开始运行脚本: " + id);
 
             ScriptRuntime runtime;
 
             if (uiMode)
             {
                 var activity = await StartScriptActivity(id);
-                runtime = new ScriptRuntime(id, engine, activity, MainActivity.Instance, path);
+                runtime = new ScriptRuntime(id, engine, activity, directory);
 
-                activity.OnFinished = () =>
+                Device.BeginInvokeOnMainThread(() =>
                 {
-                    runtime.SetExit();
-                };
-                try
-                {
-                    engine.Execute(mainType, runtime);
-                }
-                catch (Exception ex)
-                {
-                    ScriptLogger.Instance.Error(ex.ToString());
-                }
+                    try
+                    {
+                        engine.Execute(entryType, runtime);
+                    }
+                    catch (Exception ex)
+                    {
+                        this.logger.Error(ex.ToString());
+                    }
+                });
             }
             else
             {
-                runtime = new ScriptRuntime(id, engine, MainActivity.Instance, path);
+                runtime = new ScriptRuntime(id, engine, directory);
+
+                runtime.Threads.ScriptExitCallback = runtime.Exit;
+                runtime.Threads.ScriptExitSignal = true;
+
+                runtime.Tasks.ScriptExitCallback = runtime.Exit;
+                runtime.Tasks.ScriptExitSignal = true;
 
                 runtime.Threads.Start(() =>
-                {
-                    engine.Execute(mainType, runtime);
-                });
+                  {
+                      engine.Execute(entryType, runtime);
+                  });
             }
         }
 

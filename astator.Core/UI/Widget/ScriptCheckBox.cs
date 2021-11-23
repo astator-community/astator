@@ -19,7 +19,7 @@ namespace astator.Core.UI.Widget
             base.OnAttachedToWindow();
             this.onAttachedListener?.OnAttached(this);
         }
-        public ScriptCheckBox(Android.Content.Context context, UIArgs args) : base(context)
+        public ScriptCheckBox(Android.Content.Context context, UiArgs args) : base(context)
         {
             this.LayoutParameters = new MarginLayoutParams(this.LayoutParameters ?? new(LayoutParams.WrapContent, LayoutParams.WrapContent));
             this.ButtonTintList = ColorStateList.ValueOf(Color.ParseColor("#808080"));
@@ -31,8 +31,8 @@ namespace astator.Core.UI.Widget
             if (args["textSize"] is null) args["textSize"] = DefaultValue.TextSize;
             if (args["id"] is null)
             {
-                this.Id = $"{ GetType().Name }-{ UIManager.CreateCount }";
-                UIManager.CreateCount++;
+                this.Id = $"{ GetType().Name }-{ UiManager.CreateCount }";
+                UiManager.CreateCount++;
             }
             foreach (var item in args)
             {

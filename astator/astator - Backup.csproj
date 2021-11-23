@@ -18,7 +18,7 @@
 		<ApplicationVersion>1</ApplicationVersion>
 
 		<!-- Required for C# Hot Reload -->
-		<UseInterpreter Condition="'$(Configuration)' == 'Debug'">True</UseInterpreter>
+		<UseInterpreter Condition="'$(TargetFramework)' == 'net6.0-android'">True</UseInterpreter>
 
 		<SupportedOSPlatformVersion Condition="'$(TargetFramework)' == 'net6.0-android'">24.0</SupportedOSPlatformVersion>
 
@@ -43,9 +43,6 @@
 
 		<!-- Custom Fonts -->
 		<MauiFont Include="Resources\Fonts\*" />
-	
-		<MauiAsset Include="Resources\References\*" />
-	
 	</ItemGroup>
 
 
@@ -53,7 +50,7 @@
 		<ProjectReference Include="..\astator.Core\astator.Core.csproj" />
 		<ProjectReference Include="..\astator.Engine\astator.Engine.csproj" />
 	</ItemGroup>
-	
+
 
 
 </Project>

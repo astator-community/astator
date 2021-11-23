@@ -3,14 +3,13 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Emit;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.Runtime.Loader;
 using System.Text;
 
 namespace astator.Engine
 {
     public class ScriptEngine
     {
-        private static IEnumerable<MetadataReference> References;
+        private static List<MetadataReference> References = new();
 
         private Domain alc;
 
@@ -18,13 +17,18 @@ namespace astator.Engine
 
         private List<SyntaxTree> trees = new();
 
-        public ScriptEngine()
+        private List<MetadataReference> scriptReferences = new();
+
+        public ScriptEngine(string directory)
         {
             this.alc = new Domain();
 
-            if (References is null)
+            if (References.Count == 0)
             {
-                References = AssemblyLoadContext.Default.Assemblies.Select(x => MetadataReference.CreateFromFile(x.Location));
+                foreach (var path in Directory.GetFiles(directory, "*.dll", SearchOption.AllDirectories))
+                {
+                    References.Add(MetadataReference.CreateFromFile(path));
+                }
             }
         }
 
@@ -36,11 +40,11 @@ namespace astator.Engine
             }
         }
 
-        public void LoadFromAssemblyPath(string path)
+        public void LoadReference(string path)
         {
             if (path.EndsWith(".dll"))
             {
-                this.alc.LoadFromAssemblyPath(path);
+                this.scriptReferences.Add(MetadataReference.CreateFromFile(path));
             }
         }
 
@@ -55,9 +59,10 @@ namespace astator.Engine
             var assemblyName = Path.GetRandomFileName();
             var compilation = CSharpCompilation.Create(
                 assemblyName,
+                references: References.Concat(this.scriptReferences).ToList(),
                 syntaxTrees: this.trees,
-                options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary, optimizationLevel: OptimizationLevel.Debug))
-                .AddReferences(References);
+                options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary, optimizationLevel: OptimizationLevel.Release));
+
 
             using var dll = new MemoryStream();
             using var pdb = new MemoryStream();
@@ -73,18 +78,18 @@ namespace astator.Engine
             return result;
         }
 
-        public void Execute(string mainType, dynamic runtime)
+        public void Execute(string entryType, dynamic runtime)
         {
-            this.assembly.TryGetTarget(out var assembly);
-            var type = assembly.GetType(mainType);
-            if (type is null)
+            try
             {
-
-            }
-            dynamic obj = Activator.CreateInstance(type);
-            if (obj is not null)
-            {
+                this.assembly.TryGetTarget(out var assembly);
+                var type = assembly.GetType(entryType);
+                dynamic obj = Activator.CreateInstance(type);
                 obj.Main(runtime);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
             }
         }
     }

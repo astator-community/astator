@@ -7,12 +7,6 @@ using System.Collections.Generic;
 
 namespace astator.Core.UI
 {
-    public enum RequestFlags
-    {
-        media_projection = 1000,
-        floaty_window = 1001,
-        ExternalStorage = 1002
-    }
     public static class DefaultValue
     {
         public static int TextSize { get; } = 6;

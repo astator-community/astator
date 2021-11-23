@@ -2,7 +2,6 @@
 using NLog;
 using NLog.Config;
 using NLog.Targets;
-using NLog.Time;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -18,20 +17,11 @@ namespace astator.Core
         public string Message { get; set; } = string.Empty;
     }
 
-    public class ScriptTimeSource : TimeSource
-    {
-        public override DateTime Time => DateTime.Now.AddHours(8);
-
-        public override DateTime FromSystemTime(DateTime systemTime)
-        {
-            return systemTime;
-        }
-    }
     public class ScriptLogger
     {
         private static ScriptLogger instance;
         private readonly NLogger logger;
-        public List<Action<LogArgs>> Actions = new();
+        public Dictionary<string, Action<LogArgs>> Callbacks = new();
 
         public static ScriptLogger Instance
         {
@@ -45,26 +35,42 @@ namespace astator.Core
             }
         }
 
-        public void AddAction(Action<LogArgs> action)
+        public string AddCallback(string key, Action<LogArgs> action)
         {
-            this.Actions.Add(action);
+            while (this.Callbacks.ContainsKey(key))
+            {
+                key += DateTime.Now.ToString("dd-HH-mm-ss");
+            }
+
+            this.Callbacks.Add(key, action);
+            return key;
+        }
+
+        public void RemoveCallback(string key)
+        {
+            foreach (var _key in this.Callbacks.Keys)
+            {
+                if (_key.StartsWith(key))
+                {
+                    this.Callbacks.Remove(_key);
+                }
+            }
         }
 
         public ScriptLogger()
         {
-            TimeSource.Current = new ScriptTimeSource();
-            var path = Path.Combine(MauiApplication.Current.FilesDir?.AbsolutePath ?? "/sdcard/astator.log/", "Log", "log.txt");
+            var path = Path.Combine(MauiApplication.Current.GetExternalFilesDir("Log").ToString(), "log.txt");
             var config = new LoggingConfiguration();
             var methodCallTarget = new MethodCallTarget("AddMessage", (logEvent, parameters) =>
             {
                 var message = new LogArgs
                 {
                     Level = logEvent.Level,
-                    Time = DateTime.Now.AddHours(8),
+                    Time = DateTime.Now,
                     Message = logEvent.FormattedMessage
                 };
 
-                foreach (var action in this.Actions)
+                foreach (var action in this.Callbacks.Values)
                 {
                     action.Invoke(message);
                 }
@@ -76,14 +82,6 @@ namespace astator.Core
                 Layout = @"${level}*/${date::universalTime=false:format=MM-dd HH\:mm\:ss\.fff}*/: ${message}",
             };
             config.LoggingRules.Add(new LoggingRule("*", LogLevel.Trace, fileTarget));
-
-            //#if DEBUG
-            //            var consoleTarget = new ConsoleTarget
-            //            {
-            //                Layout = @"[${date:format=HH\:mm\:ss}][${level}]: ${message}",
-            //            };
-            //            config.LoggingRules.Add(new LoggingRule("*", LogLevel.Trace, consoleTarget));
-            //#endif
 
             this.logger = LogManager.Setup().
                 SetupExtensions(s => s.AutoLoadAssemblies(false)).
