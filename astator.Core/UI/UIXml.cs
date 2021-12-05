@@ -42,7 +42,7 @@ namespace astator.Core.UI
             var id = args["id"];
             if (id is string temp)
             {
-                manager[temp] = view;
+                manager[temp] = (IScriptView)view;
             }
 
             return view;

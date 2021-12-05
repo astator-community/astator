@@ -1,0 +1,57 @@
+﻿<UserControl
+    x:Class="astator.Views.DirCard"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:astator.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="300"
+    d:DesignWidth="400"
+    mc:Ignorable="d">
+    <Grid
+        Height="60"
+        Padding="0,5"
+        ColumnSpacing="10">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="35" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="60" />
+        </Grid.ColumnDefinitions>
+        <Image
+            Grid.Column="0"
+            Margin="0,2"
+            Source="Assets/Images/dir.png" />
+        <Grid
+            Grid.Column="1"
+            VerticalAlignment="Center"
+            RowSpacing="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+            </Grid.RowDefinitions>
+            <TextBlock
+                Name="PathName"
+                Grid.Row="0"
+                FontSize="14" />
+            <TextBlock
+                Name="PathInfo"
+                Grid.Row="1"
+                FontSize="8"
+                Foreground="#666666" />
+        </Grid>
+        <Grid
+            Grid.Column="2"
+            Padding="5,15"
+            Tapped="Option_Tapped">
+            <Image HorizontalAlignment="Right" Source="Assets/Images/right.png" />
+            <Grid.ContextFlyout>
+                <MenuFlyout>
+                    <MenuFlyoutItem Click="Rename_Clicked" Text="重命名" />
+                    <MenuFlyoutItem Click="Remove_Clicked" Text="删除" />
+                </MenuFlyout>
+            </Grid.ContextFlyout>
+        </Grid>
+
+    </Grid>
+
+</UserControl>

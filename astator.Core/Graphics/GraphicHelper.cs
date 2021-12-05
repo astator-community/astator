@@ -1,25 +1,45 @@
-﻿using Android.Media;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Threading;
 namespace astator.Core.Graphics
 {
-    class GraphicHelper
+    public class GraphicHelper
     {
         private readonly ScreenCapturer capturer = ScreenCapturer.Instance;
         private int width = -1;
         private int height = -1;
         private int rowStride = -1;
-        private bool inited = false;
         private byte[] screenData;
         private readonly short[][] redList = new short[256][];
         private readonly int[] steps = new int[256];
         private readonly int[] thresholdCapacity = new int[256];
-        private bool Init(Image image)
+
+        public static GraphicHelper Create()
+        {
+            var helper = new GraphicHelper();
+            if (helper.Initialize())
+            {
+                return helper;
+            }
+            return null;
+        }
+
+        private GraphicHelper()
+        {
+
+        }
+
+        private bool Initialize()
+        {
+            return ReInitialize();
+        }
+
+        public bool ReInitialize()
         {
             try
             {
+                var image = this.capturer.AcquireLatestImage();
                 var byteBuf = image.GetPlanes()[0].Buffer;
                 this.width = image.Width;
                 this.height = image.Height;
@@ -39,6 +59,7 @@ namespace astator.Core.Graphics
                 return false;
             }
         }
+
         public bool KeepScreen(bool sign)
         {
             if (AcquireLatestImage())
@@ -54,6 +75,7 @@ namespace astator.Core.Graphics
                 return false;
             }
         }
+
         private bool AcquireLatestImage()
         {
             var image = this.capturer.AcquireLatestImage();
@@ -61,20 +83,13 @@ namespace astator.Core.Graphics
             {
                 return false;
             }
-            if (!this.inited)
-            {
-                if (!Init(image))
-                {
-                    return false;
-                }
-                this.inited = true;
-            }
             var byteBuf = image.GetPlanes()[0].Buffer;
             byteBuf.Position(0);
             byteBuf.Get(this.screenData, 0, this.rowStride * this.height);
             image.Close();
             return true;
         }
+
         public void GetRedList()
         {
             Array.Fill(this.steps, 0);
@@ -89,7 +104,7 @@ namespace astator.Core.Graphics
                     if (step >= this.thresholdCapacity[k])
                     {
                         this.thresholdCapacity[k] = this.thresholdCapacity[k] + 20480;
-                        Array.Resize(ref this.redList[i], 20480);
+                        Array.Resize(ref this.redList[k], this.redList[k].Length + 20480);
                     }
                     this.redList[k][step] = (short)j;
                     this.redList[k][step + 1] = (short)i;
@@ -98,6 +113,7 @@ namespace astator.Core.Graphics
                 }
             }
         }
+
         private static int Round(double num)
         {
             var local = (int)((num - (int)num) * 100);
@@ -114,6 +130,7 @@ namespace astator.Core.Graphics
             }
             return (int)num + 1;
         }
+
         public int[] GetPixel(int x, int y)
         {
             if (x >= 0 && x < this.width && y >= 0 && y < this.height)
@@ -130,16 +147,19 @@ namespace astator.Core.Graphics
                 return new int[] { 0, 0, 0 };
             }
         }
+
         public string GetPixelStr(int x, int y)
         {
             var result = GetPixel(x, y);
             return $"0x{result[0]:x2}{result[1]:x2}{result[2]:x2}";
         }
+
         public int GetPixelHex(int x, int y)
         {
             var result = GetPixel(x, y);
             return (result[0] & 0xff) << 16 | (result[1] & 0xff) << 8 | (result[2] & 0xff);
         }
+
         private bool CompareColor(int[] description, int offsetX, int offsetY, int offsetLength)
         {
             var x = description[0] + offsetX;
@@ -177,6 +197,7 @@ namespace astator.Core.Graphics
             }
             return description[8] == 1;
         }
+
         public bool CompareColor(int[] description, int sim, int offset)
         {
             var offsetLength = offset == 0 ? 1 : 9;
@@ -197,6 +218,7 @@ namespace astator.Core.Graphics
             };
             return CompareColor(temp, 0, 0, offsetLength);
         }
+
         private bool CompareColorEx(int[][] description, int x, int y, int offsetLength)
         {
             foreach (var temp in description)
@@ -210,6 +232,7 @@ namespace astator.Core.Graphics
             }
             return true;
         }
+
         public bool CompareColorEx(int[][] description, int sim, int offset)
         {
             foreach (var temp in description)
@@ -223,6 +246,7 @@ namespace astator.Core.Graphics
             }
             return true;
         }
+
         public bool CompareColorExLoop(int[][] description, int sim, int offset, int timeout, int timelag, int sign)
         {
             var num = timeout / timelag;
@@ -256,6 +280,7 @@ namespace astator.Core.Graphics
             }
             return false;
         }
+
         private Point FindMultiColor(int startX, int startY, int endX, int endY, int[] firstDescription, int[][] offsetDescription, int offsetLength)
         {
             var r = firstDescription[2];
@@ -284,6 +309,7 @@ namespace astator.Core.Graphics
             }
             return new Point(-1, -1);
         }
+
         public Point FindMultiColor(int startX, int startY, int endX, int endY, int[][] description, int sim, int offset)
         {
             startX = Math.Max(startX, 0);
@@ -336,10 +362,12 @@ namespace astator.Core.Graphics
             }
             return new Point(-1, -1);
         }
+
         public Point FindMultiColor(int[] range, int[][] description, int sim, int offset)
         {
             return FindMultiColor(range[0], range[1], range[2], range[3], description, sim, offset);
         }
+
         public Point FindMultiColorLoop(int startX, int startY, int endX, int endY, int[][] description, int sim, int offset, int timeout, int timelag, int sign)
         {
             var num = timeout / timelag;
@@ -375,10 +403,12 @@ namespace astator.Core.Graphics
             }
             return FindMultiColor(startX, startY, endX, endY, description, sim, offset);
         }
+
         public Point FindMultiColorLoop(int[] range, int[][] description, int sim, int offset, int timeout, int timelag, int sign)
         {
             return FindMultiColorLoop(range[0], range[1], range[2], range[3], description, sim, offset, timeout, timelag, sign);
         }
+
         private List<Point> FindMultiColorEx(int startX, int startY, int endX, int endY, int[] firstDescription, int[][] offsetDescription)
         {
             var r = firstDescription[2];
@@ -408,6 +438,7 @@ namespace astator.Core.Graphics
             }
             return result;
         }
+
         public List<Point> FindMultiColorEx(int startX, int startY, int endX, int endY, int[][] description, int sim, int filterNum)
         {
             startX = Math.Max(startX, 0);
@@ -479,17 +510,21 @@ namespace astator.Core.Graphics
             }
             return result;
         }
+
         public List<Point> FindMultiColorEx(int startX, int startY, int endX, int endY, int[][] description, int sim)
         {
             return FindMultiColorEx(startX, startY, endX, endY, description, sim, 5);
         }
+
         public List<Point> FindMultiColorEx(int[] range, int[][] description, int sim, int filterNum)
         {
             return FindMultiColorEx(range[0], range[1], range[2], range[3], description, sim, filterNum);
         }
+
         public List<Point> FindMultiColorEx(int[] range, int[][] description, int sim)
         {
             return FindMultiColorEx(range[0], range[1], range[2], range[3], description, sim, 5);
         }
+
     }
 }

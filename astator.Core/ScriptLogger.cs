@@ -1,4 +1,4 @@
-﻿using Microsoft.Maui;
+﻿
 using NLog;
 using NLog.Config;
 using NLog.Targets;
@@ -59,7 +59,7 @@ namespace astator.Core
 
         public ScriptLogger()
         {
-            var path = Path.Combine(MauiApplication.Current.GetExternalFilesDir("Log").ToString(), "log.txt");
+            var path = Path.Combine(Android.App.Application.Context.GetExternalFilesDir("Log").ToString(), "log.txt");
             var config = new LoggingConfiguration();
             var methodCallTarget = new MethodCallTarget("AddMessage", (logEvent, parameters) =>
             {
@@ -92,7 +92,7 @@ namespace astator.Core
 
         public void Log(params object[] items)
         {
-            Debug(items);
+            this.logger.Debug(GetMessage(items));
         }
 
         public void Debug(params object[] items)

@@ -5,7 +5,6 @@ using Android.Media.Projection;
 using Android.Views;
 using Android.Widget;
 using astator.Core.UI.Floaty;
-using Microsoft.Maui.Controls;
 using System;
 using System.Threading.Tasks;
 using Application = Android.App.Application;
@@ -16,10 +15,9 @@ namespace astator.Core
     {
         public static Activity MainActivity { get; set; }
 
-
         public static void Toast(string text, ToastLength duration = 0)
         {
-            Device.BeginInvokeOnMainThread(() =>
+            RunOnUiThread(() =>
             {
                 Android.Widget.Toast.MakeText(Application.Context, text, duration).Show();
             });
@@ -27,13 +25,13 @@ namespace astator.Core
 
         public static void RunOnUiThread(Action action)
         {
-            Device.InvokeOnMainThreadAsync(() =>
+            MainActivity?.RunOnUiThread(() =>
             {
                 action.Invoke();
             });
         }
 
-        public static void SetStatusBarColor(Activity activity,string color)
+        public static void SetStatusBarColor(Activity activity, string color)
         {
             activity.Window.ClearFlags(WindowManagerFlags.TranslucentStatus);
             activity.Window.AddFlags(WindowManagerFlags.DrawsSystemBarBackgrounds);
@@ -45,7 +43,10 @@ namespace astator.Core
             activity.Window.DecorView.SystemUiVisibility = (StatusBarVisibility)SystemUiFlags.LightStatusBar;
         }
 
-
+        public static void StartActivity(Intent intent)
+        {
+            MainActivity.StartActivity(intent);
+        }
 
 
         public static class Permission
@@ -57,9 +58,16 @@ namespace astator.Core
                 ExternalStorage = 1002
             }
 
+            public enum CaptureOrientation
+            {
+                None = -1,
+                Vertical = 0,
+                Horizontal = 1,
+            }
+
             public static Task ReqScreenCapture(ScriptRuntime runtime, CaptureOrientation orientation)
             {
-                return runtime.Tasks.Run(() =>
+                return runtime.Tasks.Run((token) =>
                 {
                     runtime.CaptureOrientation = orientation;
                     var manager = (MediaProjectionManager)MainActivity.GetSystemService("media_projection");

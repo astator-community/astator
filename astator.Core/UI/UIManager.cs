@@ -1,10 +1,6 @@
-﻿using Android.Graphics;
-using Android.Views;
-using astator.Core.Exceptions;
+﻿using astator.Core.Exceptions;
 using astator.Core.UI.Layout;
-using astator.Core.UI.Widget;
-using Microsoft.Maui.Controls;
-using System;
+using astator.Core.UI.Views;
 using System.Collections.Generic;
 using Activity = Android.App.Activity;
 using View = Android.Views.View;
@@ -13,7 +9,7 @@ namespace astator.Core.UI
 {
     public class UiManager : IManager
     {
-        public static int CreateCount = 0;
+        public static int CreateCount { get; set; } = 0;
 
         private readonly Activity activity;
 
@@ -22,8 +18,8 @@ namespace astator.Core.UI
         private readonly string directory;
 
 
-        private Dictionary<string, object> childs = new();
-        public object this[string key]
+        private readonly Dictionary<string, IScriptView> childs = new();
+        public IScriptView this[string key]
         {
             set
             {
@@ -59,42 +55,25 @@ namespace astator.Core.UI
 
         public View Create(string type, UiArgs args)
         {
-            View view;
-            switch (type)
+            View view = type switch
             {
-                case "frame":
-                    view = CreateFrameLayout(args); break;
-                case "linear":
-                    view = CreateLinearLayout(args); break;
-                case "scroll":
-                    view = CreateScrollView(args); break;
-                case "btn":
-                    view = CreateButton(args); break;
-                case "check":
-                    view = CreateCheckBox(args); break;
-                case "edit":
-                    view = CreateEditText(args); break;
-                case "text":
-                    view = CreateTextView(args); break;
-                case "switch":
-                    view = CreateSwitch(args); break;
-                case "web":
-                    view = CreateWebView(args); break;
-                case "img":
-                    view = CreateImageView(args); break;
-                case "pager":
-                    view = CreateViewPager(args); break;
-                case "spinner":
-                    view = CreateSpinner(args); break;
-                case "card":
-                    view = CreateCardView(args); break;
-                case "radioGroup":
-                    view = CreateRadioGroup(args); break;
-                case "radio":
-                    view = CreateRadioButton(args); break;
-                default:
-                    throw new AttributeNotExistException(type);
-            }
+                "frame" => CreateFrameLayout(args),
+                "linear" => CreateLinearLayout(args),
+                "scroll" => CreateScrollView(args),
+                "btn" => CreateButton(args),
+                "check" => CreateCheckBox(args),
+                "edit" => CreateEditText(args),
+                "text" => CreateTextView(args),
+                "switch" => CreateSwitch(args),
+                "web" => CreateWebView(args),
+                "img" => CreateImageView(args),
+                "pager" => CreateViewPager(args),
+                "spinner" => CreateSpinner(args),
+                "card" => CreateCardView(args),
+                "radioGroup" => CreateRadioGroup(args),
+                "radio" => CreateRadioButton(args),
+                _ => throw new AttributeNotExistException(type),
+            };
             return view;
         }
 

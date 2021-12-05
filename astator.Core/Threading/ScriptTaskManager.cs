@@ -11,7 +11,7 @@ namespace astator.Core.Threading
         public bool ScriptExitSignal { get; set; } = false;
 
         private readonly List<Task> tasks = new();
-        private readonly List<CancellationTokenSource> tokenSources = new();
+        private readonly Dictionary<int, CancellationTokenSource> tokenSources = new();
 
         private void CallBackInvoke()
         {
@@ -26,7 +26,7 @@ namespace astator.Core.Threading
 
         public void Cancel()
         {
-            foreach (var source in this.tokenSources)
+            foreach (var source in this.tokenSources.Values)
             {
                 source.Cancel();
             }
@@ -63,14 +63,23 @@ namespace astator.Core.Threading
             return num <= 1;
         }
 
-        public Task Run(Action action)
+        public CancellationTokenSource GetTokenSource(int id)
+        {
+            if (this.tokenSources.ContainsKey(id))
+            {
+                return this.tokenSources[id];
+            }
+            throw new KeyNotFoundException(id.ToString());
+        }
+
+        public Task Run(Action<CancellationToken> action)
         {
             var source = new CancellationTokenSource();
             var task = Task.Run(() =>
             {
                 try
                 {
-                    action();
+                    action(source.Token);
                 }
                 catch (Exception)
                 {
@@ -86,18 +95,18 @@ namespace astator.Core.Threading
             }, source.Token);
 
             this.tasks.Add(task);
-            this.tokenSources.Add(source);
+            this.tokenSources.Add(task.Id, source);
 
             return task;
         }
-        public Task Run(Action action, CancellationToken token)
+        public Task Run(Action<CancellationToken> action, CancellationToken token)
         {
             var source = CancellationTokenSource.CreateLinkedTokenSource(token);
             var task = Task.Run(() =>
             {
                 try
                 {
-                    action();
+                    action(source.Token);
                 }
                 catch (Exception)
                 {
@@ -113,19 +122,19 @@ namespace astator.Core.Threading
             }, source.Token);
 
             this.tasks.Add(task);
-            this.tokenSources.Add(source);
+            this.tokenSources.Add(task.Id, source);
 
             return task;
         }
 
-        public Task Run(Func<Task> action)
+        public Task Run(Func<CancellationToken, Task> action)
         {
             var source = new CancellationTokenSource();
             var task = Task.Run(async () =>
             {
                 try
                 {
-                    await action();
+                    await action(source.Token);
                 }
                 catch (Exception)
                 {
@@ -141,19 +150,19 @@ namespace astator.Core.Threading
             }, source.Token);
 
             this.tasks.Add(task);
-            this.tokenSources.Add(source);
+            this.tokenSources.Add(task.Id, source);
 
             return task;
         }
 
-        public Task Run(Func<Task> action, CancellationToken token)
+        public Task Run(Func<CancellationToken, Task> action, CancellationToken token)
         {
             var source = CancellationTokenSource.CreateLinkedTokenSource(token);
             var task = Task.Run(async () =>
             {
                 try
                 {
-                    await action();
+                    await action(source.Token);
                 }
                 catch (Exception)
                 {
@@ -169,19 +178,19 @@ namespace astator.Core.Threading
             }, source.Token);
 
             this.tasks.Add(task);
-            this.tokenSources.Add(source);
+            this.tokenSources.Add(task.Id, source);
 
             return task;
         }
 
-        public Task<TResult> Run<TResult>(Func<TResult> func)
+        public Task<TResult> Run<TResult>(Func<CancellationToken, TResult> func)
         {
             var source = new CancellationTokenSource();
             var task = Task.Run(() =>
             {
                 try
                 {
-                    return func();
+                    return func(source.Token);
                 }
                 catch (Exception)
                 {
@@ -201,19 +210,19 @@ namespace astator.Core.Threading
             }, source.Token);
 
             this.tasks.Add(task);
-            this.tokenSources.Add(source);
+            this.tokenSources.Add(task.Id, source);
 
             return task;
         }
 
-        public Task<TResult> Run<TResult>(Func<TResult> func, CancellationToken token)
+        public Task<TResult> Run<TResult>(Func<CancellationToken, TResult> func, CancellationToken token)
         {
             var source = CancellationTokenSource.CreateLinkedTokenSource(token);
             var task = Task.Run(() =>
             {
                 try
                 {
-                    return func();
+                    return func(source.Token);
                 }
                 catch (Exception)
                 {
@@ -233,20 +242,20 @@ namespace astator.Core.Threading
             }, source.Token);
 
             this.tasks.Add(task);
-            this.tokenSources.Add(source);
+            this.tokenSources.Add(task.Id, source);
 
             return task;
         }
 
 
-        public Task<TResult> Run<TResult>(Func<Task<TResult>> func)
+        public Task<TResult> Run<TResult>(Func<CancellationToken, Task<TResult>> func)
         {
             var source = new CancellationTokenSource();
             var task = Task.Run(async () =>
             {
                 try
                 {
-                    return await func();
+                    return await func(source.Token);
                 }
                 catch (Exception)
                 {
@@ -266,19 +275,19 @@ namespace astator.Core.Threading
             }, source.Token);
 
             this.tasks.Add(task);
-            this.tokenSources.Add(source);
+            this.tokenSources.Add(task.Id, source);
 
             return task;
         }
 
-        public Task<TResult> Run<TResult>(Func<Task<TResult>> func, CancellationToken token)
+        public Task<TResult> Run<TResult>(Func<CancellationToken, Task<TResult>> func, CancellationToken token)
         {
             var source = CancellationTokenSource.CreateLinkedTokenSource(token);
             var task = Task.Run(async () =>
             {
                 try
                 {
-                    return await func();
+                    return await func(source.Token);
                 }
                 catch (TaskCanceledException)
                 {
@@ -298,7 +307,7 @@ namespace astator.Core.Threading
             }, source.Token);
 
             this.tasks.Add(task);
-            this.tokenSources.Add(source);
+            this.tokenSources.Add(task.Id, source);
 
             return task;
         }

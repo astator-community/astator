@@ -1,16 +1,13 @@
-﻿using Android.App;
-using Android.Content;
-using Android.Media.Projection;
+﻿using astator.Core.Engine;
 using astator.Core.Graphics;
 using astator.Core.Threading;
 using astator.Core.UI;
 using astator.Core.UI.Floaty;
-using astator.Engine;
 using System;
+using static astator.Core.Globals.Permission;
 
 namespace astator.Core
 {
-
     public enum ScriptState
     {
         Unstarted = 0,
@@ -20,38 +17,28 @@ namespace astator.Core
         Exited = 4
     }
 
-    public enum CaptureOrientation
-    {
-        None = -1,
-        Vertical = 0,
-        Horizontal = 1,
-    }
-
     public class ScriptRuntime
     {
-        public UiManager UiManager { get; private set; }
-        public FloatyManager FloatyManager { get; private set; }
+        public UiManager Ui { get; private set; }
+        public FloatyManager Floatys { get; private set; }
         public ScriptThreadManager Threads { get; private set; }
         public ScriptTaskManager Tasks { get; private set; }
-        public CaptureOrientation CaptureOrientation { get; set; } = CaptureOrientation.None;
-        public bool IsUIMode { get; private set; } = false;
+        public bool IsUiMode { get; private set; } = false;
+        public string ScriptId { get; }
         public ScriptState State { get; private set; }
         public Action ExitCallback { get; set; }
         public string Directory { get; private set; } = string.Empty;
-        public string ScriptId { get; }
-        public  TemplateActivity Activity { get; private set; }
+        public CaptureOrientation CaptureOrientation { get; set; } = CaptureOrientation.None;
+        public TemplateActivity Activity { get; private set; }
 
         private readonly ScriptEngine engine;
 
-
-
         public ScriptRuntime(string id, ScriptEngine engine, TemplateActivity activity, string directory) : this(id, engine, directory)
         {
-            this.IsUIMode = true;
+            this.IsUiMode = true;
             this.Activity = activity;
             this.Activity.OnFinished = () => { SetExit(); };
-            this.FloatyManager = new FloatyManager(activity, directory);
-            this.UiManager = new UiManager(activity, directory);
+            this.Ui = new UiManager(activity, directory);
         }
         public ScriptRuntime(string id, ScriptEngine engine, string directory)
         {
@@ -61,7 +48,7 @@ namespace astator.Core
             this.Directory = directory;
             this.Threads = new ScriptThreadManager();
             this.Tasks = new ScriptTaskManager();
-
+            this.Floatys = new FloatyManager(Activity ?? Globals.MainActivity, directory);
         }
 
         public void SetExit()
@@ -106,10 +93,10 @@ namespace astator.Core
             try
             {
                 this.ExitCallback?.Invoke();
-                this.FloatyManager?.HideAll();
+                this.Floatys?.HideAll();
                 ScreenCapturer.Instance?.Dispose();
                 this.engine.UnExecute();
-                ScriptLogger.Instance.Log("脚本停止运行");
+                ScriptLogger.Instance.Log("脚本停止运行" + this.ScriptId);
             }
             catch { }
             finally

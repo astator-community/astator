@@ -1,11 +1,11 @@
 ﻿using astator.Core.UI.Layout;
-using astator.Core.UI.Widget;
+using astator.Core.UI.Views;
 
 namespace astator.Core.UI
 {
     internal interface IManager
     {
-        public object this[string key] { get; set; }
+        public IScriptView this[string key] { get; set; }
         public ScriptScrollView CreateScrollView(UiArgs args);
         public ScriptWebView CreateWebView(UiArgs args);
         public ScriptSwitch CreateSwitch(UiArgs args);

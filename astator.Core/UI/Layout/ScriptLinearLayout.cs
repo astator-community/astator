@@ -6,7 +6,7 @@ using astator.Core.Exceptions;
 using System;
 namespace astator.Core.UI.Layout
 {
-    public class ScriptLinearLayout : LinearLayout
+    public class ScriptLinearLayout : LinearLayout, IScriptView
     {
         public new string Id { get; set; } = string.Empty;
         private OnAttachedListener onAttachedListener;
@@ -34,7 +34,6 @@ namespace astator.Core.UI.Layout
             foreach (var item in args)
             {
                 var key = item.Key.ToString();
-                Console.WriteLine(key);
                 if (key != "length")
                 {
                     SetAttr(key, item.Value);

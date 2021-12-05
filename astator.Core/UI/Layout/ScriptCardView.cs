@@ -5,9 +5,12 @@ using Android.Views;
 using Android.Widget;
 using AndroidX.CardView.Widget;
 using System;
+using System.Runtime.Versioning;
+
 namespace astator.Core.UI.Layout
 {
-    public class ScriptCardView : CardView
+    [SupportedOSPlatform("android30.0")]
+    public class ScriptCardView : CardView, IScriptView
     {
         public new string Id { get; set; } = string.Empty;
         private OnAttachedListener onAttachedListener;

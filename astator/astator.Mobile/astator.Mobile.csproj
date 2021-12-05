@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<TargetFrameworks>net6.0-android</TargetFrameworks>
+		<SingleProject>true</SingleProject>
+		<OutputType>Exe</OutputType>
+		<UseInterpreter Condition="'$(Configuration)' == 'Debug'">True</UseInterpreter>
+		<IsUnoHead>true</IsUnoHead>
+		<SatelliteResourceLanguages>zh-Hans</SatelliteResourceLanguages>
+	</PropertyGroup>
+	<ItemGroup>
+	  <None Remove="Android\Resources\xml\accessibilityservice.xml" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Uno.UI" Version="4.0.7" />
+		<PackageReference Include="Uno.UI.RemoteControl" Version="4.0.7" Condition="'$(Configuration)'=='Debug'" />
+		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.0.7" />
+		<PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
+		<PackageReference Include="Xamarin.Google.Android.Material" Version="1.4.0.5" />
+		<PackageReference Include="Uno.UniversalImageLoader" Version="1.9.35" />
+	</ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\..\astator.Core\astator.Core.csproj" />
+	</ItemGroup>
+	<Import Project="..\astator.Shared\astator.Shared.projitems" Label="Shared" />
+</Project>

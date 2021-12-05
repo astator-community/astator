@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
 namespace astator.Core.Graphics
 {
@@ -12,9 +11,20 @@ namespace astator.Core.Graphics
         private readonly GraphicHelper baseGraphicHelper;
         private readonly double multiple;
         private readonly int left, top, right, bottom, center, devWidth, devHeight;
-        public AnchorGraphicHelper(int devWidth, int devHeight, int left, int top, int right, int bottom)
+
+        public static AnchorGraphicHelper Create(int devWidth, int devHeight, int left, int top, int right, int bottom)
         {
-            this.baseGraphicHelper = new GraphicHelper();
+            var helper = new AnchorGraphicHelper(devWidth, devHeight, left, top, right, bottom);
+            if (helper.baseGraphicHelper is not null)
+            {
+                return helper;
+            }
+            return null;
+        }
+
+        private AnchorGraphicHelper(int devWidth, int devHeight, int left, int top, int right, int bottom)
+        {
+            this.baseGraphicHelper = GraphicHelper.Create();
             this.devWidth = devWidth;
             this.devHeight = devHeight;
             this.left = left;
@@ -24,12 +34,17 @@ namespace astator.Core.Graphics
             this.center = Round((this.right - this.left + 1.0) / 2) + this.left - 1;
             this.multiple = (this.bottom - this.top + 1.0) / this.devHeight;
         }
-        public AnchorGraphicHelper(int[] description) : this(description[0], description[1], description[2], description[3], description[4], description[5])
-        { }
+
+        public bool KeepScreen(bool sign)
+        {
+            return this.baseGraphicHelper.KeepScreen(sign);
+        }
+
         public void GetRedList()
         {
             this.baseGraphicHelper.GetRedList();
         }
+
         private static int Round(double num)
         {
             var local = (int)((num - (int)num) * 100);
@@ -46,6 +61,7 @@ namespace astator.Core.Graphics
             }
             return (int)num + 1;
         }
+
         public int[] GetRange(int sx, int sy, int smode, int ex, int ey, int emode)
         {
             var result = new int[4];
@@ -57,13 +73,15 @@ namespace astator.Core.Graphics
             result[3] = endPoint.Y;
             return result;
         }
+
         public int[] GetRange(int sx, int sy, int ex, int ey, int mode)
         {
             return GetRange(sx, sy, mode, ex, ey, mode);
         }
+
         public Point GetPoint(int x, int y, int mode)
         {
-            Point result = new();
+            var result = new Point();
             if (mode == LEFT || mode == NONE)
             {
                 result.X = Round(x * this.multiple) + this.left;
@@ -79,21 +97,25 @@ namespace astator.Core.Graphics
             result.Y = Round(y * this.multiple) + this.top;
             return result;
         }
+
         public int[] GetPixel(int x, int y, int mode)
         {
             var point = GetPoint(x, y, mode);
             return this.baseGraphicHelper.GetPixel(point.X, point.Y);
         }
-        public String GetPixelStr(int x, int y, int mode)
+
+        public string GetPixelStr(int x, int y, int mode)
         {
             var point = GetPoint(x, y, mode);
             return this.baseGraphicHelper.GetPixelStr(point.X, point.Y);
         }
+
         public int GetPixelHex(int x, int y, int mode)
         {
             var point = GetPoint(x, y, mode);
             return this.baseGraphicHelper.GetPixelHex(point.X, point.Y);
         }
+
         public int[][] GetCmpColorArray(int devWidth, int devHeight, int[][] description)
         {
             var multiple = (this.bottom - this.top + 1.0) / devHeight;
@@ -138,6 +160,7 @@ namespace astator.Core.Graphics
             }
             return result;
         }
+
         public int[][] GetFindColorArray(int devWidth, int devHeight, int[][] description)
         {
             var result = new int[description.Length][];
@@ -206,41 +229,51 @@ namespace astator.Core.Graphics
             }
             return result;
         }
+
         public bool CompareColor(int[] description, int sim, int offset)
         {
             return this.baseGraphicHelper.CompareColor(description, sim, offset);
         }
+
         public bool CompareColorEx(int[][] description, int sim, int offset)
         {
             return this.baseGraphicHelper.CompareColorEx(description, sim, offset);
         }
+
         public bool CompareColorExLoop(int[][] description, int sim, int offset, int timeout, int timelag, int sign)
         {
             return this.baseGraphicHelper.CompareColorExLoop(description, sim, offset, timeout, timelag, sign);
         }
+
         public Point FindMultiColor(int startX, int startY, int endX, int endY, int[][] description, int sim, int offset)
         {
             return this.baseGraphicHelper.FindMultiColor(startX, startY, endX, endY, description, sim, offset);
         }
+
         public Point FindMultiColor(int[] range, int[][] description, int sim, int offset)
         {
             return this.baseGraphicHelper.FindMultiColor(range[0], range[1], range[2], range[3], description, sim, offset);
         }
+
         public Point FindMultiColorLoop(int startX, int startY, int endX, int endY, int[][] description, int sim, int offset, int timeout, int timelag, int sign)
         {
             return this.baseGraphicHelper.FindMultiColorLoop(startX, startY, endX, endY, description, sim, offset, timeout, timelag, sign);
         }
+
         public Point FindMultiColorLoop(int[] range, int[][] description, int sim, int offset, int timeout, int timelag, int sign)
         {
             return this.baseGraphicHelper.FindMultiColorLoop(range[0], range[1], range[2], range[3], description, sim, offset, timeout, timelag, sign);
         }
+
         public List<Point> FindMultiColorEx(int startX, int startY, int endX, int endY, int[][] description, int sim)
         {
             return this.baseGraphicHelper.FindMultiColorEx(startX, startY, endX, endY, description, sim);
         }
+
         public List<Point> FindMultiColorEx(int[] range, int[][] description, int sim)
         {
             return this.baseGraphicHelper.FindMultiColorEx(range[0], range[1], range[2], range[3], description, sim);
         }
+
     }
 }

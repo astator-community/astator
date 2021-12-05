@@ -1,7 +1,7 @@
 ﻿using Android.Content;
 using Android.Views;
 using astator.Core.UI.Layout;
-using astator.Core.UI.Widget;
+using astator.Core.UI.Views;
 using System;
 using System.Collections.Generic;
 namespace astator.Core.UI.Floaty
@@ -16,8 +16,8 @@ namespace astator.Core.UI.Floaty
 
         private string directory = string.Empty;
 
-        private Dictionary<string, object> childs = new();
-        public object this[string key]
+        private Dictionary<string, IScriptView> childs = new();
+        public IScriptView this[string key]
         {
             set
             {

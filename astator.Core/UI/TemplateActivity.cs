@@ -3,7 +3,6 @@ using Android.Content;
 using Android.OS;
 using Android.Runtime;
 using AndroidX.AppCompat.App;
-using AndroidX.Fragment.App;
 using astator.Core.Graphics;
 using astator.Core.UI.Floaty;
 using System;
@@ -12,16 +11,23 @@ using static astator.Core.Globals.Permission;
 
 namespace astator.Core.UI
 {
-    [Activity(Theme = "@style/AppTheme.NoActionBar")]
+    [Activity(Theme = "@style/AppTheme", ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait)]
     public class TemplateActivity : AppCompatActivity
     {
         public static Dictionary<string, TemplateActivity> ScriptActivityList { get; set; } = new();
         public Action OnFinished { get; set; }
 
+        private string scriptId = string.Empty;
+
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-            ScriptActivityList.Add(this.Intent.GetStringExtra("id"), this);
+            this.scriptId = this.Intent.GetStringExtra("id");
+            if (ScriptActivityList.ContainsKey(this.scriptId))
+            {
+                ScriptActivityList.Remove(this.scriptId);
+            }
+            ScriptActivityList.Add(this.scriptId, this);
         }
 
         protected override void OnStart()
@@ -42,6 +48,7 @@ namespace astator.Core.UI
         public override void Finish()
         {
             base.Finish();
+            ScriptActivityList.Remove(this.scriptId);
             this.OnFinished?.Invoke();
         }
 

@@ -232,7 +232,7 @@ namespace astator.Core
         {
             return Task.Run(() =>
             {
-                logger.Log(value);
+                this.logger.Log(value);
             });
         }
 
@@ -241,7 +241,7 @@ namespace astator.Core
             return Task.Run(() =>
             {
                 var value = new string(buffer, index, count);
-                logger.Log(value);
+                this.logger.Log(value);
             });
         }
 
@@ -250,7 +250,7 @@ namespace astator.Core
             return Task.Run(() =>
             {
                 var value = new string(buffer.ToArray());
-                logger.Log(value);
+                this.logger.Log(value);
             }, cancellationToken);
         }
 
@@ -258,7 +258,7 @@ namespace astator.Core
         {
             return Task.Run(() =>
             {
-                logger.Log(value);
+                this.logger.Log(value);
             });
         }
 
@@ -266,7 +266,7 @@ namespace astator.Core
         {
             return Task.Run(() =>
             {
-                logger.Log(value);
+                this.logger.Log(value);
             }, cancellationToken);
         }
 
@@ -274,7 +274,7 @@ namespace astator.Core
         {
             return Task.Run(() =>
             {
-                logger.Log(value);
+                this.logger.Log(value);
             });
         }
 
@@ -283,7 +283,7 @@ namespace astator.Core
             return Task.Run(() =>
             {
                 var value = new string(buffer, index, count);
-                logger.Log(value);
+                this.logger.Log(value);
             });
         }
 
@@ -292,7 +292,7 @@ namespace astator.Core
             return Task.Run(() =>
             {
                 var value = new string(buffer.ToArray());
-                logger.Log(value);
+                this.logger.Log(value);
             }, cancellationToken);
         }
 
@@ -300,7 +300,7 @@ namespace astator.Core
         {
             return Task.Run(() =>
             {
-                logger.Log(value);
+                this.logger.Log(value);
             });
         }
 
@@ -308,7 +308,7 @@ namespace astator.Core
         {
             return Task.Run(() =>
             {
-                logger.Log(value);
+                this.logger.Log(value);
             }, cancellationToken);
         }
     }

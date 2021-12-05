@@ -6,7 +6,7 @@ using astator.Core.Exceptions;
 using System;
 namespace astator.Core.UI.Layout
 {
-    public class ScriptRadioGroup : RadioGroup
+    public class ScriptRadioGroup : RadioGroup, IScriptView
     {
         public new string Id { get; set; } = string.Empty;
         private OnAttachedListener onAttachedListener;

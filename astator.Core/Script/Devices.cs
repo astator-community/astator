@@ -9,7 +9,7 @@ namespace astator.Core.Script
 {
     public static class Devices
     {
-        public static Activity Activity { get; set; }
+        public static Activity MainActivity { get => Globals.MainActivity; }
         public static float Dp => Dm.Density;
         public static int Dpi => (int)Dm.DensityDpi;
 
@@ -19,7 +19,7 @@ namespace astator.Core.Script
             get
             {
                 var dm = new DisplayMetrics();
-                Activity.WindowManager.DefaultDisplay.GetRealMetrics(dm);
+                MainActivity.WindowManager.DefaultDisplay.GetRealMetrics(dm);
                 return dm;
             }
         }
@@ -29,7 +29,7 @@ namespace astator.Core.Script
         {
             get
             {
-                var manager = Activity?.WindowManager;
+                var manager = MainActivity?.WindowManager;
                 Debug.Assert(manager is not null);
                 Debug.Assert(manager.DefaultDisplay is not null);
                 if (manager.DefaultDisplay.Rotation == Android.Views.SurfaceOrientation.Rotation0 || manager.DefaultDisplay.Rotation == Android.Views.SurfaceOrientation.Rotation180)
@@ -44,7 +44,7 @@ namespace astator.Core.Script
         {
             get
             {
-                var manager = Activity?.WindowManager;
+                var manager = MainActivity?.WindowManager;
                 Debug.Assert(manager is not null);
                 Debug.Assert(manager.DefaultDisplay is not null);
                 if (manager.DefaultDisplay.Rotation == Android.Views.SurfaceOrientation.Rotation0)
@@ -98,6 +98,6 @@ namespace astator.Core.Script
         public static long Time => Build.Time;
 
         ///<summary>设备首次启动时产生和存储的64位数，当设备被wipe后该数重置。</summary>
-        public static string AndroidId => Android.Provider.Settings.Secure.GetString(Activity?.ApplicationContext?.ContentResolver, Android.Provider.Settings.Secure.AndroidId);
+        public static string AndroidId => Android.Provider.Settings.Secure.GetString(MainActivity?.ApplicationContext?.ContentResolver, Android.Provider.Settings.Secure.AndroidId);
     }
 }

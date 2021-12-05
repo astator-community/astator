@@ -8,26 +8,28 @@ using System;
 using System.Collections.Generic;
 namespace astator.Core.UI.Layout
 {
-    public class ViewPagerAdapter : PagerAdapter
+
+    public class ScriptViewPager : ViewPager, IScriptView
     {
-        public override int Count => this.pages.Count;
-        private readonly List<View> pages;
-        public ViewPagerAdapter(List<View> pages)
+        public class ViewPagerAdapter : PagerAdapter
         {
-            this.pages = pages;
+            public override int Count => this.pages.Count;
+            private readonly List<View> pages;
+            public ViewPagerAdapter(List<View> pages)
+            {
+                this.pages = pages;
+            }
+            public override bool IsViewFromObject(View view, Java.Lang.Object @object)
+            {
+                return view == @object;
+            }
+            public override Java.Lang.Object InstantiateItem(ViewGroup container, int position)
+            {
+                container.AddView(this.pages[position]);
+                return this.pages[position];
+            }
         }
-        public override bool IsViewFromObject(View view, Java.Lang.Object @object)
-        {
-            return view == @object;
-        }
-        public override Java.Lang.Object InstantiateItem(ViewGroup container, int position)
-        {
-            container.AddView(this.pages[position]);
-            return this.pages[position];
-        }
-    }
-    public class ScriptViewPager : ViewPager
-    {
+
         public new string Id { get; set; } = string.Empty;
         private OnAttachedListener onAttachedListener;
         private readonly List<View> _pages = new();

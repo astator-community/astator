@@ -6,7 +6,7 @@ using astator.Core.Exceptions;
 using System;
 namespace astator.Core.UI.Layout
 {
-    public class ScriptScrollView : ScrollView
+    public class ScriptScrollView : ScrollView, IScriptView
     {
         public new string Id { get; set; } = string.Empty;
         private OnAttachedListener onAttachedListener;
