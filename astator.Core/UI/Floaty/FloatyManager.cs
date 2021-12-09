@@ -1,7 +1,7 @@
 ﻿using Android.Content;
 using Android.Views;
 using astator.Core.UI.Layout;
-using astator.Core.UI.Views;
+using astator.Core.UI.Widget;
 using System;
 using System.Collections.Generic;
 namespace astator.Core.UI.Floaty
@@ -14,9 +14,9 @@ namespace astator.Core.UI.Floaty
 
         private readonly Dictionary<string, Dictionary<string, object>> staticListeners = new();
 
-        private string directory = string.Empty;
+        private readonly string directory = string.Empty;
 
-        private Dictionary<string, IScriptView> childs = new();
+        private readonly Dictionary<string, IScriptView> childs = new();
         public IScriptView this[string key]
         {
             set

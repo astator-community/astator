@@ -26,4 +26,11 @@
 		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.0.1" />
 	</ItemGroup>
 
+
+	<ItemGroup>
+	  <Reference Include="PaddleOcrBinding">
+	    <HintPath>..\astator\PaddleOcrBinding\bin\Release\net6.0-android\PaddleOcrBinding.dll</HintPath>
+	  </Reference>
+	</ItemGroup>
+
 </Project>

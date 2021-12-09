@@ -1,5 +1,4 @@
-﻿
-using Android.Graphics.Drawables;
+﻿using Android.Graphics.Drawables;
 using Android.Views;
 using AndroidX.AppCompat.App;
 using astator.Core;
@@ -9,20 +8,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Windows.UI;
-
-/* 项目“astator.Mobile (net6.0-android)”的未合并的更改
-在此之前:
-using Windows.UI.Popups;
-using astator.Core;
-using System.Linq;
-在此之后:
-using Windows.UI;
-using Windows.UI.Popups;
-using Windows.UI.Xaml.Linq;
-*/
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
+using Color = Windows.UI.Color;
+using Path = System.IO.Path;
 
 
 // The User Control item template is documented at https://go.microsoft.com/fwlink/?LinkId=234236
@@ -31,7 +21,7 @@ namespace astator.Pages
 {
     public sealed partial class LogPage : UserControl
     {
-        ScriptLogger logger = ScriptLogger.Instance;
+        readonly ScriptLogger logger = ScriptLogger.Instance;
         public LogPage()
         {
             InitializeComponent();
@@ -129,8 +119,30 @@ namespace astator.Pages
             return false;
         }
 
-        private async void Remove_Tapped(object sender, TappedRoutedEventArgs e)
+        private void Remove_Tapped(object sender, TappedRoutedEventArgs e)
         {
+
+            //var stream = Android.App.Application.Context.Assets.Open("test.png");
+            //var bd = (BitmapDrawable)Drawable.CreateFromStream(stream, null);
+            //var bitmap = bd.Bitmap;
+
+            //var result = PaddleOcrHelper.Create(new PaddleOcrHelper.PaddleOcrArgs
+            //{
+            //    PowerMode = CpuPowerMode.LITE_POWER_HIGH
+            //}).Ocr(bitmap);
+
+
+            //Console.WriteLine(result.ToString());
+            //var dialog = new AlertDialog.Builder(MainActivity.Instance)
+            //    .SetTitle("提示")
+            //    .SetMessage(result.ToString())
+            //    .Create();
+
+            //dialog.Window.SetBackgroundDrawable(new ColorDrawable(Color.FromArgb(0xff, 0xf0, 0xf3, 0xf6)));
+            //dialog.Show();
+
+
+
             var dialog = new AlertDialog.Builder(MainActivity.Instance)
                 .SetTitle("提示")
                 .SetMessage("确定要清空日志吗?")

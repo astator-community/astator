@@ -1,6 +1,6 @@
 ﻿using astator.Core.Exceptions;
 using astator.Core.UI.Layout;
-using astator.Core.UI.Views;
+using astator.Core.UI.Widget;
 using System.Collections.Generic;
 using Activity = Android.App.Activity;
 using View = Android.Views.View;

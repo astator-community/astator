@@ -23,10 +23,10 @@ namespace astator
         {
             InitializeLogging();
 
-            this.InitializeComponent();
+            InitializeComponent();
 
 #if HAS_UNO || NETFX_CORE
-            this.Suspending += OnSuspending;
+            Suspending += OnSuspending;
 #endif
         }
 
@@ -48,10 +48,10 @@ namespace astator
             _window = new Window();
             _window.Activate();
 #else
-            _window = Windows.UI.Xaml.Window.Current;
+            this._window = Windows.UI.Xaml.Window.Current;
 #endif
 
-            var rootFrame = _window.Content as Frame;
+            var rootFrame = this._window.Content as Frame;
 
             // Do not repeat app initialization when the Window already has content,
             // just ensure that the window is active
@@ -68,7 +68,7 @@ namespace astator
                 }
 
                 // Place the frame in the current Window
-                _window.Content = rootFrame;
+                this._window.Content = rootFrame;
             }
 
 #if !(NET6_0_OR_GREATER && WINDOWS)
@@ -83,7 +83,7 @@ namespace astator
                     rootFrame.Navigate(typeof(MainPage), args.Arguments);
                 }
                 // Ensure the current window is active
-                _window.Activate();
+                this._window.Activate();
             }
         }
 
@@ -167,7 +167,7 @@ namespace astator
             global::Uno.Extensions.LogExtensionPoint.AmbientLoggerFactory = factory;
 
 #if HAS_UNO
-			global::Uno.UI.Adapter.Microsoft.Extensions.Logging.LoggingAdapter.Initialize();
+            global::Uno.UI.Adapter.Microsoft.Extensions.Logging.LoggingAdapter.Initialize();
 #endif
         }
     }

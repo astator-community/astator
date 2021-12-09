@@ -48,7 +48,7 @@ namespace astator.Core
             this.Directory = directory;
             this.Threads = new ScriptThreadManager();
             this.Tasks = new ScriptTaskManager();
-            this.Floatys = new FloatyManager(Activity ?? Globals.MainActivity, directory);
+            this.Floatys = new FloatyManager(this.Activity ?? Globals.MainActivity, directory);
         }
 
         public void SetExit()
@@ -96,7 +96,7 @@ namespace astator.Core
                 this.Floatys?.HideAll();
                 ScreenCapturer.Instance?.Dispose();
                 this.engine.UnExecute();
-                ScriptLogger.Instance.Log("脚本停止运行" + this.ScriptId);
+                ScriptLogger.Instance.Log("脚本停止运行: " + this.ScriptId);
             }
             catch { }
             finally

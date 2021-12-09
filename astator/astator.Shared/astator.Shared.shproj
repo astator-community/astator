@@ -1,13 +1,30 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-	<PropertyGroup Label="Globals">
-		<ProjectGuid>6279c845-92f8-4333-ab99-3d213163593c</ProjectGuid>
-		<MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
-	</PropertyGroup>
-	<Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
-	<Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\CodeSharing\Microsoft.CodeSharing.Common.Default.props" />
-	<Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\CodeSharing\Microsoft.CodeSharing.Common.props" />
-	<PropertyGroup />
-	<Import Project="astator.Shared.projitems" Label="Shared" />
-	<Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\CodeSharing\Microsoft.CodeSharing.CSharp.targets" />
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>6279c845-92f8-4333-ab99-3d213163593c</ProjectGuid>
+    <MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
+  </PropertyGroup>
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\CodeSharing\Microsoft.CodeSharing.Common.Default.props" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\CodeSharing\Microsoft.CodeSharing.Common.props" />
+  <PropertyGroup />
+  <Import Project="astator.Shared.projitems" Label="Shared" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\CodeSharing\Microsoft.CodeSharing.CSharp.targets" />
+  <ItemGroup>
+    <_Globbed_Compile Remove="Obfuscator\Obfuscator.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <_Globbed_Content Remove="Assets\angle_op.bin" />
+    <_Globbed_Content Remove="Assets\angle_op.param" />
+    <_Globbed_Content Remove="Assets\arm64-v8a\libOcrLite.so" />
+    <_Globbed_Content Remove="Assets\armeabi-v7a\libOcrLite.so" />
+    <_Globbed_Content Remove="Assets\crnn_lite_op.bin" />
+    <_Globbed_Content Remove="Assets\crnn_lite_op.param" />
+    <_Globbed_Content Remove="Assets\dbnet_op.bin" />
+    <_Globbed_Content Remove="Assets\dbnet_op.param" />
+    <_Globbed_Content Remove="Assets\keys.txt" />
+    <_Globbed_Content Remove="Assets\test.png" />
+    <_Globbed_Content Remove="Assets\x86\libOcrLite.so" />
+    <_Globbed_Content Remove="Assets\x86_64\libOcrLite.so" />
+  </ItemGroup>
 </Project>

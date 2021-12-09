@@ -94,7 +94,7 @@ namespace astator.Core.Graphics
         }
 
         private bool disposedValue;
-        protected virtual new void Dispose(bool disposing)
+        protected new virtual void Dispose(bool disposing)
         {
             if (!this.disposedValue)
             {

@@ -1,14 +1,6 @@
-using Android.App;
-using Android.Content;
-using Android.OS;
 using Android.Runtime;
-using Android.Views;
-using Android.Widget;
 using Com.Nostra13.Universalimageloader.Core;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Windows.UI.Xaml.Media;
 
 namespace astator.Droid
@@ -31,7 +23,7 @@ namespace astator.Droid
         private static void ConfigureUniversalImageLoader()
         {
             // Create global configuration and initialize ImageLoader with this config
-            ImageLoaderConfiguration config = new ImageLoaderConfiguration
+            var config = new ImageLoaderConfiguration
                 .Builder(Context)
                 .Build();
 

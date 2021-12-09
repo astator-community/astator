@@ -4,7 +4,7 @@ namespace astator.Core.UI
 {
     public class UiArgs
     {
-        private Dictionary<string, object> args = new();
+        private readonly Dictionary<string, object> args = new();
         public object this[string key]
         {
             set

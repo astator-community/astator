@@ -10,7 +10,7 @@ namespace astator.Core.UI
         internal static ViewGroup Parse(IManager manager, string xml)
         {
             var doc = XDocument.Parse(xml);
-            var root = (ViewGroup)manager.CreateFrameLayout(null);
+            ViewGroup root = manager.CreateFrameLayout(null);
             ParseElements(manager, doc.Elements(), ref root);
             return root;
         }

@@ -30,7 +30,7 @@ namespace astator.Controllers
         [JsonPropertyName("buffer")]
         public NodeType Buffer { get; set; }
 
-        private JsonSerializerSettings serializerSettings = new JsonSerializerSettings
+        private readonly JsonSerializerSettings serializerSettings = new JsonSerializerSettings
         {
             ContractResolver = new CamelCasePropertyNamesContractResolver()
         };

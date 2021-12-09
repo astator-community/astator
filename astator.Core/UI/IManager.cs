@@ -1,5 +1,5 @@
 ﻿using astator.Core.UI.Layout;
-using astator.Core.UI.Views;
+using astator.Core.UI.Widget;
 
 namespace astator.Core.UI
 {

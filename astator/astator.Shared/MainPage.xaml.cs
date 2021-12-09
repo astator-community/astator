@@ -1,19 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.IO.Compression;
-using System.Linq;
-using System.Reflection;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -26,26 +13,30 @@ namespace astator
     {
         public MainPage()
         {
-            var assembly = Assembly.GetExecutingAssembly();
-            var sdkPath = assembly.GetManifestResourceNames().FirstOrDefault(name => name.EndsWith("sdk.zip"));
-            var sdkFileName = sdkPath[sdkPath.LastIndexOf("v")..];
-            var version = sdkFileName[1..sdkFileName.IndexOf('-')];
-            var outputDir = Android.App.Application.Context.GetExternalFilesDir("Sdk").ToString();
-            var versionPath = Path.Combine(outputDir, "version.txt");
-            if (!File.Exists(versionPath) || int.Parse(version) > int.Parse(File.ReadAllText(versionPath)))
-            {
-                using (var stream = assembly.GetManifestResourceStream(sdkPath))
-                {
-                    using var zip = new ZipArchive(stream);
+            //var sdkPath = Android.App.Application.Context.Assets.List("ScriptSdk").FirstOrDefault(name => name.EndsWith("sdk.zip"));
+            //var sdkFileName = sdkPath[sdkPath.LastIndexOf("v")..];
+            //var version = sdkFileName[1..sdkFileName.IndexOf('-')];
+            //var outputDir = Android.App.Application.Context.GetExternalFilesDir("Sdk").ToString();
+            //var versionPath = Path.Combine(outputDir, "version.txt");
+            //if (!File.Exists(versionPath) || int.Parse(version) > int.Parse(File.ReadAllText(versionPath)))
+            //{
+            //    using (var stream = Android.App.Application.Context.Assets.Open($"ScriptSdk/{sdkPath}"))
+            //    {
+            //        using var zip = new ZipArchive(stream);
 
-                    if (!Directory.Exists(outputDir))
-                    {
-                        Directory.CreateDirectory(outputDir);
-                    }
-                    zip.ExtractToDirectory(outputDir, true);
-                }
-                File.WriteAllText(versionPath, version);
-            };
+            //        if (!Directory.Exists(outputDir))
+            //        {
+            //            Directory.CreateDirectory(outputDir);
+            //        }
+            //        zip.ExtractToDirectory(outputDir, true);
+            //    }
+            //    File.WriteAllText(versionPath, version);
+            //};
+
+
+
+
+
             InitializeComponent();
         }
 
