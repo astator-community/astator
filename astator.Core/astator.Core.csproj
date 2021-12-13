@@ -28,9 +28,20 @@
 
 
 	<ItemGroup>
+	  <ProjectReference Include="..\3rdparty\Obfuscar\Obfuscar\Obfuscar.csproj" />
+	</ItemGroup>
+
+
+	<ItemGroup>
 	  <Reference Include="PaddleOcrBinding">
-	    <HintPath>..\astator\PaddleOcrBinding\bin\Release\net6.0-android\PaddleOcrBinding.dll</HintPath>
+	    <HintPath>..\3rdparty\PaddleOcrBinding\bin\Release\net6.0-android\PaddleOcrBinding.dll</HintPath>
 	  </Reference>
 	</ItemGroup>
+
+	<Target Name="IncludeAllDependencies" BeforeTargets="_GetPackageFiles">
+		<ItemGroup>
+			<None Include="$(OutputPath)*.*" Exclude="$(OutputPath)$(AssemblyName).exe;$(OutputPath)$(AssemblyName).pdb" Pack="True" PackagePath="tools\net47" />
+		</ItemGroup>
+	</Target>
 
 </Project>

@@ -60,9 +60,9 @@ namespace astator.Core
 
             public enum CaptureOrientation
             {
-                None = -1,
-                Vertical = 0,
-                Horizontal = 1,
+                None = 0,
+                Vertical = 1,
+                Horizontal = 2,
             }
 
             public static Task ReqScreenCapture(ScriptRuntime runtime, CaptureOrientation orientation)
@@ -80,6 +80,7 @@ namespace astator.Core
                     }
                 });
             }
+
             public static void ReqFloaty()
             {
                 if (!Android.Provider.Settings.CanDrawOverlays(MainActivity))

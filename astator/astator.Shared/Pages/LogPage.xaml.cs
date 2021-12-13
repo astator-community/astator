@@ -1,7 +1,9 @@
-﻿using Android.Graphics.Drawables;
+﻿using Android.Graphics;
+using Android.Graphics.Drawables;
 using Android.Views;
 using AndroidX.AppCompat.App;
 using astator.Core;
+using astator.Core.Graphics;
 using NLog;
 using System;
 using System.Collections.Generic;
@@ -122,41 +124,44 @@ namespace astator.Pages
         private void Remove_Tapped(object sender, TappedRoutedEventArgs e)
         {
 
-            //var stream = Android.App.Application.Context.Assets.Open("test.png");
-            //var bd = (BitmapDrawable)Drawable.CreateFromStream(stream, null);
-            //var bitmap = bd.Bitmap;
+            var stream = Android.App.Application.Context.Assets.Open("paddleocr/test.png");
+            //var bitmap = BitmapFactory.DecodeFile("/sdcard/astator.script/test.jpg");
+            var bitmap = BitmapFactory.DecodeStream(stream);
 
-            //var result = PaddleOcrHelper.Create(new PaddleOcrHelper.PaddleOcrArgs
-            //{
-            //    PowerMode = CpuPowerMode.LITE_POWER_HIGH
-            //}).Ocr(bitmap);
+            var paddle = PaddleOcrHelper.Create(new PaddleOcrArgs
+            {
+                PowerMode = CpuPowerMode.LITE_POWER_HIGH
+            });
 
+            var result = paddle.Ocr(bitmap);
 
-            //Console.WriteLine(result.ToString());
-            //var dialog = new AlertDialog.Builder(MainActivity.Instance)
-            //    .SetTitle("提示")
-            //    .SetMessage(result.ToString())
-            //    .Create();
+            bitmap.Recycle();
 
-            //dialog.Window.SetBackgroundDrawable(new ColorDrawable(Color.FromArgb(0xff, 0xf0, 0xf3, 0xf6)));
-            //dialog.Show();
-
-
-
+            Console.WriteLine(result.ToString());
             var dialog = new AlertDialog.Builder(MainActivity.Instance)
                 .SetTitle("提示")
-                .SetMessage("确定要清空日志吗?")
-                .SetPositiveButton("确定", (sender, e) =>
-                {
-                    this.LogLayout.Children.Clear();
-                    var path = Path.Combine(Android.App.Application.Context.GetExternalFilesDir("Log").ToString(), "log.txt");
-                    File.WriteAllText(path, string.Empty);
-                })
-                .SetNegativeButton("取消", (sender, e) => { })
+                .SetMessage(result.ToString())
                 .Create();
 
             dialog.Window.SetBackgroundDrawable(new ColorDrawable(Color.FromArgb(0xff, 0xf0, 0xf3, 0xf6)));
             dialog.Show();
+
+
+
+            //var dialog = new AlertDialog.Builder(MainActivity.Instance)
+            //    .SetTitle("提示")
+            //    .SetMessage("确定要清空日志吗?")
+            //    .SetPositiveButton("确定", (sender, e) =>
+            //    {
+            //        this.LogLayout.Children.Clear();
+            //        var path = Path.Combine(Android.App.Application.Context.GetExternalFilesDir("Log").ToString(), "log.txt");
+            //        File.WriteAllText(path, string.Empty);
+            //    })
+            //    .SetNegativeButton("取消", (sender, e) => { })
+            //    .Create();
+
+            //dialog.Window.SetBackgroundDrawable(new ColorDrawable(Color.FromArgb(0xff, 0xf0, 0xf3, 0xf6)));
+            //dialog.Show();
         }
     }
 }

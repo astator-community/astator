@@ -8,6 +8,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace astator.Core.Engine
 {
@@ -22,6 +23,7 @@ namespace astator.Core.Engine
         private readonly List<SyntaxTree> trees = new();
 
         private readonly List<MetadataReference> scriptReferences = new();
+
 
         public ScriptEngine(string directory)
         {
@@ -78,6 +80,28 @@ namespace astator.Core.Engine
                 dll.Seek(0, SeekOrigin.Begin);
                 pdb.Seek(0, SeekOrigin.Begin);
                 this.assembly = new WeakReference<Assembly>(this.alc.LoadFromStream(dll, pdb));
+            }
+            return result;
+        }
+
+        public EmitResult Compile(string outputPath)
+        {
+            var assemblyName = Path.GetRandomFileName();
+            var compilation = CSharpCompilation.Create(
+                assemblyName,
+
+                references: References.Concat(this.scriptReferences).ToList(),
+                syntaxTrees: this.trees,
+                options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary, optimizationLevel: OptimizationLevel.Release));
+
+            using var dll = new MemoryStream();
+            var result = compilation.Emit(dll);
+
+            if (result.Success)
+            {
+                dll.Seek(0, SeekOrigin.Begin);
+                using var fs = new FileStream(outputPath, FileMode.OpenOrCreate);
+                dll.CopyTo(fs);
             }
             return result;
         }

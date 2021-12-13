@@ -56,7 +56,7 @@ namespace astator.Core.Graphics
             var data = (Intent)intent.GetParcelableExtra("data");
             var manager = (MediaProjectionManager)GetSystemService("media_projection");
             this.mediaProjection = manager?.GetMediaProjection((int)Result.Ok, data);
-            var orientation = (CaptureOrientation)data.GetIntExtra("orientation", -1);
+            var orientation = (CaptureOrientation)data.GetIntExtra("orientation", 0);
             var width = orientation == CaptureOrientation.Horizontal ? Devices.Height : Devices.Width;
             var height = orientation == CaptureOrientation.Horizontal ? Devices.Width : Devices.Height;
             this.imageReader = ImageReader.NewInstance(width, height, (ImageFormatType)Format.Rgba8888, 2);
@@ -94,6 +94,7 @@ namespace astator.Core.Graphics
         }
 
         private bool disposedValue;
+
         protected new virtual void Dispose(bool disposing)
         {
             if (!this.disposedValue)
@@ -107,6 +108,7 @@ namespace astator.Core.Graphics
                 this.disposedValue = true;
             }
         }
+
         ~ScreenCapturer()
         {
             Dispose(disposing: false);

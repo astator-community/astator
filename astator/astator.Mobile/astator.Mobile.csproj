@@ -14,7 +14,6 @@
 		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.0.7" />
 		<PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
-		<PackageReference Include="Xamarin.Google.Android.Material" Version="1.4.0.5" />
 		<PackageReference Include="Uno.UniversalImageLoader" Version="1.9.35" />
 	</ItemGroup>
 	<ItemGroup>
@@ -22,24 +21,22 @@
 	</ItemGroup>
 	<Import Project="..\astator.Shared\astator.Shared.projitems" Label="Shared" />
 	<ItemGroup>
-	  <AndroidAsset Remove="Android\Assets\paddleocr\arm64-v8a\libc++_shared.so" />
-	</ItemGroup>
-	<ItemGroup>
 		<AndroidNativeLibrary Include="Android\Assets\paddleocr\arm64-v8a\*" />
 		<AndroidNativeLibrary Include="Android\Assets\paddleocr\armeabi-v7a\*" />
-	</ItemGroup>
-	<ItemGroup>
-	  <Reference Include="PaddleOcrBinding">
-	    <HintPath>..\PaddleOcrBinding\bin\Release\net6.0-android\PaddleOcrBinding.dll</HintPath>
-	  </Reference>
 	</ItemGroup>
 	<ItemGroup>
 	  <AndroidAsset Remove="Android\Assets\ScriptSdk\v211130-sdk.zip" />
 	</ItemGroup>
 	<ItemGroup>
+	  <None Remove="Android\Assets\paddleocr\test.png" />
 	  <None Remove="Android\Assets\ScriptSdk\v211130-sdk.zip" />
 	</ItemGroup>
 	<ItemGroup>
 	  <EmbeddedResource Include="Android\Assets\ScriptSdk\v211130-sdk.zip" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Reference Include="PaddleOcrBinding">
+	    <HintPath>..\PaddleOcrBinding\bin\Release\net6.0-android\PaddleOcrBinding.dll</HintPath>
+	  </Reference>
 	</ItemGroup>
 	</Project>

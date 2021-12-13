@@ -3,6 +3,7 @@ using Android.OS;
 using Android.Views;
 using astator.Core;
 using astator.Core.Engine;
+using astator.Core.ThirdParty;
 using astator.Core.UI;
 using System;
 using System.Collections.Generic;
@@ -59,6 +60,7 @@ namespace astator.Controllers
         public async void RunProject(string directory, string id)
         {
             var csprojPath = Directory.GetFiles(directory, "*.csproj", SearchOption.AllDirectories)[0];
+            var projectName = Path.GetFileNameWithoutExtension(csprojPath);
 
             GetId(ref id);
 
@@ -153,6 +155,83 @@ namespace astator.Controllers
                   {
                       engine.Execute(entryType, runtime);
                   });
+            }
+        }
+
+        public void CompileProject(string directory)
+        {
+            var csprojPath = Directory.GetFiles(directory, "*.csproj", SearchOption.AllDirectories)[0];
+            var projectName = Path.GetFileNameWithoutExtension(csprojPath);
+
+            this.logger.Log($"开始编译项目: {projectName}");
+
+            var xd = XDocument.Load(csprojPath);
+
+            var config = xd.Descendants("ScriptConfig");
+            var entryType = config.Select(x => x.Element("EntryType")).First()?.Value ?? string.Empty;
+
+            if (entryType == string.Empty)
+            {
+                this.logger.Error("脚本未指定EntryType!");
+                return;
+            }
+
+            var itemGroup = xd.Descendants("ItemGroup");
+            var references = from element in itemGroup.Elements()
+                             where element.Name == "Reference"
+                             from attr in element.Attributes()
+                             where attr.Value.EndsWith(".dll")
+                             select attr.Value;
+
+
+            var engine = new ScriptEngine(Application.Context.GetExternalFilesDir("Sdk").ToString());
+
+            foreach (var reference in references)
+            {
+                if (reference.StartsWith("."))
+                {
+                    var absolutePath = Path.Combine(directory, reference);
+                    if (File.Exists(absolutePath))
+                    {
+                        engine.LoadReference(absolutePath);
+                    }
+                }
+                else
+                {
+                    engine.LoadReference(reference);
+                }
+            }
+
+            var scripts = Directory.GetFiles(directory, "*.cs", SearchOption.AllDirectories);
+
+            foreach (var script in scripts)
+            {
+                engine.LoadScript(script);
+            }
+
+            var outputPath = Path.Combine(directory, "output", $"{projectName}.dll");
+
+            var emitResult = engine.Compile(outputPath);
+
+            if (!emitResult.Success)
+            {
+                foreach (var item in emitResult.Diagnostics)
+                {
+                    this.logger.Error("编译失败: " + item.ToString());
+                }
+                return;
+            }
+
+            this.logger.Log($"编译成功: {projectName}");
+
+            if (ObfuscatorHelper.Execute(new ObfuscatorRules
+            {
+                InputPath = outputPath,
+                OutputDir = Path.Combine(directory, "output", "obfuscator"),
+                EntryType = entryType
+            }))
+            {
+                this.logger.Log($"混淆成功: {projectName}");
             }
         }
 
