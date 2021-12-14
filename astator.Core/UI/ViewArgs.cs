@@ -2,7 +2,13 @@
 
 namespace astator.Core.UI
 {
-    public class UiArgs
+    /// <summary>
+    /// view属性参数
+    ///  <para>例子:</para>
+    /// <para>var args = new ViewArgs();</para>
+    /// <para>args["id"] = "test";</para>
+    /// </summary>
+    public class ViewArgs
     {
         private readonly Dictionary<string, object> args = new();
         public object this[string key]

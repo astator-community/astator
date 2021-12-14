@@ -9,16 +9,24 @@ namespace astator.Core.UI
 {
     public class UiManager : IManager
     {
-        public static int CreateCount { get; set; } = 0;
+        internal static int CreateCount { get; set; } = 0;
 
         private readonly Activity activity;
 
+        /// <summary>
+        /// 全局lisistener
+        /// </summary>
         private readonly Dictionary<string, Dictionary<string, object>> globalListeners = new();
 
         private readonly string directory;
 
-
         private readonly Dictionary<string, IScriptView> childs = new();
+
+        /// <summary>
+        /// 控件索引器
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
         public IScriptView this[string key]
         {
             set
@@ -43,17 +51,33 @@ namespace astator.Core.UI
             this.directory = directory;
         }
 
+        /// <summary>
+        /// 解析xml字符串
+        /// </summary>
+        /// <param name="xml"></param>
+        /// <returns></returns>
         public View ParseXml(string xml)
         {
             return UiXml.Parse(this, xml);
         }
 
-        public void Show(View view)
+        /// <summary>
+        /// 展示布局
+        /// </summary>
+        /// <param name="layout"></param>
+        public void Show(View layout)
         {
-            this.activity.SetContentView(view);
+            this.activity.SetContentView(layout);
         }
 
-        public View Create(string type, UiArgs args)
+        /// <summary>
+        /// 创建控件
+        /// </summary>
+        /// <param name="type">控件类型</param>
+        /// <param name="args">属性参数</param>
+        /// <returns></returns>
+        /// <exception cref="AttributeNotExistException"></exception>
+        public View Create(string type, ViewArgs args)
         {
             View view = type switch
             {
@@ -77,7 +101,7 @@ namespace astator.Core.UI
             return view;
         }
 
-        public ScriptScrollView CreateScrollView(UiArgs args = null)
+        public ScriptScrollView CreateScrollView(ViewArgs args = null)
         {
             var result = new ScriptScrollView(this.activity, args);
             if (this.globalListeners.ContainsKey("scroll"))
@@ -90,7 +114,7 @@ namespace astator.Core.UI
             return result;
         }
 
-        public ScriptWebView CreateWebView(UiArgs args = null)
+        public ScriptWebView CreateWebView(ViewArgs args = null)
         {
             var result = new ScriptWebView(this.activity, args);
             if (this.globalListeners.ContainsKey("web"))
@@ -103,7 +127,7 @@ namespace astator.Core.UI
             return result;
         }
 
-        public ScriptSwitch CreateSwitch(UiArgs args = null)
+        public ScriptSwitch CreateSwitch(ViewArgs args = null)
         {
             var result = new ScriptSwitch(this.activity, args);
             if (this.globalListeners.ContainsKey("switch"))
@@ -116,7 +140,7 @@ namespace astator.Core.UI
             return result;
         }
 
-        public ScriptCheckBox CreateCheckBox(UiArgs args = null)
+        public ScriptCheckBox CreateCheckBox(ViewArgs args = null)
         {
             var result = new ScriptCheckBox(this.activity, args);
             if (this.globalListeners.ContainsKey("check"))
@@ -129,7 +153,7 @@ namespace astator.Core.UI
             return result;
         }
 
-        public ScriptImageView CreateImageView(UiArgs args = null)
+        public ScriptImageView CreateImageView(ViewArgs args = null)
         {
             var result = new ScriptImageView(this.activity, this.directory, args);
             if (this.globalListeners.ContainsKey("img"))
@@ -142,7 +166,7 @@ namespace astator.Core.UI
             return result;
         }
 
-        public ScriptButton CreateButton(UiArgs args = null)
+        public ScriptButton CreateButton(ViewArgs args = null)
         {
             var result = new ScriptButton(this.activity, args);
             if (this.globalListeners.ContainsKey("btn"))
@@ -155,7 +179,7 @@ namespace astator.Core.UI
             return result;
         }
 
-        public ScriptLinearLayout CreateLinearLayout(UiArgs args = null)
+        public ScriptLinearLayout CreateLinearLayout(ViewArgs args = null)
         {
             var result = new ScriptLinearLayout(this.activity, args);
             if (this.globalListeners.ContainsKey("linear"))
@@ -168,7 +192,7 @@ namespace astator.Core.UI
             return result;
         }
 
-        public ScriptFrameLayout CreateFrameLayout(UiArgs args = null)
+        public ScriptFrameLayout CreateFrameLayout(ViewArgs args = null)
         {
             var result = new ScriptFrameLayout(this.activity, args);
             if (this.globalListeners.ContainsKey("frame"))
@@ -181,7 +205,7 @@ namespace astator.Core.UI
             return result;
         }
 
-        public ScriptEditText CreateEditText(UiArgs args = null)
+        public ScriptEditText CreateEditText(ViewArgs args = null)
         {
             var result = new ScriptEditText(this.activity, args);
             if (this.globalListeners.ContainsKey("edit"))
@@ -194,7 +218,7 @@ namespace astator.Core.UI
             return result;
         }
 
-        public ScriptTextView CreateTextView(UiArgs args = null)
+        public ScriptTextView CreateTextView(ViewArgs args = null)
         {
             var result = new ScriptTextView(this.activity, args);
             if (this.globalListeners.ContainsKey("text"))
@@ -207,7 +231,7 @@ namespace astator.Core.UI
             return result;
         }
 
-        public ScriptSpinner CreateSpinner(UiArgs args = null)
+        public ScriptSpinner CreateSpinner(ViewArgs args = null)
         {
             var result = new ScriptSpinner(this.activity, args);
             if (this.globalListeners.ContainsKey("spinner"))
@@ -220,7 +244,7 @@ namespace astator.Core.UI
             return result;
         }
 
-        public ScriptViewPager CreateViewPager(UiArgs args = null)
+        public ScriptViewPager CreateViewPager(ViewArgs args = null)
         {
             var result = new ScriptViewPager(this.activity, args);
             if (this.globalListeners.ContainsKey("viewPager"))
@@ -233,7 +257,7 @@ namespace astator.Core.UI
             return result;
         }
 
-        public ScriptRadioGroup CreateRadioGroup(UiArgs args = null)
+        public ScriptRadioGroup CreateRadioGroup(ViewArgs args = null)
         {
             var result = new ScriptRadioGroup(this.activity, args);
             if (this.globalListeners.ContainsKey("radioGroup"))
@@ -246,7 +270,7 @@ namespace astator.Core.UI
             return result;
         }
 
-        public ScriptRadioButton CreateRadioButton(UiArgs args = null)
+        public ScriptRadioButton CreateRadioButton(ViewArgs args = null)
         {
             var result = new ScriptRadioButton(this.activity, args);
             if (this.globalListeners.ContainsKey("radio"))
@@ -259,7 +283,7 @@ namespace astator.Core.UI
             return result;
         }
 
-        public ScriptCardView CreateCardView(UiArgs args = null)
+        public ScriptCardView CreateCardView(ViewArgs args = null)
         {
             var result = new ScriptCardView(this.activity, args);
             if (this.globalListeners.ContainsKey("card"))
@@ -272,6 +296,12 @@ namespace astator.Core.UI
             return result;
         }
 
+        /// <summary>
+        /// 添加全局listener, 仅在创建view之前添加有效
+        /// </summary>
+        /// <param name="type">view类型</param>
+        /// <param name="key">listener类型</param>
+        /// <param name="listener"></param>
         public void On(string type, string key, object listener)
         {
             if (!this.globalListeners.ContainsKey(type))

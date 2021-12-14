@@ -16,7 +16,7 @@ namespace astator.Core.ThirdParty
         /// <summary>
         /// 待混淆程序集路径
         /// </summary>
-        public string InputPath;
+        public string DllPath;
         /// <summary>
         /// 生成输出目录
         /// </summary>
@@ -77,19 +77,19 @@ namespace astator.Core.ThirdParty
         /// <returns></returns>
         public static bool Execute(ObfuscatorRules rules)
         {
-            if (rules.InputPath is null)
+            if (rules.DllPath is null)
             {
-                throw new Exception("输入路径不可为空");
+                throw new Exception("dll路径不可为空");
             }
 
-            if (!rules.InputPath.EndsWith(".dll"))
+            if (!rules.DllPath.EndsWith(".dll"))
             {
-                throw new Exception("输入路径不可为空");
+                throw new Exception("dll路径不合法");
             }
 
             if (rules.OutputDir is null)
             {
-                rules.OutputDir =Path.Combine(Path.GetDirectoryName(rules.InputPath), "obfuscator");
+                rules.OutputDir = Path.Combine(Path.GetDirectoryName(rules.DllPath), "obfuscator");
             }
 
             if (rules.EntryType is null)
@@ -113,9 +113,9 @@ namespace astator.Core.ThirdParty
                         <Var name = ""OptimizeMethods"" value = ""{rules.OptimizeMethods}"" />
                         <AssemblySearchPath path=""{Android.App.Application.Context.GetExternalFilesDir("Sdk")}"" />
    
-                        <Module file = ""{rules.InputPath}"">
+                        <Module file = ""{rules.DllPath}"">
                             <SkipMethod type=""{rules.EntryType}"" attrib = ""public"" rx = "".*"" />
-                          </Module>
+                        </Module>
                     </Obfuscator >
                      ";
 

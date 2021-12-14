@@ -31,7 +31,7 @@ namespace astator.Core.UI
 
         private static View ParseElement(IManager manager, XElement element)
         {
-            var args = new UiArgs();
+            var args = new ViewArgs();
             foreach (var attr in element.Attributes())
             {
                 args[attr.Name.ToString()] = attr.Value;
@@ -48,7 +48,7 @@ namespace astator.Core.UI
             return view;
         }
 
-        private static View Create(IManager manager, string type, UiArgs args)
+        private static View Create(IManager manager, string type, ViewArgs args)
         {
             View view = type switch
             {

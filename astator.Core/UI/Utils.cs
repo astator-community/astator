@@ -7,58 +7,18 @@ using System.Collections.Generic;
 
 namespace astator.Core.UI
 {
+    /// <summary>
+    /// view默认值
+    /// </summary>
     public static class DefaultValue
     {
-        public static int TextSize { get; } = 6;
+        public static int TextSize { get; } = 8;
         public static string TextColor { get; } = "#4a4a4d";
         public static string BackgroundColor { get; } = "#ffffff";
     }
-    public static class Util
+    internal static class Utils
     {
-        public static string GetgetLocalIPAddress()
-        {
-            var ie = NetworkInterface.NetworkInterfaces;
-            while (ie.HasMoreElements)
-            {
-                var intf = ie.NextElement() as NetworkInterface;
-                var enumIpAddr = intf.InetAddresses;
-                while (enumIpAddr.HasMoreElements)
-                {
-                    var inetAddress = enumIpAddr.NextElement() as InetAddress;
-                    if (!inetAddress.IsLoopbackAddress && inetAddress is Inet4Address && inetAddress.HostAddress.StartsWith("192.168"))
-                    {
-                        return inetAddress.HostAddress.ToString();
-                    }
-                }
-            }
-            ie = NetworkInterface.NetworkInterfaces;
-            while (ie.HasMoreElements)
-            {
-                var intf = ie.NextElement() as NetworkInterface;
-                var enumIpAddr = intf.InetAddresses;
-                while (enumIpAddr.HasMoreElements)
-                {
-                    var inetAddress = enumIpAddr.NextElement() as InetAddress;
-                    if (!inetAddress.IsLoopbackAddress && inetAddress is Inet4Address && inetAddress.HostAddress.ToString() != "127.0.0.1")
-                    {
-                        return inetAddress.HostAddress.ToString();
-                    }
-                }
-            }
-            return null;
-        }
-        public static Type GetType(string value)
-        {
-            foreach (var asm in AppDomain.CurrentDomain.GetAssemblies())
-            {
-                if (asm.GetType(value) is not null)
-                {
-                    return asm.GetType(value);
-                }
-            }
-            return null;
-        }
-        public static T TypeParse<T>(object value)
+        internal static T TypeParse<T>(object value)
         {
             var str = value.ToString().Trim().ToLower();
             var properties = typeof(T).GetProperties();
@@ -71,7 +31,8 @@ namespace astator.Core.UI
             }
             throw new AttributeNotExistException(str);
         }
-        public static T EnumParse<T>(object value)
+
+        internal static T EnumParse<T>(object value)
         {
             var list = new List<int>();
             if (value is string strs)
@@ -103,7 +64,8 @@ namespace astator.Core.UI
             }
             throw new AttributeNotExistException(value.ToString() ?? string.Empty);
         }
-        public static int DpParse(object value)
+
+        internal static int DpParse(object value)
         {
             return (int)(Devices.Dp * float.Parse(value.ToString().Trim()));
         }

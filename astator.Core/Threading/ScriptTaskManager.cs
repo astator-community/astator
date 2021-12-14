@@ -5,12 +5,18 @@ using System.Threading.Tasks;
 
 namespace astator.Core.Threading
 {
+    //在astator中, 脚本必须经过此api来实现task, 否则astator无法在脚本停止时卸载相关程序集
+
+    /// <summary>
+    /// 脚本task管理类
+    /// </summary>
     public class ScriptTaskManager
     {
-        public Action<int> ScriptExitCallback { get; set; }
-        public bool ScriptExitSignal { get; set; } = false;
+        internal Action<int> ScriptExitCallback { get; set; }
+        internal bool ScriptExitSignal { get; set; } = false;
 
         private readonly List<Task> tasks = new();
+
         private readonly Dictionary<int, CancellationTokenSource> tokenSources = new();
 
         private void CallBackInvoke()
@@ -24,6 +30,9 @@ namespace astator.Core.Threading
             }
         }
 
+        /// <summary>
+        /// 向所有task发送取消信号
+        /// </summary>
         public void Cancel()
         {
             foreach (var source in this.tokenSources.Values)
@@ -32,6 +41,10 @@ namespace astator.Core.Threading
             }
         }
 
+        /// <summary>
+        /// 是否有task存活
+        /// </summary>
+        /// <returns></returns>
         public bool IsAlive()
         {
             foreach (var task in this.tasks)
@@ -47,6 +60,10 @@ namespace astator.Core.Threading
             return false;
         }
 
+        /// <summary>
+        /// 是否只有一个task存活
+        /// </summary>
+        /// <returns></returns>
         private bool IsLastAlive()
         {
             var num = 0;
@@ -63,6 +80,12 @@ namespace astator.Core.Threading
             return num <= 1;
         }
 
+        /// <summary>
+        /// 获取task对应的CancellationTokenSource
+        /// </summary>
+        /// <param name="id">task的id</param>
+        /// <returns></returns>
+        /// <exception cref="KeyNotFoundException"></exception>
         public CancellationTokenSource GetTokenSource(int id)
         {
             if (this.tokenSources.ContainsKey(id))
@@ -72,6 +95,7 @@ namespace astator.Core.Threading
             throw new KeyNotFoundException(id.ToString());
         }
 
+        
         public Task Run(Action<CancellationToken> action)
         {
             var source = new CancellationTokenSource();
@@ -99,6 +123,7 @@ namespace astator.Core.Threading
 
             return task;
         }
+
         public Task Run(Action<CancellationToken> action, CancellationToken token)
         {
             var source = CancellationTokenSource.CreateLinkedTokenSource(token);

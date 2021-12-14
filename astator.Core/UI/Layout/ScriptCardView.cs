@@ -24,7 +24,7 @@ namespace astator.Core.UI.Layout
             base.AddView(child);
             return this;
         }
-        public ScriptCardView(Android.Content.Context context, UiArgs args) : base(context)
+        public ScriptCardView(Android.Content.Context context, ViewArgs args) : base(context)
         {
             if (args is null)
             {
@@ -72,14 +72,14 @@ namespace astator.Core.UI.Layout
                 case "w":
                     {
                         LayoutParams lp = new(this.LayoutParameters ?? new(ViewGroup.LayoutParams.WrapContent, ViewGroup.LayoutParams.WrapContent));
-                        lp.Width = Util.DpParse(value);
+                        lp.Width = Utils.DpParse(value);
                         this.LayoutParameters = lp;
                         break;
                     }
                 case "h":
                     {
                         LayoutParams lp = new(this.LayoutParameters ?? new(ViewGroup.LayoutParams.WrapContent, ViewGroup.LayoutParams.WrapContent));
-                        lp.Height = Util.DpParse(value);
+                        lp.Height = Utils.DpParse(value);
                         this.LayoutParameters = lp;
                         break;
                     }
@@ -92,30 +92,30 @@ namespace astator.Core.UI.Layout
                         }
                         else if (value is int[] arr)
                         {
-                            margin[0] = Util.DpParse(arr[0]);
-                            margin[1] = Util.DpParse(arr[1]);
-                            margin[2] = Util.DpParse(arr[2]);
-                            margin[3] = Util.DpParse(arr[3]);
+                            margin[0] = Utils.DpParse(arr[0]);
+                            margin[1] = Utils.DpParse(arr[1]);
+                            margin[2] = Utils.DpParse(arr[2]);
+                            margin[3] = Utils.DpParse(arr[3]);
                         }
                         else if (value is string str)
                         {
                             var strArr = str.Split(",");
                             if (strArr.Length == 1)
                             {
-                                var temp = Util.DpParse(strArr[0]);
+                                var temp = Utils.DpParse(strArr[0]);
                                 margin[0] = margin[1] = margin[2] = margin[3] = temp;
                             }
                             else if (strArr.Length == 2)
                             {
-                                margin[0] = margin[2] = Util.DpParse(strArr[0]);
-                                margin[1] = margin[3] = Util.DpParse(strArr[1]);
+                                margin[0] = margin[2] = Utils.DpParse(strArr[0]);
+                                margin[1] = margin[3] = Utils.DpParse(strArr[1]);
                             }
                             else if (strArr.Length == 4)
                             {
-                                margin[0] = Util.DpParse(strArr[0]);
-                                margin[1] = Util.DpParse(strArr[1]);
-                                margin[2] = Util.DpParse(strArr[2]);
-                                margin[3] = Util.DpParse(strArr[3]);
+                                margin[0] = Utils.DpParse(strArr[0]);
+                                margin[1] = Utils.DpParse(strArr[1]);
+                                margin[2] = Utils.DpParse(strArr[2]);
+                                margin[3] = Utils.DpParse(strArr[3]);
                             }
                         }
                         var lp = this.LayoutParameters as LayoutParams ?? new(this.LayoutParameters as MarginLayoutParams ?? new(ViewGroup.LayoutParams.WrapContent, ViewGroup.LayoutParams.WrapContent));
@@ -126,7 +126,7 @@ namespace astator.Core.UI.Layout
                 case "layoutGravity":
                     {
                         var lp = this.LayoutParameters as LayoutParams ?? new(this.LayoutParameters as MarginLayoutParams ?? new(ViewGroup.LayoutParams.WrapContent, ViewGroup.LayoutParams.WrapContent));
-                        lp.Gravity = Util.EnumParse<GravityFlags>(value);
+                        lp.Gravity = Utils.EnumParse<GravityFlags>(value);
                         this.LayoutParameters = lp;
                         break;
                     }
@@ -139,30 +139,30 @@ namespace astator.Core.UI.Layout
                         }
                         else if (value is int[] arr)
                         {
-                            padding[0] = Util.DpParse(arr[0]);
-                            padding[1] = Util.DpParse(arr[1]);
-                            padding[2] = Util.DpParse(arr[2]);
-                            padding[3] = Util.DpParse(arr[3]);
+                            padding[0] = Utils.DpParse(arr[0]);
+                            padding[1] = Utils.DpParse(arr[1]);
+                            padding[2] = Utils.DpParse(arr[2]);
+                            padding[3] = Utils.DpParse(arr[3]);
                         }
                         else if (value is string str)
                         {
                             var strArr = str.Split(",");
                             if (strArr.Length == 1)
                             {
-                                var temp = Util.DpParse(strArr[0]);
+                                var temp = Utils.DpParse(strArr[0]);
                                 padding[0] = padding[1] = padding[2] = padding[3] = temp;
                             }
                             else if (strArr.Length == 2)
                             {
-                                padding[0] = padding[2] = Util.DpParse(strArr[0]);
-                                padding[1] = padding[3] = Util.DpParse(strArr[1]);
+                                padding[0] = padding[2] = Utils.DpParse(strArr[0]);
+                                padding[1] = padding[3] = Utils.DpParse(strArr[1]);
                             }
                             else if (strArr.Length == 4)
                             {
-                                padding[0] = Util.DpParse(strArr[0]);
-                                padding[1] = Util.DpParse(strArr[1]);
-                                padding[2] = Util.DpParse(strArr[2]);
-                                padding[3] = Util.DpParse(strArr[3]);
+                                padding[0] = Utils.DpParse(strArr[0]);
+                                padding[1] = Utils.DpParse(strArr[1]);
+                                padding[2] = Utils.DpParse(strArr[2]);
+                                padding[3] = Utils.DpParse(strArr[3]);
                             }
                         }
                         SetContentPadding(padding[0], padding[1], padding[2], padding[3]);
@@ -188,7 +188,7 @@ namespace astator.Core.UI.Layout
                     }
                 case "visibility":
                     {
-                        this.Visibility = Util.EnumParse<ViewStates>(value);
+                        this.Visibility = Utils.EnumParse<ViewStates>(value);
                         break;
                     }
                 case "rotation":

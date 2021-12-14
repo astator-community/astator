@@ -84,7 +84,7 @@ namespace astator.Controllers
                              select attr.Value;
 
 
-            var engine = new ScriptEngine(Application.Context.GetExternalFilesDir("Sdk").ToString());
+            var engine = new ScriptEngine();
 
             foreach (var reference in references)
             {
@@ -106,7 +106,7 @@ namespace astator.Controllers
 
             foreach (var script in scripts)
             {
-                engine.LoadScript(script);
+                engine.ParseScript(script);
             }
 
             var emitResult = engine.Compile();
@@ -145,10 +145,10 @@ namespace astator.Controllers
             {
                 runtime = new ScriptRuntime(id, engine, directory);
 
-                runtime.Threads.ScriptExitCallback = runtime.Exit;
+                runtime.Threads.ScriptExitCallback = runtime.Stop;
                 runtime.Threads.ScriptExitSignal = true;
 
-                runtime.Tasks.ScriptExitCallback = runtime.Exit;
+                runtime.Tasks.ScriptExitCallback = runtime.Stop;
                 runtime.Tasks.ScriptExitSignal = true;
 
                 runtime.Threads.Start(() =>
@@ -184,7 +184,7 @@ namespace astator.Controllers
                              select attr.Value;
 
 
-            var engine = new ScriptEngine(Application.Context.GetExternalFilesDir("Sdk").ToString());
+            var engine = new ScriptEngine();
 
             foreach (var reference in references)
             {
@@ -206,10 +206,11 @@ namespace astator.Controllers
 
             foreach (var script in scripts)
             {
-                engine.LoadScript(script);
+                engine.ParseScript(script);
             }
 
             var outputPath = Path.Combine(directory, "output", $"{projectName}.dll");
+            var obfuscatorPath = Path.Combine(Path.GetDirectoryName(outputPath), "obfuscator");
 
             var emitResult = engine.Compile(outputPath);
 
@@ -222,16 +223,18 @@ namespace astator.Controllers
                 return;
             }
 
-            this.logger.Log($"编译成功: {projectName}");
+            this.logger.Log($"编译成功: {outputPath}");
 
-            if (ObfuscatorHelper.Execute(new ObfuscatorRules
+            var obfuscatorResult = ObfuscatorHelper.Execute(new ObfuscatorRules
             {
-                InputPath = outputPath,
-                OutputDir = Path.Combine(directory, "output", "obfuscator"),
+                DllPath = outputPath,
+                OutputDir = obfuscatorPath,
                 EntryType = entryType
-            }))
+            });
+
+            if (obfuscatorResult)
             {
-                this.logger.Log($"混淆成功: {projectName}");
+                this.logger.Log($"混淆成功: {obfuscatorPath}/{projectName}.dll");
             }
         }
 
@@ -247,16 +250,16 @@ namespace astator.Controllers
             context.StartActivity(intent);
 
             return await Task.Run(() =>
-             {
-                 while (true)
-                 {
-                     if (TemplateActivity.ScriptActivityList.ContainsKey(id))
-                     {
-                         return TemplateActivity.ScriptActivityList[id];
-                     }
-                     Thread.Sleep(50);
-                 }
-             });
+            {
+                while (true)
+                {
+                    if (TemplateActivity.ScriptActivityList.ContainsKey(id))
+                    {
+                        return TemplateActivity.ScriptActivityList[id];
+                    }
+                    Thread.Sleep(50);
+                }
+            });
         }
 
     }

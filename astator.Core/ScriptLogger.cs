@@ -3,6 +3,7 @@ using NLog;
 using NLog.Config;
 using NLog.Targets;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -17,11 +18,10 @@ namespace astator.Core
         public string Message { get; set; } = string.Empty;
     }
 
+
     public class ScriptLogger
     {
         private static ScriptLogger instance;
-        private readonly NLogger logger;
-        public Dictionary<string, Action<LogArgs>> Callbacks = new();
 
         public static ScriptLogger Instance
         {
@@ -35,24 +35,28 @@ namespace astator.Core
             }
         }
 
+        private readonly NLogger logger;
+
+        private ConcurrentDictionary<string, Action<LogArgs>> callbacks = new();
+
         public string AddCallback(string key, Action<LogArgs> action)
         {
-            while (this.Callbacks.ContainsKey(key))
+            while (this.callbacks.ContainsKey(key))
             {
                 key += DateTime.Now.ToString("dd-HH-mm-ss");
             }
 
-            this.Callbacks.Add(key, action);
+            this.callbacks.TryAdd(key, action);
             return key;
         }
 
         public void RemoveCallback(string key)
         {
-            foreach (var _key in this.Callbacks.Keys)
+            foreach (var _key in this.callbacks.Keys)
             {
                 if (_key.StartsWith(key))
                 {
-                    this.Callbacks.Remove(_key);
+                    this.callbacks.TryRemove(_key,out _);
                 }
             }
         }
@@ -70,7 +74,7 @@ namespace astator.Core
                     Message = logEvent.FormattedMessage
                 };
 
-                foreach (var action in this.Callbacks.Values)
+                foreach (var action in this.callbacks.Values)
                 {
                     action.Invoke(message);
                 }
@@ -87,7 +91,6 @@ namespace astator.Core
                 SetupExtensions(s => s.AutoLoadAssemblies(false)).
                 LoadConfiguration(config).
                 GetCurrentClassLogger();
-
         }
 
         public void Log(params object[] items)

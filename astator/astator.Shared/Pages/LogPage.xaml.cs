@@ -30,7 +30,7 @@ namespace astator.Pages
 
             Console.SetOut(new ScriptConsole());
 
-            this.logger.Callbacks.Add("logPage", (value) => AddLogText(value));
+            this.logger.AddCallback("logPage", (value) => AddLogText(value));
             InitLogList();
         }
 
@@ -146,7 +146,7 @@ namespace astator.Pages
             dialog.Window.SetBackgroundDrawable(new ColorDrawable(Color.FromArgb(0xff, 0xf0, 0xf3, 0xf6)));
             dialog.Show();
 
-
+           Globals.Permission.ReqScreenCap();
 
             //var dialog = new AlertDialog.Builder(MainActivity.Instance)
             //    .SetTitle("提示")

@@ -2,6 +2,9 @@
 using System.Drawing;
 namespace astator.Core.Graphics
 {
+    /// <summary>
+    /// 图色锚点查找类
+    /// </summary>
     public class AnchorGraphicHelper
     {
         private static readonly int NONE = -1;
@@ -12,6 +15,16 @@ namespace astator.Core.Graphics
         private readonly double multiple;
         private readonly int left, top, right, bottom, center, devWidth, devHeight;
 
+        /// <summary>
+        /// 静态构造函数
+        /// </summary>
+        /// <param name="devWidth">开发分辨率的宽</param>
+        /// <param name="devHeight">开发分辨率的高</param>
+        /// <param name="left">运行分辨率布局 startX</param>
+        /// <param name="top">运行分辨率布局 startY</param>
+        /// <param name="right">运行分辨率布局 endX</param>
+        /// <param name="bottom">运行分辨率布局 endY</param>
+        /// <returns>AnchorGraphicHelper, 当初始化失败时返回null</returns>
         public static AnchorGraphicHelper Create(int devWidth, int devHeight, int left, int top, int right, int bottom)
         {
             var helper = new AnchorGraphicHelper(devWidth, devHeight, left, top, right, bottom);
@@ -35,16 +48,27 @@ namespace astator.Core.Graphics
             this.multiple = (this.bottom - this.top + 1.0) / this.devHeight;
         }
 
+        /// <summary>
+        /// 获取截图数据
+        /// </summary>
+        /// <param name="sign">是否需要调用多点找色</param>
+        /// <returns></returns>
         public bool KeepScreen(bool sign)
         {
             return this.baseGraphicHelper.KeepScreen(sign);
         }
 
+        /// <summary>
+        /// 获取所有r值对应的坐标
+        /// </summary>
         public void GetRedList()
         {
             this.baseGraphicHelper.GetRedList();
         }
 
+        /// <summary>
+        /// 四舍六入五成双
+        /// </summary>
         private static int Round(double num)
         {
             var local = (int)((num - (int)num) * 100);
@@ -62,6 +86,15 @@ namespace astator.Core.Graphics
             return (int)num + 1;
         }
 
+        /// <summary>
+        /// 获取与运行分辨率相关的范围
+        /// </summary>
+        /// <param name="sx">开发分辨率的startX</param>
+        /// <param name="sy">开发分辨率的startY</param>
+        /// <param name="smode">sx和sy的坐标对齐方式</param>
+        /// <param name="ex">开发分辨率的endX</param>
+        /// <param name="ey">开发分辨率的endY</param>
+        /// <param name="emode">ex和ey的坐标对齐方式</param>
         public int[] GetRange(int sx, int sy, int smode, int ex, int ey, int emode)
         {
             var result = new int[4];
@@ -74,11 +107,27 @@ namespace astator.Core.Graphics
             return result;
         }
 
+        /// <summary>
+        /// 获取与运行分辨率相关的范围
+        /// </summary>
+        /// <param name="sx">开发分辨率的startX</param>
+        /// <param name="sy">开发分辨率的startY</param>
+        /// <param name="ex">开发分辨率的endX</param>
+        /// <param name="ey">开发分辨率的endY</param>
+        /// <param name="mode">坐标对齐方式</param>
+        /// <returns></returns>
         public int[] GetRange(int sx, int sy, int ex, int ey, int mode)
         {
             return GetRange(sx, sy, mode, ex, ey, mode);
         }
 
+        /// <summary>
+        /// 获取与运行分辨率相关的坐标
+        /// </summary>
+        /// <param name="x">开发分辨率的x</param>
+        /// <param name="y">开发分辨率的y</param>
+        /// <param name="mode">坐标对齐方式</param>
+        /// <returns></returns>
         public Point GetPoint(int x, int y, int mode)
         {
             var result = new Point();
@@ -98,24 +147,52 @@ namespace astator.Core.Graphics
             return result;
         }
 
+        /// <summary>
+        /// 获取指定像素数据
+        /// </summary>
+        /// <param name="x">开发分辨率的x</param>
+        /// <param name="y">开发分辨率的y</param>
+        /// <param name="mode">坐标对齐方式</param>
+        /// <returns>rgb数组, 例如:"int[]{255,255,255}"</returns>
         public int[] GetPixel(int x, int y, int mode)
         {
             var point = GetPoint(x, y, mode);
             return this.baseGraphicHelper.GetPixel(point.X, point.Y);
         }
 
+        /// <summary>
+        /// 获取指定像素数据
+        /// </summary>
+        /// <param name="x">开发分辨率的x</param>
+        /// <param name="y">开发分辨率的y</param>
+        /// <param name="mode">坐标对齐方式</param>
+        /// <returns>颜色字符串, 例如:"0xffffff"</returns>
         public string GetPixelStr(int x, int y, int mode)
         {
             var point = GetPoint(x, y, mode);
             return this.baseGraphicHelper.GetPixelStr(point.X, point.Y);
         }
 
+        /// <summary>
+        /// 获取指定像素数据
+        /// </summary>
+        /// <param name="x">开发分辨率的x</param>
+        /// <param name="y">开发分辨率的y</param>
+        /// <param name="mode">坐标对齐方式</param>
+        /// <returns>颜色字符串, 例如:0xffffff</returns>
         public int GetPixelHex(int x, int y, int mode)
         {
             var point = GetPoint(x, y, mode);
             return this.baseGraphicHelper.GetPixelHex(point.X, point.Y);
         }
 
+        /// <summary>
+        /// 获取与运行分辨率相关的比色色组
+        /// </summary>
+        /// <param name="devWidth">开发分辨率的宽</param>
+        /// <param name="devHeight">开发分辨率的高</param>
+        /// <param name="description">锚点色组</param>
+        /// <returns></returns>
         public int[][] GetCmpColorArray(int devWidth, int devHeight, int[][] description)
         {
             var multiple = (this.bottom - this.top + 1.0) / devHeight;
@@ -161,6 +238,13 @@ namespace astator.Core.Graphics
             return result;
         }
 
+        /// <summary>
+        /// 获取与运行分辨率相关的找色色组
+        /// </summary>
+        /// <param name="devWidth">开发分辨率的宽</param>
+        /// <param name="devHeight">开发分辨率的高</param>
+        /// <param name="description">锚点色组</param>
+        /// <returns></returns>
         public int[][] GetFindColorArray(int devWidth, int devHeight, int[][] description)
         {
             var result = new int[description.Length][];
@@ -230,49 +314,136 @@ namespace astator.Core.Graphics
             return result;
         }
 
-        public bool CompareColor(int[] description, int sim, int offset)
+        /// <summary>
+        /// 单点比色
+        /// </summary>
+        /// <param name="description">色组描述</param>
+        /// <param name="sim">相似度, 0~100</param>
+        /// <param name="isOffset">是否偏移查找</param>
+        /// <returns></returns>
+        public bool CompareColor(int[] description, int sim, bool isOffset)
         {
-            return this.baseGraphicHelper.CompareColor(description, sim, offset);
+            return this.baseGraphicHelper.CompareColor(description, sim, isOffset);
         }
 
-        public bool CompareColorEx(int[][] description, int sim, int offset)
+        /// <summary>
+        /// 多点比色
+        /// </summary>
+        /// <param name="description">色组描述</param>
+        /// <param name="sim">相似度, 0~100</param>
+        /// <param name="isOffset">是否偏移查找</param>
+        /// <returns></returns>
+        public bool CompareColorEx(int[][] description, int sim, bool isOffset)
         {
-            return this.baseGraphicHelper.CompareColorEx(description, sim, offset);
+            return this.baseGraphicHelper.CompareColorEx(description, sim, isOffset);
         }
 
-        public bool CompareColorExLoop(int[][] description, int sim, int offset, int timeout, int timelag, int sign)
+        /// <summary>
+        /// 条件循环多点比色
+        /// </summary>
+        /// <param name="description">色组描述</param>
+        /// <param name="sim">相似度</param>
+        /// <param name="isOffset">是否偏移查找</param>
+        /// <param name="timeout">超时时间</param>
+        /// <param name="timelag">间隔时间</param>
+        /// <param name="sign">跳出条件,true为找色成功时返回,false为找色失败时返回</param>
+        /// <returns></returns>
+        public bool CompareColorExLoop(int[][] description, int sim, bool isOffset, int timeout, int timelag, bool sign)
         {
-            return this.baseGraphicHelper.CompareColorExLoop(description, sim, offset, timeout, timelag, sign);
+            return this.baseGraphicHelper.CompareColorExLoop(description, sim, isOffset, timeout, timelag, sign);
         }
 
-        public Point FindMultiColor(int startX, int startY, int endX, int endY, int[][] description, int sim, int offset)
+        /// <summary>
+        /// 多点找色
+        /// </summary>
+        /// <param name="sx">查找范围: startX</param>
+        /// <param name="sy">查找范围: startY</param>
+        /// <param name="ex">查找范围: endX</param>
+        /// <param name="ey">查找范围: endY</param>
+        /// <param name="description">色组描述</param>
+        /// <param name="sim">相似度, 0~100</param>
+        /// <param name="isOffset">是否偏移查找</param>
+        /// <returns></returns>
+        public Point FindMultiColor(int sx, int sy, int ex, int ey, int[][] description, int sim, bool isOffset)
         {
-            return this.baseGraphicHelper.FindMultiColor(startX, startY, endX, endY, description, sim, offset);
+            return this.baseGraphicHelper.FindMultiColor(sx, sy, ex, ey, description, sim, isOffset);
         }
 
-        public Point FindMultiColor(int[] range, int[][] description, int sim, int offset)
+        /// <summary>
+        /// 多点找色
+        /// </summary>
+        /// <param name="range">查找范围数组, new int[]{sx, sy, ex, ey}</param>
+        /// <param name="description">色组描述</param>
+        /// <param name="sim">相似度, 0~100</param>
+        /// <param name="isOffset">是否偏移查找</param>
+        /// <returns></returns>
+        public Point FindMultiColor(int[] range, int[][] description, int sim, bool isOffset)
         {
-            return this.baseGraphicHelper.FindMultiColor(range[0], range[1], range[2], range[3], description, sim, offset);
+            return this.baseGraphicHelper.FindMultiColor(range[0], range[1], range[2], range[3], description, sim, isOffset);
         }
 
-        public Point FindMultiColorLoop(int startX, int startY, int endX, int endY, int[][] description, int sim, int offset, int timeout, int timelag, int sign)
+        /// <summary>
+        /// 条件循环多点找色
+        /// </summary>
+        /// <param name="sx">查找范围: startX</param>
+        /// <param name="sy">查找范围: startY</param>
+        /// <param name="ex">查找范围: endX</param>
+        /// <param name="ey">查找范围: endY</param>
+        /// <param name="description">色组描述</param>
+        /// <param name="sim">相似度, 0~100</param>
+        /// <param name="isOffset">是否偏移查找</param>
+        /// <param name="timeout">超时时间</param>
+        /// <param name="timelag">间隔时间</param>
+        /// <param name="sign">跳出条件,true为找色成功时返回,false为找色失败时返回</param>
+        /// <returns></returns>
+        public Point FindMultiColorLoop(int sx, int sy, int ex, int ey, int[][] description, int sim, bool isOffset, int timeout, int timelag, bool sign)
         {
-            return this.baseGraphicHelper.FindMultiColorLoop(startX, startY, endX, endY, description, sim, offset, timeout, timelag, sign);
+            return this.baseGraphicHelper.FindMultiColorLoop(sx, sy, ex, ey, description, sim, isOffset, timeout, timelag, sign);
         }
 
-        public Point FindMultiColorLoop(int[] range, int[][] description, int sim, int offset, int timeout, int timelag, int sign)
+        /// <summary>
+        /// 条件循环多点找色
+        /// </summary>
+        /// <param name="range">查找范围数组, new int[]{sx, sy, ex, ey}</param>
+        /// <param name="description">色组描述</param>
+        /// <param name="sim">相似度, 0~100</param>
+        /// <param name="isOffset">是否偏移查找</param>
+        /// <param name="timeout">超时时间</param>
+        /// <param name="timelag">间隔时间</param>
+        /// <param name="sign">跳出条件,true为找色成功时返回,false为找色失败时返回</param>
+        /// <returns></returns>
+        public Point FindMultiColorLoop(int[] range, int[][] description, int sim, bool isOffset, int timeout, int timelag, bool sign)
         {
-            return this.baseGraphicHelper.FindMultiColorLoop(range[0], range[1], range[2], range[3], description, sim, offset, timeout, timelag, sign);
+            return this.baseGraphicHelper.FindMultiColorLoop(range[0], range[1], range[2], range[3], description, sim, isOffset, timeout, timelag, sign);
         }
 
-        public List<Point> FindMultiColorEx(int startX, int startY, int endX, int endY, int[][] description, int sim)
+        /// <summary>
+        /// 多点找色
+        /// </summary>
+        /// <param name="sx">查找范围: startX</param>
+        /// <param name="sy">查找范围: startY</param>
+        /// <param name="ex">查找范围: endX</param>
+        /// <param name="ey">查找范围: endY</param>
+        /// <param name="description">色组描述</param>
+        /// <param name="sim">相似度, 0~100</param>
+        /// <param name="filterNum">过滤半径, 默认-1, 去除重叠区域</param>
+        /// <returns>返回所有坐标</returns>
+        public List<Point> FindMultiColorEx(int sx, int sy, int ex, int ey, int[][] description, int sim, int filterNum = -1)
         {
-            return this.baseGraphicHelper.FindMultiColorEx(startX, startY, endX, endY, description, sim);
+            return this.baseGraphicHelper.FindMultiColorEx(sx, sy, ex, ey, description, sim, filterNum);
         }
 
-        public List<Point> FindMultiColorEx(int[] range, int[][] description, int sim)
+        /// <summary>
+        /// 多点找色
+        /// </summary>
+        /// <param name="range">查找范围数组, new int[]{sx, sy, ex, ey}</param>
+        /// <param name="description">色组描述</param>
+        /// <param name="sim">相似度, 0~100</param>
+        /// <param name="filterNum">过滤半径, 默认-1, 去除重叠区域</param>
+        /// <returns>返回所有坐标</returns>
+        public List<Point> FindMultiColorEx(int[] range, int[][] description, int sim, int filterNum = -1)
         {
-            return this.baseGraphicHelper.FindMultiColorEx(range[0], range[1], range[2], range[3], description, sim);
+            return this.baseGraphicHelper.FindMultiColorEx(range[0], range[1], range[2], range[3], description, sim, filterNum);
         }
 
     }

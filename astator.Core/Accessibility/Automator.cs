@@ -3,6 +3,9 @@ using Android.Graphics;
 
 namespace astator.Core.Accessibility
 {
+    /// <summary>
+    /// 自动化操作类
+    /// </summary>
     public static class Automator
     {
         private static ScriptAccessibilityService Service { get => ScriptAccessibilityService.Instance; }

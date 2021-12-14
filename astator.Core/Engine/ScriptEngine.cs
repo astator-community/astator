@@ -12,34 +12,59 @@ using System.Threading.Tasks;
 
 namespace astator.Core.Engine
 {
+
+    /// <summary>
+    /// 脚本编译执行引擎
+    /// </summary>
     public class ScriptEngine
     {
+        /// <summary>
+        /// sdk引用
+        /// </summary>
         private static List<MetadataReference> References;
 
+        /// <summary>
+        /// 动态域
+        /// </summary>
         private readonly Domain alc;
 
+        /// <summary>
+        /// 编译程序集
+        /// </summary>
         private WeakReference<Assembly> assembly;
 
+        /// <summary>
+        /// 解析语法树
+        /// </summary>
         private readonly List<SyntaxTree> trees = new();
 
+        /// <summary>
+        /// 脚本程序集引用
+        /// </summary>
         private readonly List<MetadataReference> scriptReferences = new();
 
 
-        public ScriptEngine(string directory)
+        public ScriptEngine()
         {
             this.alc = new Domain();
+
+            var sdkDir = Android.App.Application.Context.GetExternalFilesDir("Sdk").ToString();
 
             if (References is null)
             {
                 References = new();
-                foreach (var path in Directory.GetFiles(directory, "*.dll", SearchOption.AllDirectories))
+                foreach (var path in Directory.GetFiles(sdkDir, "*.dll", SearchOption.AllDirectories))
                 {
                     References.Add(MetadataReference.CreateFromFile(path));
                 }
             }
         }
 
-        public void LoadScript(string path)
+        /// <summary>
+        /// 解析cs文件
+        /// </summary>
+        /// <param name="path"></param>
+        public void ParseScript(string path)
         {
             if (path.EndsWith(".cs"))
             {
@@ -47,6 +72,10 @@ namespace astator.Core.Engine
             }
         }
 
+        /// <summary>
+        /// 加载引用程序集
+        /// </summary>
+        /// <param name="path"></param>
         public void LoadReference(string path)
         {
             if (path.EndsWith(".dll"))
@@ -55,18 +84,24 @@ namespace astator.Core.Engine
             }
         }
 
+        /// <summary>
+        /// 动态域卸载
+        /// </summary>
         [MethodImpl(MethodImplOptions.NoInlining)]
         public void UnExecute()
         {
             this.alc.Unload();
         }
 
+        /// <summary>
+        /// 编译
+        /// </summary>
+        /// <returns></returns>
         public EmitResult Compile()
         {
             var assemblyName = Path.GetRandomFileName();
             var compilation = CSharpCompilation.Create(
                 assemblyName,
-
                 references: References.Concat(this.scriptReferences).ToList(),
                 syntaxTrees: this.trees,
                 options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary, optimizationLevel: OptimizationLevel.Release));
@@ -84,12 +119,16 @@ namespace astator.Core.Engine
             return result;
         }
 
+        /// <summary>
+        /// 编译到文件
+        /// </summary>
+        /// <param name="outputPath"></param>
+        /// <returns></returns>
         public EmitResult Compile(string outputPath)
         {
             var assemblyName = Path.GetRandomFileName();
             var compilation = CSharpCompilation.Create(
                 assemblyName,
-
                 references: References.Concat(this.scriptReferences).ToList(),
                 syntaxTrees: this.trees,
                 options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary, optimizationLevel: OptimizationLevel.Release));
@@ -103,9 +142,15 @@ namespace astator.Core.Engine
                 using var fs = new FileStream(outputPath, FileMode.OpenOrCreate);
                 dll.CopyTo(fs);
             }
+
             return result;
         }
 
+        /// <summary>
+        /// 执行
+        /// </summary>
+        /// <param name="entryType">入口类名称</param>
+        /// <param name="runtime">scriptRuntime</param>
         public void Execute(string entryType, dynamic runtime)
         {
             try

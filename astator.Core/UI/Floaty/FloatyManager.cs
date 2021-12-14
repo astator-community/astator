@@ -6,6 +6,10 @@ using System;
 using System.Collections.Generic;
 namespace astator.Core.UI.Floaty
 {
+
+    /// <summary>
+    /// 悬浮窗管理类
+    /// </summary>
     public class FloatyManager : IManager
     {
         public List<FloatWindow> Floatys { get; set; } = new();
@@ -17,6 +21,12 @@ namespace astator.Core.UI.Floaty
         private readonly string directory = string.Empty;
 
         private readonly Dictionary<string, IScriptView> childs = new();
+
+        /// <summary>
+        /// 控件索引器
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
         public IScriptView this[string key]
         {
             set
@@ -40,6 +50,13 @@ namespace astator.Core.UI.Floaty
             this.directory = directory;
         }
 
+        /// <summary>
+        /// 添加悬浮窗
+        /// </summary>
+        /// <param name="view"></param>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns></returns>
         public FloatWindow Show(View view, int x = 0, int y = 0)
         {
             FloatWindow floaty = new(view, x, y);
@@ -47,22 +64,29 @@ namespace astator.Core.UI.Floaty
             return floaty;
         }
 
-        public void Hide(FloatWindow floaty)
+        /// <summary>
+        /// 移除悬浮窗
+        /// </summary>
+        /// <param name="floaty"></param>
+        public void Remove(FloatWindow floaty)
         {
-            floaty.Hide();
+            floaty.Remove();
             this.Floatys.Remove(floaty);
         }
 
-        public void HideAll()
+        /// <summary>
+        /// 移除所有悬浮窗
+        /// </summary>
+        public void RemoveAll()
         {
             foreach (var floaty in this.Floatys)
             {
-                floaty.Hide();
+                floaty.Remove();
             }
             this.Floatys.Clear();
         }
 
-        public ScriptScrollView CreateScrollView(UiArgs args = null)
+        public ScriptScrollView CreateScrollView(ViewArgs args = null)
         {
             var result = new ScriptScrollView(this.context, args);
             if (this.staticListeners.ContainsKey("scroll"))
@@ -75,7 +99,7 @@ namespace astator.Core.UI.Floaty
             return result;
         }
 
-        public ScriptWebView CreateWebView(UiArgs args = null)
+        public ScriptWebView CreateWebView(ViewArgs args = null)
         {
             var result = new ScriptWebView(this.context, args);
             if (this.staticListeners.ContainsKey("web"))
@@ -88,7 +112,7 @@ namespace astator.Core.UI.Floaty
             return result;
         }
 
-        public ScriptSwitch CreateSwitch(UiArgs args = null)
+        public ScriptSwitch CreateSwitch(ViewArgs args = null)
         {
             var result = new ScriptSwitch(this.context, args);
             if (this.staticListeners.ContainsKey("switch"))
@@ -101,7 +125,7 @@ namespace astator.Core.UI.Floaty
             return result;
         }
 
-        public ScriptCheckBox CreateCheckBox(UiArgs args = null)
+        public ScriptCheckBox CreateCheckBox(ViewArgs args = null)
         {
             var result = new ScriptCheckBox(this.context, args);
             if (this.staticListeners.ContainsKey("check"))
@@ -114,7 +138,7 @@ namespace astator.Core.UI.Floaty
             return result;
         }
 
-        public ScriptImageView CreateImageView(UiArgs args = null)
+        public ScriptImageView CreateImageView(ViewArgs args = null)
         {
             var result = new ScriptImageView(this.context, this.directory, args);
             if (this.staticListeners.ContainsKey("img"))
@@ -127,7 +151,7 @@ namespace astator.Core.UI.Floaty
             return result;
         }
 
-        public ScriptButton CreateButton(UiArgs args = null)
+        public ScriptButton CreateButton(ViewArgs args = null)
         {
             var result = new ScriptButton(this.context, args);
             if (this.staticListeners.ContainsKey("btn"))
@@ -140,7 +164,7 @@ namespace astator.Core.UI.Floaty
             return result;
         }
 
-        public ScriptLinearLayout CreateLinearLayout(UiArgs args = null)
+        public ScriptLinearLayout CreateLinearLayout(ViewArgs args = null)
         {
             var result = new ScriptLinearLayout(this.context, args);
             if (this.staticListeners.ContainsKey("linear"))
@@ -153,7 +177,7 @@ namespace astator.Core.UI.Floaty
             return result;
         }
 
-        public ScriptFrameLayout CreateFrameLayout(UiArgs args = null)
+        public ScriptFrameLayout CreateFrameLayout(ViewArgs args = null)
         {
             var result = new ScriptFrameLayout(this.context, args);
             if (this.staticListeners.ContainsKey("frame"))
@@ -166,7 +190,7 @@ namespace astator.Core.UI.Floaty
             return result;
         }
 
-        public ScriptEditText CreateEditText(UiArgs args = null)
+        public ScriptEditText CreateEditText(ViewArgs args = null)
         {
             var result = new ScriptEditText(this.context, args);
             if (this.staticListeners.ContainsKey("edit"))
@@ -179,7 +203,7 @@ namespace astator.Core.UI.Floaty
             return result;
         }
 
-        public ScriptTextView CreateTextView(UiArgs args = null)
+        public ScriptTextView CreateTextView(ViewArgs args = null)
         {
             var result = new ScriptTextView(this.context, args);
             if (this.staticListeners.ContainsKey("text"))
@@ -192,7 +216,7 @@ namespace astator.Core.UI.Floaty
             return result;
         }
 
-        public ScriptSpinner CreateSpinner(UiArgs args = null)
+        public ScriptSpinner CreateSpinner(ViewArgs args = null)
         {
             var result = new ScriptSpinner(this.context, args);
             if (this.staticListeners.ContainsKey("text"))
@@ -205,26 +229,32 @@ namespace astator.Core.UI.Floaty
             return result;
         }
 
-        public ScriptViewPager CreateViewPager(UiArgs args = null)
+        public ScriptViewPager CreateViewPager(ViewArgs args = null)
         {
             throw new NotImplementedException();
         }
 
-        public ScriptRadioGroup CreateRadioGroup(UiArgs args = null)
+        public ScriptRadioGroup CreateRadioGroup(ViewArgs args = null)
         {
             throw new NotImplementedException();
         }
 
-        public ScriptRadioButton CreateRadioButton(UiArgs args = null)
+        public ScriptRadioButton CreateRadioButton(ViewArgs args = null)
         {
             throw new NotImplementedException();
         }
 
-        public ScriptCardView CreateCardView(UiArgs args = null)
+        public ScriptCardView CreateCardView(ViewArgs args = null)
         {
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// 添加全局listener, 仅在创建view之前添加有效
+        /// </summary>
+        /// <param name="type">view类型</param>
+        /// <param name="key">listener类型</param>
+        /// <param name="listener"></param>
         public void On(string type, string key, object listener)
         {
             if (!this.staticListeners.ContainsKey(type))
