@@ -1,0 +1,48 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFrameworks>net6.0-android</TargetFrameworks>
+		<Nullable>disable</Nullable>
+		<SingleProject>true</SingleProject>
+		<RootNamespace>astator.Core</RootNamespace>
+		<OutputType>Library</OutputType>
+		<GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+		<Authors>astator</Authors>
+		<Version>0.0.1</Version>
+		<SatelliteResourceLanguages>zh-Hans</SatelliteResourceLanguages>
+		<ProduceReferenceAssembly>True</ProduceReferenceAssembly>
+		<UseInterpreter Condition="'$(Configuration)' == 'Debug'">True</UseInterpreter>
+		
+		<SupportedOSPlatformVersion Condition="'$(TargetFramework)' == 'net6.0-android'">24.0</SupportedOSPlatformVersion>
+	</PropertyGroup>
+
+
+	<ItemGroup>
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+		<PackageReference Include="NLog" Version="4.7.13" />
+		<PackageReference Include="Xamarin.AndroidX.AppCompat" Version="1.3.1.4" />
+		<PackageReference Include="Xamarin.AndroidX.Fragment" Version="1.3.6.4" />
+		<PackageReference Include="Xamarin.AndroidX.Legacy.Support.V4" Version="1.0.0.11" />
+		<PackageReference Include="Xamarin.AndroidX.RecyclerView" Version="1.2.1.4" />
+		<PackageReference Include="Xamarin.Google.Android.Material" Version="1.4.0.5" />
+		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.0.1" />
+	</ItemGroup>
+
+
+	<ItemGroup>
+	  <ProjectReference Include="..\3rdparty\Obfuscar\Obfuscar\Obfuscar.csproj" />
+	</ItemGroup>
+
+
+	<ItemGroup>
+	  <Folder Include="Script\" />
+	</ItemGroup>
+
+
+	<ItemGroup>
+	  <Reference Include="PaddleOcrBinding">
+	    <HintPath>..\3rdparty\PaddleOcrBinding\bin\Release\net6.0-android\PaddleOcrBinding.dll</HintPath>
+	  </Reference>
+	</ItemGroup>
+
+</Project>

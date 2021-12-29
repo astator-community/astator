@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<GridLayout
+    x:Class="astator.Views.PathCard"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:v="clr-namespace:astator.Views"
+    Padding="20,5"
+    ColumnDefinitions="auto,*,auto"
+    HeightRequest="60">
+
+    <Image
+        GridLayout.Column="0"
+        Source="{Binding Source={RelativeSource FindAncestor, AncestorType={x:Type GridLayout}}, Path=TypeImageSource}"
+        VerticalOptions="Center"
+        WidthRequest="50" />
+
+    <GridLayout
+        Padding="10,5"
+        BackgroundColor="Transparent"
+        GridLayout.Column="1"
+        RowDefinitions="auto,auto">
+        <Label
+            FontAttributes="Bold"
+            FontSize="14"
+            GridLayout.Row="0"
+            Text="{Binding Source={RelativeSource FindAncestor, AncestorType={x:Type GridLayout}, AncestorLevel=2}, Path=PathName}" />
+        <Label
+            Padding="0,5,0,0"
+            FontSize="8"
+            GridLayout.Row="1"
+            Text="{Binding Source={RelativeSource FindAncestor, AncestorType={x:Type GridLayout}, AncestorLevel=2}, Path=PathInfo}"
+            TextColor="#666666"
+            VerticalOptions="End" />
+    </GridLayout>
+
+    <Image
+        GridLayout.Column="2"
+        Source="{Binding Source={RelativeSource FindAncestor, AncestorType={x:Type GridLayout}}, Path=MoreImageSource}"
+        VerticalOptions="Center"
+        WidthRequest="24" />
+
+</GridLayout>

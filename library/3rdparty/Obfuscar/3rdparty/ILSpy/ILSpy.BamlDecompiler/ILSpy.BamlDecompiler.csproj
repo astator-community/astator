@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+  <PropertyGroup>
+    <AssemblyName>ILSpy.BamlDecompiler.Plugin</AssemblyName>
+    <LangVersion>8.0</LangVersion>
+    <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
+    <BaseAddress>6488064</BaseAddress>
+    <UseWpf>true</UseWpf>
+  </PropertyGroup>
+  
+  <Import Project="..\multitargeting.props" Condition="Exists('..\multitargeting.props')" />
+  <PropertyGroup Condition="!Exists('..\multitargeting.props')">
+    <TargetFramework>net472</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <DebugType>pdbonly</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <OutputPath>..\ILSpy\bin\$(Configuration)\</OutputPath>
+  </PropertyGroup>
+
+  <Import Project="..\packages.props" />
+
+  <ItemGroup>
+    <Compile Remove="Baml\KnownThings.gen.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AvalonEdit" Version="$(AvalonEditVersion)" />
+    <PackageReference Include="System.Composition" Version="$(SystemCompositionVersion)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ILSpy\ILSpy.csproj" />
+    <ProjectReference Include="..\ICSharpCode.Decompiler\ICSharpCode.Decompiler.csproj" />
+    <ProjectReference Include="..\SharpTreeView\ICSharpCode.TreeView.csproj" />
+  </ItemGroup>
+
+</Project>
