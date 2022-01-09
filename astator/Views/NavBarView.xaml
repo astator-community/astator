@@ -2,24 +2,31 @@
 <ContentView
     x:Class="astator.Views.NavBarView"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:v="clr-namespace:astator.Views">
     <GridLayout ColumnDefinitions="*,*,*,*">
-        <ImageButton
+        <GridLayout.Resources>
+            <Style TargetType="v:CustomImageButton">
+                <Setter Property="Padding" Value="10" />
+                <Setter Property="BackgroundColor" Value="Transparent" />
+            </Style>
+        </GridLayout.Resources>
+        <v:CustomImageButton
             x:Name="HomeTab"
             Clicked="HomeTab_Clicked"
             GridLayout.Column="0"
             Source="home.png" />
-        <ImageButton
+        <v:CustomImageButton
             x:Name="LogTab"
             Clicked="LogTab_Clicked"
             GridLayout.Column="1"
             Source="log.png" />
-        <ImageButton
+        <v:CustomImageButton
             x:Name="DocTab"
             Clicked="DocTab_Clicked"
             GridLayout.Column="2"
             Source="doc.png" />
-        <ImageButton
+        <v:CustomImageButton
             x:Name="SettingsTab"
             Clicked="SettingsTab_Clicked"
             GridLayout.Column="3"

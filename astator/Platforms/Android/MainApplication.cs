@@ -11,6 +11,11 @@ namespace astator
         {
         }
 
+        public override void OnCreate()
+        {
+            base.OnCreate();
+        }
+
         protected override MauiApp CreateMauiApp()
         {
             return MauiProgram.CreateMauiApp();

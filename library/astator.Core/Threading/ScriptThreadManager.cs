@@ -13,7 +13,6 @@ namespace astator.Core.Threading
     public class ScriptThreadManager
     {
         internal Action<int> ScriptExitCallback { get; set; }
-
         internal bool ScriptExitSignal { get; set; } = false;
 
         private readonly List<Thread> threads = new();

@@ -3,21 +3,48 @@
     x:Class="astator.Pages.LogPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:v="clr-namespace:astator.Views"
-    Title="LogPage"
-    BackgroundColor="White">
+    xmlns:v="clr-namespace:astator.Views">
+
     <GridLayout RowDefinitions="55,*,55">
-        <GridLayout GridLayout.Row="0">
+        <GridLayout
+            Padding="15,5"
+            ColumnDefinitions="*,auto"
+            GridLayout.Row="0"
+            HorizontalOptions="FillAndExpand">
             <Label
                 x:Name="Header"
-                Margin="15,0,0,0"
                 FontAttributes="Bold"
                 FontSize="28"
+                GridLayout.Column="0"
                 HorizontalOptions="Start"
                 Text="日志"
                 VerticalOptions="Center" />
+            <v:CustomImageButton
+                Padding="10,6"
+                BackgroundColor="Transparent"
+                Clicked="Delete_Clicked"
+                GridLayout.Column="1"
+                HeightRequest="45"
+                HorizontalOptions="End"
+                Source="delete.png"
+                VerticalOptions="Center"
+                WidthRequest="45" />
         </GridLayout>
-        <GridLayout GridLayout.Row="1" />
+
+        <ScrollView
+            x:Name="LogScrollView"
+            Padding="15,5"
+            GridLayout.Row="1">
+            <VerticalStackLayout x:Name="LogLayout">
+                <VerticalStackLayout.Resources>
+                    <Style TargetType="Label">
+                        <Setter Property="FontFamily" Value="CascadiaCode" />
+                        <Setter Property="FontSize" Value="14" />
+                        <Setter Property="Margin" Value="0,0,0,3" />
+                    </Style>
+                </VerticalStackLayout.Resources>
+            </VerticalStackLayout>
+        </ScrollView>
         <v:NavBarView ActiveTab="log" GridLayout.Row="2" />
     </GridLayout>
 </ContentPage>

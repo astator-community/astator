@@ -182,4 +182,17 @@ namespace astator.Core.UI
             }
         }
     }
+
+    public class OnMenuItemClickListener : Java.Lang.Object, AndroidX.AppCompat.Widget.PopupMenu.IOnMenuItemClickListener
+    {
+        private readonly Func<IMenuItem, bool> callBack;
+        public OnMenuItemClickListener(Func<IMenuItem, bool> callBack)
+        {
+            this.callBack = callBack;
+        }
+        public bool OnMenuItemClick(IMenuItem item)
+        {
+            return callBack.Invoke(item);
+        }
+    }
 }

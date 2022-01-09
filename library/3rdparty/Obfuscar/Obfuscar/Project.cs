@@ -77,7 +77,7 @@ namespace Obfuscar
 
         public string KeyContainerName = null;
         private string keyPair;
-        private RSA keyValue;
+        //private RSA keyValue;
 
         public string KeyPair
         {

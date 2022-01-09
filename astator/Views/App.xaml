@@ -3,6 +3,7 @@
     x:Class="astator.App"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:v="clr-namespace:astator.Views"
     xmlns:windows="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.WindowsSpecific;assembly=Microsoft.Maui.Controls"
     windows:Application.ImageDirectory="Assets">
     <Application.Resources>
@@ -17,14 +18,19 @@
 
             <Style TargetType="Label">
                 <Setter Property="TextColor" Value="{DynamicResource SecondaryColor}" />
-                <Setter Property="FontFamily" Value="OPPOSansRegular" />
+                <Setter Property="FontFamily" Value="CascadiaCode" />
             </Style>
 
             <Style TargetType="Button">
                 <Setter Property="TextColor" Value="{DynamicResource SecondaryColor}" />
-                <Setter Property="FontFamily" Value="OPPOSansRegular" />
+                <Setter Property="FontFamily" Value="CascadiaCode" />
                 <Setter Property="BackgroundColor" Value="{DynamicResource PrimaryColor}" />
                 <Setter Property="Padding" Value="14,10" />
+            </Style>
+
+            <Style TargetType="v:CustomLabelButton">
+                <Setter Property="TextColor" Value="{DynamicResource SecondaryColor}" />
+                <Setter Property="FontFamily" Value="CascadiaCode" />
             </Style>
 
             <Style TargetType="ImageButton">

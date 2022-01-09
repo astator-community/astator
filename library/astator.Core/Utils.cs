@@ -2,9 +2,9 @@
 
 namespace astator.Core
 {
-    internal class Utils
+    public class Utils
     {
-        internal static string GetgetLocalIPAddress()
+        public static string GetLocalHostAddress()
         {
             var ie = NetworkInterface.NetworkInterfaces;
             while (ie.HasMoreElements)
@@ -20,7 +20,9 @@ namespace astator.Core
                     }
                 }
             }
+
             ie = NetworkInterface.NetworkInterfaces;
+
             while (ie.HasMoreElements)
             {
                 var intf = ie.NextElement() as NetworkInterface;
@@ -36,7 +38,5 @@ namespace astator.Core
             }
             return null;
         }
-
-
     }
 }

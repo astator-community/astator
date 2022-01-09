@@ -5,6 +5,7 @@ using NLog.Targets;
 using System;
 using System.Collections.Concurrent;
 using System.IO;
+using System.Linq;
 using System.Text;
 using NLogger = NLog.Logger;
 
@@ -36,26 +37,33 @@ namespace astator.Core
 
         private readonly NLogger logger;
 
-        private ConcurrentDictionary<string, Action<LogArgs>> callbacks = new();
+        private readonly ConcurrentDictionary<string, Action<LogArgs>> callbacks = new();
+
+        private readonly object locker = new();
 
         public string AddCallback(string key, Action<LogArgs> action)
         {
-            while (this.callbacks.ContainsKey(key))
+            lock (locker)
             {
-                key += DateTime.Now.ToString("dd-HH-mm-ss");
+                if (this.callbacks.ContainsKey(key))
+                {
+                    key += DateTime.Now.ToString("HH-mm-ss-fff");
+                }
+                this.callbacks.TryAdd(key, action);
+                return key;
             }
-
-            this.callbacks.TryAdd(key, action);
-            return key;
         }
 
         public void RemoveCallback(string key)
         {
-            foreach (var _key in this.callbacks.Keys)
+            lock (locker)
             {
-                if (_key.StartsWith(key))
+                foreach (var _key in this.callbacks.Keys.ToList())
                 {
-                    this.callbacks.TryRemove(_key, out _);
+                    if (_key.StartsWith(key))
+                    {
+                        this.callbacks.TryRemove(_key, out _);
+                    }
                 }
             }
         }
@@ -75,7 +83,11 @@ namespace astator.Core
 
                 foreach (var action in this.callbacks.Values)
                 {
-                    action.Invoke(message);
+                    try
+                    {
+                        action.Invoke(message);
+                    }
+                    catch { }
                 }
             });
             config.LoggingRules.Add(new LoggingRule("*", LogLevel.Trace, methodCallTarget));

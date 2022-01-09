@@ -12,15 +12,15 @@ namespace astator.Core.ThirdParty
         /// <summary>
         /// 待混淆程序集路径
         /// </summary>
-        public string DllPath;
+        public string DllPath = string.Empty;
         /// <summary>
         /// 生成输出目录
         /// </summary>
-        public string OutputDir;
+        public string OutputDir = string.Empty;
         /// <summary>
         /// 入口类名称
         /// </summary>
-        public string EntryType;
+        public string EntryType = string.Empty;
         /// <summary>
         /// 是否重命名属性, 默认true
         /// </summary>

@@ -1,6 +1,7 @@
 ﻿using Android.Graphics;
 using Android.OS;
 using Android.Views;
+using System;
 using static Android.Views.ViewGroup;
 namespace astator.Core.UI.Floaty
 {
@@ -33,7 +34,12 @@ namespace astator.Core.UI.Floaty
             layoutParams.Format = Format.Transparent;
             layoutParams.Gravity = GravityFlags.Left | GravityFlags.Top;
             layoutParams.Flags = WindowManagerFlags.NotFocusable;
-            layoutParams.LayoutInDisplayCutoutMode = LayoutInDisplayCutoutMode.ShortEdges;
+
+            if (OperatingSystem.IsAndroidVersionAtLeast(30))
+            {
+                layoutParams.LayoutInDisplayCutoutMode = LayoutInDisplayCutoutMode.ShortEdges;
+            }
+          
             layoutParams.Width = LayoutParams.WrapContent;
             layoutParams.Height = LayoutParams.WrapContent;
             layoutParams.X = x;

@@ -19,7 +19,6 @@ namespace astator.Core.Accessibility
             {
                 Service?.DispatchGesture(gesture, null, null);
             }
-
         }
 
         public static void Swipe(int startX, int startY, int endX, int endY, int duration)
@@ -33,5 +32,12 @@ namespace astator.Core.Accessibility
                 Service?.DispatchGesture(gesture, null, null);
             }
         }
+
+        public static void GetWindow()
+        {
+          // Service.win
+        }
+
     }
+
 }

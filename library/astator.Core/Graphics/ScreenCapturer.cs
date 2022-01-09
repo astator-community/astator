@@ -1,14 +1,19 @@
 ﻿using Android.App;
 using Android.Content;
 using Android.Content.PM;
+using Android.Content.Res;
 using Android.Graphics;
 using Android.Hardware.Display;
 using Android.Media;
 using Android.Media.Projection;
 using Android.OS;
 using Android.Runtime;
+using Android.Views;
 using AndroidX.Core.App;
+using AndroidX.Core.Graphics.Drawable;
 using System;
+using System.Collections.Generic;
+using Orientation = Android.Content.Res.Orientation;
 
 namespace astator.Core.Graphics
 {
@@ -17,19 +22,35 @@ namespace astator.Core.Graphics
     {
         public static ScreenCapturer Instance { get; set; }
 
+
         private MediaProjection mediaProjection;
 
         private ImageReader imageReader;
 
         private VirtualDisplay virtualDisplay;
 
+        private Orientation currentOrientation;
+
+        private Image lastImage;
+
+        private static readonly object locker = new();
+
         public Image AcquireLatestImage()
         {
-            return this.imageReader.AcquireLatestImage();
+            lock (locker)
+            {
+                var image = this.imageReader.AcquireLatestImage();
+                if (image is not null)
+                {
+                    this.lastImage = image;
+                }
+                return this.lastImage;
+            }
         }
+
         public Bitmap AcquireLatestBitmap()
         {
-            var image = this.imageReader.AcquireLatestImage();
+            var image = AcquireLatestImage();
             if (image is not null)
             {
                 var plane = image.GetPlanes()[0];
@@ -48,41 +69,69 @@ namespace astator.Core.Graphics
         [return: GeneratedEnum]
         public override StartCommandResult OnStartCommand(Intent intent, [GeneratedEnum] StartCommandFlags flags, int startId)
         {
-            //StartNotification();
+            if (Instance is not null)
+            {
+                Instance.Dispose();
+            }
 
-            //var data = (Intent)intent.GetParcelableExtra("data");
-            //var manager = (MediaProjectionManager)GetSystemService("media_projection");
-            //this.mediaProjection = manager?.GetMediaProjection((int)Result.Ok, data);
-            //var orientation = (CaptureOrientation)data.GetIntExtra("orientation", 0);
-            //var width = orientation == CaptureOrientation.Horizontal ? Devices.Height : Devices.Width;
-            //var height = orientation == CaptureOrientation.Horizontal ? Devices.Width : Devices.Height;
-            //this.imageReader = ImageReader.NewInstance(width, height, (ImageFormatType)Format.Rgba8888, 2);
-            //this.virtualDisplay = this.mediaProjection?.CreateVirtualDisplay("ScreenCapturer", width, height, Devices.Dpi,
-            //      DisplayFlags.Round, this.imageReader.Surface, null, null);
+            StartNotification();
 
-            //if (Instance is not null)
-            //{
-            //    Instance.Dispose();
-            //}
+            var data = (Intent)intent.GetParcelableExtra("data");
+            var manager = (MediaProjectionManager)GetSystemService("media_projection");
+            this.mediaProjection = manager?.GetMediaProjection((int)Result.Ok, data);
 
-            //Instance = this;
+            var width = Globals.Devices.Width;
+            var height = Globals.Devices.Height;
+
+            this.imageReader = ImageReader.NewInstance(width, height, (ImageFormatType)Format.Rgba8888, 2);
+            this.virtualDisplay = this.mediaProjection?.CreateVirtualDisplay("ScreenCapturer", width, height, Globals.Devices.Dpi,
+                  DisplayFlags.Round, this.imageReader.Surface, null, null);
+
+            Instance = this;
 
             return base.OnStartCommand(intent, flags, startId);
         }
 
+        public override void OnConfigurationChanged(Configuration newConfig)
+        {
+            base.OnConfigurationChanged(newConfig);
+
+            if (newConfig.Orientation == currentOrientation)
+            {
+                return;
+            }
+            else
+            {
+                currentOrientation = newConfig.Orientation;
+            }
+
+            this.imageReader?.Close();
+            this.virtualDisplay?.Release();
+
+            var width = Globals.Devices.Width;
+            var height = Globals.Devices.Height;
+
+            this.imageReader = ImageReader.NewInstance(width, height, (ImageFormatType)Format.Rgba8888, 2);
+            this.virtualDisplay = this.mediaProjection?.CreateVirtualDisplay("ScreenCapturer", width, height, Globals.Devices.Dpi,
+                  DisplayFlags.Round, this.imageReader.Surface, null, null);
+        }
+
         private void StartNotification()
         {
-            var notification = new NotificationCompat.Builder(this, "1000")
-                .SetContentTitle("astator")
-                .SetContentText("截屏服务正在运行中")
-                .Build();
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+            if (OperatingSystem.IsAndroidVersionAtLeast(26))
             {
                 var notificationManager = (NotificationManager)GetSystemService(NotificationService);
-                NotificationChannel channel = new("1000", "astator截屏服务", NotificationImportance.Default);
+                NotificationChannel channel = new("1000", "截屏服务", NotificationImportance.Default);
                 notificationManager.CreateNotificationChannel(channel);
             }
+
+            var notification = new NotificationCompat.Builder(this, "1000")
+              .SetContentTitle("截屏服务正在运行中")
+              .SetSmallIcon(IconCompat.TypeUnknown)
+              .Build();
+
             StartForeground(1000, notification);
+
         }
 
         public override IBinder OnBind(Intent intent)
@@ -101,8 +150,10 @@ namespace astator.Core.Graphics
                     this.mediaProjection?.Dispose();
                     this.imageReader?.Dispose();
                     this.virtualDisplay?.Dispose();
+                    this.disposedValue = true;
+                    StopSelf();
+                    Instance = null;
                 }
-                this.disposedValue = true;
             }
         }
 
@@ -110,6 +161,7 @@ namespace astator.Core.Graphics
         {
             Dispose(disposing: false);
         }
+
         public new void Dispose()
         {
             Dispose(disposing: true);

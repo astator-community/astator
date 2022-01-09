@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -17,7 +18,7 @@ namespace astator.Core.Threading
 
         private readonly List<Task> tasks = new();
 
-        private readonly Dictionary<int, CancellationTokenSource> tokenSources = new();
+        private readonly ConcurrentDictionary<int, CancellationTokenSource> tokenSources = new();
 
         private void CallBackInvoke()
         {
@@ -119,7 +120,7 @@ namespace astator.Core.Threading
             }, source.Token);
 
             this.tasks.Add(task);
-            this.tokenSources.Add(task.Id, source);
+            this.tokenSources.TryAdd(task.Id, source);
 
             return task;
         }
@@ -147,7 +148,7 @@ namespace astator.Core.Threading
             }, source.Token);
 
             this.tasks.Add(task);
-            this.tokenSources.Add(task.Id, source);
+            this.tokenSources.TryAdd(task.Id, source);
 
             return task;
         }
@@ -175,7 +176,7 @@ namespace astator.Core.Threading
             }, source.Token);
 
             this.tasks.Add(task);
-            this.tokenSources.Add(task.Id, source);
+            this.tokenSources.TryAdd(task.Id, source);
 
             return task;
         }
@@ -203,7 +204,7 @@ namespace astator.Core.Threading
             }, source.Token);
 
             this.tasks.Add(task);
-            this.tokenSources.Add(task.Id, source);
+            this.tokenSources.TryAdd(task.Id, source);
 
             return task;
         }
@@ -235,7 +236,7 @@ namespace astator.Core.Threading
             }, source.Token);
 
             this.tasks.Add(task);
-            this.tokenSources.Add(task.Id, source);
+            this.tokenSources.TryAdd(task.Id, source);
 
             return task;
         }
@@ -267,7 +268,7 @@ namespace astator.Core.Threading
             }, source.Token);
 
             this.tasks.Add(task);
-            this.tokenSources.Add(task.Id, source);
+            this.tokenSources.TryAdd(task.Id, source);
 
             return task;
         }
@@ -300,7 +301,7 @@ namespace astator.Core.Threading
             }, source.Token);
 
             this.tasks.Add(task);
-            this.tokenSources.Add(task.Id, source);
+            this.tokenSources.TryAdd(task.Id, source);
 
             return task;
         }
@@ -332,7 +333,7 @@ namespace astator.Core.Threading
             }, source.Token);
 
             this.tasks.Add(task);
-            this.tokenSources.Add(task.Id, source);
+            this.tokenSources.TryAdd(task.Id, source);
 
             return task;
         }

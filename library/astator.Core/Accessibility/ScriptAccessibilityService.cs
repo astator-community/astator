@@ -1,50 +1,72 @@
 ﻿using Android.AccessibilityServices;
+using Android.App;
+using Android.Views;
 using Android.Views.Accessibility;
+using AndroidX.Core.App;
+using AndroidX.Core.Graphics.Drawable;
+using System;
+using System.Collections.Generic;
 using Action = System.Action;
 
 namespace astator.Core.Accessibility
 {
-    //[Service(Label = "astator", Enabled = true, Exported = true, Permission = "android.permission.BIND_ACCESSIBILITY_SERVICE")]
-    //[IntentFilter(new string[] { "android.accessibilityservice.AccessibilityService" })]
-    //[MetaData("android.accessibilityservice", Resource = "@xml/accessibilityservice")]
+    [Service(Label = "astator",ForegroundServiceType =Android.Content.PM.ForegroundService.TypeLocation, Enabled = true, Exported = true, Permission = "android.permission.BIND_ACCESSIBILITY_SERVICE")]
+    [IntentFilter(new string[] { "android.accessibilityservice.AccessibilityService" })]
+    [MetaData("android.accessibilityservice", Resource = "@xml/accessibilityservice")]
     public class ScriptAccessibilityService : AccessibilityService
     {
-        public static ScriptAccessibilityService Instance { get; private set; }
-
-        /// <summary>
-        /// 无障碍服务连接回调
-        /// </summary>
-        public static Action ConnectCallback { get; set; }
-
-        /// <summary>
-        /// 无障碍服务销毁回调
-        /// </summary>
-        public static Action DestroyCallback { get; set; }
+        public static ScriptAccessibilityService Instance { get; set; }
 
         protected override void OnServiceConnected()
         {
             base.OnServiceConnected();
             Instance = this;
+            StartNotification();
+        }
 
-            ConnectCallback?.Invoke();
+        private void StartNotification()
+        {
+            if (OperatingSystem.IsAndroidVersionAtLeast(26))
+            {
+                var notificationManager = (NotificationManager)GetSystemService(NotificationService);
+                NotificationChannel channel = new("1001", "无障碍服务", NotificationImportance.Default);
+                notificationManager.CreateNotificationChannel(channel);
+            }
+
+
+            var notification = new NotificationCompat.Builder(this, "1001")
+              .SetContentTitle("无障碍服务正在运行中")
+              .SetSmallIcon(IconCompat.TypeUnknown)
+              .Build();
+
+            StartForeground(1001, notification);
+
+        }
+
+        protected override bool OnKeyEvent(KeyEvent e)
+        {
+            //if (e.KeyCode == Keycode.VolumeDown)
+            //{
+
+            //}
+            return base.OnKeyEvent(e);
         }
 
         public override void OnAccessibilityEvent(AccessibilityEvent e)
-        { }
+        {
+        }
 
         public override void OnInterrupt()
         {
+            StopSelf();
             Instance = null;
-
-            DestroyCallback?.Invoke();
         }
 
         public override void OnDestroy()
         {
             base.OnDestroy();
+            StopSelf();
             Instance = null;
-
-            DestroyCallback?.Invoke();
         }
     }
 }

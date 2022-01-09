@@ -66,7 +66,7 @@ namespace astator.Core.UI.Widget
                     }
                 case "inputType":
                     {
-                        this.InputType = Utils.EnumParse<InputTypes>(value);
+                        this.InputType = Util.EnumParse<InputTypes>(value);
                         break;
                     }
                 case "singleLine":
@@ -82,7 +82,7 @@ namespace astator.Core.UI.Widget
                     }
                 case "textSize":
                     {
-                        SetTextSize(Android.Util.ComplexUnitType.Dip, Utils.DpParse(value));
+                        SetTextSize(Android.Util.ComplexUnitType.Dip, Util.DpParse(value));
                         break;
                     }
                 case "textColor":
@@ -93,29 +93,29 @@ namespace astator.Core.UI.Widget
                     }
                 case "lines":
                     {
-                        SetLines(Utils.DpParse(value));
+                        SetLines(Util.DpParse(value));
                         break;
                     }
                 case "maxLines":
                     {
-                        SetMaxLines(Utils.DpParse(value));
+                        SetMaxLines(Util.DpParse(value));
                         break;
                     }
                 case "typeface":
                     {
-                        var tf = Utils.TypeParse<Typeface>(value);
+                        var tf = Util.TypeParse<Typeface>(value);
                         var style = this.Typeface?.Style ?? tf.Style;
                         SetTypeface(tf, style);
                         break;
                     }
                 case "textStyle":
                     {
-                        SetTypeface(this.Typeface, Utils.EnumParse<TypefaceStyle>(value));
+                        SetTypeface(this.Typeface, Util.EnumParse<TypefaceStyle>(value));
                         break;
                     }
                 case "ems":
                     {
-                        SetEms(Utils.DpParse(value));
+                        SetEms(Util.DpParse(value));
                         break;
                     }
                 case "autoLink":
@@ -159,22 +159,22 @@ namespace astator.Core.UI.Widget
                     }
                 case "w":
                     {
-                        SetWidth(Utils.DpParse(value));
+                        SetWidth(Util.DpParse(value));
                         break;
                     }
                 case "h":
                     {
-                        SetHeight(Utils.DpParse(value));
+                        SetHeight(Util.DpParse(value));
                         break;
                     }
                 case "minWidth":
                     {
-                        SetMinWidth(Utils.DpParse(value));
+                        SetMinWidth(Util.DpParse(value));
                         break;
                     }
                 case "minHeight":
                     {
-                        SetMinHeight(Utils.DpParse(value));
+                        SetMinHeight(Util.DpParse(value));
                         break;
                     }
                 case "margin":
@@ -186,30 +186,30 @@ namespace astator.Core.UI.Widget
                         }
                         else if (value is int[] arr)
                         {
-                            margin[0] = Utils.DpParse(arr[0]);
-                            margin[1] = Utils.DpParse(arr[1]);
-                            margin[2] = Utils.DpParse(arr[2]);
-                            margin[3] = Utils.DpParse(arr[3]);
+                            margin[0] = Util.DpParse(arr[0]);
+                            margin[1] = Util.DpParse(arr[1]);
+                            margin[2] = Util.DpParse(arr[2]);
+                            margin[3] = Util.DpParse(arr[3]);
                         }
                         else if (value is string str)
                         {
                             var strArr = str.Split(",");
                             if (strArr.Length == 1)
                             {
-                                var temp = Utils.DpParse(strArr[0]);
+                                var temp = Util.DpParse(strArr[0]);
                                 margin[0] = margin[1] = margin[2] = margin[3] = temp;
                             }
                             else if (strArr.Length == 2)
                             {
-                                margin[0] = margin[2] = Utils.DpParse(strArr[0]);
-                                margin[1] = margin[3] = Utils.DpParse(strArr[1]);
+                                margin[0] = margin[2] = Util.DpParse(strArr[0]);
+                                margin[1] = margin[3] = Util.DpParse(strArr[1]);
                             }
                             else if (strArr.Length == 4)
                             {
-                                margin[0] = Utils.DpParse(strArr[0]);
-                                margin[1] = Utils.DpParse(strArr[1]);
-                                margin[2] = Utils.DpParse(strArr[2]);
-                                margin[3] = Utils.DpParse(strArr[3]);
+                                margin[0] = Util.DpParse(strArr[0]);
+                                margin[1] = Util.DpParse(strArr[1]);
+                                margin[2] = Util.DpParse(strArr[2]);
+                                margin[3] = Util.DpParse(strArr[3]);
                             }
                         }
                         var lp = this.LayoutParameters as FrameLayout.LayoutParams ?? new(this.LayoutParameters as MarginLayoutParams ?? new(ViewGroup.LayoutParams.WrapContent, ViewGroup.LayoutParams.WrapContent));
@@ -219,13 +219,13 @@ namespace astator.Core.UI.Widget
                     }
                 case "gravity":
                     {
-                        this.Gravity = Utils.EnumParse<GravityFlags>(value);
+                        this.Gravity = Util.EnumParse<GravityFlags>(value);
                         break;
                     }
                 case "layoutGravity":
                     {
                         var lp = this.LayoutParameters as FrameLayout.LayoutParams ?? new(this.LayoutParameters as MarginLayoutParams ?? new(ViewGroup.LayoutParams.WrapContent, ViewGroup.LayoutParams.WrapContent));
-                        lp.Gravity = Utils.EnumParse<GravityFlags>(value);
+                        lp.Gravity = Util.EnumParse<GravityFlags>(value);
                         this.LayoutParameters = lp;
                         break;
                     }
@@ -238,30 +238,30 @@ namespace astator.Core.UI.Widget
                         }
                         else if (value is int[] arr)
                         {
-                            padding[0] = Utils.DpParse(arr[0]);
-                            padding[1] = Utils.DpParse(arr[1]);
-                            padding[2] = Utils.DpParse(arr[2]);
-                            padding[3] = Utils.DpParse(arr[3]);
+                            padding[0] = Util.DpParse(arr[0]);
+                            padding[1] = Util.DpParse(arr[1]);
+                            padding[2] = Util.DpParse(arr[2]);
+                            padding[3] = Util.DpParse(arr[3]);
                         }
                         else if (value is string str)
                         {
                             var strArr = str.Split(",");
                             if (strArr.Length == 1)
                             {
-                                var temp = Utils.DpParse(strArr[0]);
+                                var temp = Util.DpParse(strArr[0]);
                                 padding[0] = padding[1] = padding[2] = padding[3] = temp;
                             }
                             else if (strArr.Length == 2)
                             {
-                                padding[0] = padding[2] = Utils.DpParse(strArr[0]);
-                                padding[1] = padding[3] = Utils.DpParse(strArr[1]);
+                                padding[0] = padding[2] = Util.DpParse(strArr[0]);
+                                padding[1] = padding[3] = Util.DpParse(strArr[1]);
                             }
                             else if (strArr.Length == 4)
                             {
-                                padding[0] = Utils.DpParse(strArr[0]);
-                                padding[1] = Utils.DpParse(strArr[1]);
-                                padding[2] = Utils.DpParse(strArr[2]);
-                                padding[3] = Utils.DpParse(strArr[3]);
+                                padding[0] = Util.DpParse(strArr[0]);
+                                padding[1] = Util.DpParse(strArr[1]);
+                                padding[2] = Util.DpParse(strArr[2]);
+                                padding[3] = Util.DpParse(strArr[3]);
                             }
                         }
                         SetPadding(padding[0], padding[1], padding[2], padding[3]);
@@ -288,7 +288,7 @@ namespace astator.Core.UI.Widget
                 case "visibility":
                     {
                         if (value is string temp)
-                            this.Visibility = Utils.EnumParse<ViewStates>(value);
+                            this.Visibility = Util.EnumParse<ViewStates>(value);
                         break;
                     }
                 case "rotation":
@@ -320,7 +320,14 @@ namespace astator.Core.UI.Widget
                 "hint" => this.Hint,
                 "hintTextColor" => this.CurrentHintTextColor,
                 "inputType" => this.InputType,
-                "singleLine" => this.IsSingleLine,
+                "singleLine" => new Func<object>(() =>
+                {
+                    if (OperatingSystem.IsAndroidVersionAtLeast(29))
+                    {
+                        return this.IsSingleLine;
+                    }
+                    throw new SdkNotSupportedException(29);
+                }),
                 "text" => this.Text,
                 "textSize" => this.TextSize,
                 "textColor" => this.CurrentTextColor,

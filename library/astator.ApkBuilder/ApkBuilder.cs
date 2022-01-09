@@ -41,9 +41,11 @@ public class ApkBuilder
                     using var stream = entry.Open();
                     var bytes = new byte[stream.Length];
                     stream.Read(bytes);
-                    stream.Flush();
-                    var axmlBytes = AndroidBinaryXml.Build(bytes, versionName, packageName, labelName);
                     stream.Position = 0;
+                    stream.Write(new byte[bytes.Length]);
+                    stream.Position = 0;
+
+                    var axmlBytes = AndroidBinaryXml.Build(bytes, versionName, packageName, labelName);
                     stream.Write(axmlBytes);
                 }
                 else if (entry.FullName == "resources.arsc")
@@ -51,9 +53,11 @@ public class ApkBuilder
                     using var stream = entry.Open();
                     var bytes = new byte[stream.Length];
                     stream.Read(bytes);
-                    stream.Flush();
-                    var arscBytes = AndroidResources.Build(bytes, packageName);
                     stream.Position = 0;
+                    stream.Write(new byte[bytes.Length]);
+                    stream.Position = 0;
+
+                    var arscBytes = AndroidResources.Build(bytes, packageName);
                     stream.Write(arscBytes);
                 }
             }

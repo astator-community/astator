@@ -6,10 +6,12 @@ using Android.OS;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using astator.Core.Exceptions;
 using astator.Core.Graphics;
 using astator.Core.UI.Floaty;
 using System;
 using System.Collections.Generic;
+using System.Runtime.Versioning;
 using System.Threading.Tasks;
 using Application = Android.App.Application;
 
@@ -17,7 +19,7 @@ namespace astator.Core
 {
     public class Globals
     {
-        public static Activity MainActivity { get; set; }
+        public static Context AppContext { get; set; }
 
         /// <summary>
         /// 给用户展示简短消息的视图
@@ -38,7 +40,7 @@ namespace astator.Core
         /// <param name="action"></param>
         public static void RunOnUiThread(Action action)
         {
-            MainActivity?.RunOnUiThread(() =>
+            (AppContext as Activity)?.RunOnUiThread(() =>
             {
                 action.Invoke();
             });
@@ -71,7 +73,7 @@ namespace astator.Core
         /// <param name="intent">意图</param>
         public static void StartActivity(Intent intent)
         {
-            MainActivity.StartActivity(intent);
+            AppContext.StartActivity(intent);
         }
 
 
@@ -81,7 +83,7 @@ namespace astator.Core
         public class Permission
         {
             /// <summary>
-            /// 请求标志
+            /// 权限枚举
             /// </summary>
             public enum RequestFlags
             {
@@ -102,11 +104,11 @@ namespace astator.Core
 
                 Task.Run(() =>
                 {
-                    var manager = (MediaProjectionManager)MainActivity.GetSystemService("media_projection");
+                    var manager = (MediaProjectionManager)AppContext.GetSystemService("media_projection");
                     if (manager is not null)
                     {
                         var intent = manager.CreateScreenCaptureIntent();
-                        MainActivity.StartActivityForResult(intent, (int)RequestFlags.MediaProjection);
+                        (AppContext as Activity).StartActivityForResult(intent, (int)RequestFlags.MediaProjection);
                     }
                 });
             }
@@ -125,9 +127,9 @@ namespace astator.Core
             /// </summary>
             public static void ReqFloaty()
             {
-                if (!Android.Provider.Settings.CanDrawOverlays(MainActivity))
+                if (!Android.Provider.Settings.CanDrawOverlays(AppContext))
                 {
-                    MainActivity.StartActivityForResult(new Intent(Android.Provider.Settings.ActionManageOverlayPermission, Android.Net.Uri.Parse("package:" + MainActivity.PackageName)), (int)RequestFlags.FloatyWindow);
+                    (AppContext as Activity).StartActivityForResult(new Intent(Android.Provider.Settings.ActionManageOverlayPermission, Android.Net.Uri.Parse("package:" + AppContext.PackageName)), (int)RequestFlags.FloatyWindow);
                 }
             }
 
@@ -137,7 +139,7 @@ namespace astator.Core
             /// <returns></returns>
             public static bool CheckFloaty()
             {
-                return Android.Provider.Settings.CanDrawOverlays(MainActivity);
+                return Android.Provider.Settings.CanDrawOverlays(AppContext);
             }
 
             /// <summary>
@@ -147,7 +149,7 @@ namespace astator.Core
             {
                 if (FloatyService.Instance is null)
                 {
-                    MainActivity.StartService(new(MainActivity, typeof(FloatyService)));
+                    AppContext.StartService(new(AppContext, typeof(FloatyService)));
                 }
             }
         }
@@ -155,7 +157,6 @@ namespace astator.Core
 
         public class Devices
         {
-            public static Activity MainActivity { get => Globals.MainActivity; }
             public static float Dp => Dm.Density;
             public static int Dpi => (int)Dm.DensityDpi;
 
@@ -165,18 +166,33 @@ namespace astator.Core
                 get
                 {
                     var dm = new DisplayMetrics();
-                    MainActivity.WindowManager.DefaultDisplay.GetRealMetrics(dm);
+                    (AppContext as Activity).WindowManager.DefaultDisplay.GetRealMetrics(dm);
                     return dm;
                 }
             }
-
-            ///<summary>与旋转方向无关的宽</summary>
+            ///<summary>宽</summary>
             public static int Width
             {
                 get
                 {
-                    var manager = MainActivity?.WindowManager;
-                    if (manager.DefaultDisplay.Rotation == Android.Views.SurfaceOrientation.Rotation0 || manager.DefaultDisplay.Rotation == Android.Views.SurfaceOrientation.Rotation180)
+                    return Dm.WidthPixels;
+                }
+            }
+            ///<summary>高</summary>
+            public static int Height
+            {
+                get
+                {
+                    return Dm.HeightPixels;
+                }
+            }
+            ///<summary>与旋转方向无关的宽</summary>
+            public static int RealWidth
+            {
+                get
+                {
+                    var manager = (AppContext as Activity)?.WindowManager;
+                    if (manager.DefaultDisplay.Rotation == SurfaceOrientation.Rotation0 || manager.DefaultDisplay.Rotation == SurfaceOrientation.Rotation180)
                     {
                         return Dm.WidthPixels;
                     }
@@ -184,12 +200,12 @@ namespace astator.Core
                 }
             }
             ///<summary>与旋转方向无关的高</summary>
-            public static int Height
+            public static int RealHeight
             {
                 get
                 {
-                    var manager = MainActivity?.WindowManager;
-                    if (manager.DefaultDisplay.Rotation == Android.Views.SurfaceOrientation.Rotation0)
+                    var manager = (AppContext as Activity)?.WindowManager;
+                    if (manager.DefaultDisplay.Rotation == SurfaceOrientation.Rotation0 || manager.DefaultDisplay.Rotation == SurfaceOrientation.Rotation180)
                     {
                         return Dm.HeightPixels;
                     }
@@ -211,7 +227,16 @@ namespace astator.Core
             ///<summary>唯一编号</summary>
             public static string Fingerprint => Build.Fingerprint;
             ///<summary>硬件序列号</summary>
-            public static string Serial => Build.GetSerial();
+
+            [SupportedOSPlatform("android26.0")]
+            public static string Serial
+            {
+                get
+                {
+                    return Build.GetSerial();
+                }
+            }
+
             ///<summary>硬件制造商</summary>
             public static string Manufacturer => Build.Manufacturer;
             ///<summary>版本</summary>
@@ -240,7 +265,7 @@ namespace astator.Core
             public static long Time => Build.Time;
 
             ///<summary>设备首次启动时产生和存储的64位数，当设备被wipe后该数重置。</summary>
-            public static string AndroidId => Android.Provider.Settings.Secure.GetString(MainActivity.ContentResolver, Android.Provider.Settings.Secure.AndroidId);
+            public static string AndroidId => Android.Provider.Settings.Secure.GetString((AppContext as Activity).ContentResolver, Android.Provider.Settings.Secure.AndroidId);
         }
 
     }

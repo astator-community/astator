@@ -1,4 +1,5 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using astator.Core.Script;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Emit;
 using System;
@@ -60,16 +61,66 @@ namespace astator.Core.Engine
         }
 
         /// <summary>
+        /// 解析cs字符串
+        /// </summary>
+        public void ParseScript(string text, string path = default)
+        {
+            this.trees.Add(CSharpSyntaxTree.ParseText(text, path: path, encoding: Encoding.UTF8));
+        }
+
+        /// <summary>
         /// 解析cs文件
         /// </summary>
         /// <param name="path"></param>
-        public void ParseScript(string path)
+        public void ParseScriptFromFile(string path)
         {
-            if (path.EndsWith(".cs"))
+            if (path.EndsWith(".cs") || path.EndsWith(".csx"))
             {
                 this.trees.Add(CSharpSyntaxTree.ParseText(File.ReadAllText(path), path: path, encoding: Encoding.UTF8));
             }
         }
+
+        /// <summary>
+        /// 解析csx脚本文件
+        /// </summary>
+        /// <param name="path"></param>
+        public void ParseCsx(string path)
+        {
+            var lines = File.ReadAllLines(path);
+            var directory = Path.GetDirectoryName(path);
+            for (var i = 0; i < lines.Length; i++)
+            {
+                var line = lines[i];
+                if (line.StartsWith("#"))
+                {
+                    if (line.StartsWith("#r"))
+                    {
+                        var reference = Path.Combine(directory, line[(line.IndexOf('"') + 1)..line.LastIndexOf('"')]);
+                        LoadReference(reference);
+                    }
+                    else if (line.StartsWith("#load"))
+                    {
+                        var script = Path.Combine(directory, line[(line.IndexOf('"') + 1)..line.LastIndexOf('"')]);
+                        if (script.EndsWith("csx"))
+                        {
+                            ParseCsx(script);
+                        }
+                        else if (script.EndsWith("cs"))
+                        {
+                            ParseScriptFromFile(script);
+                        }
+                    }
+                    lines[i] = lines[i].Replace("#", "//#");
+                }
+                else
+                {
+                    var text = string.Join("\r\n", lines);
+                    ParseScript(text, path);
+                    return;
+                }
+            }
+        }
+
 
         /// <summary>
         /// 加载引用程序集
@@ -148,21 +199,52 @@ namespace astator.Core.Engine
         /// <summary>
         /// 执行
         /// </summary>
-        /// <param name="entryType">入口类名称</param>
-        /// <param name="runtime">scriptRuntime</param>
-        public void Execute(string entryType, dynamic runtime)
+        /// <param name="method">入口方法</param>
+        /// <param name="runtime"></param>
+        public void Execute(MethodInfo method, dynamic runtime)
+        {
+            try
+            {
+                method.Invoke(null, new object[] { runtime });
+            }
+            catch (Exception ex)
+            {
+                ScriptLogger.Instance.Error(ex.ToString());
+            }
+        }
+
+        /// <summary>
+        /// 获取入口方法
+        /// </summary>
+        /// <returns></returns>
+        public MethodInfo GetEntryMethod()
         {
             try
             {
                 this.assembly.TryGetTarget(out var assembly);
-                var type = assembly.GetType(entryType);
-                dynamic obj = Activator.CreateInstance(type);
-                obj.Main(runtime);
+                var types = assembly.GetTypes();
+
+                foreach (var type in types)
+                {
+                    var methods = type.GetMethods();
+                    foreach (var method in methods)
+                    {
+                        if (Attribute.IsDefined(method, typeof(EntryMethod)))
+                        {
+                            if (method.IsStatic && method.IsPublic)
+                            {
+                                return method;
+                            }
+                        }
+                    }
+                }
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.ToString());
+                ScriptLogger.Instance.Error(ex.ToString());
             }
+
+            return null;
         }
     }
 }

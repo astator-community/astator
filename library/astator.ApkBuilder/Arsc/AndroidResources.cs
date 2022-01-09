@@ -5,7 +5,6 @@ namespace astator.ApkBuilder.Arsc;
 
 internal class AndroidResources
 {
-    public static readonly string path = Path.Combine(Android.App.Application.Context.GetExternalFilesDir("template").ToString(), "resources.arsc");
     public static byte[] Build(byte[] bytes, string packageName)
     {
         using var stream = new MemoryStream();
@@ -18,12 +17,12 @@ internal class AndroidResources
 
             if (type == ChunkType.TablePackage)
             {
-                var startposition = stream.Position + 10;
-                stream.Position = startposition;
+                var startPosition = stream.Position + 10;
+                stream.Position = startPosition;
                 var _bytes = new byte[256];
                 stream.Write(_bytes);
 
-                stream.Position = startposition;
+                stream.Position = startPosition;
                 _bytes = Encoding.Unicode.GetBytes(packageName);
 
                 stream.Write(_bytes);

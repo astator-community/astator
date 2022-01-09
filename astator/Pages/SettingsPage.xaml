@@ -3,21 +3,125 @@
     x:Class="astator.Pages.SettingsPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:v="clr-namespace:astator.Views"
-    Title="SettingsPage"
-    BackgroundColor="White">
+    xmlns:v="clr-namespace:astator.Views">
+
     <GridLayout RowDefinitions="55,*,55">
         <GridLayout GridLayout.Row="0">
             <Label
                 x:Name="Header"
-                Margin="15,0,0,0"
+                Margin="15,5"
                 FontAttributes="Bold"
                 FontSize="28"
                 HorizontalOptions="Start"
                 Text="设置"
                 VerticalOptions="Center" />
         </GridLayout>
-        <GridLayout GridLayout.Row="1" />
+        <GridLayout
+            Padding="0,5"
+            GridLayout.Row="1"
+            RowDefinitions="40,40,40,40,40"
+            VerticalOptions="End">
+            <v:CustomCard
+                Padding="20,0"
+                Clicked="AccessibilityService_Clicked"
+                ColumnDefinitions="auto,*,auto"
+                GridLayout.Row="0">
+                <Image
+                    GridLayout.Column="0"
+                    HeightRequest="24"
+                    Source="press.png"
+                    VerticalOptions="Center" />
+                <Label
+                    Margin="5,0"
+                    FontAttributes="Bold"
+                    FontSize="16"
+                    GridLayout.Column="1"
+                    Text="无障碍服务"
+                    VerticalOptions="Center" />
+                <Switch
+                    x:Name="AccessibilityService"
+                    GridLayout.Column="2"
+                    OnColor="#2f88ff"
+                    ThumbColor="#535c64"
+                    Toggled="AccessibilityService_Toggled"
+                    VerticalOptions="Center" />
+            </v:CustomCard>
+            <v:CustomCard
+                Padding="20,0"
+                Clicked="CaptureService_Clicked"
+                ColumnDefinitions="auto,*,auto"
+                GridLayout.Row="1">
+                <Image
+                    GridLayout.Column="0"
+                    HeightRequest="24"
+                    Source="capture.png"
+                    VerticalOptions="Center" />
+                <Label
+                    Margin="5,0"
+                    FontAttributes="Bold"
+                    FontSize="16"
+                    GridLayout.Column="1"
+                    Text="截屏服务"
+                    VerticalOptions="Center" />
+                <Switch
+                    x:Name="CaptureService"
+                    GridLayout.Column="2"
+                    OnColor="#2f88ff"
+                    ThumbColor="#535c64"
+                    Toggled="CaptureService_Toggled"
+                    VerticalOptions="Center" />
+            </v:CustomCard>
+            <v:CustomCard
+                Padding="20,0"
+                Clicked="DebugService_Clicked"
+                ColumnDefinitions="auto,auto,*,auto,auto"
+                GridLayout.Row="2">
+                <Image
+                    GridLayout.Column="0"
+                    HeightRequest="24"
+                    Source="service.png"
+                    VerticalOptions="Center" />
+                <Label
+                    Margin="5,0"
+                    FontAttributes="Bold"
+                    FontSize="16"
+                    GridLayout.Column="1"
+                    Text="调试服务"
+                    VerticalOptions="Center" />
+                <Label
+                    x:Name="HostAddress"
+                    Margin="10,0"
+                    FontSize="12"
+                    GridLayout.Column="2"
+                    VerticalOptions="Center" />
+                <Switch
+                    x:Name="DebugService"
+                    GridLayout.Column="3"
+                    OnColor="#2f88ff"
+                    ThumbColor="#535c64"
+                    Toggled="DebugService_Toggled"
+                    VerticalOptions="Center" />
+            </v:CustomCard>
+            <v:CustomCard
+                Padding="20,0"
+                Clicked="Info_Clicked"
+                ColumnDefinitions="auto,*"
+                GridLayout.Row="3">
+                <Image
+                    GridLayout.Column="0"
+                    HeightRequest="24"
+                    Source="about.png"
+                    VerticalOptions="Center" />
+                <Label
+                    Margin="5,0"
+                    FontAttributes="Bold"
+                    FontSize="16"
+                    GridLayout.Column="1"
+                    Text="关于"
+                    VerticalOptions="Center" />
+            </v:CustomCard>
+
+        </GridLayout>
         <v:NavBarView ActiveTab="settings" GridLayout.Row="2" />
     </GridLayout>
 </ContentPage>

@@ -101,7 +101,7 @@ namespace astator.Core.ThirdParty
             this.PowerMode = args.PowerMode;
 
             this.predictor = new Predictor();
-            this.predictor.Init(Globals.MainActivity, this.ModelDir, this.LabelPath, this.ThreadNum, this.PowerMode);
+            this.predictor.Init(Globals.AppContext, this.ModelDir, this.LabelPath, this.ThreadNum, this.PowerMode);
         }
 
         private PaddleOcrHelper()
@@ -114,7 +114,7 @@ namespace astator.Core.ThirdParty
             this.PowerMode = args.PowerMode;
 
             this.predictor = new Predictor();
-            this.predictor.Init(Globals.MainActivity, this.ModelDir, this.LabelPath, this.ThreadNum, this.PowerMode);
+            this.predictor.Init(Globals.AppContext, this.ModelDir, this.LabelPath, this.ThreadNum, this.PowerMode);
         }
 
         public string Ocr(Bitmap bitmap)

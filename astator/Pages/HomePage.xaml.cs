@@ -34,11 +34,13 @@ namespace astator.Pages
 
         protected override void OnAppearing()
         {
+            base.OnAppearing();
             MainActivity.Instance.OnKeyDownCallback = OnKeyDown;
         }
 
         protected override void OnDisappearing()
         {
+            base.OnDisappearing();
             MainActivity.Instance.OnKeyDownCallback = null;
         }
 
@@ -51,15 +53,16 @@ namespace astator.Pages
                 var name = Path.GetFileName(dir);
                 var info = $"{new DirectoryInfo(dir).LastWriteTime:yyyy/MM/dd HH:mm}";
 
-                var card = new PathCard
+                var card = new CustomPathCard
                 {
                     Tag = dir,
                     PathName = name,
                     PathInfo = info,
                     TypeImageSource = "dir.png",
-                    MoreImageSource = "right.png",
                 };
-                card.OnClicked += Dir_Tapped;
+
+                card.Clicked += Dir_Clicked;
+
                 this.FilesLayout.Children.Add(card);
             }
 
@@ -70,29 +73,27 @@ namespace astator.Pages
                 var info = $"{new DirectoryInfo(file).LastWriteTime:yyyy/MM/dd HH:mm}";
                 var icon = file.EndsWith(".cs") ? "_script" : file.EndsWith(".csproj") ? "_csproj" : file.EndsWith("xml") ? "_xml" : string.Empty;
 
-                var card = new PathCard
+                var card = new CustomPathCard
                 {
                     Tag = file,
                     PathName = name,
                     PathInfo = info,
-                    TypeImageSource = $"Assets/Image/file{icon}.png",
-                    MoreImageSource = "more.png"
+                    TypeImageSource = $"file{icon}.png",
                 };
-
                 this.FilesLayout.Children.Add(card);
             }
         }
 
-        private void Dir_Tapped(object sender, EventArgs e)
+        private void Dir_Clicked(object sender, EventArgs e)
         {
-            var card = sender as PathCard;
+            var card = sender as CustomPathCard;
             var directory = card.Tag as string;
             UpdateDirTbs(directory);
         }
 
         private void DirTb_Clicked(object sender, EventArgs e)
         {
-            var dir = sender as LabelButton;
+            var dir = sender as CustomLabelButton;
             UpdateDirTbs(dir.Tag as string);
         }
 
@@ -103,7 +104,7 @@ namespace astator.Pages
             var dirs = Path.GetRelativePath(this.rootDir, dir).Split(Path.DirectorySeparatorChar);
             for (var i = Math.Max(0, dirs.Length - 3); i < dirs.Length; i++)
             {
-                var tb = new LabelButton
+                var tb = new CustomLabelButton
                 {
                     Text = dirs[i],
                     TextColor = Color.Parse("#888888"),
@@ -139,7 +140,7 @@ namespace astator.Pages
                 var count = this.DirTbLayout.Children.Count / 2;
                 if (count > 1)
                 {
-                    UpdateDirTbs((this.DirTbLayout.Children[(count - 2) * 2] as LabelButton).Tag as string);
+                    UpdateDirTbs((this.DirTbLayout.Children[(count - 2) * 2] as CustomLabelButton).Tag as string);
                     return true;
                 }
             }

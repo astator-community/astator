@@ -1,4 +1,5 @@
-﻿using astator.Views;
+﻿
+using astator.Views;
 using Microsoft.Maui.Controls.Compatibility;
 
 namespace astator;
@@ -11,11 +12,10 @@ public static class MauiProgram
             .UseMauiApp<App>()
             .ConfigureFonts(fonts =>
             {
-                fonts.AddFont("OPPOSans-R.ttf", "OPPOSansRegular");
+                fonts.AddFont("CascadiaCode-SemiLight.ttf", "CascadiaCode");
             }).ConfigureMauiHandlers(handler =>
             {
-                handler.AddCompatibilityRenderer(typeof(LabelButton), typeof(LabelbuttonRenderer));
-
+                handler.AddCompatibilityRenderer(typeof(CustomLabelButton), typeof(CustomLabelButtonRenderer));
             });
         return builder.Build();
     }

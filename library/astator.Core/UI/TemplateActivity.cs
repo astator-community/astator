@@ -11,7 +11,7 @@ using static astator.Core.Globals.Permission;
 
 namespace astator.Core.UI
 {
-    [Activity(Theme = "@style/AppTheme", ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait)]
+    [Activity(Theme = "@style/AppTheme.NoActionBar", ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait)]
     public class TemplateActivity : AppCompatActivity
     {
         public static Dictionary<string, TemplateActivity> ScriptActivityList { get; set; } = new();
@@ -55,19 +55,6 @@ namespace astator.Core.UI
         protected override void OnActivityResult(int requestCode, [GeneratedEnum] Result resultCode, Intent data)
         {
             base.OnActivityResult(requestCode, resultCode, data);
-            if (resultCode == Result.Ok)
-            {
-                if (requestCode == (int)RequestFlags.MediaProjection)
-                {
-                    Intent intent = new(this, typeof(ScreenCapturer));
-                    intent.PutExtra("data", data);
-                    StartForegroundService(intent);
-                }
-                else if (requestCode == (int)RequestFlags.FloatyWindow)
-                {
-                    StartService(new(this, typeof(FloatyService)));
-                }
-            }
         }
         public override void StartActivityForResult(Intent intent, int requestCode)
         {

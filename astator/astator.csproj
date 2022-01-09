@@ -41,47 +41,15 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Remove="Resources\Fonts\OPPOSans-R.ttf" />
-	  <None Remove="Resources\Images\dir.svg" />
-	  <None Remove="Resources\Images\doc.svg" />
-	  <None Remove="Resources\Images\doc_on.svg" />
-	  <None Remove="Resources\Images\file.png" />
-	  <None Remove="Resources\Images\file_csproj.png" />
-	  <None Remove="Resources\Images\file_script.png" />
-	  <None Remove="Resources\Images\file_xml.png" />
-	  <None Remove="Resources\Images\home.svg" />
-	  <None Remove="Resources\Images\home_on.svg" />
-	  <None Remove="Resources\Images\log.svg" />
-	  <None Remove="Resources\Images\log_on.svg" />
-	  <None Remove="Resources\Images\more.png" />
-	  <None Remove="Resources\Images\right.png" />
-	  <None Remove="Resources\Images\settings.svg" />
-	  <None Remove="Resources\Images\settings_on.svg" />
-	  <None Remove="Resources\jni\arm64-v8a\libc++_shared.so" />
-	  <None Remove="Resources\jni\arm64-v8a\libhiai.so" />
-	  <None Remove="Resources\jni\arm64-v8a\libhiai_ir.so" />
-	  <None Remove="Resources\jni\arm64-v8a\libhiai_ir_build.so" />
-	  <None Remove="Resources\jni\arm64-v8a\libNative.so" />
-	  <None Remove="Resources\jni\arm64-v8a\libpaddle_light_api_shared.so" />
-	  <None Remove="Resources\jni\armeabi-v7a\libc++_shared.so" />
-	  <None Remove="Resources\jni\armeabi-v7a\libhiai.so" />
-	  <None Remove="Resources\jni\armeabi-v7a\libhiai_ir.so" />
-	  <None Remove="Resources\jni\armeabi-v7a\libhiai_ir_build.so" />
-	  <None Remove="Resources\jni\armeabi-v7a\libNative.so" />
-	  <None Remove="Resources\jni\armeabi-v7a\libpaddle_light_api_shared.so" />
-	</ItemGroup>
-
-	<ItemGroup>
+	  <PackageReference Include="System.Collections.Concurrent" Version="4.3.0" />
 	  <PackageReference Include="System.Reactive" Version="5.0.0" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Compile Update="Views\NavBarView.xaml.cs">
-	    <DependentUpon>NavBarView.xaml</DependentUpon>
-	  </Compile>
-	</ItemGroup>
 
 	<ItemGroup>
+	  <MauiXaml Update="Pages\AboutPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Pages\DocPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
@@ -97,21 +65,41 @@
 	  <MauiXaml Update="Views\NavBarView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Views\PathCard.xaml">
+	  <MauiXaml Update="Views\CustomPathCard.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	</ItemGroup>
 
+	<ItemGroup>
+		<AndroidNativeLibrary Include="Resources\JNI\*\*" />
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(Configuration)' == 'Debug'">
+	  <MauiAsset Include="Resources\ScriptFiles\v220108-sdk.zip" />
+	</ItemGroup>
 
 	<ItemGroup>
-		<AndroidNativeLibrary Include="Resources\jni\*\*" />
+	  <None Remove="Resources\Images\about.svg" />
+	</ItemGroup>
+
+ 
+	<ItemGroup>
+	  <ProjectReference Include="..\library\astator.ApkBuilder\astator.ApkBuilder.csproj" />
+	  <ProjectReference Include="..\library\astator.Core\astator.Core.csproj" />
 	</ItemGroup>
 
 
 	<ItemGroup>
-	  <Reference Include="ApkBuilderBinding">
-	    <HintPath>..\library\3rdparty\ApkBuilderBinding\bin\Release\net6.0-android\ApkBuilderBinding.dll</HintPath>
+	  <Reference Include="PaddleOcrBinding">
+	    <HintPath>..\library\3rdparty\PaddleOcrBinding\bin\Release\net6.0-android\PaddleOcrBinding.dll</HintPath>
 	  </Reference>
+	</ItemGroup>
+
+
+	<ItemGroup>
+	  <Compile Update="Views\CustomPathCard.xaml.cs">
+	    <DependentUpon>CustomPathCard.xaml</DependentUpon>
+	  </Compile>
 	</ItemGroup>
 
 </Project>

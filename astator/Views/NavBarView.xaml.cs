@@ -39,8 +39,9 @@ namespace astator.Views
 
         private void SetCurrentPage(int index)
         {
-            var mainPage = Application.Current.MainPage as CarouselPage;
-            mainPage.CurrentPage = mainPage.Children[index];
+            var mainPage = Application.Current.MainPage as NavigationPage;
+            var carouselPage = mainPage.RootPage as CarouselPage;
+            carouselPage.CurrentPage = carouselPage.Children[index];
         }
 
         private void HomeTab_Clicked(object sender, EventArgs e)

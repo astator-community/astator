@@ -88,7 +88,7 @@ namespace astator.Core
         /// <summary>
         /// 脚本自身的activity
         /// </summary>
-        public TemplateActivity Activity { get; private set; }
+        private TemplateActivity activity;
 
         /// <summary>
         /// 脚本执行引擎
@@ -98,8 +98,8 @@ namespace astator.Core
         public ScriptRuntime(string id, ScriptEngine engine, TemplateActivity activity, string directory) : this(id, engine, directory)
         {
             this.IsUiMode = true;
-            this.Activity = activity;
-            this.Activity.OnFinished = () => { SetStop(); };
+            this.activity = activity;
+            this.activity.OnFinished = () => { SetStop(); };
             this.Ui = new UiManager(activity, directory);
         }
         public ScriptRuntime(string id, ScriptEngine engine, string directory)
@@ -110,7 +110,17 @@ namespace astator.Core
             this.Directory = directory;
             this.Threads = new ScriptThreadManager();
             this.Tasks = new ScriptTaskManager();
-            this.Floatys = new FloatyManager(this.Activity ?? Globals.MainActivity, directory);
+
+            if (!IsUiMode)
+            {
+                this.Threads.ScriptExitCallback = Stop;
+                this.Threads.ScriptExitSignal = true;
+
+                this.Tasks.ScriptExitCallback = Stop;
+                this.Tasks.ScriptExitSignal = true;
+            }
+
+            this.Floatys = new FloatyManager(this.activity ?? Globals.AppContext, directory);
         }
 
         /// <summary>

@@ -3,11 +3,10 @@
     x:Class="astator.Pages.HomePage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:v="clr-namespace:astator.Views"
-    BackgroundColor="White">
+    xmlns:v="clr-namespace:astator.Views">
 
     <ContentPage.Resources>
-        <Style TargetType="v:LabelButton">
+        <Style TargetType="v:CustomLabelButton">
             <Setter Property="BackgroundColor" Value="{DynamicResource PrimaryColor}" />
             <Setter Property="TextColor" Value="{DynamicResource SecondaryColor}" />
             <Setter Property="FontSize" Value="18" />
@@ -20,7 +19,7 @@
         <GridLayout GridLayout.Row="0">
             <Label
                 x:Name="Header"
-                Margin="15,0,0,0"
+                Margin="15,5"
                 FontAttributes="Bold"
                 FontSize="28"
                 HorizontalOptions="Start"
@@ -28,12 +27,10 @@
                 VerticalOptions="Center" />
         </GridLayout>
 
-        <ScrollView
-            x:Name="DirTbScrollView"
+        <HorizontalStackLayout
+            x:Name="DirTbLayout"
             Padding="20,10"
-            GridLayout.Row="1">
-            <HorizontalStackLayout x:Name="DirTbLayout" />
-        </ScrollView>
+            GridLayout.Row="1" />
 
         <ScrollView GridLayout.Row="2">
             <VerticalStackLayout x:Name="FilesLayout" />
@@ -41,4 +38,5 @@
 
         <v:NavBarView ActiveTab="home" GridLayout.Row="3" />
     </GridLayout>
+
 </ContentPage>
