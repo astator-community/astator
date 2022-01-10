@@ -13,7 +13,7 @@
 		<ApplicationTitle>astator</ApplicationTitle>
 
 		<!-- App Identifier -->
-		<ApplicationId>com.companyname.astator</ApplicationId>
+		<ApplicationId>com.astator.astator</ApplicationId>
 
 		<!-- Versions -->
 		<ApplicationVersion>1</ApplicationVersion>
@@ -23,14 +23,15 @@
 
 		<SupportedOSPlatformVersion Condition="'$(TargetFramework)' == 'net6.0-android'">24.0</SupportedOSPlatformVersion>
 		<AndroidPackageFormat>apk</AndroidPackageFormat>
-		<ProduceReferenceAssembly>True</ProduceReferenceAssembly>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<!-- App Icon -->
-		<MauiIcon Include="Resources\appicon.svg" ForegroundFile="Resources\appiconfg.svg" Color="#512BD4" />
+
+		<MauiIcon Include="Resources\appicon.png" Color="#8000ff" />
 
 		<!-- Splash Screen -->
+
 		<MauiSplashScreen Include="Resources\appiconfg.svg" Color="#512BD4" />
 
 		<!-- Images -->
@@ -59,6 +60,9 @@
 	  <MauiXaml Update="Pages\LogPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Pages\ScriptLogPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Pages\SettingsPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
@@ -79,7 +83,13 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <None Remove="Resources\appicon - 复制.png" />
+	  <None Remove="Resources\appicon.svg" />
+	  <None Remove="Resources\appiconfg.png" />
+	  <None Remove="Resources\appicon_1.svg" />
 	  <None Remove="Resources\Images\about.svg" />
+	  <None Remove="Resources\Images\appicon.png" />
+	  <None Remove="Resources\Images\floaty.svg" />
 	</ItemGroup>
 
  
@@ -100,6 +110,13 @@
 	  <Compile Update="Views\CustomPathCard.xaml.cs">
 	    <DependentUpon>CustomPathCard.xaml</DependentUpon>
 	  </Compile>
+	</ItemGroup>
+
+
+	<ItemGroup>
+	  <MauiImage Update="Resources\Images\appicon.png">
+	    <Color>#8000ff</Color>
+	  </MauiImage>
 	</ItemGroup>
 
 </Project>

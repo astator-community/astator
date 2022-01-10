@@ -21,10 +21,9 @@ internal class CustomImageButton : ImageButton
 
         var view = this.Handler.NativeView as AndroidX.AppCompat.Widget.AppCompatImageButton;
 
-        if (this.Padding != default)
-        {
-            view.SetPadding(Util.DpParse(this.Padding.Left), Util.DpParse(this.Padding.Top), Util.DpParse(this.Padding.Right), Util.DpParse(this.Padding.Bottom));
-        }
+
+        view.SetPadding(Util.DpParse(this.Padding.Left), Util.DpParse(this.Padding.Top), Util.DpParse(this.Padding.Right), Util.DpParse(this.Padding.Bottom));
+
 
         if (this.IsCircle)
         {

@@ -3,11 +3,8 @@ using Android.Content;
 using Android.OS;
 using Android.Runtime;
 using AndroidX.AppCompat.App;
-using astator.Core.Graphics;
-using astator.Core.UI.Floaty;
 using System;
 using System.Collections.Generic;
-using static astator.Core.Globals.Permission;
 
 namespace astator.Core.UI
 {

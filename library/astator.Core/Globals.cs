@@ -6,7 +6,6 @@ using Android.OS;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
-using astator.Core.Exceptions;
 using astator.Core.Graphics;
 using astator.Core.UI.Floaty;
 using System;
@@ -139,13 +138,18 @@ namespace astator.Core
             /// <returns></returns>
             public static bool CheckFloaty()
             {
-                return Android.Provider.Settings.CanDrawOverlays(AppContext);
+                if (Android.Provider.Settings.CanDrawOverlays(AppContext))
+                {
+                    StartFloatyService();
+                    return true;
+                }
+                return false;
             }
 
             /// <summary>
             /// 启动悬浮窗服务
             /// </summary>
-            public static void StartFloatyService()
+            private static void StartFloatyService()
             {
                 if (FloatyService.Instance is null)
                 {
@@ -171,21 +175,9 @@ namespace astator.Core
                 }
             }
             ///<summary>宽</summary>
-            public static int Width
-            {
-                get
-                {
-                    return Dm.WidthPixels;
-                }
-            }
+            public static int Width => Dm.WidthPixels;
             ///<summary>高</summary>
-            public static int Height
-            {
-                get
-                {
-                    return Dm.HeightPixels;
-                }
-            }
+            public static int Height => Dm.HeightPixels;
             ///<summary>与旋转方向无关的宽</summary>
             public static int RealWidth
             {
@@ -229,13 +221,7 @@ namespace astator.Core
             ///<summary>硬件序列号</summary>
 
             [SupportedOSPlatform("android26.0")]
-            public static string Serial
-            {
-                get
-                {
-                    return Build.GetSerial();
-                }
-            }
+            public static string Serial => Build.GetSerial();
 
             ///<summary>硬件制造商</summary>
             public static string Manufacturer => Build.Manufacturer;

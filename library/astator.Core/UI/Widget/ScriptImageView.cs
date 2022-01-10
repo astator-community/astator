@@ -55,226 +55,226 @@ namespace astator.Core.UI.Widget
             switch (key)
             {
                 case "id":
-                    {
-                        if (value is string temp)
-                            this.Id = temp.Trim(); break;
-                    }
+                {
+                    if (value is string temp)
+                        this.Id = temp.Trim(); break;
+                }
                 case "src":
+                {
+                    if (value is string temp)
                     {
-                        if (value is string temp)
+                        var path = temp;
+                        if (!path.StartsWith("/"))
                         {
-                            var path = temp;
-                            if (!path.StartsWith("/"))
-                            {
-                                path = System.IO.Path.Combine(this._workingDirectory, path);
-                            }
-                            if (!File.Exists(path))
-                            {
-                                throw new FileNotFoundException(path + ": open failed! (No such file or directory)");
-                            }
-                            var bitmap = BitmapFactory.DecodeFile(path);
-                            SetImageBitmap(bitmap);
+                            path = System.IO.Path.Combine(this._workingDirectory, path);
                         }
-                        break;
+                        if (!File.Exists(path))
+                        {
+                            throw new FileNotFoundException(path + ": open failed! (No such file or directory)");
+                        }
+                        var bitmap = BitmapFactory.DecodeFile(path);
+                        SetImageBitmap(bitmap);
                     }
+                    break;
+                }
                 case "scaleType":
-                    {
-                        SetScaleType(Util.TypeParse<ScaleType>(value));
-                        break;
-                    }
+                {
+                    SetScaleType(Util.TypeParse<ScaleType>(value));
+                    break;
+                }
                 case "click":
-                    {
-                        SetOnClickListener((OnClickListener)value);
-                        break;
-                    }
+                {
+                    SetOnClickListener((OnClickListener)value);
+                    break;
+                }
                 case "w":
-                    {
-                        var lp = this.LayoutParameters as FrameLayout.LayoutParams ?? new(this.LayoutParameters as MarginLayoutParams ?? new(ViewGroup.LayoutParams.WrapContent, ViewGroup.LayoutParams.WrapContent));
-                        lp.Width = Util.DpParse(value);
-                        this.LayoutParameters = lp;
-                        break;
-                    }
+                {
+                    var lp = this.LayoutParameters as FrameLayout.LayoutParams ?? new(this.LayoutParameters as MarginLayoutParams ?? new(ViewGroup.LayoutParams.WrapContent, ViewGroup.LayoutParams.WrapContent));
+                    lp.Width = Util.DpParse(value);
+                    this.LayoutParameters = lp;
+                    break;
+                }
                 case "h":
-                    {
-                        var lp = this.LayoutParameters as FrameLayout.LayoutParams ?? new(this.LayoutParameters as MarginLayoutParams ?? new(ViewGroup.LayoutParams.WrapContent, ViewGroup.LayoutParams.WrapContent));
-                        lp.Height = Util.DpParse(value);
-                        this.LayoutParameters = lp;
-                        break;
-                    }
+                {
+                    var lp = this.LayoutParameters as FrameLayout.LayoutParams ?? new(this.LayoutParameters as MarginLayoutParams ?? new(ViewGroup.LayoutParams.WrapContent, ViewGroup.LayoutParams.WrapContent));
+                    lp.Height = Util.DpParse(value);
+                    this.LayoutParameters = lp;
+                    break;
+                }
                 case "margin":
+                {
+                    var margin = new int[4];
+                    if (value is int i32)
                     {
-                        var margin = new int[4];
-                        if (value is int i32)
-                        {
-                            margin[0] = margin[1] = margin[2] = margin[3] = i32;
-                        }
-                        else if (value is int[] arr)
-                        {
-                            margin[0] = Util.DpParse(arr[0]);
-                            margin[1] = Util.DpParse(arr[1]);
-                            margin[2] = Util.DpParse(arr[2]);
-                            margin[3] = Util.DpParse(arr[3]);
-                        }
-                        else if (value is string str)
-                        {
-                            var strArr = str.Split(",");
-                            if (strArr.Length == 1)
-                            {
-                                var temp = Util.DpParse(strArr[0]);
-                                margin[0] = margin[1] = margin[2] = margin[3] = temp;
-                            }
-                            else if (strArr.Length == 2)
-                            {
-                                margin[0] = margin[2] = Util.DpParse(strArr[0]);
-                                margin[1] = margin[3] = Util.DpParse(strArr[1]);
-                            }
-                            else if (strArr.Length == 4)
-                            {
-                                margin[0] = Util.DpParse(strArr[0]);
-                                margin[1] = Util.DpParse(strArr[1]);
-                                margin[2] = Util.DpParse(strArr[2]);
-                                margin[3] = Util.DpParse(strArr[3]);
-                            }
-                        }
-                        var lp = this.LayoutParameters as FrameLayout.LayoutParams ?? new(this.LayoutParameters as MarginLayoutParams ?? new(ViewGroup.LayoutParams.WrapContent, ViewGroup.LayoutParams.WrapContent));
-                        lp.SetMargins(margin[0], margin[1], margin[2], margin[3]);
-                        this.LayoutParameters = lp;
-                        break;
+                        margin[0] = margin[1] = margin[2] = margin[3] = i32;
                     }
+                    else if (value is int[] arr)
+                    {
+                        margin[0] = Util.DpParse(arr[0]);
+                        margin[1] = Util.DpParse(arr[1]);
+                        margin[2] = Util.DpParse(arr[2]);
+                        margin[3] = Util.DpParse(arr[3]);
+                    }
+                    else if (value is string str)
+                    {
+                        var strArr = str.Split(",");
+                        if (strArr.Length == 1)
+                        {
+                            var temp = Util.DpParse(strArr[0]);
+                            margin[0] = margin[1] = margin[2] = margin[3] = temp;
+                        }
+                        else if (strArr.Length == 2)
+                        {
+                            margin[0] = margin[2] = Util.DpParse(strArr[0]);
+                            margin[1] = margin[3] = Util.DpParse(strArr[1]);
+                        }
+                        else if (strArr.Length == 4)
+                        {
+                            margin[0] = Util.DpParse(strArr[0]);
+                            margin[1] = Util.DpParse(strArr[1]);
+                            margin[2] = Util.DpParse(strArr[2]);
+                            margin[3] = Util.DpParse(strArr[3]);
+                        }
+                    }
+                    var lp = this.LayoutParameters as FrameLayout.LayoutParams ?? new(this.LayoutParameters as MarginLayoutParams ?? new(ViewGroup.LayoutParams.WrapContent, ViewGroup.LayoutParams.WrapContent));
+                    lp.SetMargins(margin[0], margin[1], margin[2], margin[3]);
+                    this.LayoutParameters = lp;
+                    break;
+                }
                 case "layoutGravity":
-                    {
-                        var lp = this.LayoutParameters as FrameLayout.LayoutParams ?? new(this.LayoutParameters as MarginLayoutParams ?? new(ViewGroup.LayoutParams.WrapContent, ViewGroup.LayoutParams.WrapContent));
-                        lp.Gravity = Util.EnumParse<GravityFlags>(value);
-                        this.LayoutParameters = lp;
-                        break;
-                    }
+                {
+                    var lp = this.LayoutParameters as FrameLayout.LayoutParams ?? new(this.LayoutParameters as MarginLayoutParams ?? new(ViewGroup.LayoutParams.WrapContent, ViewGroup.LayoutParams.WrapContent));
+                    lp.Gravity = Util.EnumParse<GravityFlags>(value);
+                    this.LayoutParameters = lp;
+                    break;
+                }
                 case "padding":
+                {
+                    var padding = new int[4];
+                    if (value is int i32)
                     {
-                        var padding = new int[4];
-                        if (value is int i32)
-                        {
-                            padding[0] = padding[1] = padding[2] = padding[3] = i32;
-                        }
-                        else if (value is int[] arr)
-                        {
-                            padding[0] = Util.DpParse(arr[0]);
-                            padding[1] = Util.DpParse(arr[1]);
-                            padding[2] = Util.DpParse(arr[2]);
-                            padding[3] = Util.DpParse(arr[3]);
-                        }
-                        else if (value is string str)
-                        {
-                            var strArr = str.Split(",");
-                            if (strArr.Length == 1)
-                            {
-                                var temp = Util.DpParse(strArr[0]);
-                                padding[0] = padding[1] = padding[2] = padding[3] = temp;
-                            }
-                            else if (strArr.Length == 2)
-                            {
-                                padding[0] = padding[2] = Util.DpParse(strArr[0]);
-                                padding[1] = padding[3] = Util.DpParse(strArr[1]);
-                            }
-                            else if (strArr.Length == 4)
-                            {
-                                padding[0] = Util.DpParse(strArr[0]);
-                                padding[1] = Util.DpParse(strArr[1]);
-                                padding[2] = Util.DpParse(strArr[2]);
-                                padding[3] = Util.DpParse(strArr[3]);
-                            }
-                        }
-                        SetPadding(padding[0], padding[1], padding[2], padding[3]);
-                        break;
+                        padding[0] = padding[1] = padding[2] = padding[3] = i32;
                     }
+                    else if (value is int[] arr)
+                    {
+                        padding[0] = Util.DpParse(arr[0]);
+                        padding[1] = Util.DpParse(arr[1]);
+                        padding[2] = Util.DpParse(arr[2]);
+                        padding[3] = Util.DpParse(arr[3]);
+                    }
+                    else if (value is string str)
+                    {
+                        var strArr = str.Split(",");
+                        if (strArr.Length == 1)
+                        {
+                            var temp = Util.DpParse(strArr[0]);
+                            padding[0] = padding[1] = padding[2] = padding[3] = temp;
+                        }
+                        else if (strArr.Length == 2)
+                        {
+                            padding[0] = padding[2] = Util.DpParse(strArr[0]);
+                            padding[1] = padding[3] = Util.DpParse(strArr[1]);
+                        }
+                        else if (strArr.Length == 4)
+                        {
+                            padding[0] = Util.DpParse(strArr[0]);
+                            padding[1] = Util.DpParse(strArr[1]);
+                            padding[2] = Util.DpParse(strArr[2]);
+                            padding[3] = Util.DpParse(strArr[3]);
+                        }
+                    }
+                    SetPadding(padding[0], padding[1], padding[2], padding[3]);
+                    break;
+                }
                 case "alpha":
-                    {
-                        if (value is string temp)
-                            this.Alpha = float.Parse(temp.Trim());
-                        break;
-                    }
+                {
+                    if (value is string temp)
+                        this.Alpha = float.Parse(temp.Trim());
+                    break;
+                }
                 case "bg":
-                    {
-                        if (value is string temp)
-                            this.Background = new ColorDrawable(Color.ParseColor(temp));
-                        break;
-                    }
+                {
+                    if (value is string temp)
+                        this.Background = new ColorDrawable(Color.ParseColor(temp));
+                    break;
+                }
                 case "fg":
-                    {
-                        if (value is string temp)
-                            this.Foreground = new ColorDrawable(Color.ParseColor(temp));
-                        break;
-                    }
+                {
+                    if (value is string temp)
+                        this.Foreground = new ColorDrawable(Color.ParseColor(temp));
+                    break;
+                }
                 case "radius":
+                {
+                    var radius = new float[8];
+                    if (value is int i32)
                     {
-                        var radius = new float[8];
-                        if (value is int i32)
-                        {
-                            radius[0] = radius[1] = radius[2] = radius[3] = radius[4] = radius[5] = radius[6] = radius[7] = i32;
-                        }
-                        else if (value is int[] arr)
-                        {
-                            radius[0] = Util.DpParse(arr[0]);
-                            radius[1] = Util.DpParse(arr[1]);
-                            radius[2] = Util.DpParse(arr[2]);
-                            radius[3] = Util.DpParse(arr[3]);
-                            radius[4] = Util.DpParse(arr[4]);
-                            radius[5] = Util.DpParse(arr[5]);
-                            radius[6] = Util.DpParse(arr[6]);
-                            radius[7] = Util.DpParse(arr[7]);
-                        }
-                        else if (value is string str)
-                        {
-                            var strArr = str.Split(",");
-                            if (strArr.Length == 1)
-                            {
-                                var temp = Util.DpParse(strArr[0]);
-                                radius[0] = radius[1] = radius[2] = radius[3] = radius[4] = radius[5] = radius[6] = radius[7] = temp;
-                            }
-                            else if (strArr.Length == 4)
-                            {
-                                radius[0] = radius[1] = Util.DpParse(strArr[0]);
-                                radius[2] = radius[3] = Util.DpParse(strArr[1]);
-                                radius[4] = radius[5] = Util.DpParse(strArr[2]);
-                                radius[6] = radius[7] = Util.DpParse(strArr[3]);
-                            }
-                            else if (strArr.Length == 8)
-                            {
-                                radius[0] = Util.DpParse(strArr[0]);
-                                radius[1] = Util.DpParse(strArr[1]);
-                                radius[2] = Util.DpParse(strArr[2]);
-                                radius[3] = Util.DpParse(strArr[3]);
-                                radius[4] = Util.DpParse(strArr[4]);
-                                radius[5] = Util.DpParse(strArr[5]);
-                                radius[6] = Util.DpParse(strArr[6]);
-                                radius[7] = Util.DpParse(strArr[7]);
-                            }
-                        }
-                        radius.CopyTo(this.Radius, 0);
-                        break;
+                        radius[0] = radius[1] = radius[2] = radius[3] = radius[4] = radius[5] = radius[6] = radius[7] = i32;
                     }
+                    else if (value is int[] arr)
+                    {
+                        radius[0] = Util.DpParse(arr[0]);
+                        radius[1] = Util.DpParse(arr[1]);
+                        radius[2] = Util.DpParse(arr[2]);
+                        radius[3] = Util.DpParse(arr[3]);
+                        radius[4] = Util.DpParse(arr[4]);
+                        radius[5] = Util.DpParse(arr[5]);
+                        radius[6] = Util.DpParse(arr[6]);
+                        radius[7] = Util.DpParse(arr[7]);
+                    }
+                    else if (value is string str)
+                    {
+                        var strArr = str.Split(",");
+                        if (strArr.Length == 1)
+                        {
+                            var temp = Util.DpParse(strArr[0]);
+                            radius[0] = radius[1] = radius[2] = radius[3] = radius[4] = radius[5] = radius[6] = radius[7] = temp;
+                        }
+                        else if (strArr.Length == 4)
+                        {
+                            radius[0] = radius[1] = Util.DpParse(strArr[0]);
+                            radius[2] = radius[3] = Util.DpParse(strArr[1]);
+                            radius[4] = radius[5] = Util.DpParse(strArr[2]);
+                            radius[6] = radius[7] = Util.DpParse(strArr[3]);
+                        }
+                        else if (strArr.Length == 8)
+                        {
+                            radius[0] = Util.DpParse(strArr[0]);
+                            radius[1] = Util.DpParse(strArr[1]);
+                            radius[2] = Util.DpParse(strArr[2]);
+                            radius[3] = Util.DpParse(strArr[3]);
+                            radius[4] = Util.DpParse(strArr[4]);
+                            radius[5] = Util.DpParse(strArr[5]);
+                            radius[6] = Util.DpParse(strArr[6]);
+                            radius[7] = Util.DpParse(strArr[7]);
+                        }
+                    }
+                    radius.CopyTo(this.Radius, 0);
+                    break;
+                }
                 case "visibility":
-                    {
-                        this.Visibility = Util.EnumParse<ViewStates>(value);
-                        break;
-                    }
+                {
+                    this.Visibility = Util.EnumParse<ViewStates>(value);
+                    break;
+                }
                 case "rotation":
-                    {
-                        if (value is string temp)
-                            this.Rotation = float.Parse(temp.Trim());
-                        break;
-                    }
+                {
+                    if (value is string temp)
+                        this.Rotation = float.Parse(temp.Trim());
+                    break;
+                }
                 case "transformPivotX":
-                    {
-                        if (value is string temp)
-                            this.TranslationX = float.Parse(temp.Trim());
-                        break;
-                    }
+                {
+                    if (value is string temp)
+                        this.TranslationX = float.Parse(temp.Trim());
+                    break;
+                }
                 case "transformPivotY":
-                    {
-                        if (value is string temp)
-                            this.TranslationY = float.Parse(temp.Trim());
-                        break;
-                    }
+                {
+                    if (value is string temp)
+                        this.TranslationY = float.Parse(temp.Trim());
+                    break;
+                }
                 default:
                     throw new AttributeNotExistException(key);
             }
@@ -325,11 +325,11 @@ namespace astator.Core.UI.Widget
             switch (key)
             {
                 case "attached":
-                    {
-                        if (listener is OnAttachedListener temp)
-                            this.onAttachedListener = temp;
-                        break;
-                    }
+                {
+                    if (listener is OnAttachedListener temp)
+                        this.onAttachedListener = temp;
+                    break;
+                }
                 default:
                     this.OnListener(key, listener);
                     break;

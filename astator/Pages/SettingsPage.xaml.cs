@@ -7,6 +7,7 @@ using System.IO.Compression;
 using System.Net;
 using System.Net.Sockets;
 using System.Reactive.Linq;
+using Path = System.IO.Path;
 
 namespace astator.Pages
 {
@@ -59,10 +60,21 @@ namespace astator.Pages
             }
         }
 
+        private void Floaty_Toggled(object sender, ToggledEventArgs e)
+        {
+            if (e.Value)
+            {
+                FloatyManager.Instance.Show();
+            }
+            else
+            {
+                FloatyManager.Instance.Remove();
+            }
+        }
+
 
         private TcpListener tcpListener;
         private CancellationTokenSource tokenSource;
-        private ScriptLogger logger = ScriptLogger.Instance;
 
         private async void DebugService_Toggled(object sender, ToggledEventArgs e)
         {
@@ -74,7 +86,7 @@ namespace astator.Pages
                     this.tokenSource = new CancellationTokenSource();
                     this.tcpListener = new TcpListener(IPAddress.Parse(hostAddress), 1024);
                     this.tcpListener.Start();
-                    ScriptLogger.Instance.Log("开启调试服务");
+                    ScriptLogger.Log("开启调试服务");
                     this.HostAddress.Text = $"({hostAddress})";
                     while (true)
                     {
@@ -84,12 +96,12 @@ namespace astator.Pages
                 }
                 catch (OperationCanceledException)
                 {
-                    ScriptLogger.Instance.Log("停止调试服务");
+                    ScriptLogger.Log("停止调试服务");
                     this.HostAddress.Text = string.Empty;
                 }
                 catch (Exception ex)
                 {
-                    ScriptLogger.Instance.Error(ex.Message);
+                    ScriptLogger.Error(ex.Message);
                 }
             }
             else
@@ -108,9 +120,7 @@ namespace astator.Pages
                 var info = $"{Globals.Devices.Brand} {Globals.Devices.Model}";
                 await stream.WriteAsync(Stick.MakePackData("init", info));
 
-                var logger = ScriptLogger.Instance;
-
-                var key = logger.AddCallback("info", async (args) =>
+                var key = ScriptLogger.AddCallback("info", async (args) =>
                 {
                     var pack = Stick.MakePackData("showMessage", $"[{info}] {args.Time:HH:mm:ss.fff}: {args.Message}");
                     await stream.WriteAsync(pack);
@@ -134,7 +144,7 @@ namespace astator.Pages
                                     archive.ExtractToDirectory(directory);
                                 }
 
-                                ScriptManager.Instance.RunProject(directory, data.Description);
+                                _ = ScriptManager.Instance.RunProject(directory);
 
                                 break;
                             }
@@ -194,7 +204,7 @@ namespace astator.Pages
                     }
                     catch (Exception)
                     {
-                        logger.RemoveCallback(key);
+                        ScriptLogger.RemoveCallback(key);
                     }
                 }
 
@@ -207,6 +217,11 @@ namespace astator.Pages
         }
 
         private void CaptureService_Clicked(object sender, EventArgs e)
+        {
+            this.CaptureService.IsToggled = !this.CaptureService.IsToggled;
+        }
+
+        private void Floaty_Clicked(object sender, EventArgs e)
         {
             this.CaptureService.IsToggled = !this.CaptureService.IsToggled;
         }

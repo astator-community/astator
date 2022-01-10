@@ -73,9 +73,34 @@
             </v:CustomCard>
             <v:CustomCard
                 Padding="20,0"
+                Clicked="Floaty_Clicked"
+                ColumnDefinitions="auto,*,auto"
+                GridLayout.Row="2">
+                <Image
+                    GridLayout.Column="0"
+                    HeightRequest="24"
+                    Source="floaty.png"
+                    VerticalOptions="Center" />
+                <Label
+                    Margin="5,0"
+                    FontAttributes="Bold"
+                    FontSize="16"
+                    GridLayout.Column="1"
+                    Text="悬浮窗"
+                    VerticalOptions="Center" />
+                <Switch
+                    x:Name="Floaty"
+                    GridLayout.Column="2"
+                    OnColor="#2f88ff"
+                    ThumbColor="#535c64"
+                    Toggled="Floaty_Toggled"
+                    VerticalOptions="Center" />
+            </v:CustomCard>
+            <v:CustomCard
+                Padding="20,0"
                 Clicked="DebugService_Clicked"
                 ColumnDefinitions="auto,auto,*,auto,auto"
-                GridLayout.Row="2">
+                GridLayout.Row="3">
                 <Image
                     GridLayout.Column="0"
                     HeightRequest="24"
@@ -106,7 +131,7 @@
                 Padding="20,0"
                 Clicked="Info_Clicked"
                 ColumnDefinitions="auto,*"
-                GridLayout.Row="3">
+                GridLayout.Row="4">
                 <Image
                     GridLayout.Column="0"
                     HeightRequest="24"

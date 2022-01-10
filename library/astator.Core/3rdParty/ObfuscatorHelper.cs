@@ -90,7 +90,7 @@ namespace astator.Core.ThirdParty
 
             if (rules.EntryType is null)
             {
-                ScriptLogger.Instance.Warn("未指定入口类名称!");
+                ScriptLogger.Warn("未指定入口类名称!");
             }
 
             var xml =
@@ -124,7 +124,7 @@ namespace astator.Core.ThirdParty
             }
             catch (Exception ex)
             {
-                ScriptLogger.Instance.Error(ex.Message);
+                ScriptLogger.Error(ex.Message);
                 return false;
             }
         }

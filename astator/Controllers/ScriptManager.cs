@@ -27,8 +27,6 @@ public class ScriptManager
         }
     }
 
-    private static ScriptLogger Logger => ScriptLogger.Instance;
-
     private readonly ConcurrentDictionary<string, ScriptRuntime> runtimes = new();
 
     private int step = 0;
@@ -37,7 +35,7 @@ public class ScriptManager
 
     public void GetId(ref string id)
     {
-        lock (locker)
+        lock (this.locker)
         {
             if (id is null)
             {
@@ -52,169 +50,175 @@ public class ScriptManager
         }
     }
 
-    public async void RunScript(string path, string id)
+    public async Task<ScriptRuntime> RunScript(string path)
     {
-        await Task.Run(async () =>
-        {
-            GetId(ref id);
+        return await Task.Run(async () =>
+         {
+             var id = Path.GetFileNameWithoutExtension(path);
+             GetId(ref id);
 
-            var directory = Path.GetDirectoryName(path);
-            var engine = new ScriptEngine();
+             var directory = Path.GetDirectoryName(path);
+             var engine = new ScriptEngine();
 
-            engine.ParseCsx(path);
+             engine.ParseCsx(path);
 
-            var emitResult = engine.Compile();
+             var emitResult = engine.Compile();
 
-            if (!emitResult.Success)
-            {
-                foreach (var item in emitResult.Diagnostics)
-                {
-                    Logger.Error("编译失败: " + item.ToString());
-                }
-                return;
-            }
+             if (!emitResult.Success)
+             {
+                 foreach (var item in emitResult.Diagnostics)
+                 {
+                     Logger.Error("编译失败: " + item.ToString());
+                 }
+                 return null;
+             }
 
-            var method = engine.GetEntryMethod();
-            if (method is null)
-            {
-                Logger.Error("未找到入口方法!");
-                return;
-            }
-            var isUiMode = method.GetCustomAttribute<EntryMethod>().IsUIMode;
+             var method = engine.GetEntryMethod();
+             if (method is null)
+             {
+                 Logger.Error("未找到入口方法!");
+                 return null;
+             }
+             var isUiMode = method.GetCustomAttribute<EntryMethod>().IsUIMode;
 
-            Logger.Log("脚本开始运行: " + id);
+             ScriptLogger.Log("脚本开始运行: " + id);
 
-            ScriptRuntime runtime;
+             ScriptRuntime runtime;
 
-            if (isUiMode)
-            {
-                var activity = await StartScriptActivity(id);
-                runtime = new ScriptRuntime(id, engine, activity, directory);
+             if (isUiMode)
+             {
+                 var activity = await StartScriptActivity(id);
+                 runtime = new ScriptRuntime(id, engine, activity, directory);
 
-                Device.BeginInvokeOnMainThread(() =>
-                {
-                    try
-                    {
-                        engine.Execute(method, runtime);
-                    }
-                    catch (Exception ex)
-                    {
-                        Logger.Error(ex.ToString());
-                    }
-                });
-            }
-            else
-            {
-                runtime = new ScriptRuntime(id, engine, directory);
+                 Device.BeginInvokeOnMainThread(() =>
+                 {
+                     try
+                     {
+                         engine.Execute(method, runtime);
+                     }
+                     catch (Exception ex)
+                     {
+                         Logger.Error(ex.ToString());
+                     }
+                 });
+             }
+             else
+             {
+                 runtime = new ScriptRuntime(id, engine, directory);
 
-                runtime.Threads.Start(() =>
-                {
-                    engine.Execute(method, runtime);
-                });
-            }
+                 runtime.Threads.Start(() =>
+                 {
+                     engine.Execute(method, runtime);
+                 });
+             }
 
-            this.runtimes.TryAdd(id, runtime);
-        });
+             this.runtimes.TryAdd(id, runtime);
+
+             return runtime;
+         });
     }
 
-    public async void RunProject(string directory, string id)
+    public async Task<ScriptRuntime> RunProject(string directory)
     {
-        await Task.Run(async () =>
-        {
-            var csprojPath = Directory.GetFiles(directory, "*.csproj", SearchOption.AllDirectories)[0];
+        return await Task.Run(async () =>
+         {
+             var csprojPath = Directory.GetFiles(directory, "*.csproj", SearchOption.AllDirectories)[0];
 
-            GetId(ref id);
+             var id = Path.GetFileNameWithoutExtension(csprojPath);
+             GetId(ref id);
 
-            var xd = XDocument.Load(csprojPath);
+             var xd = XDocument.Load(csprojPath);
 
-            var config = xd.Descendants("ScriptConfig");
-
-
-            var itemGroup = xd.Descendants("ItemGroup");
-            var references = from element in itemGroup.Elements()
-                             where element.Name == "Reference"
-                             from attr in element.Attributes()
-                             where attr.Value.EndsWith(".dll")
-                             select attr.Value;
+             var config = xd.Descendants("ScriptConfig");
 
 
-            var engine = new ScriptEngine();
+             var itemGroup = xd.Descendants("ItemGroup");
+             var references = from element in itemGroup.Elements()
+                              where element.Name == "Reference"
+                              from attr in element.Attributes()
+                              where attr.Value.EndsWith(".dll")
+                              select attr.Value;
 
-            foreach (var reference in references)
-            {
-                if (reference.StartsWith("."))
-                {
-                    var absolutePath = Path.Combine(directory, reference);
-                    if (File.Exists(absolutePath))
-                    {
-                        engine.LoadReference(absolutePath);
-                    }
-                }
-                else
-                {
-                    engine.LoadReference(reference);
-                }
-            }
 
-            var scripts = Directory.GetFiles(directory, "*.cs", SearchOption.AllDirectories);
+             var engine = new ScriptEngine();
 
-            foreach (var script in scripts)
-            {
-                engine.ParseScriptFromFile(script);
-            }
+             foreach (var reference in references)
+             {
+                 if (reference.StartsWith("."))
+                 {
+                     var absolutePath = Path.Combine(directory, reference);
+                     if (File.Exists(absolutePath))
+                     {
+                         engine.LoadReference(absolutePath);
+                     }
+                 }
+                 else
+                 {
+                     engine.LoadReference(reference);
+                 }
+             }
 
-            var emitResult = engine.Compile();
+             var scripts = Directory.GetFiles(directory, "*.cs", SearchOption.AllDirectories);
 
-            if (!emitResult.Success)
-            {
-                foreach (var item in emitResult.Diagnostics)
-                {
-                    Logger.Error("编译失败: " + item.ToString());
-                }
-                return;
-            }
+             foreach (var script in scripts)
+             {
+                 engine.ParseScriptFromFile(script);
+             }
 
-            var method = engine.GetEntryMethod();
-            if (method is null)
-            {
-                Logger.Error("未找到入口方法!");
-                return;
-            }
-            var isUiMode = method.GetCustomAttribute<EntryMethod>().IsUIMode;
+             var emitResult = engine.Compile();
 
-            Logger.Log("脚本开始运行: " + id);
+             if (!emitResult.Success)
+             {
+                 foreach (var item in emitResult.Diagnostics)
+                 {
+                     Logger.Error("编译失败: " + item.ToString());
+                 }
+                 return null;
+             }
 
-            ScriptRuntime runtime;
+             var method = engine.GetEntryMethod();
+             if (method is null)
+             {
+                 Logger.Error("未找到入口方法!");
+                 return null;
+             }
+             var isUiMode = method.GetCustomAttribute<EntryMethod>().IsUIMode;
 
-            if (isUiMode)
-            {
-                var activity = await StartScriptActivity(id);
-                runtime = new ScriptRuntime(id, engine, activity, directory);
+             ScriptLogger.Log("脚本开始运行: " + id);
 
-                Device.BeginInvokeOnMainThread(() =>
-                {
-                    try
-                    {
-                        engine.Execute(method, runtime);
-                    }
-                    catch (Exception ex)
-                    {
-                        Logger.Error(ex.ToString());
-                    }
-                });
-            }
-            else
-            {
-                runtime = new ScriptRuntime(id, engine, directory);
+             ScriptRuntime runtime;
 
-                runtime.Threads.Start(() =>
-                {
-                    engine.Execute(method, runtime);
-                });
-            }
+             if (isUiMode)
+             {
+                 var activity = await StartScriptActivity(id);
+                 runtime = new ScriptRuntime(id, engine, activity, directory);
 
-            this.runtimes.TryAdd(id, runtime);
-        });
+                 Device.BeginInvokeOnMainThread(() =>
+                 {
+                     try
+                     {
+                         engine.Execute(method, runtime);
+                     }
+                     catch (Exception ex)
+                     {
+                         Logger.Error(ex.ToString());
+                     }
+                 });
+             }
+             else
+             {
+                 runtime = new ScriptRuntime(id, engine, directory);
+
+                 runtime.Threads.Start(() =>
+                 {
+                     engine.Execute(method, runtime);
+                 });
+             }
+
+             this.runtimes.TryAdd(id, runtime);
+
+             return runtime;
+         });
     }
 
     private static async Task<TemplateActivity> StartScriptActivity(string id)
@@ -243,11 +247,11 @@ public class ScriptManager
 
     public void Stop(string key)
     {
-        foreach (var _key in runtimes.Keys.ToList())
+        foreach (var _key in this.runtimes.Keys.ToList())
         {
             if (_key.Equals(key))
             {
-                runtimes.TryRemove(key, out var runtime);
+                this.runtimes.TryRemove(key, out var runtime);
                 runtime.SetStop();
             }
 
@@ -256,9 +260,9 @@ public class ScriptManager
 
     public void StopAll()
     {
-        foreach (var key in runtimes.Keys.ToList())
+        foreach (var key in this.runtimes.Keys.ToList())
         {
-            runtimes.TryRemove(key, out var runtime);
+            this.runtimes.TryRemove(key, out var runtime);
             runtime.SetStop();
         }
     }

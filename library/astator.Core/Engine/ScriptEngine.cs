@@ -209,7 +209,7 @@ namespace astator.Core.Engine
             }
             catch (Exception ex)
             {
-                ScriptLogger.Instance.Error(ex.ToString());
+                ScriptLogger.Error(ex.ToString());
             }
         }
 
@@ -241,7 +241,7 @@ namespace astator.Core.Engine
             }
             catch (Exception ex)
             {
-                ScriptLogger.Instance.Error(ex.ToString());
+                ScriptLogger.Error(ex.ToString());
             }
 
             return null;

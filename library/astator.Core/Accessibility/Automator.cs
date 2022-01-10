@@ -8,7 +8,7 @@ namespace astator.Core.Accessibility
     /// </summary>
     public static class Automator
     {
-        private static ScriptAccessibilityService Service { get => ScriptAccessibilityService.Instance; }
+        private static ScriptAccessibilityService Service => ScriptAccessibilityService.Instance;
 
         public static void Click(int x, int y, int duration = 1)
         {
@@ -35,7 +35,7 @@ namespace astator.Core.Accessibility
 
         public static void GetWindow()
         {
-          // Service.win
+            // Service.win
         }
 
     }

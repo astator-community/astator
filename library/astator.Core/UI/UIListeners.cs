@@ -192,7 +192,7 @@ namespace astator.Core.UI
         }
         public bool OnMenuItemClick(IMenuItem item)
         {
-            return callBack.Invoke(item);
+            return this.callBack.Invoke(item);
         }
     }
 }

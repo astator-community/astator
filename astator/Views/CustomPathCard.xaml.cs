@@ -1,11 +1,8 @@
 using Android.Content;
-using Android.Media;
 using Android.Views;
-using Android.Webkit;
 using astator.Controllers;
 using astator.Core;
 using astator.Core.UI;
-using Microsoft.Maui.Controls.Compatibility;
 using Microsoft.Maui.Platform;
 
 namespace astator.Views
@@ -70,64 +67,54 @@ namespace astator.Views
 
             var view = this.Handler.NativeView as LayoutViewGroup;
 
-            if (TypeImageSource != "dir.png")
+            if (this.TypeImageSource != "dir.png")
             {
                 var menu = new AndroidX.AppCompat.Widget.PopupMenu(Globals.AppContext, view, (int)GravityFlags.Right);
 
-                if (PathName.EndsWith(".csproj"))
+                if (this.PathName.EndsWith(".csproj"))
                 {
                     menu.Menu.Add("运行项目");
                     menu.Menu.Add("打包apk");
                     menu.Menu.Add("编译dll");
-
-                    Clicked += (sender, e) =>
-                    {
-                        ScriptManager.Instance.RunProject(Path.GetDirectoryName(Tag.ToString()), Path.GetFileNameWithoutExtension(PathName));
-                    };
                 }
-                else if (PathName.EndsWith(".csx"))
+                else if (this.PathName.EndsWith(".csx"))
                 {
                     menu.Menu.Add("运行脚本");
-
-                    Clicked += (sender, e) =>
-                    {
-                        ScriptManager.Instance.RunScript(Tag.ToString(), Path.GetFileNameWithoutExtension(PathName));
-                    };
                 }
 
                 menu.Menu.Add("其他应用打开");
 
 
                 menu.SetOnMenuItemClickListener(new OnMenuItemClickListener((item) =>
-               {
-                   if (item.TitleFormatted.ToString() == "运行项目")
-                   {
-                       ScriptManager.Instance.RunProject(Path.GetDirectoryName(Tag.ToString()), Path.GetFileNameWithoutExtension(PathName));
-                   }
-                   else if (item.TitleFormatted.ToString() == "运行脚本")
-                   {
-                       ScriptManager.Instance.RunScript(Tag.ToString(), Path.GetFileNameWithoutExtension(PathName));
-                   }
-                   else if (item.TitleFormatted.ToString() == "其他应用打开")
-                   {
-                       var path = Tag.ToString();
-                       var intent = new Intent(Intent.ActionView);
-                       intent.AddFlags(ActivityFlags.NewTask);
+                {
+                    if (item.TitleFormatted.ToString() == "运行项目")
+                    {
+                        _ = ScriptManager.Instance.RunProject(Path.GetDirectoryName(this.Tag.ToString()));
+                    }
+                    else if (item.TitleFormatted.ToString() == "运行脚本")
+                    {
+                        _ = ScriptManager.Instance.RunScript(this.Tag.ToString());
+                    }
+                    else if (item.TitleFormatted.ToString() == "其他应用打开")
+                    {
+                        var path = this.Tag.ToString();
+                        var intent = new Intent(Intent.ActionView);
+                        intent.AddFlags(ActivityFlags.NewTask);
 
-                       var contentType = new FileResult(Tag.ToString()).ContentType;
+                        var contentType = new FileResult(this.Tag.ToString()).ContentType;
 
-                       var uri = AndroidX.Core.Content.FileProvider.GetUriForFile(Android.App.Application.Context,
-                           Android.App.Application.Context.PackageName + ".fileProvider",
-                           new Java.IO.File(path));
+                        var uri = AndroidX.Core.Content.FileProvider.GetUriForFile(Android.App.Application.Context,
+                            Android.App.Application.Context.PackageName + ".fileProvider",
+                            new Java.IO.File(path));
 
-                       intent.AddFlags(ActivityFlags.GrantReadUriPermission | ActivityFlags.GrantWriteUriPermission);
-                       intent.SetDataAndType(uri, contentType);
+                        intent.AddFlags(ActivityFlags.GrantReadUriPermission | ActivityFlags.GrantWriteUriPermission);
+                        intent.SetDataAndType(uri, contentType);
 
-                       Globals.AppContext.StartActivity(intent);
-                   }
-                   //MenuItemClicked?.Invoke(this, new MenuItemOnMenuItemClickEventArgs(true, item));
-                   return true;
-               }));
+                        Globals.AppContext.StartActivity(intent);
+                    }
+                    //MenuItemClicked?.Invoke(this, new MenuItemOnMenuItemClickEventArgs(true, item));
+                    return true;
+                }));
 
                 view.SetOnLongClickListener(new OnLongClickListener((v) =>
                 {

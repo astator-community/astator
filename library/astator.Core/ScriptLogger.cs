@@ -39,30 +39,31 @@ namespace astator.Core
 
         private readonly ConcurrentDictionary<string, Action<LogArgs>> callbacks = new();
 
-        private readonly object locker = new();
 
-        public string AddCallback(string key, Action<LogArgs> action)
+        private static readonly object locker = new();
+
+        public static string AddCallback(string key, Action<LogArgs> action)
         {
             lock (locker)
             {
-                if (this.callbacks.ContainsKey(key))
+                if (Instance.callbacks.ContainsKey(key))
                 {
                     key += DateTime.Now.ToString("HH-mm-ss-fff");
                 }
-                this.callbacks.TryAdd(key, action);
+                Instance.callbacks.TryAdd(key, action);
                 return key;
             }
         }
 
-        public void RemoveCallback(string key)
+        public static void RemoveCallback(string key)
         {
             lock (locker)
             {
-                foreach (var _key in this.callbacks.Keys.ToList())
+                foreach (var _key in Instance.callbacks.Keys.ToList())
                 {
                     if (_key.StartsWith(key))
                     {
-                        this.callbacks.TryRemove(_key, out _);
+                        Instance.callbacks.TryRemove(_key, out _);
                     }
                 }
             }
@@ -70,7 +71,7 @@ namespace astator.Core
 
         public ScriptLogger()
         {
-            var path = Path.Combine(Android.App.Application.Context.GetExternalFilesDir("Log").ToString(), "log.txt");
+            var path = Path.Combine(Android.App.Application.Context.GetExternalFilesDir("log").ToString(), "log.txt");
             var config = new LoggingConfiguration();
             var methodCallTarget = new MethodCallTarget("AddMessage", (logEvent, parameters) =>
             {
@@ -104,39 +105,39 @@ namespace astator.Core
                 GetCurrentClassLogger();
         }
 
-        public void Log(params object[] items)
+        public static void Log(params object[] items)
         {
-            this.logger.Debug(GetMessage(items));
+            Instance.logger.Debug(GetMessage(items));
         }
 
-        public void Debug(params object[] items)
+        public static void Debug(params object[] items)
         {
-            this.logger.Debug(GetMessage(items));
+            Instance.logger.Debug(GetMessage(items));
         }
 
-        public void Info(params object[] items)
+        public static void Info(params object[] items)
         {
-            this.logger.Info(GetMessage(items));
+            Instance.logger.Info(GetMessage(items));
         }
 
-        public void Error(params object[] items)
+        public static void Error(params object[] items)
         {
-            this.logger.Error(GetMessage(items));
+            Instance.logger.Error(GetMessage(items));
         }
 
-        public void Warn(params object[] items)
+        public static void Warn(params object[] items)
         {
-            this.logger.Warn(GetMessage(items));
+            Instance.logger.Warn(GetMessage(items));
         }
 
-        public void Trace(params object[] items)
+        public static void Trace(params object[] items)
         {
-            this.logger.Trace(GetMessage(items));
+            Instance.logger.Trace(GetMessage(items));
         }
 
-        public void Fatal(params object[] items)
+        public static void Fatal(params object[] items)
         {
-            this.logger.Fatal(GetMessage(items));
+            Instance.logger.Fatal(GetMessage(items));
         }
 
         private static StringBuilder GetMessage(params object[] items)

@@ -4,6 +4,7 @@ using astator.Core.Threading;
 using astator.Core.UI;
 using astator.Core.UI.Floaty;
 using System;
+using System.Collections.Generic;
 
 namespace astator.Core
 {
@@ -78,7 +79,7 @@ namespace astator.Core
         /// <summary>
         /// 脚本停止回调
         /// </summary>
-        public Action ExitCallback { get; set; }
+        public List<Action> ExitCallbacks { get; set; } = new();
 
         /// <summary>
         /// 脚本所在路径
@@ -88,7 +89,12 @@ namespace astator.Core
         /// <summary>
         /// 脚本自身的activity
         /// </summary>
-        private TemplateActivity activity;
+        public TemplateActivity Context { get; private set; }
+
+        /// <summary>
+        /// 在脚本停止时退出应用, 只在打包apk有效
+        /// </summary>
+        public bool IsExitAppOnStoped { get; set; }
 
         /// <summary>
         /// 脚本执行引擎
@@ -98,8 +104,8 @@ namespace astator.Core
         public ScriptRuntime(string id, ScriptEngine engine, TemplateActivity activity, string directory) : this(id, engine, directory)
         {
             this.IsUiMode = true;
-            this.activity = activity;
-            this.activity.OnFinished = () => { SetStop(); };
+            this.Context = activity;
+            this.Context.OnFinished = SetStop;
             this.Ui = new UiManager(activity, directory);
         }
         public ScriptRuntime(string id, ScriptEngine engine, string directory)
@@ -111,7 +117,7 @@ namespace astator.Core
             this.Threads = new ScriptThreadManager();
             this.Tasks = new ScriptTaskManager();
 
-            if (!IsUiMode)
+            if (!this.IsUiMode)
             {
                 this.Threads.ScriptExitCallback = Stop;
                 this.Threads.ScriptExitSignal = true;
@@ -120,7 +126,7 @@ namespace astator.Core
                 this.Tasks.ScriptExitSignal = true;
             }
 
-            this.Floatys = new FloatyManager(this.activity ?? Globals.AppContext, directory);
+            this.Floatys = new FloatyManager(this.Context ?? Globals.AppContext, directory);
         }
 
         /// <summary>
@@ -171,11 +177,22 @@ namespace astator.Core
 
             try
             {
-                this.ExitCallback?.Invoke();
+                foreach (var callback in this.ExitCallbacks)
+                {
+                    callback.Invoke();
+                }
                 this.Floatys?.RemoveAll();
                 ScreenCapturer.Instance?.Dispose();
                 this.engine.UnExecute();
-                ScriptLogger.Instance.Log("脚本停止运行: " + this.ScriptId);
+                ScriptLogger.Log("脚本停止运行: " + this.ScriptId);
+
+                if (this.IsExitAppOnStoped && Android.App.Application.Context.PackageName != "com.astator.astator")
+                {
+                    Globals.RunOnUiThread(() =>
+                    {
+                        Android.OS.Process.KillProcess(Android.OS.Process.MyPid());
+                    });
+                }
             }
             catch { }
             finally

@@ -1,5 +1,4 @@
 ﻿using Android.Graphics;
-using Android.OS;
 using Android.Views;
 using System;
 using static Android.Views.ViewGroup;
@@ -23,7 +22,7 @@ namespace astator.Core.UI.Floaty
         {
             this.view = view;
             var layoutParams = new WindowManagerLayoutParams();
-            if ((int)Build.VERSION.SdkInt >= 26)
+            if (OperatingSystem.IsAndroidVersionAtLeast(26))
             {
                 layoutParams.Type = WindowManagerTypes.ApplicationOverlay;
             }
@@ -33,18 +32,18 @@ namespace astator.Core.UI.Floaty
             }
             layoutParams.Format = Format.Transparent;
             layoutParams.Gravity = GravityFlags.Left | GravityFlags.Top;
-            layoutParams.Flags = WindowManagerFlags.NotFocusable;
+            layoutParams.Flags = WindowManagerFlags.NotFocusable | WindowManagerFlags.LayoutNoLimits;
 
             if (OperatingSystem.IsAndroidVersionAtLeast(30))
             {
                 layoutParams.LayoutInDisplayCutoutMode = LayoutInDisplayCutoutMode.ShortEdges;
             }
-          
+
             layoutParams.Width = LayoutParams.WrapContent;
             layoutParams.Height = LayoutParams.WrapContent;
             layoutParams.X = x;
             layoutParams.Y = y;
-            FloatyService.Instance.AddView(view, layoutParams);
+            FloatyService.Instance?.AddView(view, layoutParams);
             this.showed = true;
         }
 
@@ -55,13 +54,10 @@ namespace astator.Core.UI.Floaty
         /// <param name="y"></param>
         public void SetPosition(int x, int y)
         {
-            if (this.view.LayoutParameters is WindowManagerLayoutParams layoutParams)
-            {
-                layoutParams.X = x;
-                layoutParams.Y = y;
-                FloatyService.Instance.UpdateViewLayout(this.view, layoutParams);
-            }
-
+            var layoutParams = this.view.LayoutParameters as WindowManagerLayoutParams;
+            layoutParams.X = x;
+            layoutParams.Y = y;
+            FloatyService.Instance?.UpdateViewLayout(this.view, layoutParams);
         }
 
         /// <summary>
@@ -70,23 +66,20 @@ namespace astator.Core.UI.Floaty
         /// <returns></returns>
         public Point GetPosition()
         {
-            if (this.view.LayoutParameters is WindowManagerLayoutParams layoutParams)
-            {
-                return new Point(layoutParams.X, layoutParams.Y);
-            }
-            return new Point(-1, -1);
+            var layoutParams = this.view.LayoutParameters as WindowManagerLayoutParams;
+            return new Point(layoutParams.X, layoutParams.Y);
         }
 
         /// <summary>
         /// 移除悬浮窗
         /// </summary>
         /// <returns></returns>
-        public bool Remove()
+        internal bool Remove()
         {
             if (this.showed)
             {
                 this.showed = false;
-                FloatyService.Instance.RemoveView(this.view);
+                FloatyService.Instance?.RemoveView(this.view);
                 return true;
             }
             else

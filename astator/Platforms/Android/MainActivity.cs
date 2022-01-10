@@ -6,6 +6,7 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using astator.Core;
+using astator.Core.Broadcast;
 using astator.Core.Graphics;
 using astator.Core.UI.Floaty;
 using Microsoft.Maui.Platform;
@@ -50,11 +51,23 @@ namespace astator
                         StartActivityForResult(new Intent(Android.Provider.Settings.ActionManageAllFilesAccessPermission), 3);
                     }
                 }
+
+                var filter = new IntentFilter();
+                filter.AddAction(Intent.ActionConfigurationChanged);
+                filter.AddAction(Intent.CategoryHome);
+
+                RegisterReceiver(ScriptBroadcastReceiver.Instance, filter);
             }
             catch { }
 
             base.OnCreate(savedInstanceState);
             Platform.Init(this, savedInstanceState);
+        }
+
+        protected override void OnDestroy()
+        {
+            UnregisterReceiver(ScriptBroadcastReceiver.Instance);
+            base.OnDestroy();
         }
 
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, Permission[] grantResults)
@@ -107,7 +120,7 @@ namespace astator
                 else
                 {
                     this.latestTime = time;
-                    Globals.Toast("再按一次返回退出astator");
+                    Globals.Toast("再按一次返回退出应用");
                 }
                 return true;
             }

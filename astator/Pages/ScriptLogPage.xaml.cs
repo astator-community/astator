@@ -1,23 +1,23 @@
-using AndroidX.AppCompat.App;
+using Android.App;
 using astator.Core;
 using NLog;
 
 namespace astator.Pages
 {
-    public partial class LogPage : ContentPage
+    public partial class ScriptLogPage : ContentPage
     {
-        public LogPage()
+        public ScriptLogPage()
         {
             InitializeComponent();
 
-            ScriptLogger.AddCallback("logPage", AddLogText);
+            ScriptLogger.AddCallback("logPage", (value) => AddLogText(value));
 
             InitLogList();
         }
 
         private void InitLogList()
         {
-            var path = Path.Combine(MauiApplication.Current.GetExternalFilesDir("log").ToString(), "log.txt");
+            var path = Path.Combine(MauiApplication.Current.GetExternalFilesDir("Log").ToString(), "log.txt");
             var logList = new List<string>();
             if (File.Exists(path))
             {

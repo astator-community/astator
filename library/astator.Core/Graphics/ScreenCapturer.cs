@@ -12,7 +12,6 @@ using Android.Views;
 using AndroidX.Core.App;
 using AndroidX.Core.Graphics.Drawable;
 using System;
-using System.Collections.Generic;
 using Orientation = Android.Content.Res.Orientation;
 
 namespace astator.Core.Graphics
@@ -96,13 +95,13 @@ namespace astator.Core.Graphics
         {
             base.OnConfigurationChanged(newConfig);
 
-            if (newConfig.Orientation == currentOrientation)
+            if (newConfig.Orientation == this.currentOrientation)
             {
                 return;
             }
             else
             {
-                currentOrientation = newConfig.Orientation;
+                this.currentOrientation = newConfig.Orientation;
             }
 
             this.imageReader?.Close();

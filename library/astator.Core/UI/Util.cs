@@ -74,24 +74,24 @@ namespace astator.Core.UI
             switch (key)
             {
                 case "click":
-                    {
-                        if (listener is OnClickListener temp)
-                            view.SetOnClickListener(temp);
-                        break;
-                    }
+                {
+                    if (listener is OnClickListener temp)
+                        view.SetOnClickListener(temp);
+                    break;
+                }
 
                 case "longClick":
-                    {
-                        if (listener is OnLongClickListener temp)
-                            view.SetOnLongClickListener(temp);
-                        break;
-                    }
+                {
+                    if (listener is OnLongClickListener temp)
+                        view.SetOnLongClickListener(temp);
+                    break;
+                }
                 case "touch":
-                    {
-                        if (listener is OnTouchListener temp)
-                            view.SetOnTouchListener(temp);
-                        break;
-                    }
+                {
+                    if (listener is OnTouchListener temp)
+                        view.SetOnTouchListener(temp);
+                    break;
+                }
 
                 default: throw new ArgumentException(key + ": 未定义属性!");
             }
@@ -101,11 +101,11 @@ namespace astator.Core.UI
             switch (key)
             {
                 case "scrollChange":
-                    {
-                        if (listener is OnScrollChangeListener temp)
-                            view.SetOnScrollChangeListener(temp);
-                        break;
-                    }
+                {
+                    if (listener is OnScrollChangeListener temp)
+                        view.SetOnScrollChangeListener(temp);
+                    break;
+                }
                 default:
                     view.OnListener(key, listener);
                     break;

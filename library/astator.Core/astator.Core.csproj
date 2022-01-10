@@ -25,14 +25,20 @@
 
 
 	<ItemGroup>
-	  <ProjectReference Include="..\3rdparty\Obfuscar\Obfuscar\Obfuscar.csproj" />
+		<ProjectReference Include="..\3rdparty\Obfuscar\Obfuscar\Obfuscar.csproj" />
 	</ItemGroup>
 
 
 	<ItemGroup>
-	  <Reference Include="PaddleOcrBinding">
-	    <HintPath>..\3rdparty\PaddleOcrBinding\bin\Release\net6.0-android\PaddleOcrBinding.dll</HintPath>
-	  </Reference>
+		<Reference Include="PaddleOcrBinding">
+			<HintPath>..\3rdparty\PaddleOcrBinding\bin\Release\net6.0-android\PaddleOcrBinding.dll</HintPath>
+		</Reference>
 	</ItemGroup>
+
+	<Target Name="IncludeAllDependencies" BeforeTargets="_GetPackageFiles">
+		<ItemGroup>
+			<None Include="$(OutputPath)\net6.0-android\*.*" Exclude="$(OutputPath)\net6.0-android\*.exe;$(OutputPath)\net6.0-android\*.pdb" Pack="True" PackagePath="lib\net6.0-android31.0" />
+		</ItemGroup>
+	</Target>
 
 </Project>

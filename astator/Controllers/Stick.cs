@@ -47,26 +47,26 @@ public struct PackData
 
 public static class Stick
 {
-    public static byte[] MakePackData(string key, object body)
-    {
-        var pack = new PackData
-        {
-            Key = key,
-            Buffer = new NodeType
-            {
-                Type = "Buffer",
-                Data = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(body))
-            }
-        };
+    //public static byte[] MakePackData(string key, object body)
+    //{
+    //    var pack = new PackData
+    //    {
+    //        Key = key,
+    //        Buffer = new NodeType
+    //        {
+    //            Type = "Buffer",
+    //            Data = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(body))
+    //        }
+    //    };
 
-        var data = pack.ToBytes();
+    //    var data = pack.ToBytes();
 
-        var header = Int2Bytes(data.Length);
+    //    var header = Int2Bytes(data.Length);
 
-        var result = header.Concat(data).ToArray();
+    //    var result = header.Concat(data).ToArray();
 
-        return result;
-    }
+    //    return result;
+    //}
 
     public static byte[] MakePackData(string key, byte[] body)
     {
@@ -81,9 +81,7 @@ public static class Stick
         };
 
         var data = pack.ToBytes();
-
         var header = Int2Bytes(data.Length);
-
         var result = header.Concat(data).ToArray();
 
         return result;
