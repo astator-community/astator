@@ -17,6 +17,7 @@ astator的目标是使用c#作为脚本的安卓自动化软件
 
 ## 工作原理
 使用roslyn进行编译
+
 使用assemblyLoadContext进行插件隔离域的动态装卸
 
 
