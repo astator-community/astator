@@ -19,7 +19,7 @@
         <GridLayout
             Padding="0,5"
             GridLayout.Row="1"
-            RowDefinitions="40,40,40,40,40"
+            RowDefinitions="40,40,40,40,40,40"
             VerticalOptions="End">
             <v:CustomCard
                 Padding="20,0"
@@ -129,9 +129,27 @@
             </v:CustomCard>
             <v:CustomCard
                 Padding="20,0"
-                Clicked="Info_Clicked"
+                Clicked="NugetManage_Clicked"
                 ColumnDefinitions="auto,*"
                 GridLayout.Row="4">
+                <Image
+                    GridLayout.Column="0"
+                    HeightRequest="24"
+                    Source="manage.png"
+                    VerticalOptions="Center" />
+                <Label
+                    Margin="5,0"
+                    FontAttributes="Bold"
+                    FontSize="16"
+                    GridLayout.Column="1"
+                    Text="nuget包管理"
+                    VerticalOptions="Center" />
+            </v:CustomCard>
+            <v:CustomCard
+                Padding="20,0"
+                Clicked="About_Clicked"
+                ColumnDefinitions="auto,*"
+                GridLayout.Row="5">
                 <Image
                     GridLayout.Column="0"
                     HeightRequest="24"

@@ -74,50 +74,9 @@ namespace astator.Core.Engine
         /// <param name="path"></param>
         public void ParseScriptFromFile(string path)
         {
-            if (path.EndsWith(".cs") || path.EndsWith(".csx"))
+            if (path.EndsWith(".cs"))
             {
                 this.trees.Add(CSharpSyntaxTree.ParseText(File.ReadAllText(path), path: path, encoding: Encoding.UTF8));
-            }
-        }
-
-        /// <summary>
-        /// 解析csx脚本文件
-        /// </summary>
-        /// <param name="path"></param>
-        public void ParseCsx(string path)
-        {
-            var lines = File.ReadAllLines(path);
-            var directory = Path.GetDirectoryName(path);
-            for (var i = 0; i < lines.Length; i++)
-            {
-                var line = lines[i];
-                if (line.StartsWith("#"))
-                {
-                    if (line.StartsWith("#r"))
-                    {
-                        var reference = Path.Combine(directory, line[(line.IndexOf('"') + 1)..line.LastIndexOf('"')]);
-                        LoadReference(reference);
-                    }
-                    else if (line.StartsWith("#load"))
-                    {
-                        var script = Path.Combine(directory, line[(line.IndexOf('"') + 1)..line.LastIndexOf('"')]);
-                        if (script.EndsWith("csx"))
-                        {
-                            ParseCsx(script);
-                        }
-                        else if (script.EndsWith("cs"))
-                        {
-                            ParseScriptFromFile(script);
-                        }
-                    }
-                    lines[i] = lines[i].Replace("#", "//#");
-                }
-                else
-                {
-                    var text = string.Join("\r\n", lines);
-                    ParseScript(text, path);
-                    return;
-                }
             }
         }
 
@@ -214,10 +173,10 @@ namespace astator.Core.Engine
         }
 
         /// <summary>
-        /// 获取入口方法
+        /// 获取项目入口方法
         /// </summary>
         /// <returns></returns>
-        public MethodInfo GetEntryMethod()
+        public MethodInfo GetProjectEntryMethodInfo()
         {
             try
             {
@@ -229,11 +188,48 @@ namespace astator.Core.Engine
                     var methods = type.GetMethods();
                     foreach (var method in methods)
                     {
-                        if (Attribute.IsDefined(method, typeof(EntryMethod)))
+                        if (Attribute.IsDefined(method, typeof(ProjectEntryMethod)))
                         {
                             if (method.IsStatic && method.IsPublic)
                             {
                                 return method;
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ScriptLogger.Error(ex.ToString());
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// 获取脚本入口方法
+        /// </summary>
+        /// <returns></returns>
+        public MethodInfo GetScriptEntryMethodInfo(string flieName)
+        {
+            try
+            {
+                this.assembly.TryGetTarget(out var assembly);
+                var types = assembly.GetTypes();
+
+                foreach (var type in types)
+                {
+                    var methods = type.GetMethods();
+                    foreach (var method in methods)
+                    {
+                        if (Attribute.IsDefined(method, typeof(ScriptEntryMethod)))
+                        {
+                            if (method.IsStatic && method.IsPublic)
+                            {
+                                if (method.GetCustomAttribute<ScriptEntryMethod>().FileName == flieName)
+                                {
+                                    return method;
+                                }
                             }
                         }
                     }

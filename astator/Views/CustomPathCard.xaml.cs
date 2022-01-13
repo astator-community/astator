@@ -7,24 +7,8 @@ using Microsoft.Maui.Platform;
 
 namespace astator.Views
 {
-    public struct PathCardArgs
-    {
-        public object Tag;
-        public string PathName;
-        public string PathInfo;
-        public string TypeImageSource;
-        public string MoreImageSource;
-    }
-
     public partial class CustomPathCard : CustomCard
     {
-        public static readonly BindableProperty TagBindableProperty = BindableProperty.Create(nameof(Tag), typeof(object), typeof(CustomLabelButton));
-        public object Tag
-        {
-            get => GetValue(TagBindableProperty);
-            set => SetValue(TagBindableProperty, value);
-        }
-
         public static readonly BindableProperty TypeImageSourceBindableProperty = BindableProperty.Create(nameof(TypeImageSource), typeof(string), typeof(CustomPathCard));
         public string TypeImageSource
         {

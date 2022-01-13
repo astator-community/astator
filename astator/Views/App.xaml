@@ -11,6 +11,8 @@
 
             <Color x:Key="PrimaryColor">#f0f3f6</Color>
             <Color x:Key="SecondaryColor">#4a4a4d</Color>
+            <Color x:Key="FocusColor">#cad4de</Color>
+
 
             <Style TargetType="GridLayout">
                 <Setter Property="BackgroundColor" Value="{DynamicResource PrimaryColor}" />
@@ -29,6 +31,11 @@
             </Style>
 
             <Style TargetType="v:CustomLabelButton">
+                <Setter Property="TextColor" Value="{DynamicResource SecondaryColor}" />
+                <Setter Property="FontFamily" Value="CascadiaCode" />
+            </Style>
+
+            <Style TargetType="v:CustomLabel">
                 <Setter Property="TextColor" Value="{DynamicResource SecondaryColor}" />
                 <Setter Property="FontFamily" Value="CascadiaCode" />
             </Style>

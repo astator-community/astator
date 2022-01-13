@@ -25,7 +25,9 @@
 
 
 	<ItemGroup>
-		<ProjectReference Include="..\3rdparty\Obfuscar\Obfuscar\Obfuscar.csproj" />
+		<ProjectReference Include="..\3rdparty\Obfuscar\Obfuscar\Obfuscar.csproj">
+			<PrivateAssets>all</PrivateAssets>
+		</ProjectReference>
 	</ItemGroup>
 
 

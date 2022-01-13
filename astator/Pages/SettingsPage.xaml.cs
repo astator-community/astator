@@ -6,7 +6,6 @@ using astator.Core.Graphics;
 using System.IO.Compression;
 using System.Net;
 using System.Net.Sockets;
-using System.Reactive.Linq;
 using Path = System.IO.Path;
 
 namespace astator.Pages
@@ -231,11 +230,14 @@ namespace astator.Pages
             this.DebugService.IsToggled = !this.DebugService.IsToggled;
         }
 
-        private async void Info_Clicked(object sender, EventArgs e)
+        private async void NugetManage_Clicked(object sender, EventArgs e)
         {
-            var page = new AboutPage();
-            NavigationPage.SetHasNavigationBar(page, false);
-            await this.Navigation.PushAsync(page);
+            await this.Navigation.PushAsync(new NugetPage());
+        }
+
+        private async void About_Clicked(object sender, EventArgs e)
+        {
+            await this.Navigation.PushAsync(new AboutPage());
         }
     }
 }

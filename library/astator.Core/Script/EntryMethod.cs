@@ -3,6 +3,21 @@
 namespace astator.Core.Script;
 
 /// <summary>
+/// 项目入口方法特性
+/// </summary>
+public class ProjectEntryMethod : EntryMethod
+{
+}
+
+/// <summary>
+/// 脚本入口方法特性
+/// </summary>
+public class ScriptEntryMethod : EntryMethod
+{
+    public string FileName { get; set; }
+}
+
+/// <summary>
 /// 入口方法特性
 /// </summary>
 [AttributeUsage(AttributeTargets.Method)]

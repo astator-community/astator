@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<v:CustomCard
+    x:Class="astator.Views.PackageInfoCard"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:v="clr-namespace:astator.Views"
+    Padding="20,5"
+    ColumnDefinitions="auto,*,auto">
+
+
+    <Image
+        x:Name="Icon"
+        GridLayout.Column="0"
+        HeightRequest="45"
+        Source="nuget.png"
+        VerticalOptions="Center"
+        WidthRequest="45" />
+    <GridLayout
+        Padding="10,0"
+        BackgroundColor="Transparent"
+        GridLayout.Column="1"
+        RowDefinitions="auto,*">
+        <Label
+            FontSize="16"
+            GridLayout.Row="0"
+            Text="{Binding Source={RelativeSource FindAncestor, AncestorType={x:Type v:CustomCard}}, Path=PkgId}"
+            VerticalOptions="Start" />
+        <Label
+            FontSize="10"
+            GridLayout.Row="1"
+            Text="{Binding Source={RelativeSource FindAncestor, AncestorType={x:Type v:CustomCard}}, Path=Description}"
+            TextColor="#666666"
+            VerticalOptions="Center"
+            VerticalTextAlignment="Center" />
+    </GridLayout>
+    <Label
+        FontSize="12"
+        GridLayout.Column="2"
+        Text="{Binding Source={RelativeSource FindAncestor, AncestorType={x:Type v:CustomCard}}, Path=Version}"
+        VerticalOptions="Start" />
+
+</v:CustomCard>

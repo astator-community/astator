@@ -73,9 +73,7 @@ namespace astator
         private static void ReleaseProject()
         {
             var outputDir = Android.App.Application.Context.GetExternalFilesDir("project").ToString();
-            var projectPath = Android.App.Application.Context.Assets.List("Resources/ScriptFiles").FirstOrDefault(name => name == "project.zip");
-
-            using var stream = Android.App.Application.Context.Assets.Open(Path.Combine("Resources/ScriptFiles", projectPath));
+            using var stream = Android.App.Application.Context.Assets.Open(Path.Combine("Resources/ScriptFiles/project.zip"));
             using var zip = new ZipArchive(stream);
 
             if (Directory.Exists(outputDir))
@@ -109,6 +107,7 @@ namespace astator
                 }
                 File.WriteAllText(versionPath, version);
             };
+
         }
     }
 }

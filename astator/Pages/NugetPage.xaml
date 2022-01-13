@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="astator.Pages.NugetPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:v="clr-namespace:astator.Views"
+    NavigationPage.HasNavigationBar="False">
+
+    <GridLayout RowDefinitions="55,50,*">
+        <Label
+            x:Name="Header"
+            Margin="15,5"
+            FontAttributes="Bold"
+            FontSize="28"
+            GridLayout.Row="0"
+            HorizontalOptions="Start"
+            Text="nuget包管理"
+            VerticalOptions="Center" />
+        <GridLayout
+            Padding="20,5,10,5"
+            ColumnDefinitions="*,auto"
+            GridLayout.Row="1">
+            <Editor
+                x:Name="SearchEditor"
+                FontSize="20"
+                GridLayout.Column="0"
+                HeightRequest="50"
+                PlaceholderColor="#2F88FF"
+                TextChanged="SearchEditor_TextChanged"
+                TextColor="{DynamicResource SecondaryColor}"
+                VerticalOptions="Center"
+                VerticalTextAlignment="Center" />
+            <v:CustomImageButton
+                x:Name="SearchBtn"
+                Margin="5,0"
+                Padding="12"
+                BackgroundColor="Transparent"
+                Clicked="SearchBtn_Clicked"
+                GridLayout.Column="1"
+                HeightRequest="50"
+                HorizontalOptions="End"
+                Source="search.png"
+                VerticalOptions="Center"
+                WidthRequest="50" />
+        </GridLayout>
+
+        <RefreshView
+            x:Name="Refresh"
+            BackgroundColor="{DynamicResource PrimaryColor}"
+            GridLayout.Row="2"
+            IsRefreshing="False"
+            RefreshColor="#2F88FF"
+            Refreshing="Refresh_Refreshing">
+            <GridLayout>
+                <ScrollView Margin="0,10,0,0" GridLayout.Row="2">
+                    <VerticalStackLayout x:Name="PkgLayout">
+                        <VerticalStackLayout.Resources>
+                            <Style TargetType="v:PackageInfoCard">
+                                <Setter Property="MaximumHeightRequest" Value="80" />
+                            </Style>
+                        </VerticalStackLayout.Resources>
+                    </VerticalStackLayout>
+                </ScrollView>
+            </GridLayout>
+        </RefreshView>
+    </GridLayout>
+
+</ContentPage>

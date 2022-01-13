@@ -43,7 +43,6 @@
 
 	<ItemGroup>
 	  <PackageReference Include="System.Collections.Concurrent" Version="4.3.0" />
-	  <PackageReference Include="System.Reactive" Version="5.0.0" />
 	</ItemGroup>
 
 
@@ -60,6 +59,12 @@
 	  <MauiXaml Update="Pages\LogPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Pages\NugetPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Pages\PackageInfoPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Pages\ScriptLogPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
@@ -72,6 +77,9 @@
 	  <MauiXaml Update="Views\CustomPathCard.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Views\PackageInfoCard.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -82,20 +90,12 @@
 	  <MauiAsset Include="Resources\ScriptFiles\v220108-sdk.zip" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <None Remove="Resources\appicon - 复制.png" />
-	  <None Remove="Resources\appicon.svg" />
-	  <None Remove="Resources\appiconfg.png" />
-	  <None Remove="Resources\appicon_1.svg" />
-	  <None Remove="Resources\Images\about.svg" />
-	  <None Remove="Resources\Images\appicon.png" />
-	  <None Remove="Resources\Images\floaty.svg" />
-	</ItemGroup>
 
  
 	<ItemGroup>
 	  <ProjectReference Include="..\library\astator.ApkBuilder\astator.ApkBuilder.csproj" />
 	  <ProjectReference Include="..\library\astator.Core\astator.Core.csproj" />
+	  <ProjectReference Include="..\library\astator.NugetManager\astator.NugetManager.csproj" />
 	</ItemGroup>
 
 
@@ -103,20 +103,6 @@
 	  <Reference Include="PaddleOcrBinding">
 	    <HintPath>..\library\3rdparty\PaddleOcrBinding\bin\Release\net6.0-android\PaddleOcrBinding.dll</HintPath>
 	  </Reference>
-	</ItemGroup>
-
-
-	<ItemGroup>
-	  <Compile Update="Views\CustomPathCard.xaml.cs">
-	    <DependentUpon>CustomPathCard.xaml</DependentUpon>
-	  </Compile>
-	</ItemGroup>
-
-
-	<ItemGroup>
-	  <MauiImage Update="Resources\Images\appicon.png">
-	    <Color>#8000ff</Color>
-	  </MauiImage>
 	</ItemGroup>
 
 </Project>

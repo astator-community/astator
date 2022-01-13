@@ -5,6 +5,12 @@ namespace astator.Views;
 
 internal class CustomImageButton : ImageButton
 {
+    public static readonly BindableProperty TagBindableProperty = BindableProperty.Create(nameof(Tag), typeof(object), typeof(CustomLabelButton));
+    public object Tag
+    {
+        get => GetValue(TagBindableProperty);
+        set => SetValue(TagBindableProperty, value);
+    }
 
     public static readonly BindableProperty IsCircleBindableProperty = BindableProperty.Create(nameof(IsCircle), typeof(bool), typeof(CustomLabelButton));
     public bool IsCircle
@@ -35,7 +41,7 @@ internal class CustomImageButton : ImageButton
         {
             if (e.Action == MotionEventActions.Down)
             {
-                this.BackgroundColor = Color.Parse("#cad4de");
+                this.BackgroundColor = (Color)Application.Current.Resources["FocusColor"];
             }
             else
             {

@@ -7,7 +7,7 @@
     <GridLayout ColumnDefinitions="*,*,*,*">
         <GridLayout.Resources>
             <Style TargetType="v:CustomImageButton">
-                <Setter Property="Padding" Value="10" />
+                <Setter Property="Padding" Value="11" />
                 <Setter Property="BackgroundColor" Value="Transparent" />
             </Style>
         </GridLayout.Resources>

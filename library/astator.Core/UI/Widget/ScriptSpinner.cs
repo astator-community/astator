@@ -13,24 +13,40 @@ namespace astator.Core.UI.Widget
     {
         public class SpinnerAdapter<T> : ArrayAdapter<T>
         {
-            public Color TextColor { get; internal set; } = Color.ParseColor(DefaultValue.TextColor);
-            public Color BackgroundColor { get; internal set; } = Color.ParseColor(DefaultValue.BackgroundColor);
-            public float TextSize { get; internal set; } = DefaultValue.TextSize;
-            public SpinnerAdapter(Android.Content.Context context, int textViewResourceId, List<T> objects) : base(context, textViewResourceId, objects) { }
+            public Color TextColor { get; set; } = Color.ParseColor(DefaultValue.TextColor);
+            public Color BackgroundColor { get; set; } = Color.ParseColor(DefaultValue.BackgroundColor);
+            public float TextSize { get; set; } = DefaultValue.TextSize;
+            public Typeface Typeface { get; set; }
+            public SpinnerAdapter(Android.Content.Context context, int textViewResourceId, List<T> objects) : base(context, textViewResourceId, objects) {
+            }
             public override View GetView(int position, View convertView, ViewGroup parent)
             {
                 var view = (TextView)base.GetView(position, convertView, parent);
                 view.SetTextColor(this.TextColor);
                 view.SetBackgroundColor(this.BackgroundColor);
-                view.TextSize = Util.DpParse(this.TextSize);
+                view.TextSize = this.TextSize;
+
+                if (Typeface is not null)
+                {
+                    view.Typeface = Typeface;
+                }
+                
                 return view;
             }
+
+
             public override View GetDropDownView(int position, View convertView, ViewGroup parent)
             {
                 var view = (TextView)base.GetView(position, convertView, parent);
                 view.SetTextColor(this.TextColor);
                 view.SetBackgroundColor(this.BackgroundColor);
-                view.TextSize = Util.DpParse(this.TextSize);
+                view.TextSize = this.TextSize;
+
+                if (Typeface is not null)
+                {
+                    view.Typeface = Typeface;
+                }
+
                 return view;
             }
         }
@@ -71,7 +87,7 @@ namespace astator.Core.UI.Widget
             }
             if (this.list.Count != 0)
             {
-                this.Adapter = new SpinnerAdapter<string>(context, Android.Resource.Layout.SelectDialogItem, this.list)
+                this.Adapter = new SpinnerAdapter<string>(context, Android.Resource.Layout.SimpleListItemChecked, this.list)
                 {
                     TextColor = textColor,
                     BackgroundColor = backgroundColor,
@@ -211,7 +227,7 @@ namespace astator.Core.UI.Widget
                     if (value is string temp)
                     {
                         var color = Color.ParseColor(temp);
-                        this.Background = new ColorDrawable(color);
+                        //this.Background = new ColorDrawable(color);
                         this.backgroundColor = color;
                     }
                     break;

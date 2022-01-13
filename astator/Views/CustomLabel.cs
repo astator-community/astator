@@ -6,42 +6,24 @@ namespace astator.Views;
 
 internal class CustomLabel : Label
 {
+    public static readonly BindableProperty TagBindableProperty = BindableProperty.Create(nameof(Tag), typeof(object), typeof(CustomLabelButton));
+    public object Tag
+    {
+        get => GetValue(TagBindableProperty);
+        set => SetValue(TagBindableProperty, value);
+    }
+
+    public event EventHandler Clicked;
+
     protected override void OnHandlerChanged()
     {
         base.OnHandlerChanged();
 
         var view = this.Handler.NativeView as AndroidX.AppCompat.Widget.AppCompatTextView;
 
-        var menu = new AndroidX.AppCompat.Widget.PopupMenu(Globals.AppContext, view);
-
-        menu.Menu.Add("复制");
-
-        menu.SetOnMenuItemClickListener(new OnMenuItemClickListener((item) =>
+        view.SetOnClickListener(new OnClickListener((v) =>
         {
-            if (item.GroupId == 0)
-            {
-                Clipboard.SetTextAsync(view.Text);
-            }
-            return true;
-        }));
-
-        view.SetOnLongClickListener(new OnLongClickListener((v) =>
-        {
-            menu.Show();
-            return true;
-        }));
-
-        view.SetOnTouchListener(new OnTouchListener((v, e) =>
-        {
-            if (e.Action == MotionEventActions.Down)
-            {
-                this.BackgroundColor = Color.Parse("#cad4de");
-            }
-            else
-            {
-                this.BackgroundColor = (Color)Application.Current.Resources["PrimaryColor"];
-            }
-            return false;
+            Clicked?.Invoke(this, null);
         }));
     }
 }

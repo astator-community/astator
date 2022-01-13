@@ -6,6 +6,13 @@ namespace astator.Views;
 
 public class CustomCard : GridLayout
 {
+    public static readonly BindableProperty TagBindableProperty = BindableProperty.Create(nameof(Tag), typeof(object), typeof(CustomLabelButton));
+    public object Tag
+    {
+        get => GetValue(TagBindableProperty);
+        set => SetValue(TagBindableProperty, value);
+    }
+
     public event EventHandler Clicked;
     protected override void OnHandlerChanged()
     {
@@ -15,7 +22,7 @@ public class CustomCard : GridLayout
         {
             if (e.Action == MotionEventActions.Down)
             {
-                this.BackgroundColor = Color.Parse("#cad4de");
+                this.BackgroundColor = (Color)Application.Current.Resources["FocusColor"];
             }
             else
             {

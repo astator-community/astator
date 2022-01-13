@@ -5,7 +5,8 @@ namespace astator.Pages
 {
     public partial class HomePage : ContentPage
     {
-        private string rootDir = string.Empty;
+        private readonly string rootDir = string.Empty;
+        private string currentDir;
 
         public HomePage()
         {
@@ -100,6 +101,7 @@ namespace astator.Pages
 
         private void UpdateDirTbs(string dir)
         {
+            currentDir = dir;
             this.DirTbLayout.Clear();
             var dirs = Path.GetRelativePath(this.rootDir, dir).Split(Path.DirectorySeparatorChar);
             for (var i = Math.Max(0, dirs.Length - 3); i < dirs.Length; i++)
@@ -147,5 +149,11 @@ namespace astator.Pages
             return false;
         }
 
+        private void Refresh_Refreshing(object sender, EventArgs e)
+        {
+            UpdateDirTbs(currentDir);
+            var refresh = sender as RefreshView;
+            refresh.IsRefreshing = false;
+        }
     }
 }

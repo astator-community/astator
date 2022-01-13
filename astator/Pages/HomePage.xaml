@@ -29,12 +29,18 @@
 
         <HorizontalStackLayout
             x:Name="DirTbLayout"
-            Padding="20,10"
+            Padding="20,5"
             GridLayout.Row="1" />
-
-        <ScrollView GridLayout.Row="2">
-            <VerticalStackLayout x:Name="FilesLayout" />
-        </ScrollView>
+        <RefreshView
+            BackgroundColor="{DynamicResource PrimaryColor}"
+            GridLayout.Row="2"
+            IsRefreshing="False"
+            RefreshColor="#2F88FF"
+            Refreshing="Refresh_Refreshing">
+            <ScrollView>
+                <VerticalStackLayout x:Name="FilesLayout" />
+            </ScrollView>
+        </RefreshView>
 
         <v:NavBarView ActiveTab="home" GridLayout.Row="3" />
     </GridLayout>

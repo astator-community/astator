@@ -112,15 +112,24 @@ namespace astator
 
             if (!result && keyCode == Keycode.Back)
             {
-                var time = DateTime.Now;
-                if (time.Subtract(this.latestTime).TotalMilliseconds < 1000)
+
+                var pages = Microsoft.Maui.Controls.Application.Current.MainPage.Navigation.NavigationStack;
+                if (pages.Count > 1)
                 {
-                    Process.KillProcess(Process.MyPid());
+                    Microsoft.Maui.Controls.Application.Current.MainPage.Navigation.PopAsync();
                 }
                 else
                 {
-                    this.latestTime = time;
-                    Globals.Toast("再按一次返回退出应用");
+                    var time = DateTime.Now;
+                    if (time.Subtract(this.latestTime).TotalMilliseconds < 1000)
+                    {
+                        Process.KillProcess(Process.MyPid());
+                    }
+                    else
+                    {
+                        this.latestTime = time;
+                        Globals.Toast("再按一次返回退出应用");
+                    }
                 }
                 return true;
             }

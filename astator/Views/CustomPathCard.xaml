@@ -10,7 +10,7 @@
 
     <Image
         GridLayout.Column="0"
-        Source="{Binding Source={RelativeSource FindAncestor, AncestorType={x:Type GridLayout}}, Path=TypeImageSource}"
+        Source="{Binding Source={RelativeSource FindAncestor, AncestorType={x:Type v:CustomCard}}, Path=TypeImageSource}"
         VerticalOptions="Center"
         WidthRequest="50" />
 
@@ -24,12 +24,12 @@
             FontAttributes="Bold"
             FontSize="14"
             GridLayout.Row="0"
-            Text="{Binding Source={RelativeSource FindAncestor, AncestorType={x:Type GridLayout}, AncestorLevel=2}, Path=PathName}" />
+            Text="{Binding Source={RelativeSource FindAncestor, AncestorType={x:Type v:CustomCard}}, Path=PathName}" />
         <Label
-            Padding="0,5,0,0"
+            Padding="0,3,0,0"
             FontSize="8"
             GridLayout.Row="1"
-            Text="{Binding Source={RelativeSource FindAncestor, AncestorType={x:Type GridLayout}, AncestorLevel=2}, Path=PathInfo}"
+            Text="{Binding Source={RelativeSource FindAncestor, AncestorType={x:Type v:CustomCard}}, Path=PathInfo}"
             TextColor="#666666"
             VerticalOptions="End" />
     </GridLayout>

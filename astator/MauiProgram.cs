@@ -16,6 +16,7 @@ public static class MauiProgram
             }).ConfigureMauiHandlers(handler =>
             {
                 handler.AddCompatibilityRenderer(typeof(CustomLabelButton), typeof(CustomLabelButtonRenderer));
+                handler.AddHandler(typeof(CustomSpinner), typeof(CustomSpinnerHandler));
             });
         return builder.Build();
     }

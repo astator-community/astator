@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="astator.PackageInfoPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:v="clr-namespace:astator.Views"
+    NavigationPage.HasNavigationBar="False">
+    <GridLayout RowDefinitions="70,55,*">
+        <Label
+            x:Name="PkgId"
+            Margin="15,5"
+            FontAttributes="Bold"
+            FontSize="22"
+            GridLayout.Row="0"
+            HorizontalOptions="Start"
+            Text="astator.Core"
+            VerticalOptions="Center" />
+        <GridLayout
+            Padding="20,5"
+            ColumnDefinitions="*,auto"
+            GridLayout.Row="1">
+            <GridLayout
+                GridLayout.Column="0"
+                PropertyChanged="VersionItems_SizeChanged"
+                RowDefinitions="40,auto">
+                <v:CustomSpinner
+                    x:Name="VersionItems"
+                    BackgroundColor="{DynamicResource PrimaryColor}"
+                    FontSize="16"
+                    GridLayout.Row="0"
+                    SelectionChanged="VersionItems_SelectionChanged"
+                    TextColor="{DynamicResource SecondaryColor}" />
+                <Line
+                    x:Name="Underline"
+                    GridLayout.Row="1"
+                    Stroke="#2B0B98"
+                    StrokeThickness="1.8" />
+            </GridLayout>
+            <v:CustomImageButton
+                x:Name="AttribBtn"
+                Padding="18,12,6,12"
+                BackgroundColor="{DynamicResource PrimaryColor}"
+                Clicked="AttribBtn_Clicked"
+                GridLayout.Column="1"
+                HeightRequest="55"
+                VerticalOptions="Center"
+                WidthRequest="55" />
+        </GridLayout>
+        <ScrollView GridLayout.Row="2">
+
+            <RefreshView
+                x:Name="Refresh"
+                BackgroundColor="{DynamicResource PrimaryColor}"
+                IsRefreshing="True"
+                RefreshColor="#2F88FF">
+                <GridLayout Padding="20,10" RowDefinitions="auto,auto,auto,auto,auto,auto,auto,auto,auto">
+                    <Label
+                        FontAttributes="Bold"
+                        FontSize="14"
+                        Text="描述" />
+                    <Label
+                        x:Name="Description"
+                        Margin="0,5"
+                        GridLayout.Row="1" />
+                    <HorizontalStackLayout Margin="0,5" GridLayout.Row="2">
+                        <Label
+                            FontAttributes="Bold"
+                            FontSize="14"
+                            Text="版本:  " />
+                        <Label x:Name="Version" VerticalTextAlignment="End" />
+                    </HorizontalStackLayout>
+                    <HorizontalStackLayout Margin="0,5" GridLayout.Row="3">
+                        <Label
+                            FontAttributes="Bold"
+                            FontSize="14"
+                            Text="作者:  " />
+                        <Label x:Name="Authors" VerticalTextAlignment="End" />
+                    </HorizontalStackLayout>
+                    <HorizontalStackLayout Margin="0,5" GridLayout.Row="4">
+                        <Label FontAttributes="Bold" Text="许可证:  " />
+                        <v:CustomLabel x:Name="License" />
+                    </HorizontalStackLayout>
+                    <HorizontalStackLayout Margin="0,5" GridLayout.Row="5">
+                        <Label FontAttributes="Bold" Text="发布日期:  " />
+                        <Label x:Name="PublishDate" VerticalTextAlignment="End" />
+                    </HorizontalStackLayout>
+                    <HorizontalStackLayout Margin="0,5" GridLayout.Row="6">
+                        <Label FontAttributes="Bold" Text="项目地址:  " />
+                        <v:CustomLabel
+                            x:Name="ProjectUrl"
+                            Clicked="Uri_Clicked"
+                            FontSize="14"
+                            TextColor="#56c2ec"
+                            TextDecorations="Underline" />
+                    </HorizontalStackLayout>
+                    <Label
+                        Margin="0,5"
+                        FontAttributes="Bold"
+                        FontSize="14"
+                        GridLayout.Row="7"
+                        Text="依赖项 " />
+                    <GridLayout x:Name="DependencyList" GridLayout.Row="8" />
+                </GridLayout>
+            </RefreshView>
+        </ScrollView>
+
+    </GridLayout>
+</ContentPage>
