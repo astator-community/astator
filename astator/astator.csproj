@@ -74,7 +74,7 @@
 	  <MauiXaml Update="Views\NavBarView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Views\CustomPathCard.xaml">
+	  <MauiXaml Update="Views\PathCard.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\PackageInfoCard.xaml">
@@ -86,8 +86,8 @@
 		<AndroidNativeLibrary Include="Resources\JNI\*\*" />
 	</ItemGroup>
 
-	<ItemGroup Condition="'$(Configuration)' == 'Debug'">
-	  <MauiAsset Include="Resources\ScriptFiles\v220108-sdk.zip" />
+	<ItemGroup>
+	  <MauiAsset Include="Resources\ScriptFiles\v220114-sdk.zip" />
 	</ItemGroup>
 
 
@@ -103,6 +103,13 @@
 	  <Reference Include="PaddleOcrBinding">
 	    <HintPath>..\library\3rdparty\PaddleOcrBinding\bin\Release\net6.0-android\PaddleOcrBinding.dll</HintPath>
 	  </Reference>
+	</ItemGroup>
+
+
+	<ItemGroup>
+	  <Compile Update="Views\PathCard.xaml.cs">
+	    <DependentUpon>PathCard.xaml</DependentUpon>
+	  </Compile>
 	</ItemGroup>
 
 </Project>

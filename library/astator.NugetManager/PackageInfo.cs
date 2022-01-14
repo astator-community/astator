@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NuGet.Versioning;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,5 +17,33 @@ public class PackageInfo
     public string Version { get; set; } = string.Empty;
 
     [JsonPropertyName("path")]
-    public string Path { get; set; } = string.Empty;
+    public List<string> Path { get; set; } = new();
+
+
+    public bool Exists(PackageInfo other)
+    {
+        if (this.Name == other.Name)
+        {
+            if (this.Version == other.Version)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static bool Exists(List<PackageInfo> left, KeyValuePair<string, NuGetVersion> right)
+    {
+        foreach (var item in left)
+        {
+            if (item.Name == right.Key)
+            {
+                if (item.Version == right.Value.ToString())
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 }

@@ -1,7 +1,10 @@
 ﻿using astator.Core.Script;
+using astator.NugetManager;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Emit;
+using Newtonsoft.Json;
+using NuGet.Versioning;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -9,6 +12,8 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace astator.Core.Engine
 {
@@ -43,9 +48,16 @@ namespace astator.Core.Engine
         /// </summary>
         private readonly List<MetadataReference> scriptReferences = new();
 
+        /// <summary>
+        /// 项目根目录
+        /// </summary>
+        private readonly string rootDir;
 
-        public ScriptEngine()
+
+        public ScriptEngine(string rootDir)
         {
+            this.rootDir = rootDir;
+
             this.alc = new Domain();
 
             var sdkDir = Android.App.Application.Context.GetExternalFilesDir("Sdk").ToString();
@@ -61,22 +73,27 @@ namespace astator.Core.Engine
         }
 
         /// <summary>
-        /// 解析cs字符串
-        /// </summary>
-        public void ParseScript(string text, string path = default)
-        {
-            this.trees.Add(CSharpSyntaxTree.ParseText(text, path: path, encoding: Encoding.UTF8));
-        }
-
-        /// <summary>
         /// 解析cs文件
         /// </summary>
         /// <param name="path"></param>
-        public void ParseScriptFromFile(string path)
+        private void ParseCSFile(string path)
         {
             if (path.EndsWith(".cs"))
             {
                 this.trees.Add(CSharpSyntaxTree.ParseText(File.ReadAllText(path), path: path, encoding: Encoding.UTF8));
+            }
+        }
+
+        /// <summary>
+        /// 解析所有cs文件
+        /// </summary>
+        public void ParseAllCS()
+        {
+            var scripts = Directory.GetFiles(rootDir, "*.cs", SearchOption.AllDirectories);
+
+            foreach (var script in scripts)
+            {
+                ParseCSFile(script);
             }
         }
 
@@ -85,12 +102,25 @@ namespace astator.Core.Engine
         /// 加载引用程序集
         /// </summary>
         /// <param name="path"></param>
-        public void LoadReference(string path)
+        public bool LoadReference(string path)
         {
-            if (path.EndsWith(".dll"))
+            if (path.StartsWith("."))
             {
-                this.scriptReferences.Add(MetadataReference.CreateFromFile(path));
+                path = Path.Combine(rootDir, path);
             }
+            if (!path.EndsWith(".dll"))
+            {
+                ScriptLogger.Error($"加载dll失败, 非dll文件: {path}");
+                return false;
+            }
+            if (!File.Exists(path))
+            {
+                ScriptLogger.Error($"加载dll失败, 文件不存在: {path}");
+                return false;
+            }
+
+            this.scriptReferences.Add(MetadataReference.CreateFromFile(path));
+            return true;
         }
 
         /// <summary>
@@ -160,7 +190,7 @@ namespace astator.Core.Engine
         /// </summary>
         /// <param name="method">入口方法</param>
         /// <param name="runtime"></param>
-        public void Execute(MethodInfo method, dynamic runtime)
+        public static void Execute(MethodInfo method, dynamic runtime)
         {
             try
             {
@@ -242,5 +272,146 @@ namespace astator.Core.Engine
 
             return null;
         }
+
+
+
+        public async Task<bool> Restore()
+        {
+            var projectPath = Directory.GetFiles(rootDir, "*.csproj", SearchOption.AllDirectories).First();
+            try
+            {
+                var xd = XDocument.Load(projectPath);
+                var itemGroup = xd.Descendants("ItemGroup");
+
+                var packageInfos = await RestorePackage(itemGroup);
+
+                if (packageInfos.Any())
+                {
+                    if (!LoadPackageReference(packageInfos))
+                    {
+                        return false;
+                    }
+                }
+
+                if (!LoadDllReference(itemGroup))
+                {
+                    return false;
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                ScriptLogger.Error(ex.ToString());
+                return false;
+            }
+        }
+
+        private bool LoadPackageReference(List<PackageInfo> infos)
+        {
+            foreach (var info in infos)
+            {
+                foreach (var p in info.Path)
+                {
+                    if (!LoadReference(p))
+                    {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
+        private bool LoadDllReference(IEnumerable<XElement> itemGroup)
+        {
+            var references = from element in itemGroup.Elements()
+                             where element.Name == "Reference"
+                             from attr in element.Attributes()
+                             where attr.Value.EndsWith(".dll")
+                             select attr.Value;
+
+            foreach (var path in references)
+            {
+                if (!LoadReference(path))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        private async Task<List<PackageInfo>> RestorePackage(IEnumerable<XElement> itemGroup)
+        {
+            var restorePath = Path.Combine(this.rootDir, "obj", "project.packages.json");
+
+            var packageReferenceItemGroups = from element in itemGroup.Elements()
+                                             where element.Name == "PackageReference"
+                                             select element.Attributes();
+
+            var packageReferences = new Dictionary<string, NuGetVersion>();
+            foreach (var group in packageReferenceItemGroups)
+            {
+                var pkgId = group.Where(x => x.Name == "Include").Select(x => x.Value).FirstOrDefault();
+                if (pkgId == "astator.Core")
+                {
+                    continue;
+                }
+                var version = await NugetCommands.ParseVersion(pkgId,
+                    group.Where(x => x.Name == "Version").Select(x => x.Value).FirstOrDefault() ?? "*");
+
+                packageReferences.Add(pkgId!, version);
+            }
+
+            if (!File.Exists(restorePath))
+            {
+                if (!Directory.Exists(Path.GetDirectoryName(restorePath)))
+                {
+                    Directory.CreateDirectory(Path.GetDirectoryName(restorePath));
+                }
+                using var fs = File.Create(restorePath);
+            }
+
+            var storeInfos = JsonConvert.DeserializeObject<List<PackageInfo>>(File.ReadAllText(restorePath));
+
+            if (storeInfos is not null)
+            {
+                foreach (var r in packageReferences)
+                {
+                    if (PackageInfo.Exists(storeInfos, r))
+                    {
+                        packageReferences.Remove(r.Key);
+                    }
+                }
+            }
+
+            var isNeedRestore = false;
+
+            foreach (var info in storeInfos)
+            {
+                foreach (var path in info.Path)
+                {
+                    if (!File.Exists(path))
+                    {
+                        isNeedRestore  = true;
+                        break;
+                    }
+                }
+
+                if (isNeedRestore)
+                {
+                    break;
+                }
+            }
+
+            if (packageReferences.Any() || isNeedRestore)
+            {
+                var transitiveDependences = await NugetCommands.ListPackageTransitiveDependenceAsync(packageReferences);
+                storeInfos = await NugetCommands.GetPackageInfosAsync(transitiveDependences);
+                File.WriteAllText(restorePath, JsonConvert.SerializeObject(storeInfos, Formatting.Indented));
+            }
+
+            return storeInfos;
+        }
+
+
     }
 }

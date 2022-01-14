@@ -54,7 +54,7 @@ namespace astator.Pages
                 var name = Path.GetFileName(dir);
                 var info = $"{new DirectoryInfo(dir).LastWriteTime:yyyy/MM/dd HH:mm}";
 
-                var card = new CustomPathCard
+                var card = new PathCard
                 {
                     Tag = dir,
                     PathName = name,
@@ -74,7 +74,7 @@ namespace astator.Pages
                 var info = $"{new DirectoryInfo(file).LastWriteTime:yyyy/MM/dd HH:mm}";
                 var icon = file.EndsWith(".cs") ? "_script" : file.EndsWith(".csproj") ? "_csproj" : file.EndsWith("xml") ? "_xml" : string.Empty;
 
-                var card = new CustomPathCard
+                var card = new PathCard
                 {
                     Tag = file,
                     PathName = name,
@@ -87,7 +87,7 @@ namespace astator.Pages
 
         private void Dir_Clicked(object sender, EventArgs e)
         {
-            var card = sender as CustomPathCard;
+            var card = sender as PathCard;
             var directory = card.Tag as string;
             UpdateDirTbs(directory);
         }

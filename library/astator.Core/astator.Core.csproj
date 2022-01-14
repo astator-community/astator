@@ -8,14 +8,17 @@
 		<OutputType>Library</OutputType>
 		<UseMaui>true</UseMaui>
 		<GeneratePackageOnBuild>False</GeneratePackageOnBuild>
-		<Authors>astator</Authors>
-		<Version>0.0.1</Version>
 		<SatelliteResourceLanguages>zh-Hans</SatelliteResourceLanguages>
 		<ProduceReferenceAssembly>True</ProduceReferenceAssembly>
 		<UseInterpreter Condition="'$(Configuration)' == 'Debug'">True</UseInterpreter>
 		<SupportedOSPlatformVersion>24.0</SupportedOSPlatformVersion>
+		
+		<Authors>yiszza</Authors>
+		<Version>0.0.3</Version>
+		<PackageProjectUrl>https://github.com/astator-community/astator</PackageProjectUrl>
+		<Company>astator</Company>
+		<Description>用于astator脚本的开发</Description>
 	</PropertyGroup>
-
 
 	<ItemGroup>
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
@@ -26,6 +29,9 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\3rdparty\Obfuscar\Obfuscar\Obfuscar.csproj">
+			<PrivateAssets>all</PrivateAssets>
+		</ProjectReference>
+		<ProjectReference Include="..\astator.NugetManager\astator.NugetManager.csproj">
 			<PrivateAssets>all</PrivateAssets>
 		</ProjectReference>
 	</ItemGroup>

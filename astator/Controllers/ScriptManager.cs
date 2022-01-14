@@ -57,41 +57,16 @@ public class ScriptManager
              var id = Path.GetFileNameWithoutExtension(path);
              GetId(ref id);
 
-             var directory = Path.GetDirectoryName(path);
-             var csprojPath = Directory.GetFiles(directory, "*.csproj", SearchOption.AllDirectories)[0];
+             var projectDir = Path.GetDirectoryName(path);
 
-             var xd = XDocument.Load(csprojPath);
-             var config = xd.Descendants("ScriptConfig");
-             var itemGroup = xd.Descendants("ItemGroup");
-             var references = from element in itemGroup.Elements()
-                              where element.Name == "Reference"
-                              from attr in element.Attributes()
-                              where attr.Value.EndsWith(".dll")
-                              select attr.Value;
+             var engine = new ScriptEngine(projectDir);
 
-             var engine = new ScriptEngine();
-
-             foreach (var reference in references)
+             if (!await engine.Restore())
              {
-                 if (reference.StartsWith("."))
-                 {
-                     var absolutePath = Path.Combine(directory, reference);
-                     if (File.Exists(absolutePath))
-                     {
-                         engine.LoadReference(absolutePath);
-                     }
-                 }
-                 else
-                 {
-                     engine.LoadReference(reference);
-                 }
+                 return null;
              }
 
-             var scripts = Directory.GetFiles(directory, "*.cs", SearchOption.AllDirectories);
-             foreach (var script in scripts)
-             {
-                 engine.ParseScriptFromFile(script);
-             }
+             engine.ParseAllCS();
 
              var emitResult = engine.Compile();
              if (!emitResult.Success)
@@ -118,13 +93,13 @@ public class ScriptManager
              if (isUiMode)
              {
                  var activity = await StartScriptActivity(id);
-                 runtime = new ScriptRuntime(id, engine, activity, directory);
+                 runtime = new ScriptRuntime(id, engine, activity, projectDir);
 
                  Device.BeginInvokeOnMainThread(() =>
                  {
                      try
                      {
-                         engine.Execute(method, runtime);
+                         ScriptEngine.Execute(method, runtime);
                      }
                      catch (Exception ex)
                      {
@@ -134,11 +109,11 @@ public class ScriptManager
              }
              else
              {
-                 runtime = new ScriptRuntime(id, engine, directory);
+                 runtime = new ScriptRuntime(id, engine, projectDir);
 
                  runtime.Threads.Start(() =>
                  {
-                     engine.Execute(method, runtime);
+                     ScriptEngine.Execute(method, runtime);
                  });
              }
 
@@ -148,47 +123,23 @@ public class ScriptManager
          });
     }
 
-    public async Task<ScriptRuntime> RunProject(string directory)
+    public async Task<ScriptRuntime> RunProject(string projectDir)
     {
         return await Task.Run(async () =>
         {
-            var csprojPath = Directory.GetFiles(directory, "*.csproj", SearchOption.AllDirectories)[0];
+            var csprojPath = Directory.GetFiles(projectDir, "*.csproj", SearchOption.AllDirectories).First();
 
             var id = Path.GetFileNameWithoutExtension(csprojPath);
             GetId(ref id);
 
-            var xd = XDocument.Load(csprojPath);
-            var config = xd.Descendants("ScriptConfig");
-            var itemGroup = xd.Descendants("ItemGroup");
-            var references = from element in itemGroup.Elements()
-                             where element.Name == "Reference"
-                             from attr in element.Attributes()
-                             where attr.Value.EndsWith(".dll")
-                             select attr.Value;
+            var engine = new ScriptEngine(projectDir);
 
-            var engine = new ScriptEngine();
-
-            foreach (var reference in references)
+            if (!await engine.Restore())
             {
-                if (reference.StartsWith("."))
-                {
-                    var absolutePath = Path.Combine(directory, reference);
-                    if (File.Exists(absolutePath))
-                    {
-                        engine.LoadReference(absolutePath);
-                    }
-                }
-                else
-                {
-                    engine.LoadReference(reference);
-                }
+                return null;
             }
 
-            var scripts = Directory.GetFiles(directory, "*.cs", SearchOption.AllDirectories);
-            foreach (var script in scripts)
-            {
-                engine.ParseScriptFromFile(script);
-            }
+            engine.ParseAllCS();
 
             var emitResult = engine.Compile();
             if (!emitResult.Success)
@@ -206,7 +157,7 @@ public class ScriptManager
                 Logger.Error("未找到入口方法!");
                 return null;
             }
-            var isUiMode = method.GetCustomAttribute<EntryMethod>().IsUIMode;
+            var isUiMode = method.GetCustomAttribute<ProjectEntryMethod>().IsUIMode;
 
             ScriptLogger.Log("脚本开始运行: " + id);
 
@@ -215,13 +166,13 @@ public class ScriptManager
             if (isUiMode)
             {
                 var activity = await StartScriptActivity(id);
-                runtime = new ScriptRuntime(id, engine, activity, directory);
+                runtime = new ScriptRuntime(id, engine, activity, projectDir);
 
                 Device.BeginInvokeOnMainThread(() =>
                 {
                     try
                     {
-                        engine.Execute(method, runtime);
+                        ScriptEngine.Execute(method, runtime);
                     }
                     catch (Exception ex)
                     {
@@ -231,11 +182,11 @@ public class ScriptManager
             }
             else
             {
-                runtime = new ScriptRuntime(id, engine, directory);
+                runtime = new ScriptRuntime(id, engine, projectDir);
 
                 runtime.Threads.Start(() =>
                 {
-                    engine.Execute(method, runtime);
+                    ScriptEngine.Execute(method, runtime);
                 });
             }
 

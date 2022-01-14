@@ -137,10 +137,10 @@ namespace astator.Pages
                             case "runProject":
                             {
                                 using var zipStream = new MemoryStream(data.Buffer.Data);
-                                var directory = Path.Combine(MauiApplication.Current.ExternalCacheDir.ToString(), $"{data.Description}-{DateTime.Now:MMddHHmmssfff}");
+                                var directory = Path.Combine(MauiApplication.Current.ExternalCacheDir.ToString(), data.Description);
                                 using (var archive = new ZipArchive(zipStream))
                                 {
-                                    archive.ExtractToDirectory(directory);
+                                    archive.ExtractToDirectory(directory,true);
                                 }
 
                                 _ = ScriptManager.Instance.RunProject(directory);

@@ -11,169 +11,171 @@ namespace astator.NugetManager;
 
 public class NugetCommands
 {
-    private const string excludeDlls = @"Microsoft.CSharp
-Microsoft.VisualBasic.Core
-Microsoft.VisualBasic
-Microsoft.Win32.Primitives
-Microsoft.Win32.Registry
-mscorlib
-netstandard
-System.AppContext
-System.Buffers
-System.Collections.Concurrent
-System.Collections
-System.Collections.Immutable
-System.Collections.NonGeneric
-System.Collections.Specialized
-System.ComponentModel.Annotations
-System.ComponentModel.DataAnnotations
-System.ComponentModel
-System.ComponentModel.EventBasedAsync
-System.ComponentModel.Primitives
-System.ComponentModel.TypeConverter
-System.Configuration
-System.Console
-System.Core
-System.Data.Common
-System.Data.DataSetExtensions
-System.Data
-System.Diagnostics.Contracts
-System.Diagnostics.Debug
-System.Diagnostics.DiagnosticSource
-System.Diagnostics.FileVersionInfo
-System.Diagnostics.Process
-System.Diagnostics.StackTrace
-System.Diagnostics.TextWriterTraceListener
-System.Diagnostics.Tools
-System.Diagnostics.TraceSource
-System.Diagnostics.Tracing
-System
-System.Drawing
-System.Drawing.Primitives
-System.Dynamic.Runtime
-System.Formats.Asn1
-System.Globalization.Calendars
-System.Globalization
-System.Globalization.Extensions
-System.IO.Compression.Brotli
-System.IO.Compression
-System.IO.Compression.FileSystem
-System.IO.Compression.ZipFile
-System.IO
-System.IO.FileSystem.AccessControl
-System.IO.FileSystem
-System.IO.FileSystem.DriveInfo
-System.IO.FileSystem.Primitives
-System.IO.FileSystem.Watcher
-System.IO.IsolatedStorage
-System.IO.MemoryMappedFiles
-System.IO.Pipes.AccessControl
-System.IO.Pipes
-System.IO.UnmanagedMemoryStream
-System.Linq
-System.Linq.Expressions
-System.Linq.Parallel
-System.Linq.Queryable
-System.Memory
-System.Net
-System.Net.Http
-System.Net.Http.Json
-System.Net.HttpListener
-System.Net.Mail
-System.Net.NameResolution
-System.Net.NetworkInformation
-System.Net.Ping
-System.Net.Primitives
-System.Net.Requests
-System.Net.Security
-System.Net.ServicePoint
-System.Net.Sockets
-System.Net.WebClient
-System.Net.WebHeaderCollection
-System.Net.WebProxy
-System.Net.WebSockets.Client
-System.Net.WebSockets
-System.Numerics
-System.Numerics.Vectors
-System.ObjectModel
-System.Reflection.DispatchProxy
-System.Reflection
-System.Reflection.Emit
-System.Reflection.Emit.ILGeneration
-System.Reflection.Emit.Lightweight
-System.Reflection.Extensions
-System.Reflection.Metadata
-System.Reflection.Primitives
-System.Reflection.TypeExtensions
-System.Resources.Reader
-System.Resources.ResourceManager
-System.Resources.Writer
-System.Runtime.CompilerServices.Unsafe
-System.Runtime.CompilerServices.VisualC
-System.Runtime
-System.Runtime.Extensions
-System.Runtime.Handles
-System.Runtime.InteropServices
-System.Runtime.InteropServices.RuntimeInformation
-System.Runtime.Intrinsics
-System.Runtime.Loader
-System.Runtime.Numerics
-System.Runtime.Serialization
-System.Runtime.Serialization.Formatters
-System.Runtime.Serialization.Json
-System.Runtime.Serialization.Primitives
-System.Runtime.Serialization.Xml
-System.Security.AccessControl
-System.Security.Claims
-System.Security.Cryptography.Algorithms
-System.Security.Cryptography.Cng
-System.Security.Cryptography.Csp
-System.Security.Cryptography.Encoding
-System.Security.Cryptography.OpenSsl
-System.Security.Cryptography.Primitives
-System.Security.Cryptography.X509Certificates
-System.Security
-System.Security.Principal
-System.Security.Principal.Windows
-System.Security.SecureString
-System.ServiceModel.Web
-System.ServiceProcess
-System.Text.Encoding.CodePages
-System.Text.Encoding
-System.Text.Encoding.Extensions
-System.Text.Encodings.Web
-System.Text.Json
-System.Text.RegularExpressions
-System.Threading.Channels
-System.Threading
-System.Threading.Overlapped
-System.Threading.Tasks.Dataflow
-System.Threading.Tasks
-System.Threading.Tasks.Extensions
-System.Threading.Tasks.Parallel
-System.Threading.Thread
-System.Threading.ThreadPool
-System.Threading.Timer
-System.Transactions
-System.Transactions.Local
-System.ValueTuple
-System.Web
-System.Web.HttpUtility
-System.Windows
-System.Xml
-System.Xml.Linq
-System.Xml.ReaderWriter
-System.Xml.Serialization
-System.Xml.XDocument
-System.Xml.XmlDocument
-System.Xml.XmlSerializer
-System.Xml.XPath
-System.Xml.XPath.XDocument
-WindowsBase";
 
-    private static string[] ExcludeDlls = excludeDlls.Split("\r\n");
+    private static readonly string[] ExcludeDlls = new[]
+    {
+        "Microsoft.CSharp",
+        "Microsoft.VisualBasic.Core",
+        "Microsoft.VisualBasic",
+        "Microsoft.Win32.Primitives",
+        "Microsoft.Win32.Registry",
+        "mscorlib",
+        "netstandard",
+        "System.AppContext",
+        "System.Buffers",
+        "System.Collections.Concurrent",
+        "System.Collections",
+        "System.Collections.Immutable",
+        "System.Collections.NonGeneric",
+        "System.Collections.Specialized",
+        "System.ComponentModel.Annotations",
+        "System.ComponentModel.DataAnnotations",
+        "System.ComponentModel",
+        "System.ComponentModel.EventBasedAsync",
+        "System.ComponentModel.Primitives",
+        "System.ComponentModel.TypeConverter",
+        "System.Configuration",
+        "System.Console",
+        "System.Core",
+        "System.Data.Common",
+        "System.Data.DataSetExtensions",
+        "System.Data",
+        "System.Diagnostics.Contracts",
+        "System.Diagnostics.Debug",
+        "System.Diagnostics.DiagnosticSource",
+        "System.Diagnostics.FileVersionInfo",
+        "System.Diagnostics.Process",
+        "System.Diagnostics.StackTrace",
+        "System.Diagnostics.TextWriterTraceListener",
+        "System.Diagnostics.Tools",
+        "System.Diagnostics.TraceSource",
+        "System.Diagnostics.Tracing",
+        "System",
+        "System.Drawing",
+        "System.Drawing.Primitives",
+        "System.Dynamic.Runtime",
+        "System.Formats.Asn1",
+        "System.Globalization.Calendars",
+        "System.Globalization",
+        "System.Globalization.Extensions",
+        "System.IO.Compression.Brotli",
+        "System.IO.Compression",
+        "System.IO.Compression.FileSystem",
+        "System.IO.Compression.ZipFile",
+        "System.IO",
+        "System.IO.FileSystem.AccessControl",
+        "System.IO.FileSystem",
+        "System.IO.FileSystem.DriveInfo",
+        "System.IO.FileSystem.Primitives",
+        "System.IO.FileSystem.Watcher",
+        "System.IO.IsolatedStorage",
+        "System.IO.MemoryMappedFiles",
+        "System.IO.Pipes.AccessControl",
+        "System.IO.Pipes",
+        "System.IO.UnmanagedMemoryStream",
+        "System.Linq",
+        "System.Linq.Expressions",
+        "System.Linq.Parallel",
+        "System.Linq.Queryable",
+        "System.Memory",
+        "System.Net",
+        "System.Net.Http",
+        "System.Net.Http.Json",
+        "System.Net.HttpListener",
+        "System.Net.Mail",
+        "System.Net.NameResolution",
+        "System.Net.NetworkInformation",
+        "System.Net.Ping",
+        "System.Net.Primitives",
+        "System.Net.Requests",
+        "System.Net.Security",
+        "System.Net.ServicePoint",
+        "System.Net.Sockets",
+        "System.Net.WebClient",
+        "System.Net.WebHeaderCollection",
+        "System.Net.WebProxy",
+        "System.Net.WebSockets.Client",
+        "System.Net.WebSockets",
+        "System.Numerics",
+        "System.Numerics.Vectors",
+        "System.ObjectModel",
+        "System.Reflection.DispatchProxy",
+        "System.Reflection",
+        "System.Reflection.Emit",
+        "System.Reflection.Emit.ILGeneration",
+        "System.Reflection.Emit.Lightweight",
+        "System.Reflection.Extensions",
+        "System.Reflection.Metadata",
+        "System.Reflection.Primitives",
+        "System.Reflection.TypeExtensions",
+        "System.Resources.Reader",
+        "System.Resources.ResourceManager",
+        "System.Resources.Writer",
+        "System.Runtime.CompilerServices.Unsafe",
+        "System.Runtime.CompilerServices.VisualC",
+        "System.Runtime",
+        "System.Runtime.Extensions",
+        "System.Runtime.Handles",
+        "System.Runtime.InteropServices",
+        "System.Runtime.InteropServices.RuntimeInformation",
+        "System.Runtime.Intrinsics",
+        "System.Runtime.Loader",
+        "System.Runtime.Numerics",
+        "System.Runtime.Serialization",
+        "System.Runtime.Serialization.Formatters",
+        "System.Runtime.Serialization.Json",
+        "System.Runtime.Serialization.Primitives",
+        "System.Runtime.Serialization.Xml",
+        "System.Security.AccessControl",
+        "System.Security.Claims",
+        "System.Security.Cryptography.Algorithms",
+        "System.Security.Cryptography.Cng",
+        "System.Security.Cryptography.Csp",
+        "System.Security.Cryptography.Encoding",
+        "System.Security.Cryptography.OpenSsl",
+        "System.Security.Cryptography.Primitives",
+        "System.Security.Cryptography.X509Certificates",
+        "System.Security",
+        "System.Security.Principal",
+        "System.Security.Principal.Windows",
+        "System.Security.SecureString",
+        "System.ServiceModel.Web",
+        "System.ServiceProcess",
+        "System.Text.Encoding.CodePages",
+        "System.Text.Encoding",
+        "System.Text.Encoding.Extensions",
+        "System.Text.Encodings.Web",
+        "System.Text.Json",
+        "System.Text.RegularExpressions",
+        "System.Threading.Channels",
+        "System.Threading",
+        "System.Threading.Overlapped",
+        "System.Threading.Tasks.Dataflow",
+        "System.Threading.Tasks",
+        "System.Threading.Tasks.Extensions",
+        "System.Threading.Tasks.Parallel",
+        "System.Threading.Thread",
+        "System.Threading.ThreadPool",
+        "System.Threading.Timer",
+        "System.Transactions",
+        "System.Transactions.Local",
+        "System.ValueTuple",
+        "System.Web",
+        "System.Web.HttpUtility",
+        "System.Windows",
+        "System.Xml",
+        "System.Xml.Linq",
+        "System.Xml.ReaderWriter",
+        "System.Xml.Serialization",
+        "System.Xml.XDocument",
+        "System.Xml.XmlDocument",
+        "System.Xml.XmlSerializer",
+        "System.Xml.XPath",
+        "System.Xml.XPath.XDocument",
+        "WindowsBase"
+    };
 
-    private static readonly string[] frameworkNames = new string[]
+    private static readonly string[] frameworkNames = new[]
         {
             "net6.0-android31.0",
             "net6.0-android30.0",
@@ -192,6 +194,14 @@ WindowsBase";
         };
 
     public static readonly string NugetDirectory = Path.Combine(Android.OS.Environment.GetExternalStoragePublicDirectory("astator").ToString(), "nuget");
+
+    static NugetCommands()
+    {
+        if (!Directory.Exists(NugetDirectory))
+        {
+            Directory.CreateDirectory(NugetDirectory);
+        }
+    }
 
     private static readonly ILogger logger = NullLogger.Instance;
 
@@ -226,7 +236,7 @@ WindowsBase";
         {
             var tokensource = new CancellationTokenSource(10000);
             var cache = new SourceCacheContext();
-            var repository = Repository.Factory.GetCoreV3("https://nuget.cdn.azure.cn/v3/index.json");
+            var repository = Repository.Factory.GetCoreV3("https://api.nuget.org/v3/index.json");
             PackageMetadataResource resource = await repository.GetResourceAsync<PackageMetadataResource>();
 
             var packages = await resource.GetMetadataAsync(
@@ -322,26 +332,31 @@ WindowsBase";
                     continue;
                 }
 
-                string path;
                 if (group.TargetFramework is null)
                 {
-                    path = Path.Combine(dir, "lib", $"{dependence.Key}.dll");
-                }
-                else
-                {
-                    path = Path.Combine(dir, "lib", group.TargetFramework.GetShortFolderName(), $"{dependence.Key}.dll");
+                    throw new FrameworkNotFoundException(dependence.Key);
                 }
 
-                if (File.Exists(path))
+
+                string frameworkDir = Path.Combine(dir, "lib", group.TargetFramework.GetShortFolderName());
+                
+
+                var libFiles = Directory.GetFiles(frameworkDir);
+
+                var packageInfo = new PackageInfo
                 {
-                    result.Add(new PackageInfo
+                    Name = dependence.Key,
+                    Version = dependence.Value.ToString(),
+                };
+
+                foreach (var f in libFiles)
+                {
+                    if (f.EndsWith(".dll"))
                     {
-                        Name = dependence.Key,
-                        Version = dependence.Value.ToString(),
-                        Path = path,
-
-                    });
+                        packageInfo.Path.Add(f);
+                    }
                 }
+                result.Add(packageInfo);
             }
             return result;
         });
@@ -371,47 +386,40 @@ WindowsBase";
 
             foreach (var pkg in pkgs)
             {
-                try
+                var group = await GetPackageDependencyGroupAsync(pkg.Key, pkg.Value);
+                if (group is null)
                 {
-                    var group = await GetPackageDependencyGroupAsync(pkg.Key, pkg.Value);
-                    if (group is null)
-                    {
-                        continue;
-                    }
-
-                    foreach (var p in group.Packages)
-                    {
-                        var version = p.VersionRange.MinVersion;
-                        if (dependencyGroup.ContainsKey(p.Id))
-                        {
-                            if (version > dependencyGroup[p.Id])
-                            {
-                                dependencyGroup[p.Id] = version;
-                            }
-                        }
-                        else if (pkgs.ContainsKey(p.Id))
-                        {
-                            if (version > pkgs[p.Id])
-                            {
-                                pkgs[p.Id] = version;
-                            }
-                        }
-                        else if (parents.ContainsKey(p.Id))
-                        {
-                            if (version > parents[p.Id])
-                            {
-                                parents[p.Id] = version;
-                            }
-                        }
-                        else if (!ExcludeDlls.Contains(p.Id))
-                        {
-                            dependencyGroup.Add(p.Id, version);
-                        }
-                    }
+                    continue;
                 }
-                catch (Exception ex)
-                {
 
+                foreach (var p in group.Packages)
+                {
+                    var version = p.VersionRange.MinVersion;
+                    if (dependencyGroup.ContainsKey(p.Id))
+                    {
+                        if (version > dependencyGroup[p.Id])
+                        {
+                            dependencyGroup[p.Id] = version;
+                        }
+                    }
+                    else if (pkgs.ContainsKey(p.Id))
+                    {
+                        if (version > pkgs[p.Id])
+                        {
+                            pkgs[p.Id] = version;
+                        }
+                    }
+                    else if (parents.ContainsKey(p.Id))
+                    {
+                        if (version > parents[p.Id])
+                        {
+                            parents[p.Id] = version;
+                        }
+                    }
+                    else if (!ExcludeDlls.Contains(p.Id))
+                    {
+                        dependencyGroup.Add(p.Id, version);
+                    }
                 }
             }
 
@@ -455,7 +463,7 @@ WindowsBase";
         });
     }
 
-    public static async Task<NuGetVersion> ParseFloatingVersion(string pkgId, string version)
+    public static async Task<NuGetVersion> ParseVersion(string pkgId, string version)
     {
         if (!version.EndsWith("*"))
         {
