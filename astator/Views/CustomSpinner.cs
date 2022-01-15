@@ -1,20 +1,7 @@
-﻿using Android.Content;
-using Android.Widget;
-using AndroidX.AppCompat.Widget;
-using astator.Core;
-using astator.Core.UI;
+﻿using astator.Core.UI;
 using astator.Core.UI.Widget;
-using Java.Interop;
-using Microsoft.Maui.Controls.Compatibility.Platform.Android.AppCompat;
-using Microsoft.Maui.Controls.Platform;
 using Microsoft.Maui.Handlers;
 using Microsoft.Maui.Platform;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static Android.Widget.AdapterView;
 using static astator.Core.UI.Widget.ScriptSpinner;
 
 namespace astator.Views;
@@ -36,7 +23,7 @@ internal class CustomSpinner : View
         set => SetValue(SelectedItemProperty, value);
     }
 
-    public static readonly new BindableProperty BackgroundColorProperty = BindableProperty.Create(nameof(BackgroundColor), typeof(Color), typeof(CustomSpinner), (Color)Application.Current.Resources["PrimaryColor"]);
+    public static new readonly BindableProperty BackgroundColorProperty = BindableProperty.Create(nameof(BackgroundColor), typeof(Color), typeof(CustomSpinner), (Color)Application.Current.Resources["PrimaryColor"]);
     public new Color BackgroundColor
     {
         get => GetValue(BackgroundColorProperty) as Color;
@@ -64,7 +51,7 @@ internal class CustomSpinner : View
     public Action<int> SelectionChangedCallback;
     public CustomSpinner() : base()
     {
-        SelectionChangedCallback = (position) =>
+        this.SelectionChangedCallback = (position) =>
         {
             SelectionChanged?.Invoke(this, new SelectedItemChangedEventArgs(null, position));
         };
@@ -94,12 +81,12 @@ internal class CustomSpinnerHandler : ViewHandler<CustomSpinner, ScriptSpinner>
 
     protected override ScriptSpinner CreateNativeView()
     {
-        var nativeView = new ScriptSpinner(Context, null)
+        var nativeView = new ScriptSpinner(this.Context, null)
         {
             OnItemSelectedListener = new OnItemSelectedListener((AdapterView, v, position, id) =>
             {
-                VirtualView.SelectedItem = position;
-                VirtualView.SelectionChangedCallback?.Invoke(position);
+                this.VirtualView.SelectedItem = position;
+                this.VirtualView.SelectionChangedCallback?.Invoke(position);
             })
         };
         return nativeView;

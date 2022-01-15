@@ -12,8 +12,9 @@ namespace astator.NugetManager;
 public class NugetCommands
 {
 
-    private static readonly string[] ExcludeDlls = new[]
+    private static readonly string[] excludeDlls = new[]
     {
+        //net6.0
         "Microsoft.CSharp",
         "Microsoft.VisualBasic.Core",
         "Microsoft.VisualBasic",
@@ -172,7 +173,97 @@ public class NugetCommands
         "System.Xml.XmlSerializer",
         "System.Xml.XPath",
         "System.Xml.XPath.XDocument",
-        "WindowsBase"
+        "WindowsBase",
+
+        //maui
+        "Microsoft.Extensions.Configuration",
+        "Microsoft.Extensions.Configuration.Abstractions",
+        "Microsoft.Extensions.Configuration.Binder",
+        "Microsoft.Extensions.Configuration.CommandLine",
+        "Microsoft.Extensions.Configuration.EnvironmentVariables",
+        "Microsoft.Extensions.Configuration.FileExtensions",
+        "Microsoft.Extensions.Configuration.Json",
+        "Microsoft.Extensions.Configuration.UserSecrets",
+        "Microsoft.Extensions.DependencyInjection",
+        "Microsoft.Extensions.DependencyInjection.Abstractions",
+        "Microsoft.Extensions.FileProviders.Abstractions",
+        "Microsoft.Extensions.FileProviders.Physical",
+        "Microsoft.Extensions.FileSystemGlobbing",
+        "Microsoft.Extensions.Hosting",
+        "Microsoft.Extensions.Hosting.Abstractions",
+        "Microsoft.Extensions.Logging",
+        "Microsoft.Extensions.Logging.Abstractions",
+        "Microsoft.Extensions.Logging.Configuration",
+        "Microsoft.Extensions.Logging.Console",
+        "Microsoft.Extensions.Logging.Debug",
+        "Microsoft.Extensions.Logging.EventLog",
+        "Microsoft.Extensions.Logging.EventSource",
+        "Microsoft.Extensions.Options",
+        "Microsoft.Extensions.Options.ConfigurationExtensions",
+        "Microsoft.Extensions.Primitives",
+        "Microsoft.Maui.Graphics",
+        "System.Diagnostics.DiagnosticSource",
+        "System.Diagnostics.EventLog",
+        "System.Runtime.CompilerServices.Unsafe",
+        "System.Text.Encodings.Web",
+        "System.Text.Json",
+        "Xamarin.Android.Glide",
+        "Xamarin.Android.Glide.DiskLruCache",
+        "Xamarin.Android.Glide.GifDecoder",
+        "Xamarin.AndroidX.Activity",
+        "Xamarin.AndroidX.Annotation",
+        "Xamarin.AndroidX.Annotation.Experimental",
+        "Xamarin.AndroidX.AppCompat",
+        "Xamarin.AndroidX.AppCompat.AppCompatResources",
+        "Xamarin.AndroidX.Arch.Core.Common",
+        "Xamarin.AndroidX.Arch.Core.Runtime",
+        "Xamarin.AndroidX.AsyncLayoutInflater",
+        "Xamarin.AndroidX.Browser",
+        "Xamarin.AndroidX.CardView",
+        "Xamarin.AndroidX.Collection",
+        "Xamarin.AndroidX.Concurrent.Futures",
+        "Xamarin.AndroidX.ConstraintLayout",
+        "Xamarin.AndroidX.ConstraintLayout.Core",
+        "Xamarin.AndroidX.CoordinatorLayout",
+        "Xamarin.AndroidX.Core",
+        "Xamarin.AndroidX.CursorAdapter",
+        "Xamarin.AndroidX.CustomView",
+        "Xamarin.AndroidX.DocumentFile",
+        "Xamarin.AndroidX.DrawerLayout",
+        "Xamarin.AndroidX.DynamicAnimation",
+        "Xamarin.AndroidX.ExifInterface",
+        "Xamarin.AndroidX.Fragment",
+        "Xamarin.AndroidX.Interpolator",
+        "Xamarin.AndroidX.Legacy.Support.Core.UI",
+        "Xamarin.AndroidX.Legacy.Support.Core.Utils",
+        "Xamarin.AndroidX.Legacy.Support.V4",
+        "Xamarin.AndroidX.Lifecycle.Common",
+        "Xamarin.AndroidX.Lifecycle.LiveData",
+        "Xamarin.AndroidX.Lifecycle.LiveData.Core",
+        "Xamarin.AndroidX.Lifecycle.Runtime",
+        "Xamarin.AndroidX.Lifecycle.ViewModel",
+        "Xamarin.AndroidX.Lifecycle.ViewModelSavedState",
+        "Xamarin.AndroidX.Loader",
+        "Xamarin.AndroidX.LocalBroadcastManager",
+        "Xamarin.AndroidX.Media",
+        "Xamarin.AndroidX.Navigation.Common",
+        "Xamarin.AndroidX.Navigation.Fragment",
+        "Xamarin.AndroidX.Navigation.Runtime",
+        "Xamarin.AndroidX.Navigation.UI",
+        "Xamarin.AndroidX.Print",
+        "Xamarin.AndroidX.RecyclerView",
+        "Xamarin.AndroidX.SavedState",
+        "Xamarin.AndroidX.SlidingPaneLayout",
+        "Xamarin.AndroidX.SwipeRefreshLayout",
+        "Xamarin.AndroidX.Tracing.Tracing",
+        "Xamarin.AndroidX.Transition",
+        "Xamarin.AndroidX.VectorDrawable",
+        "Xamarin.AndroidX.VectorDrawable.Animated",
+        "Xamarin.AndroidX.VersionedParcelable",
+        "Xamarin.AndroidX.ViewPager",
+        "Xamarin.AndroidX.ViewPager2",
+        "Xamarin.Google.Android.Material",
+        "Xamarin.Google.Guava.ListenableFuture",
     };
 
     private static readonly string[] frameworkNames = new[]
@@ -237,7 +328,7 @@ public class NugetCommands
             var tokensource = new CancellationTokenSource(10000);
             var cache = new SourceCacheContext();
             var repository = Repository.Factory.GetCoreV3("https://api.nuget.org/v3/index.json");
-            PackageMetadataResource resource = await repository.GetResourceAsync<PackageMetadataResource>();
+            var resource = await repository.GetResourceAsync<PackageMetadataResource>();
 
             var packages = await resource.GetMetadataAsync(
                 pkgId,
@@ -259,10 +350,10 @@ public class NugetCommands
         {
             var tokensource = new CancellationTokenSource(10000);
             var cache = new SourceCacheContext();
-            SourceRepository repository = Repository.Factory.GetCoreV3("https://nuget.cdn.azure.cn/v3/index.json");
-            FindPackageByIdResource resource = await repository.GetResourceAsync<FindPackageByIdResource>();
+            var repository = Repository.Factory.GetCoreV3("https://nuget.cdn.azure.cn/v3/index.json");
+            var resource = await repository.GetResourceAsync<FindPackageByIdResource>();
 
-            using MemoryStream packageStream = new MemoryStream();
+            using var packageStream = new MemoryStream();
 
             if (!await resource.CopyNupkgToStreamAsync(
                 pkgId,
@@ -276,7 +367,7 @@ public class NugetCommands
             }
 
             var outputDir = Path.Combine(NugetDirectory, pkgId, version.ToString());
-            ZipArchive zip = new ZipArchive(packageStream);
+            var zip = new ZipArchive(packageStream);
             zip.ExtractToDirectory(outputDir, true);
 
             var libDir = Path.Combine(outputDir, "lib");
@@ -338,8 +429,8 @@ public class NugetCommands
                 }
 
 
-                string frameworkDir = Path.Combine(dir, "lib", group.TargetFramework.GetShortFolderName());
-                
+                var frameworkDir = Path.Combine(dir, "lib", group.TargetFramework.GetShortFolderName());
+
 
                 var libFiles = Directory.GetFiles(frameworkDir);
 
@@ -416,7 +507,7 @@ public class NugetCommands
                             parents[p.Id] = version;
                         }
                     }
-                    else if (!ExcludeDlls.Contains(p.Id))
+                    else if (!excludeDlls.Contains(p.Id))
                     {
                         dependencyGroup.Add(p.Id, version);
                     }

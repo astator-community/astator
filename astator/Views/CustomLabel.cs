@@ -1,6 +1,4 @@
-﻿using Android.Views;
-using astator.Core;
-using astator.Core.UI;
+﻿using astator.Core.UI;
 
 namespace astator.Views;
 

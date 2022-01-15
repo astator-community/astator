@@ -38,9 +38,9 @@
 
 
 	<ItemGroup>
-		<Reference Include="PaddleOcrBinding">
-			<HintPath>..\3rdparty\PaddleOcrBinding\bin\Release\net6.0-android\PaddleOcrBinding.dll</HintPath>
-		</Reference>
+	  <Reference Include="PaddleOcrBinding">
+	    <HintPath>..\3rdparty\PaddleOcrBinding\bin\Release\net6.0-android\PaddleOcrBinding.dll</HintPath>
+	  </Reference>
 	</ItemGroup>
 
 	<Target Name="IncludeAllDependencies" BeforeTargets="_GetPackageFiles">

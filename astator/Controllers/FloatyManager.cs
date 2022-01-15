@@ -69,7 +69,7 @@ namespace astator.Controllers
 
                 var view = layout.ToNative(Application.Current.MainPage.Handler.MauiContext);
 
-                var window = this.floatyManager.Show(view, Util.DpParse(-10), Util.DpParse(100));
+                var window = this.floatyManager.Show(view, Core.UI.Util.DpParse(-10), Core.UI.Util.DpParse(100));
                 this.floatys.Add(window);
 
 
@@ -87,11 +87,11 @@ namespace astator.Controllers
 
                      if (layoutParams.X < width / 2)
                      {
-                         layoutParams.X = Util.DpParse(-10);
+                         layoutParams.X = Core.UI.Util.DpParse(-10);
                      }
                      else
                      {
-                         layoutParams.X = width - view.Width + Util.DpParse(10);
+                         layoutParams.X = width - view.Width + Core.UI.Util.DpParse(10);
                      }
                      FloatyService.Instance.UpdateViewLayout(view, layoutParams);
 
@@ -143,11 +143,11 @@ namespace astator.Controllers
 
                     if (layoutParams.X < width / 2)
                     {
-                        layoutParams.X = Util.DpParse(-10);
+                        layoutParams.X = Core.UI.Util.DpParse(-10);
                     }
                     else
                     {
-                        layoutParams.X = width - v.Width + Util.DpParse(10);
+                        layoutParams.X = width - v.Width + Core.UI.Util.DpParse(10);
                     }
                     FloatyService.Instance.UpdateViewLayout(v, layoutParams);
                 }

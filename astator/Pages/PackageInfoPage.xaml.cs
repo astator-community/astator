@@ -1,14 +1,9 @@
-using System;
-using System.ComponentModel;
 using astator.Core;
 using astator.NugetManager;
 using astator.Views;
-using Microsoft.Maui;
-using Microsoft.Maui.Controls;
-using Microsoft.Maui.Controls.Xaml;
-using Microsoft.Maui.Essentials;
 using NuGet.Protocol.Core.Types;
 using NuGet.Versioning;
+using System.ComponentModel;
 
 namespace astator
 {
@@ -27,48 +22,48 @@ namespace astator
         {
             this.PkgId.Text = PkgId;
 
-            packages = await NugetCommands.GetPackagesMetadataAsync(PkgId);
+            this.packages = await NugetCommands.GetPackagesMetadataAsync(PkgId);
 
             var versions = new List<string>();
-            foreach (var pkg in packages)
+            foreach (var pkg in this.packages)
             {
                 versions.Add("v" + pkg.Identity.Version.ToString());
             }
-            VersionItems.Items = string.Join(",", versions);
+            this.VersionItems.Items = string.Join(",", versions);
 
-            VersionItems.SelectedItem = 0;
+            this.VersionItems.SelectedItem = 0;
         }
 
         private void ShowPkgInfo(int index)
         {
-            var pkg = packages[index];
+            var pkg = this.packages[index];
 
-            Description.Text = pkg.Description ?? default;
-            Version.Text = pkg.Identity.Version.ToString();
-            Authors.Text = pkg.Authors;
+            this.Description.Text = pkg.Description ?? default;
+            this.Version.Text = pkg.Identity.Version.ToString();
+            this.Authors.Text = pkg.Authors;
             if (pkg.LicenseMetadata is not null)
             {
-                License.Text = pkg.LicenseMetadata.License;
-                License.TextType = TextType.Text;
-                License.TextDecorations = TextDecorations.None;
-                License.TextColor = (Color)Application.Current.Resources["SecondaryColor"];
-                License.Clicked -= Uri_Clicked;
+                this.License.Text = pkg.LicenseMetadata.License;
+                this.License.TextType = TextType.Text;
+                this.License.TextDecorations = TextDecorations.None;
+                this.License.TextColor = (Color)Application.Current.Resources["SecondaryColor"];
+                this.License.Clicked -= Uri_Clicked;
             }
             else if (pkg.LicenseUrl is not null)
             {
-                License.Text = "查看许可证";
-                License.Tag = pkg.LicenseUrl.ToString();
-                License.TextType = TextType.Html;
-                License.TextDecorations = TextDecorations.Underline;
-                License.TextColor = Color.Parse("#56c2ec");
-                License.Clicked += Uri_Clicked;
+                this.License.Text = "查看许可证";
+                this.License.Tag = pkg.LicenseUrl.ToString();
+                this.License.TextType = TextType.Html;
+                this.License.TextDecorations = TextDecorations.Underline;
+                this.License.TextColor = Color.Parse("#56c2ec");
+                this.License.Clicked += Uri_Clicked;
             }
 
-            PublishDate.Text = pkg.Published.Value.ToString("d");
-            ProjectUrl.Text = pkg.ProjectUrl?.ToString() ?? default;
-            ProjectUrl.Tag = pkg.ProjectUrl?.ToString() ?? default;
+            this.PublishDate.Text = pkg.Published.Value.ToString("d");
+            this.ProjectUrl.Text = pkg.ProjectUrl?.ToString() ?? default;
+            this.ProjectUrl.Tag = pkg.ProjectUrl?.ToString() ?? default;
 
-            var dir = Path.Combine(NugetCommands.NugetDirectory, this.PkgId.Text, Version.Text);
+            var dir = Path.Combine(NugetCommands.NugetDirectory, this.PkgId.Text, this.Version.Text);
             if (Directory.Exists(dir))
             {
                 this.AttribBtn.Tag = "delete";
@@ -81,7 +76,7 @@ namespace astator
             }
 
 
-            DependencyList.Clear();
+            this.DependencyList.Clear();
 
             var group = NugetCommands.GetNearestFrameworkDependencyGroup(pkg.DependencySets);
 
@@ -92,9 +87,9 @@ namespace astator
                     Margin = new Thickness(20, 0, 0, 0),
                     Text = "不兼容"
                 };
-                DependencyList.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
-                dPkgLabel.SetValue(GridLayout.RowProperty, DependencyList.Children.Count);
-                DependencyList.Children.Add(dPkgLabel);
+                this.DependencyList.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+                dPkgLabel.SetValue(GridLayout.RowProperty, this.DependencyList.Children.Count);
+                this.DependencyList.Children.Add(dPkgLabel);
                 return;
             }
 
@@ -103,9 +98,9 @@ namespace astator
                 Text = group.TargetFramework.GetShortFolderName()
             };
 
-            DependencyList.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
-            targetLabel.SetValue(GridLayout.RowProperty, DependencyList.Children.Count);
-            DependencyList.Children.Add(targetLabel);
+            this.DependencyList.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            targetLabel.SetValue(GridLayout.RowProperty, this.DependencyList.Children.Count);
+            this.DependencyList.Children.Add(targetLabel);
 
             if (group.Packages.Any())
             {
@@ -117,9 +112,9 @@ namespace astator
                         Margin = new Thickness(20, 0, 0, 0),
                         Text = $"{dPkg.Id}>={dPkg.VersionRange.MinVersion}"
                     };
-                    DependencyList.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
-                    dPkgLabel.SetValue(GridLayout.RowProperty, DependencyList.Children.Count);
-                    DependencyList.Children.Add(dPkgLabel);
+                    this.DependencyList.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+                    dPkgLabel.SetValue(GridLayout.RowProperty, this.DependencyList.Children.Count);
+                    this.DependencyList.Children.Add(dPkgLabel);
                 }
             }
             else
@@ -129,19 +124,19 @@ namespace astator
                     Margin = new Thickness(20, 0, 0, 0),
                     Text = "无依赖项"
                 };
-                DependencyList.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
-                dPkgLabel.SetValue(GridLayout.RowProperty, DependencyList.Children.Count);
-                DependencyList.Children.Add(dPkgLabel);
+                this.DependencyList.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+                dPkgLabel.SetValue(GridLayout.RowProperty, this.DependencyList.Children.Count);
+                this.DependencyList.Children.Add(dPkgLabel);
             }
         }
 
         private async void AttribBtn_Clicked(object sender, EventArgs e)
         {
-            Refresh.IsRefreshing = true;
+            this.Refresh.IsRefreshing = true;
 
-            var id = PkgId.Text;
-            var version = NuGetVersion.Parse(Version.Text);
-            if (AttribBtn.Tag?.ToString() == "download")
+            var id = this.PkgId.Text;
+            var version = NuGetVersion.Parse(this.Version.Text);
+            if (this.AttribBtn.Tag?.ToString() == "download")
             {
                 var dependences = await NugetCommands.ListPackageTransitiveDependenceAsync(id, version);
 
@@ -161,15 +156,15 @@ namespace astator
             }
             else
             {
-                var dir = Path.Combine(NugetCommands.NugetDirectory, id, Version.Text);
+                var dir = Path.Combine(NugetCommands.NugetDirectory, id, this.Version.Text);
                 if (Directory.Exists(dir))
                 {
-                    Directory.Delete(dir,true);
+                    Directory.Delete(dir, true);
                 }
             }
 
-            ShowPkgInfo(VersionItems.SelectedItem);
-            Refresh.IsRefreshing = false;
+            ShowPkgInfo(this.VersionItems.SelectedItem);
+            this.Refresh.IsRefreshing = false;
 
         }
 
@@ -177,9 +172,9 @@ namespace astator
 
         private void VersionItems_SelectionChanged(object sender, SelectedItemChangedEventArgs e)
         {
-            Refresh.IsRefreshing = true;
+            this.Refresh.IsRefreshing = true;
             ShowPkgInfo(e.SelectedItemIndex);
-            Refresh.IsRefreshing = false;
+            this.Refresh.IsRefreshing = false;
         }
         private void Uri_Clicked(object sender, EventArgs e)
         {
@@ -194,7 +189,7 @@ namespace astator
         {
             if (e.PropertyName == "Width")
             {
-                Underline.X2 = (Underline.Parent as GridLayout).Width - 10;
+                this.Underline.X2 = (this.Underline.Parent as GridLayout).Width - 10;
             }
         }
     }

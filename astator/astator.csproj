@@ -86,8 +86,8 @@
 		<AndroidNativeLibrary Include="Resources\JNI\*\*" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <MauiAsset Include="Resources\ScriptFiles\v220114-sdk.zip" />
+	<ItemGroup Condition="'$(Configuration)' == 'Debug'">
+	  <MauiAsset Include="Resources\ScriptFiles\*" />
 	</ItemGroup>
 
 

@@ -7,7 +7,6 @@ using astator.Core.Script;
 using astator.Core.UI;
 using System.Collections.Concurrent;
 using System.Reflection;
-using System.Xml.Linq;
 using Application = Android.App.Application;
 
 namespace astator.Controllers;

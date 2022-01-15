@@ -88,13 +88,24 @@ namespace astator
 
         private static void ReleaseScriptFiles()
         {
-            var sdkPath = Android.App.Application.Context.Assets.List("Resources/ScriptFiles").FirstOrDefault(name => name.EndsWith("sdk.zip"));
+            var sdkPaths = from path in Android.App.Application.Context.Assets.List("Resources/ScriptFiles")
+                           orderby path descending
+                           select path;
+
+            var sdkPath = sdkPaths.First();
+            if (string.IsNullOrEmpty(sdkPath))
+            {
+                return;
+            }
+
             var sdkFileName = sdkPath[sdkPath.LastIndexOf("v")..];
             var version = sdkFileName[1..sdkFileName.IndexOf('-')];
             var outputDir = Android.App.Application.Context.GetExternalFilesDir("sdk").ToString();
             var versionPath = Path.Combine(outputDir, "version.txt");
             if (!File.Exists(versionPath) || int.Parse(version) > int.Parse(File.ReadAllText(versionPath)))
             {
+                Directory.Delete(outputDir, true);
+
                 using (var stream = Android.App.Application.Context.Assets.Open(Path.Combine("Resources/ScriptFiles", sdkPath)))
                 {
                     using var zip = new ZipArchive(stream);
@@ -107,7 +118,7 @@ namespace astator
                 }
                 File.WriteAllText(versionPath, version);
             };
-
         }
+
     }
 }

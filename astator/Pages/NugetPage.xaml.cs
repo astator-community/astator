@@ -1,11 +1,5 @@
-using System;
-using System.Net;
-using astator.Core;
 using astator.NugetManager;
 using astator.Views;
-using Microsoft.Maui;
-using Microsoft.Maui.Controls;
-using Microsoft.Maui.Controls.Xaml;
 
 namespace astator.Pages
 {
@@ -19,12 +13,12 @@ namespace astator.Pages
 
         private async void SearchPkg()
         {
-            SearchBtn.IsEnabled = false;
-            SearchBtn.Source = "search_disable.png";
-            Refresh.IsRefreshing = true;
-            PkgLayout.Clear();
+            this.SearchBtn.IsEnabled = false;
+            this.SearchBtn.Source = "search_disable.png";
+            this.Refresh.IsRefreshing = true;
+            this.PkgLayout.Clear();
 
-            var pkgs = await NugetCommands.SearchPkgAsync(SearchEditor.Text);
+            var pkgs = await NugetCommands.SearchPkgAsync(this.SearchEditor.Text);
 
             var cards = await Task.Run(() =>
             {
@@ -54,12 +48,12 @@ namespace astator.Pages
             foreach (var card in cards)
             {
                 card.Clicked += PkgCard_Clicked;
-                PkgLayout.Add(card);
+                this.PkgLayout.Add(card);
             }
 
-            Refresh.IsRefreshing = false;
-            SearchBtn.Source = "search.png";
-            SearchBtn.IsEnabled = true;
+            this.Refresh.IsRefreshing = false;
+            this.SearchBtn.Source = "search.png";
+            this.SearchBtn.IsEnabled = true;
         }
 
         private void SearchBtn_Clicked(object sender, EventArgs e)
@@ -72,7 +66,7 @@ namespace astator.Pages
             var card = sender as PackageInfoCard;
 
             var page = new PackageInfoPage(card.PkgId);
-            Navigation.PushAsync(page);
+            this.Navigation.PushAsync(page);
 
         }
 
@@ -80,14 +74,14 @@ namespace astator.Pages
         {
             if (e.NewTextValue.EndsWith("\n"))
             {
-                SearchEditor.Text = SearchEditor.Text.Trim();
+                this.SearchEditor.Text = this.SearchEditor.Text.Trim();
                 SearchBtn_Clicked(null, null);
             }
         }
 
         private void Refresh_Refreshing(object sender, EventArgs e)
         {
-            if (SearchBtn.IsEnabled)
+            if (this.SearchBtn.IsEnabled)
             {
                 SearchPkg();
             }

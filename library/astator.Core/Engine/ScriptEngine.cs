@@ -89,7 +89,7 @@ namespace astator.Core.Engine
         /// </summary>
         public void ParseAllCS()
         {
-            var scripts = Directory.GetFiles(rootDir, "*.cs", SearchOption.AllDirectories);
+            var scripts = Directory.GetFiles(this.rootDir, "*.cs", SearchOption.AllDirectories);
 
             foreach (var script in scripts)
             {
@@ -106,7 +106,7 @@ namespace astator.Core.Engine
         {
             if (path.StartsWith("."))
             {
-                path = Path.Combine(rootDir, path);
+                path = Path.Combine(this.rootDir, path);
             }
             if (!path.EndsWith(".dll"))
             {
@@ -277,7 +277,7 @@ namespace astator.Core.Engine
 
         public async Task<bool> Restore()
         {
-            var projectPath = Directory.GetFiles(rootDir, "*.csproj", SearchOption.AllDirectories).First();
+            var projectPath = Directory.GetFiles(this.rootDir, "*.csproj", SearchOption.AllDirectories).First();
             try
             {
                 var xd = XDocument.Load(projectPath);
@@ -285,7 +285,7 @@ namespace astator.Core.Engine
 
                 var packageInfos = await RestorePackage(itemGroup);
 
-                if (packageInfos.Any())
+                if (packageInfos is not null && packageInfos.Any())
                 {
                     if (!LoadPackageReference(packageInfos))
                     {
@@ -351,10 +351,6 @@ namespace astator.Core.Engine
             foreach (var group in packageReferenceItemGroups)
             {
                 var pkgId = group.Where(x => x.Name == "Include").Select(x => x.Value).FirstOrDefault();
-                if (pkgId == "astator.Core")
-                {
-                    continue;
-                }
                 var version = await NugetCommands.ParseVersion(pkgId,
                     group.Where(x => x.Name == "Version").Select(x => x.Value).FirstOrDefault() ?? "*");
 
@@ -372,6 +368,8 @@ namespace astator.Core.Engine
 
             var storeInfos = JsonConvert.DeserializeObject<List<PackageInfo>>(File.ReadAllText(restorePath));
 
+            var isNeedRestore = false;
+
             if (storeInfos is not null)
             {
                 foreach (var r in packageReferences)
@@ -381,26 +379,25 @@ namespace astator.Core.Engine
                         packageReferences.Remove(r.Key);
                     }
                 }
-            }
 
-            var isNeedRestore = false;
-
-            foreach (var info in storeInfos)
-            {
-                foreach (var path in info.Path)
+                foreach (var info in storeInfos)
                 {
-                    if (!File.Exists(path))
+                    foreach (var path in info.Path)
                     {
-                        isNeedRestore  = true;
+                        if (!File.Exists(path))
+                        {
+                            isNeedRestore = true;
+                            break;
+                        }
+                    }
+
+                    if (isNeedRestore)
+                    {
                         break;
                     }
                 }
-
-                if (isNeedRestore)
-                {
-                    break;
-                }
             }
+
 
             if (packageReferences.Any() || isNeedRestore)
             {

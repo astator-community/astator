@@ -81,7 +81,7 @@ namespace astator.Pages
             {
                 try
                 {
-                    var hostAddress = Utils.GetLocalHostAddress() ?? "127.0.0.1";
+                    var hostAddress = Util.GetLocalHostAddress() ?? "127.0.0.1";
                     this.tokenSource = new CancellationTokenSource();
                     this.tcpListener = new TcpListener(IPAddress.Parse(hostAddress), 1024);
                     this.tcpListener.Start();
@@ -140,10 +140,25 @@ namespace astator.Pages
                                 var directory = Path.Combine(MauiApplication.Current.ExternalCacheDir.ToString(), data.Description);
                                 using (var archive = new ZipArchive(zipStream))
                                 {
-                                    archive.ExtractToDirectory(directory,true);
+                                    archive.ExtractToDirectory(directory, true);
                                 }
 
                                 _ = ScriptManager.Instance.RunProject(directory);
+
+                                break;
+                            }
+                            case "runScript":
+                            {
+                                using var zipStream = new MemoryStream(data.Buffer.Data);
+
+                                var description = data.Description.Split("|");
+                                var directory = Path.Combine(MauiApplication.Current.ExternalCacheDir.ToString(), description[0]);
+                                using (var archive = new ZipArchive(zipStream))
+                                {
+                                    archive.ExtractToDirectory(directory, true);
+                                }
+
+                                _ = ScriptManager.Instance.RunScript(Path.Combine(directory, description[1]));
 
                                 break;
                             }

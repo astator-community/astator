@@ -17,7 +17,8 @@ namespace astator.Core.UI.Widget
             public Color BackgroundColor { get; set; } = Color.ParseColor(DefaultValue.BackgroundColor);
             public float TextSize { get; set; } = DefaultValue.TextSize;
             public Typeface Typeface { get; set; }
-            public SpinnerAdapter(Android.Content.Context context, int textViewResourceId, List<T> objects) : base(context, textViewResourceId, objects) {
+            public SpinnerAdapter(Android.Content.Context context, int textViewResourceId, List<T> objects) : base(context, textViewResourceId, objects)
+            {
             }
             public override View GetView(int position, View convertView, ViewGroup parent)
             {
@@ -26,11 +27,11 @@ namespace astator.Core.UI.Widget
                 view.SetBackgroundColor(this.BackgroundColor);
                 view.TextSize = this.TextSize;
 
-                if (Typeface is not null)
+                if (this.Typeface is not null)
                 {
-                    view.Typeface = Typeface;
+                    view.Typeface = this.Typeface;
                 }
-                
+
                 return view;
             }
 
@@ -42,9 +43,9 @@ namespace astator.Core.UI.Widget
                 view.SetBackgroundColor(this.BackgroundColor);
                 view.TextSize = this.TextSize;
 
-                if (Typeface is not null)
+                if (this.Typeface is not null)
                 {
-                    view.Typeface = Typeface;
+                    view.Typeface = this.Typeface;
                 }
 
                 return view;

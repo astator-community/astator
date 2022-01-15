@@ -1,8 +1,3 @@
-using System;
-using Microsoft.Maui;
-using Microsoft.Maui.Controls;
-using Microsoft.Maui.Controls.Xaml;
-
 namespace astator.Views
 {
     public partial class PackageInfoCard : CustomCard
@@ -21,7 +16,7 @@ namespace astator.Views
                 if (value is not null)
                 {
                     SetValue(IconUriBindableProperty, value);
-                    Icon.Source = value;
+                    this.Icon.Source = value;
                 }
             }
         }

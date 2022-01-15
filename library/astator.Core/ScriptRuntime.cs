@@ -57,7 +57,7 @@ namespace astator.Core
         public ScriptThreadManager Threads { get; private set; }
 
         /// <summary>
-        /// 任务管理
+        /// Task管理类
         /// </summary>
         public ScriptTaskManager Tasks { get; private set; }
 
@@ -69,7 +69,7 @@ namespace astator.Core
         /// <summary>
         /// 脚本id
         /// </summary>
-        public string ScriptId { get; }
+        public string ScriptId { get; private set; }
 
         /// <summary>
         /// 脚本运行状态
@@ -82,7 +82,7 @@ namespace astator.Core
         public List<Action> ExitCallbacks { get; set; } = new();
 
         /// <summary>
-        /// 脚本所在路径
+        /// 脚本所在文件夹路径
         /// </summary>
         public string Directory { get; private set; } = string.Empty;
 
