@@ -1,14 +1,19 @@
-﻿using Android.Views;
+using System;
+using astator.Controllers;
 using astator.Views;
+using Microsoft.Maui;
+using Microsoft.Maui.Controls;
+using Microsoft.Maui.Controls.Xaml;
 
 namespace astator.Pages
 {
-    public partial class HomePage : ContentPage
+    public partial class FloatyFastRunner : GridLayout
     {
+
         private readonly string rootDir = string.Empty;
         private string currentDir;
 
-        public HomePage()
+        public FloatyFastRunner()
         {
             InitializeComponent();
 
@@ -21,7 +26,7 @@ namespace astator.Pages
                     Directory.CreateDirectory(this.rootDir);
                 }
 
-                var scriptDir = Path.Combine(this.rootDir, "脚本");
+                var scriptDir = Path.Combine(this.rootDir, "�ű�");
 
                 if (!Directory.Exists(scriptDir))
                 {
@@ -31,18 +36,6 @@ namespace astator.Pages
                 UpdateDirTbs(scriptDir);
             }
             catch { }
-        }
-
-        protected override void OnAppearing()
-        {
-            base.OnAppearing();
-            MainActivity.Instance.OnKeyDownCallback = OnKeyDown;
-        }
-
-        protected override void OnDisappearing()
-        {
-            base.OnDisappearing();
-            MainActivity.Instance.OnKeyDownCallback = null;
         }
 
         private void ShowFiles(string directory)
@@ -61,7 +54,6 @@ namespace astator.Pages
                     PathInfo = info,
                     TypeImageSource = "dir.png",
                 };
-
                 card.Clicked += Dir_Clicked;
 
                 this.FilesLayout.Children.Add(card);
@@ -80,9 +72,25 @@ namespace astator.Pages
                     PathName = name,
                     PathInfo = info,
                     TypeImageSource = $"file{icon}.png",
-                    IsAddMenu = true
                 };
+                card.Clicked += File_Clicked;
+
                 this.FilesLayout.Children.Add(card);
+            }
+        }
+
+        private void File_Clicked(object sender, EventArgs e)
+        {
+            var card = sender as PathCard;
+            var filePath = card.Tag as string;
+
+            if (filePath.EndsWith(".cs"))
+            {
+                _ = ScriptManager.Instance.RunScript(filePath);
+            }
+            else if (filePath.EndsWith(".csproj"))
+            {
+                _ = ScriptManager.Instance.RunProject(Path.GetDirectoryName(filePath));
             }
         }
 
@@ -136,25 +144,12 @@ namespace astator.Pages
             }
         }
 
-        private bool OnKeyDown(Keycode keyCode, KeyEvent e)
-        {
-            if (keyCode == Keycode.Back)
-            {
-                var count = this.DirTbLayout.Children.Count / 2;
-                if (count > 1)
-                {
-                    UpdateDirTbs((this.DirTbLayout.Children[(count - 2) * 2] as CustomLabelButton).Tag as string);
-                    return true;
-                }
-            }
-            return false;
-        }
-
         private void Refresh_Refreshing(object sender, EventArgs e)
         {
             UpdateDirTbs(this.currentDir);
             var refresh = sender as RefreshView;
             refresh.IsRefreshing = false;
         }
+
     }
 }

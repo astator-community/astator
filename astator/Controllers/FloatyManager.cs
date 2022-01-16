@@ -4,6 +4,7 @@ using astator.Core;
 using astator.Core.Broadcast;
 using astator.Core.UI;
 using astator.Core.UI.Floaty;
+using astator.Pages;
 using astator.Views;
 using Microsoft.Maui.Platform;
 using View = Android.Views.View;
@@ -27,7 +28,7 @@ namespace astator.Controllers
 
         private readonly Core.UI.Floaty.FloatyManager floatyManager;
 
-        private readonly List<FloatWindow> floatys = new();
+        private readonly Dictionary<string, FloatWindow> floatys = new();
 
         public FloatyManager()
         {
@@ -68,17 +69,10 @@ namespace astator.Controllers
                 });
 
                 var view = layout.ToNative(Application.Current.MainPage.Handler.MauiContext);
-
-                var window = this.floatyManager.Show(view, Core.UI.Util.DpParse(-10), Core.UI.Util.DpParse(100));
-                this.floatys.Add(window);
-
-
                 view.SetOnTouchListener(new OnTouchListener((v, e) =>
                 {
-                    return IconWindow_TouchListener(v, e);
+                    return IconFloaty_TouchListener(v, e);
                 }));
-
-
 
                 ScriptBroadcastReceiver.AddListener(Intent.ActionConfigurationChanged, () =>
                  {
@@ -94,8 +88,10 @@ namespace astator.Controllers
                          layoutParams.X = width - view.Width + Core.UI.Util.DpParse(10);
                      }
                      FloatyService.Instance.UpdateViewLayout(view, layoutParams);
-
                  });
+
+                var window = this.floatyManager.Show(view, Core.UI.Util.DpParse(-10), Core.UI.Util.DpParse(100));
+                this.floatys.Add("iconFloaty", window);
             }
         }
 
@@ -105,7 +101,7 @@ namespace astator.Controllers
 
         private bool isMoving;
 
-        private bool IconWindow_TouchListener(View v, MotionEvent e)
+        private bool IconFloaty_TouchListener(View v, MotionEvent e)
         {
             if (e.Action == MotionEventActions.Down)
             {
@@ -150,22 +146,58 @@ namespace astator.Controllers
                         layoutParams.X = width - v.Width + Core.UI.Util.DpParse(10);
                     }
                     FloatyService.Instance.UpdateViewLayout(v, layoutParams);
+                    this.isMoving = false;
                 }
-                this.isMoving = false;
+                else
+                {
+                    var exist = this.floatys.TryGetValue("fastRunner", out var fastRunner);
+                    if (exist)
+                    {
+                        this.floatyManager.Remove(fastRunner);
+                        this.floatys.Remove("fastRunner");
+                    }
+                    else
+                    {
+                        ShowFastRunner();
+                    }
+                }
             }
             return true;
+        }
+
+        private void ShowFastRunner()
+        {
+            var width = Globals.Devices.Width / Globals.Devices.Dp;
+            var height = Globals.Devices.Height / Globals.Devices.Dp;
+            var fastRunner = new FloatyFastRunner();
+            var view = fastRunner.ToNative(Application.Current.MainPage.Handler.MauiContext);
+
+            var window = this.floatyManager.Show(view,
+                Convert.ToInt32((width - 285) / 2 * Globals.Devices.Dp),
+                Convert.ToInt32((height - 550) / 2 * Globals.Devices.Dp));
+
+            view.SetOnTouchListener(new OnTouchListener((v, e) =>
+            {
+                if (e.Action == MotionEventActions.Outside)
+                {
+                    this.floatyManager.Remove(window);
+                    return true;
+                }
+                return false;
+            }));
+
+            this.floatys.Add("fastRunner", window);
         }
 
 
         internal void Remove()
         {
-            foreach (var floaty in this.floatys)
+            foreach (var floaty in this.floatys.Values)
             {
                 this.floatyManager.Remove(floaty);
             }
+            this.floatys.Clear();
         }
-
-
 
     }
 }

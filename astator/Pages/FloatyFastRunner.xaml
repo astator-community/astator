@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<GridLayout
+    x:Class="astator.Pages.FloatyFastRunner"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:v="clr-namespace:astator.Views"
+    HeightRequest="500"
+    RowDefinitions="55,45,400"
+    WidthRequest="285">
+
+    <GridLayout.Resources>
+        <Style TargetType="v:CustomLabelButton">
+            <Setter Property="BackgroundColor" Value="{DynamicResource PrimaryColor}" />
+            <Setter Property="TextColor" Value="{DynamicResource SecondaryColor}" />
+            <Setter Property="FontSize" Value="18" />
+            <Setter Property="FontAttributes" Value="Bold" />
+        </Style>
+    </GridLayout.Resources>
+
+    <GridLayout GridLayout.Row="0">
+        <Label
+            x:Name="Header"
+            Margin="15,5"
+            FontAttributes="Bold"
+            FontSize="22"
+            HorizontalOptions="Start"
+            Text="快速运行"
+            VerticalOptions="Center" />
+    </GridLayout>
+
+    <HorizontalStackLayout
+        x:Name="DirTbLayout"
+        Padding="20,5"
+        BackgroundColor="{DynamicResource PrimaryColor}"
+        GridLayout.Row="1" />
+
+    <RefreshView
+        GridLayout.Row="2"
+        IsRefreshing="False"
+        RefreshColor="#2F88FF"
+        Refreshing="Refresh_Refreshing">
+        <GridLayout>
+            <ScrollView>
+                <VerticalStackLayout x:Name="FilesLayout" BackgroundColor="{DynamicResource PrimaryColor}" />
+            </ScrollView>
+        </GridLayout>
+    </RefreshView>
+</GridLayout>

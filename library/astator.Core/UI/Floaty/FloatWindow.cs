@@ -18,7 +18,10 @@ namespace astator.Core.UI.Floaty
         /// <param name="view"></param>
         /// <param name="x"></param>
         /// <param name="y"></param>
-        public FloatWindow(View view, int x = 0, int y = 0)
+        public FloatWindow(View view, 
+            int x = 0, 
+            int y = 0, 
+            WindowManagerFlags flags = WindowManagerFlags.NotFocusable | WindowManagerFlags.LayoutNoLimits)
         {
             this.view = view;
             var layoutParams = new WindowManagerLayoutParams();
@@ -32,7 +35,7 @@ namespace astator.Core.UI.Floaty
             }
             layoutParams.Format = Format.Transparent;
             layoutParams.Gravity = GravityFlags.Left | GravityFlags.Top;
-            layoutParams.Flags = WindowManagerFlags.NotFocusable | WindowManagerFlags.LayoutNoLimits;
+            layoutParams.Flags = WindowManagerFlags.NotFocusable | WindowManagerFlags.LayoutNoLimits | WindowManagerFlags.WatchOutsideTouch;
 
             if (OperatingSystem.IsAndroidVersionAtLeast(30))
             {

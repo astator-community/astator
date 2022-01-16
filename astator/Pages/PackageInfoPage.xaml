@@ -50,7 +50,6 @@
 
             <RefreshView
                 x:Name="Refresh"
-                BackgroundColor="{DynamicResource PrimaryColor}"
                 IsRefreshing="True"
                 RefreshColor="#2F88FF">
                 <GridLayout Padding="20,10" RowDefinitions="auto,auto,auto,auto,auto,auto,auto,auto,auto">

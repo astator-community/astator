@@ -37,12 +37,20 @@ namespace astator.Views
             set => SetValue(PathInfoBindableProperty, value);
         }
 
-        public EventHandler MenuItemClicked;
+        public static readonly BindableProperty IsAddMenuBindableProperty = BindableProperty.Create(nameof(IsAddMenu), typeof(bool), typeof(PathCard));
+        public bool IsAddMenu
+        {
+            get => (bool)GetValue(IsAddMenuBindableProperty);
+            set => SetValue(IsAddMenuBindableProperty, value);
+        }
 
         public PathCard()
         {
             InitializeComponent();
         }
+
+
+
 
 
         protected override void OnHandlerChanged()
@@ -51,7 +59,7 @@ namespace astator.Views
 
             var view = this.Handler.NativeView as LayoutViewGroup;
 
-            if (this.TypeImageSource != "dir.png")
+            if (IsAddMenu)
             {
                 var menu = new AndroidX.AppCompat.Widget.PopupMenu(Globals.AppContext, view, (int)GravityFlags.Right);
 
@@ -95,7 +103,6 @@ namespace astator.Views
 
                         Globals.AppContext.StartActivity(intent);
                     }
-                    //MenuItemClicked?.Invoke(this, new MenuItemOnMenuItemClickEventArgs(true, item));
                     return true;
                 }));
 

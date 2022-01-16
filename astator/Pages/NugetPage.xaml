@@ -46,7 +46,6 @@
 
         <RefreshView
             x:Name="Refresh"
-            BackgroundColor="{DynamicResource PrimaryColor}"
             GridLayout.Row="2"
             IsRefreshing="False"
             RefreshColor="#2F88FF"
