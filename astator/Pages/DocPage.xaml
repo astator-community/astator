@@ -12,7 +12,7 @@
                 FontAttributes="Bold"
                 FontSize="28"
                 HorizontalOptions="Start"
-                Text="文档"
+                Text="文档1"
                 VerticalOptions="Center" />
         </GridLayout>
         <GridLayout GridLayout.Row="1" />

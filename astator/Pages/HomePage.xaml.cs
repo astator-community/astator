@@ -82,8 +82,24 @@ namespace astator.Pages
                     TypeImageSource = $"file{icon}.png",
                     IsAddMenu = true
                 };
+                card.Clicked += File_Clicked;
                 this.FilesLayout.Children.Add(card);
             }
+        }
+
+        private async void File_Clicked(object sender, EventArgs e)
+        {
+            var card = sender as PathCard;
+            var path = card.Tag as string;
+
+            if (path.EndsWith(".cs")
+                || path.EndsWith(".csproj")
+                || path.EndsWith(".txt")
+                || path.EndsWith(".xml"))
+            {
+                await this.Navigation.PushAsync(new CodeEditorPage(path));
+            }
+
         }
 
         private void Dir_Clicked(object sender, EventArgs e)

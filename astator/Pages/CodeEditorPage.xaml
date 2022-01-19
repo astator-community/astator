@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="astator.CodeEditorPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:v="clr-namespace:astator.Views"
+    NavigationPage.HasNavigationBar="False">
+    <GridLayout RowDefinitions="55,*">
+        <GridLayout ColumnDefinitions="*,auto,auto">
+            <Label
+                x:Name="Header"
+                Margin="15,5"
+                FontAttributes="Bold"
+                FontSize="22"
+                HorizontalOptions="Start"
+                VerticalOptions="Center" />
+            <v:CustomImageButton
+                BackgroundColor="Transparent"
+                Clicked="Save_Clicked"
+                GridLayout.Column="1"
+                HeightRequest="28"
+                HorizontalOptions="End"
+                Source="save.png"
+                VerticalOptions="Center" />
+            <v:CustomImageButton
+                BackgroundColor="Transparent"
+                GridLayout.Column="2"
+                HeightRequest="32"
+                HorizontalOptions="End"
+                Source="more.png"
+                VerticalOptions="Center" />
+        </GridLayout>
+        <ScrollView GridLayout.Row="1">
+            <v:CodeEditorView x:Name="editor" BackgroundColor="{DynamicResource PrimaryColor}" />
+        </ScrollView>
+    </GridLayout>
+</ContentPage>

@@ -32,7 +32,7 @@
 
 		<!-- Splash Screen -->
 
-		<MauiSplashScreen Include="Resources\appiconfg.svg" Color="#512BD4" />
+		<MauiSplashScreen Include="Resources\appiconfg.svg" Color="#8000ff" />
 
 		<!-- Images -->
 		<MauiImage Include="Resources\Images\*" />
@@ -48,6 +48,9 @@
 
 	<ItemGroup>
 	  <MauiXaml Update="Pages\AboutPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Pages\CodeEditorPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Pages\DocPage.xaml">
@@ -93,6 +96,12 @@
 	  <MauiAsset Include="Resources\ScriptFiles\*" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <None Remove="Platforms\Android\Resources\values\styles.xml" />
+	  <None Remove="Resources\Images\more.svg" />
+	  <None Remove="Resources\Images\save.svg" />
+	</ItemGroup>
+
 
  
 	<ItemGroup>
@@ -103,6 +112,9 @@
 
 
 	<ItemGroup>
+	  <Reference Include="CodeViewBinding">
+	    <HintPath>..\library\3rdparty\CodeViewBinding\bin\Release\net6.0-android\CodeViewBinding.dll</HintPath>
+	  </Reference>
 	  <Reference Include="PaddleOcrBinding">
 	    <HintPath>..\library\3rdparty\PaddleOcrBinding\bin\Release\net6.0-android\PaddleOcrBinding.dll</HintPath>
 	  </Reference>

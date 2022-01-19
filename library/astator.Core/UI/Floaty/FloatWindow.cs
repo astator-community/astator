@@ -35,9 +35,9 @@ namespace astator.Core.UI.Floaty
             }
             layoutParams.Format = Format.Transparent;
             layoutParams.Gravity = GravityFlags.Left | GravityFlags.Top;
-            layoutParams.Flags = WindowManagerFlags.NotFocusable | WindowManagerFlags.LayoutNoLimits | WindowManagerFlags.WatchOutsideTouch;
+            layoutParams.Flags = flags;
 
-            if (OperatingSystem.IsAndroidVersionAtLeast(30))
+            if (OperatingSystem.IsAndroidVersionAtLeast(28))
             {
                 layoutParams.LayoutInDisplayCutoutMode = LayoutInDisplayCutoutMode.ShortEdges;
             }

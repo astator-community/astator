@@ -10,7 +10,7 @@ astator的目标是使用c#作为脚本的安卓自动化软件
 - [x] OCR (未实现部分: x86)
 - [x] 代码混淆
 - [x] apk打包
-- [ ] 代码编辑器 (优先级低, 编辑器深坑)
+- [x] 代码编辑器 (简陋实现)
 - [x] nuget包引用
 - [x] vscode插件
 - [ ] 其他
@@ -31,6 +31,7 @@ astator的目标是使用c#作为脚本的安卓自动化软件
 - [ApkSigner](https://android.googlesource.com/platform/build/+/dd910c5/tools/signapk/src/com/android/signapk) :  apkV2签名, android规定targetSdk为30以上的apk必须拥有V2签名
 - [ZipAligner](https://github.com/TimScriptov/ZipAligner-for-Android) :  apk包对齐, android规定targetSdk为30以上的apk必须使用zipalign对齐优化
 - [IconPark](https://iconpark.oceanengine.com/home) :  图标库
+- [CodeView](https://github.com/AmrDeveloper/CodeView): 代码编辑器
 
 
 

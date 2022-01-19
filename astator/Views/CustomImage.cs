@@ -29,7 +29,7 @@ internal class CustomImage : Image
     {
         public override void GetOutline(Android.Views.View view, Android.Graphics.Outline outline)
         {
-            outline.SetRoundRect(0, 0, view.Width, view.Height, (view.Width < view.Height ? view.Width : view.Height) * 10);
+            outline.SetRoundRect(0, 0, view.Width, view.Height, (view.Width < view.Height ? view.Width : view.Height) / 2);
         }
     }
 }

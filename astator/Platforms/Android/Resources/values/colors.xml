@@ -1,4 +1,6 @@
-<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<string name="accessibility-service-description">astator</string>
+    <color name="colorPrimary">#8000ff</color>
+    <color name="colorPrimaryDark">#8000ff</color>
+    <color name="colorAccent">#2B0B98</color>
 </resources>

@@ -57,12 +57,12 @@ namespace astator.Controllers
                     WidthRequest = 42,
                     HeightRequest = 42,
                     BackgroundColor = Colors.Transparent
-                };
+            };
 
                 layout.Add(new CustomImage
                 {
                     Source = "appicon.png",
-                    IsCircle = true,
+                   IsCircle = true,
                     WidthRequest = 42,
                     HeightRequest = 42,
 

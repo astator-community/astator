@@ -14,6 +14,7 @@ public class CustomCard : GridLayout
     }
 
     public event EventHandler Clicked;
+
     protected override void OnHandlerChanged()
     {
         var view = this.Handler.NativeView as LayoutViewGroup;

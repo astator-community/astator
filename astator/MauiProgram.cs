@@ -17,6 +17,7 @@ public static class MauiProgram
             {
                 handler.AddCompatibilityRenderer(typeof(CustomLabelButton), typeof(CustomLabelButtonRenderer));
                 handler.AddHandler(typeof(CustomSpinner), typeof(CustomSpinnerHandler));
+                handler.AddHandler(typeof(CodeEditorView), typeof(CodeEditorViewHandler));
             });
         return builder.Build();
     }

@@ -138,6 +138,8 @@ namespace astator.Pages
                             {
                                 using var zipStream = new MemoryStream(data.Buffer.Data);
                                 var directory = Path.Combine(MauiApplication.Current.ExternalCacheDir.ToString(), data.Description);
+                                DeleteOldCSFiles(directory);
+
                                 using (var archive = new ZipArchive(zipStream))
                                 {
                                     archive.ExtractToDirectory(directory, true);
@@ -150,9 +152,10 @@ namespace astator.Pages
                             case "runScript":
                             {
                                 using var zipStream = new MemoryStream(data.Buffer.Data);
-
                                 var description = data.Description.Split("|");
                                 var directory = Path.Combine(MauiApplication.Current.ExternalCacheDir.ToString(), description[0]);
+                                DeleteOldCSFiles(directory);
+
                                 using (var archive = new ZipArchive(zipStream))
                                 {
                                     archive.ExtractToDirectory(directory, true);
@@ -169,8 +172,11 @@ namespace astator.Pages
                                 {
                                     Directory.CreateDirectory(directory);
                                 }
+
                                 using var zipStream = new MemoryStream(data.Buffer.Data);
                                 var saveDirectory = Path.Combine(directory, data.Description);
+                                DeleteOldCSFiles(directory);
+
                                 using var archive = new ZipArchive(zipStream);
                                 archive.ExtractToDirectory(saveDirectory, true);
                                 Globals.Toast($"项目已保存至{saveDirectory}");
@@ -221,9 +227,28 @@ namespace astator.Pages
                         ScriptLogger.RemoveCallback(key);
                     }
                 }
-
             });
         }
+
+        private static void DeleteOldCSFiles(string directory)
+        {
+            if (!Directory.Exists(directory))
+            {
+                return;
+            }
+
+            var oldCSFiles = Directory.GetFiles(directory, "*.cs", SearchOption.AllDirectories);
+            if (!oldCSFiles.Any())
+            {
+                return;
+            }
+
+            foreach (var oldCSFile in oldCSFiles)
+            {
+                File.Delete(oldCSFile);
+            }
+        }
+
 
         private void AccessibilityService_Clicked(object sender, EventArgs e)
         {
