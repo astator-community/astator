@@ -1,9 +1,5 @@
-using System;
 using astator.Controllers;
 using astator.Views;
-using Microsoft.Maui;
-using Microsoft.Maui.Controls;
-using Microsoft.Maui.Controls.Xaml;
 
 namespace astator.Pages
 {

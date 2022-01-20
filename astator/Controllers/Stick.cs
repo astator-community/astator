@@ -43,6 +43,11 @@ public struct PackData
         var result = Encoding.UTF8.GetString(bytes);
         return result;
     }
+
+    public PackData()
+    {
+
+    }
 }
 
 public static class Stick

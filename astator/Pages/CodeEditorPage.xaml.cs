@@ -1,8 +1,4 @@
-using System;
 using astator.Core;
-using Microsoft.Maui;
-using Microsoft.Maui.Controls;
-using Microsoft.Maui.Controls.Xaml;
 
 namespace astator
 {
@@ -28,7 +24,7 @@ namespace astator
             try
             {
                 var text = this.editor.GetText();
-                File.WriteAllText(path, text);
+                File.WriteAllText(this.path, text);
                 Globals.Toast("文件已保存");
             }
             catch (Exception ex)

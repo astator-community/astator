@@ -62,6 +62,11 @@ namespace astator.Core.ThirdParty
         /// </summary>
         public bool OptimizeMethods = true;
 
+        public ObfuscatorRules()
+        {
+
+        }
+
     }
 
     public static class ObfuscatorHelper

@@ -1,6 +1,7 @@
 ﻿using Android.Content;
 using Android.Views;
 using astator.Core;
+using astator.Core.Accessibility;
 using astator.Core.Broadcast;
 using astator.Core.UI;
 using astator.Core.UI.Floaty;
@@ -57,12 +58,12 @@ namespace astator.Controllers
                     WidthRequest = 42,
                     HeightRequest = 42,
                     BackgroundColor = Colors.Transparent
-            };
+                };
 
                 layout.Add(new CustomImage
                 {
                     Source = "appicon.png",
-                   IsCircle = true,
+                    IsCircle = true,
                     WidthRequest = 42,
                     HeightRequest = 42,
 
@@ -158,7 +159,15 @@ namespace astator.Controllers
                     }
                     else
                     {
-                        ShowFastRunner();
+                        //ShowFastRunner();
+                        var s = UIFinder.FindOne(new SearcherArgs
+                        {
+                            Text = "YunxiOcr"
+                        });
+
+                        ScriptLogger.Log(s.GetBounds().ToString());
+                        ScriptLogger.Log(s.GetDepth().ToString());
+                        ScriptLogger.Log(s.ViewIdResourceName.Split("/").Last());
                     }
                 }
             }

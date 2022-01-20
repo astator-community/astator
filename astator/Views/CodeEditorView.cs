@@ -70,7 +70,7 @@ internal class CodeEditorView : View
 
     public CodeEditorView() : base()
     {
-        
+
     }
 }
 
@@ -240,8 +240,8 @@ internal class CodeEditorViewHandler : ViewHandler<CodeEditorView, CodeView>
             view.AddSyntaxPattern(Pattern.Compile($"(?=\\b){keyWord}(?=\\b)"), color);
         }
 
-       var codeAdapter = new ArrayAdapter(this.Context, Resource.Layout.suggestion_list_item, Resource.Id.suggestItemTextView, keyWords);
-       view.Adapter = codeAdapter;
+        var codeAdapter = new ArrayAdapter(this.Context, Resource.Layout.suggestion_list_item, Resource.Id.suggestItemTextView, keyWords);
+        view.Adapter = codeAdapter;
         return view;
     }
 

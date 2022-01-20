@@ -59,7 +59,7 @@ namespace astator.Views
 
             var view = this.Handler.NativeView as LayoutViewGroup;
 
-            if (IsAddMenu)
+            if (this.IsAddMenu)
             {
                 var menu = new AndroidX.AppCompat.Widget.PopupMenu(Globals.AppContext, view, (int)GravityFlags.Right);
 

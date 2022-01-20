@@ -58,6 +58,11 @@ namespace astator.Core.ThirdParty
         /// cpu能耗模式
         /// </summary>
         public string PowerMode = CpuPowerMode.LITE_POWER_NO_BIND;
+
+        public PaddleOcrArgs()
+        {
+
+        }
     }
 
     public class PaddleOcrHelper
