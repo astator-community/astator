@@ -6,6 +6,7 @@ using astator.Core.Graphics;
 using System.IO.Compression;
 using System.Net;
 using System.Net.Sockets;
+using System.Text;
 using Path = System.IO.Path;
 
 namespace astator.Pages
@@ -121,7 +122,7 @@ namespace astator.Pages
 
                 var key = ScriptLogger.AddCallback("info", async (args) =>
                 {
-                    var pack = Stick.MakePackData("showMessage", $"[{info}] {args.Time:HH:mm:ss.fff}: {args.Message}");
+                    var pack = Stick.MakePackData("showMessage", Encoding.UTF8.GetBytes($"[{info}] {args.Time:HH:mm:ss.fff}: {args.Message}"));
                     await stream.WriteAsync(pack);
                 });
 
@@ -136,7 +137,7 @@ namespace astator.Pages
                         {
                             case "runProject":
                             {
-                                using var zipStream = new MemoryStream(data.Buffer.Data);
+                                using var zipStream = new MemoryStream(data.Buffer);
                                 var directory = Path.Combine(MauiApplication.Current.ExternalCacheDir.ToString(), data.Description);
                                 DeleteOldCSFiles(directory);
 
@@ -151,7 +152,7 @@ namespace astator.Pages
                             }
                             case "runScript":
                             {
-                                using var zipStream = new MemoryStream(data.Buffer.Data);
+                                using var zipStream = new MemoryStream(data.Buffer);
                                 var description = data.Description.Split("|");
                                 var directory = Path.Combine(MauiApplication.Current.ExternalCacheDir.ToString(), description[0]);
                                 DeleteOldCSFiles(directory);
@@ -173,7 +174,7 @@ namespace astator.Pages
                                     Directory.CreateDirectory(directory);
                                 }
 
-                                using var zipStream = new MemoryStream(data.Buffer.Data);
+                                using var zipStream = new MemoryStream(data.Buffer);
                                 var saveDirectory = Path.Combine(directory, data.Description);
                                 DeleteOldCSFiles(directory);
 

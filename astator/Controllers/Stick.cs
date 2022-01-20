@@ -1,110 +1,33 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
-using System.Text;
-using System.Text.Json.Serialization;
+﻿using System.Text;
 
 namespace astator.Controllers;
 
-
-public struct NodeType
-{
-    [JsonPropertyName("type")]
-    public string Type { get; set; }
-
-    [JsonPropertyName("data")]
-    public byte[] Data { get; set; }
-}
-
-public struct PackData
-{
-    [JsonPropertyName("key")]
-    public string Key { get; set; } = default;
-
-    [JsonPropertyName("description")]
-    public string Description { get; set; } = default;
-
-    [JsonPropertyName("buffer")]
-    public NodeType Buffer { get; set; } = default;
-
-    private readonly JsonSerializerSettings serializerSettings = new()
-    {
-        ContractResolver = new CamelCasePropertyNamesContractResolver()
-    };
-
-    public byte[] ToBytes()
-    {
-        var result = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(this, this.serializerSettings));
-        return result;
-    }
-
-    public override string ToString()
-    {
-        var bytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(this, this.serializerSettings));
-        var result = Encoding.UTF8.GetString(bytes);
-        return result;
-    }
-
-    public PackData()
-    {
-
-    }
-}
-
 public static class Stick
 {
-    //public static byte[] MakePackData(string key, object body)
-    //{
-    //    var pack = new PackData
-    //    {
-    //        Key = key,
-    //        Buffer = new NodeType
-    //        {
-    //            Type = "Buffer",
-    //            Data = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(body))
-    //        }
-    //    };
 
-    //    var data = pack.ToBytes();
-
-    //    var header = Int2Bytes(data.Length);
-
-    //    var result = header.Concat(data).ToArray();
-
-    //    return result;
-    //}
-
-    public static byte[] MakePackData(string key, byte[] body)
+    public static byte[] MakePackData(string key, byte[] buffer)
     {
         var pack = new PackData
         {
             Key = key,
-            Buffer = new NodeType
-            {
-                Type = "Buffer",
-                Data = body
-            }
+            Buffer = buffer
         };
 
         var data = pack.ToBytes();
-        var header = Int2Bytes(data.Length);
-        var result = header.Concat(data).ToArray();
 
-        return result;
+        return data;
     }
 
-    public static byte[] MakePackData(string key, string body)
+    public static byte[] MakePackData(string key, string desc)
     {
         var pack = new PackData
         {
             Key = key,
-            Description = body
+            Description = desc
         };
 
         var data = pack.ToBytes();
-        var header = Int2Bytes(data.Length);
-        var result = header.Concat(data).ToArray();
-
-        return result;
+        return data;
     }
 
     public static byte[] MakePackData(string key)
@@ -115,10 +38,7 @@ public static class Stick
         };
 
         var data = pack.ToBytes();
-        var header = Int2Bytes(data.Length);
-        var result = header.Concat(data).ToArray();
-
-        return result;
+        return data;
     }
 
 
@@ -134,10 +54,8 @@ public static class Stick
                 offset += await stream.ReadAsync(header.AsMemory(offset, 4 - offset));
             }
 
-            var len = Bytes2Int(header);
-
+            var len = header.ToInt32();
             var data = new byte[len];
-
 
             offset = 0;
             while (offset < len)
@@ -145,8 +63,7 @@ public static class Stick
                 offset += await stream.ReadAsync(data.AsMemory(offset, len - offset));
             }
 
-            var str = Encoding.UTF8.GetString(data);
-            var result = JsonConvert.DeserializeObject<PackData>(Encoding.UTF8.GetString(data));
+            var result = PackData.Parse(data);
 
             return result;
         }
@@ -158,24 +75,36 @@ public static class Stick
 
 
 
-    private static byte[] Int2Bytes(long value)
+    public static byte[] ToBytes(this int number)
     {
-        var result = new byte[4];
-        result[0] = (byte)((value >> 24) & 0xFF);
-        result[1] = (byte)((value >> 16) & 0xFF);
-        result[2] = (byte)((value >> 8) & 0xFF);
-        result[3] = (byte)(value & 0xFF);
+        var bytes = new byte[4];
+        bytes[0] = (byte)(number >> 24);
+        bytes[1] = (byte)(number >> 16);
+        bytes[2] = (byte)(number >> 8);
+        bytes[3] = (byte)number;
+        return bytes;
+    }
+
+    public static int ToInt32(this byte[] value, int offset = 0)
+    {
+        int result;
+        result = (value[offset] << 24)
+                | (value[offset + 1] << 16)
+                | (value[offset + 2] << 8)
+                | (value[offset + 3]);
         return result;
     }
 
-    public static int Bytes2Int(byte[] value, int offset = 0)
+    public static void WriteInt32(this Stream stream, int number)
     {
-        int result;
-        result = ((value[offset] & 0xFF) << 24)
-                | ((value[offset + 1] & 0xFF) << 16)
-                | ((value[offset + 2] & 0xFF) << 8)
-                | (value[offset + 3] & 0xFF);
-        return result;
+        stream.Write(number.ToBytes());
+    }
+
+    public static int ReadInt32(this Stream stream)
+    {
+        var bytes = new byte[4];
+        stream.Read(bytes, 0, 4);
+        return bytes.ToInt32();
     }
 
 }
