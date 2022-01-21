@@ -5,10 +5,11 @@ using static Android.Views.ViewGroup;
 namespace astator.Core.UI.Floaty
 {
     /// <summary>
-    /// 悬浮窗
+    /// 全局悬浮窗, 需要悬浮窗权限
     /// </summary>
-    public class FloatWindow
+    public class FloatyWindow
     {
+
         private readonly View view;
         private bool showed = false;
 
@@ -18,12 +19,12 @@ namespace astator.Core.UI.Floaty
         /// <param name="view"></param>
         /// <param name="x"></param>
         /// <param name="y"></param>
-        public FloatWindow(View view,
+        public FloatyWindow(View view,
             int x = 0,
             int y = 0,
+            GravityFlags gravity = GravityFlags.Left | GravityFlags.Top,
             WindowManagerFlags flags = WindowManagerFlags.NotFocusable | WindowManagerFlags.LayoutNoLimits)
         {
-            this.view = view;
             var layoutParams = new WindowManagerLayoutParams();
             if (OperatingSystem.IsAndroidVersionAtLeast(26))
             {
@@ -34,7 +35,7 @@ namespace astator.Core.UI.Floaty
                 layoutParams.Type = WindowManagerTypes.Phone;
             }
             layoutParams.Format = Format.Transparent;
-            layoutParams.Gravity = GravityFlags.Left | GravityFlags.Top;
+            layoutParams.Gravity = gravity;
             layoutParams.Flags = flags;
 
             if (OperatingSystem.IsAndroidVersionAtLeast(28))
@@ -46,7 +47,9 @@ namespace astator.Core.UI.Floaty
             layoutParams.Height = LayoutParams.WrapContent;
             layoutParams.X = x;
             layoutParams.Y = y;
+
             FloatyService.Instance?.AddView(view, layoutParams);
+            this.view = view;
             this.showed = true;
         }
 
@@ -77,7 +80,7 @@ namespace astator.Core.UI.Floaty
         /// 移除悬浮窗
         /// </summary>
         /// <returns></returns>
-        internal bool Remove()
+        public bool Remove()
         {
             if (this.showed)
             {

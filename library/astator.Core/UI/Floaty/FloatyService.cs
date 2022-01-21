@@ -13,11 +13,11 @@ namespace astator.Core.UI.Floaty
         private IWindowManager windowManager;
         public void AddView(View view, LayoutParams layoutParams)
         {
-            this.windowManager.AddView(view, layoutParams);
+            this.windowManager?.AddView(view, layoutParams);
         }
         public void UpdateViewLayout(View view, LayoutParams layoutParams)
         {
-            this.windowManager.UpdateViewLayout(view, layoutParams);
+            this.windowManager?.UpdateViewLayout(view, layoutParams);
         }
         public void RemoveView(View view)
         {

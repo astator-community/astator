@@ -1,4 +1,4 @@
-﻿using Android.Views;
+﻿using astator.Core.UI.Layout;
 
 namespace astator.Views;
 
@@ -16,20 +16,10 @@ internal class CustomImage : Image
         base.OnHandlerChanged();
 
         var view = this.Handler.NativeView as AndroidX.AppCompat.Widget.AppCompatImageView;
-
-
         if (this.IsCircle)
         {
             view.ClipToOutline = true;
-            view.OutlineProvider = new CircleImageOutlineProvider();
-        }
-    }
-
-    private class CircleImageOutlineProvider : ViewOutlineProvider
-    {
-        public override void GetOutline(Android.Views.View view, Android.Graphics.Outline outline)
-        {
-            outline.SetRoundRect(0, 0, view.Width, view.Height, (view.Width < view.Height ? view.Width : view.Height) / 2);
+            view.OutlineProvider = new CircleOutlineProvider();
         }
     }
 }

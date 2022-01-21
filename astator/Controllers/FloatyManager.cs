@@ -1,7 +1,6 @@
 ﻿using Android.Content;
 using Android.Views;
 using astator.Core;
-using astator.Core.Accessibility;
 using astator.Core.Broadcast;
 using astator.Core.UI;
 using astator.Core.UI.Floaty;
@@ -27,32 +26,16 @@ namespace astator.Controllers
             }
         }
 
-        private readonly Core.UI.Floaty.FloatyManager floatyManager;
-
-        private readonly Dictionary<string, FloatWindow> floatys = new();
-
-        public FloatyManager()
-        {
-            this.floatyManager = new Core.UI.Floaty.FloatyManager(Globals.AppContext, default);
-
-        }
+        private readonly Dictionary<string, FloatyWindow> floatys = new();
 
         public async void Show()
         {
-            if (!Globals.Permission.CheckFloaty())
+            if (!await Globals.Permission.CheckFloaty())
             {
                 Globals.Permission.ReqFloaty();
             }
             else
             {
-                await Task.Run(() =>
-                {
-                    while (FloatyService.Instance is null)
-                    {
-                        Thread.Sleep(50);
-                    }
-                });
-
                 var layout = new GridLayout
                 {
                     WidthRequest = 42,
@@ -91,7 +74,7 @@ namespace astator.Controllers
                      FloatyService.Instance.UpdateViewLayout(view, layoutParams);
                  });
 
-                var window = this.floatyManager.Show(view, Core.UI.Util.DpParse(-10), Core.UI.Util.DpParse(100));
+                var window = new FloatyWindow(view, Core.UI.Util.DpParse(-10), Core.UI.Util.DpParse(100));
                 this.floatys.Add("iconFloaty", window);
             }
         }
@@ -154,20 +137,12 @@ namespace astator.Controllers
                     var exist = this.floatys.TryGetValue("fastRunner", out var fastRunner);
                     if (exist)
                     {
-                        this.floatyManager.Remove(fastRunner);
+                        fastRunner.Remove();
                         this.floatys.Remove("fastRunner");
                     }
                     else
                     {
-                        //ShowFastRunner();
-                        var s = UIFinder.FindOne(new SearcherArgs
-                        {
-                            Text = "YunxiOcr"
-                        });
-
-                        ScriptLogger.Log(s.GetBounds().ToString());
-                        ScriptLogger.Log(s.GetDepth().ToString());
-                        ScriptLogger.Log(s.ViewIdResourceName.Split("/").Last());
+                        ShowFastRunner();
                     }
                 }
             }
@@ -181,15 +156,14 @@ namespace astator.Controllers
             var fastRunner = new FloatyFastRunner();
             var view = fastRunner.ToNative(Application.Current.MainPage.Handler.MauiContext);
 
-            var window = this.floatyManager.Show(view,
-                Convert.ToInt32((width - 285) / 2 * Globals.Devices.Dp),
-                Convert.ToInt32((height - 550) / 2 * Globals.Devices.Dp));
+            var window = new FloatyWindow(view, gravity: GravityFlags.Center, flags: WindowManagerFlags.NotFocusable | WindowManagerFlags.LayoutNoLimits | WindowManagerFlags.WatchOutsideTouch);
 
             view.SetOnTouchListener(new OnTouchListener((v, e) =>
             {
                 if (e.Action == MotionEventActions.Outside)
                 {
-                    this.floatyManager.Remove(window);
+                    window.Remove();
+                    this.floatys.Remove("fastRunner");
                     return true;
                 }
                 return false;
@@ -203,7 +177,7 @@ namespace astator.Controllers
         {
             foreach (var floaty in this.floatys.Values)
             {
-                this.floatyManager.Remove(floaty);
+                floaty.Remove();
             }
             this.floatys.Clear();
         }

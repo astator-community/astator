@@ -136,11 +136,11 @@ namespace astator.Core
             /// 检查悬浮窗权限
             /// </summary>
             /// <returns></returns>
-            public static bool CheckFloaty()
+            public static async Task<bool> CheckFloaty()
             {
                 if (Android.Provider.Settings.CanDrawOverlays(AppContext))
                 {
-                    StartFloatyService();
+                    await StartFloatyService();
                     return true;
                 }
                 return false;
@@ -149,11 +149,19 @@ namespace astator.Core
             /// <summary>
             /// 启动悬浮窗服务
             /// </summary>
-            private static void StartFloatyService()
+            public static async Task StartFloatyService()
             {
                 if (FloatyService.Instance is null)
                 {
                     AppContext.StartService(new(AppContext, typeof(FloatyService)));
+
+                    await Task.Run(() =>
+                   {
+                       while (FloatyService.Instance is null)
+                       {
+                           System.Threading.Thread.Sleep(50);
+                       }
+                   });
                 }
             }
         }

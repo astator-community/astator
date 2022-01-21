@@ -1,6 +1,4 @@
-﻿using System.Text;
-
-namespace astator.Controllers;
+﻿namespace astator.Controllers;
 
 public static class Stick
 {

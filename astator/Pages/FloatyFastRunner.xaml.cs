@@ -1,5 +1,7 @@
 using astator.Controllers;
+using astator.Core.UI.Layout;
 using astator.Views;
+using Microsoft.Maui.Platform;
 
 namespace astator.Pages
 {
@@ -147,5 +149,13 @@ namespace astator.Pages
             refresh.IsRefreshing = false;
         }
 
+        protected override void OnHandlerChanged()
+        {
+            base.OnHandlerChanged();
+
+            var view = this.Handler.NativeView as LayoutViewGroup;
+            view.ClipToOutline = true;
+            view.OutlineProvider = new RadiusOutlineProvider(35);
+        }
     }
 }

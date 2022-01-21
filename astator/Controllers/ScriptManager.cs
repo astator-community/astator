@@ -62,6 +62,7 @@ public class ScriptManager
 
              if (!await engine.Restore())
              {
+                 engine.RemoveTipsFloaty();
                  return null;
              }
 

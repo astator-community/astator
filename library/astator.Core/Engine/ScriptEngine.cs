@@ -1,8 +1,12 @@
-﻿using astator.Core.Script;
+﻿using Android.Views;
+using astator.Core.Script;
+using astator.Core.UI.Floaty;
 using astator.NugetManager;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Emit;
+using Microsoft.Maui.Controls;
+using Microsoft.Maui.Platform;
 using Newtonsoft.Json;
 using NuGet.Versioning;
 using System;
@@ -53,15 +57,42 @@ namespace astator.Core.Engine
         /// </summary>
         private readonly string rootDir;
 
+        private TipsView tipsView;
+        private AppFloatyWindow tipsFloaty;
+
+        public void ShowTipsView()
+        {
+            Globals.RunOnUiThread(() =>
+            {
+                this.tipsView = new TipsView
+                {
+                    Radius = 30
+                };
+                this.tipsView.ChangeTipsText("正在初始化...");
+                var view = this.tipsView.ToNative(Application.Current.MainPage.Handler.MauiContext);
+                this.tipsFloaty = new AppFloatyWindow(view, gravity: GravityFlags.Center);
+            });
+        }
+
+        public void ChangeTipsText(string text)
+        {
+            Globals.RunOnUiThread(() => this.tipsView?.ChangeTipsText(text));
+        }
+
+        public void RemoveTipsFloaty()
+        {
+            Globals.RunOnUiThread(() => this.tipsFloaty?.Remove());
+        }
+
 
         public ScriptEngine(string rootDir)
         {
-            this.rootDir = rootDir;
+            ShowTipsView();
 
+            this.rootDir = rootDir;
             this.alc = new Domain();
 
             var sdkDir = Android.App.Application.Context.GetExternalFilesDir("Sdk").ToString();
-
             if (References is null)
             {
                 References = new();
@@ -89,6 +120,8 @@ namespace astator.Core.Engine
         /// </summary>
         public void ParseAllCS()
         {
+            ChangeTipsText("正在解析cs文件...");
+
             var scripts = Directory.GetFiles(this.rootDir, "*.cs", SearchOption.AllDirectories);
 
             foreach (var script in scripts)
@@ -138,6 +171,8 @@ namespace astator.Core.Engine
         /// <returns></returns>
         public EmitResult Compile()
         {
+            ChangeTipsText("正在编译...");
+
             var assemblyName = Path.GetRandomFileName();
             var compilation = CSharpCompilation.Create(
                 assemblyName,
@@ -155,6 +190,9 @@ namespace astator.Core.Engine
                 pdb.Seek(0, SeekOrigin.Begin);
                 this.assembly = new WeakReference<Assembly>(this.alc.LoadFromStream(dll, pdb));
             }
+
+            RemoveTipsFloaty();
+
             return result;
         }
 
@@ -165,6 +203,8 @@ namespace astator.Core.Engine
         /// <returns></returns>
         public EmitResult Compile(string outputPath)
         {
+            ChangeTipsText("正在编译...");
+
             var assemblyName = Path.GetRandomFileName();
             var compilation = CSharpCompilation.Create(
                 assemblyName,
@@ -181,6 +221,8 @@ namespace astator.Core.Engine
                 using var fs = new FileStream(outputPath, FileMode.OpenOrCreate);
                 dll.CopyTo(fs);
             }
+
+            RemoveTipsFloaty();
 
             return result;
         }
@@ -278,8 +320,15 @@ namespace astator.Core.Engine
         public async Task<bool> Restore()
         {
             var projectPath = Directory.GetFiles(this.rootDir, "*.csproj", SearchOption.AllDirectories).First();
+            if (projectPath is null)
+            {
+                return false;
+            }
+
             try
             {
+                ChangeTipsText("正在还原包引用...");
+
                 var xd = XDocument.Load(projectPath);
                 var itemGroup = xd.Descendants("ItemGroup");
 
@@ -287,12 +336,13 @@ namespace astator.Core.Engine
 
                 if (packageInfos is not null && packageInfos.Any())
                 {
+                    ChangeTipsText("正在载入依赖项...");
+
                     if (!LoadPackageReference(packageInfos))
                     {
                         return false;
                     }
                 }
-
                 if (!LoadDllReference(itemGroup))
                 {
                     return false;
@@ -402,7 +452,10 @@ namespace astator.Core.Engine
             if (packageReferences.Any() || isNeedRestore)
             {
                 var transitiveDependences = await NugetCommands.ListPackageTransitiveDependenceAsync(packageReferences);
-                storeInfos = await NugetCommands.GetPackageInfosAsync(transitiveDependences);
+                storeInfos = await NugetCommands.GetPackageInfosAsync(transitiveDependences, () =>
+                {
+                    ChangeTipsText("正在下载缺少的包...");
+                });
                 File.WriteAllText(restorePath, JsonConvert.SerializeObject(storeInfos, Formatting.Indented));
             }
 

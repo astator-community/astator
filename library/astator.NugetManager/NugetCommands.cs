@@ -399,7 +399,7 @@ public class NugetCommands
         });
     }
 
-    public static async Task<List<PackageInfo>> GetPackageInfosAsync(Dictionary<string, NuGetVersion> dependences)
+    public static async Task<List<PackageInfo>> GetPackageInfosAsync(Dictionary<string, NuGetVersion> dependences, Action downloadCallback = null)
     {
         return await Task.Run(async () =>
         {
@@ -410,6 +410,7 @@ public class NugetCommands
 
                 if (!Directory.Exists(dir))
                 {
+                    downloadCallback?.Invoke();
                     if (!await DownLoadPackageAsync(dependence.Key, dependence.Value))
                     {
                         throw new DownloadPackageException(dependence.Key);

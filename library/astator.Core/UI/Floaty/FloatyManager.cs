@@ -12,7 +12,7 @@ namespace astator.Core.UI.Floaty
     /// </summary>
     public class FloatyManager : IManager
     {
-        public List<FloatWindow> Floatys { get; set; } = new();
+        public List<FloatyWindow> Floatys { get; set; } = new();
 
         private readonly Context context;
 
@@ -57,9 +57,9 @@ namespace astator.Core.UI.Floaty
         /// <param name="x"></param>
         /// <param name="y"></param>
         /// <returns></returns>
-        public FloatWindow Show(View view, int x = 0, int y = 0)
+        public FloatyWindow Show(View view, int x = 0, int y = 0)
         {
-            FloatWindow floaty = new(view, x, y);
+            FloatyWindow floaty = new(view, x, y);
             this.Floatys.Add(floaty);
             return floaty;
         }
@@ -68,7 +68,7 @@ namespace astator.Core.UI.Floaty
         /// 移除悬浮窗
         /// </summary>
         /// <param name="floaty"></param>
-        public void Remove(FloatWindow floaty)
+        public void Remove(FloatyWindow floaty)
         {
             floaty.Remove();
             this.Floatys.Remove(floaty);

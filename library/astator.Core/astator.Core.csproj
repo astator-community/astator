@@ -43,6 +43,13 @@
 	  </Reference>
 	</ItemGroup>
 
+
+	<ItemGroup>
+	  <MauiXaml Update="Script\TipsView.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	</ItemGroup>
+
 	<Target Name="IncludeAllDependencies" BeforeTargets="_GetPackageFiles">
 		<ItemGroup>
 			<None Include="$(OutputPath)\net6.0-android\*.*" Exclude="$(OutputPath)\net6.0-android\*.exe;$(OutputPath)\net6.0-android\*.pdb" Pack="True" PackagePath="lib\net6.0-android31.0" />

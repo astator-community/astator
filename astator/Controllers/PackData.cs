@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text;
 
 namespace astator.Controllers;
 public struct PackData
@@ -17,7 +13,7 @@ public struct PackData
     public byte[] ToBytes()
     {
         var size = 4 + 4 + 256 + 4 + 256 + 4 + (this.Buffer?.Length ?? 0);
-        var ms = new MemoryStream(size);
+        using var ms = new MemoryStream(size);
         ms.WriteInt32(size - 4);
 
         var keyBytes = Encoding.UTF8.GetBytes(this.Key);
@@ -44,30 +40,34 @@ public struct PackData
 
     public static PackData Parse(byte[] bytes)
     {
-        var ms = new MemoryStream(bytes);
+        var result = new PackData();
+        using var ms = new MemoryStream(bytes);
 
         var keySize = ms.ReadInt32();
         var keyBytes = new byte[keySize];
         ms.Read(keyBytes);
         var key = Encoding.UTF8.GetString(keyBytes);
+        result.Key = key;
 
         ms.Position = 4 + 256;
         var descSize = ms.ReadInt32();
-        var descBytes = new byte[descSize];
-        ms.Read(descBytes);
-        var desc = Encoding.UTF8.GetString(descBytes);
+        if (descSize > 0)
+        {
+            var descBytes = new byte[descSize];
+            ms.Read(descBytes);
+            var desc = Encoding.UTF8.GetString(descBytes);
+            result.Description = desc;
+        }
 
         ms.Position = 4 + 256 + 4 + 256;
         var bufferSize = ms.ReadInt32();
-        var buffer = new byte[bufferSize];
-        ms.Read(buffer, 0, buffer.Length);
-
-        return new PackData
+        if (bufferSize > 0)
         {
-            Key = key,
-            Description = desc,
-            Buffer = buffer
-        };
+            var buffer = new byte[bufferSize];
+            ms.Read(buffer, 0, buffer.Length);
+            result.Buffer = buffer;
+        }
 
+        return result;
     }
 }
