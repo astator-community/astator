@@ -1,42 +1,44 @@
 ﻿using Android.Views;
+using astator.Core.UI.Floaty;
 using astator.Views;
+using Microsoft.Maui.Platform;
 
 namespace astator.Pages
 {
     public partial class HomePage : ContentPage
     {
-        private readonly string rootDir = string.Empty;
+        private string rootDir = string.Empty;
         private string currentDir;
 
         public HomePage()
         {
             InitializeComponent();
-
-            try
-            {
-                this.rootDir = Android.OS.Environment.GetExternalStoragePublicDirectory("astator").ToString();
-
-                if (!Directory.Exists(this.rootDir))
-                {
-                    Directory.CreateDirectory(this.rootDir);
-                }
-
-                var scriptDir = Path.Combine(this.rootDir, "脚本");
-
-                if (!Directory.Exists(scriptDir))
-                {
-                    Directory.CreateDirectory(scriptDir);
-                }
-
-                UpdateDirTbs(scriptDir);
-            }
-            catch { }
         }
 
         protected override void OnAppearing()
         {
             base.OnAppearing();
             MainActivity.Instance.OnKeyDownCallback = OnKeyDown;
+
+            if (!string.IsNullOrEmpty(this.rootDir))
+            {
+                return;
+            }
+            this.rootDir = Android.OS.Environment.GetExternalStoragePublicDirectory("astator").ToString();
+
+            if (!Directory.Exists(this.rootDir))
+            {
+                Directory.CreateDirectory(this.rootDir);
+            }
+
+            var scriptDir = Path.Combine(this.rootDir, "脚本");
+
+            if (!Directory.Exists(scriptDir))
+            {
+                Directory.CreateDirectory(scriptDir);
+            }
+
+            UpdateDirTbs(scriptDir);
         }
 
         protected override void OnDisappearing()
@@ -94,10 +96,34 @@ namespace astator.Pages
 
             if (path.EndsWith(".cs")
                 || path.EndsWith(".csproj")
+                || path.EndsWith(".json")
                 || path.EndsWith(".txt")
                 || path.EndsWith(".xml"))
             {
                 await this.Navigation.PushAsync(new CodeEditorPage(path));
+            }
+            else if (path.EndsWith(".png"))
+            {
+                var layout = new GridLayout
+                {
+                    WidthRequest = 200,
+                    HeightRequest = 200,
+                    BackgroundColor = Colors.Transparent
+                };
+
+                layout.Add(new Image
+                {
+                    Source = ImageSource.FromFile(path),
+                    WidthRequest = 200,
+                    HeightRequest = 200
+                });
+
+                var view = layout.ToNative(Application.Current.MainPage.Handler.MauiContext);
+
+                var floaty = new AppFloatyWindow(view, gravity: GravityFlags.Center);
+                await Task.Delay(2500);
+                floaty.Remove();
+
             }
 
         }

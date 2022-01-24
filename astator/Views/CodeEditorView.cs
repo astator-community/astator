@@ -1,4 +1,5 @@
 ﻿using Android.Widget;
+using astator.Core.UI;
 using Com.Amrdeveloper.Codeview;
 using Java.Util.Regex;
 using Microsoft.Maui.Handlers;
@@ -55,6 +56,13 @@ internal class CodeEditorView : View
     {
         get => (int)GetValue(TabLengthProperty);
         set => SetValue(TabLengthProperty, value);
+    }
+
+    public static readonly BindableProperty PaddingProperty = BindableProperty.Create(nameof(Padding), typeof(Thickness), typeof(CodeEditorView), new Thickness(10, 0, 10, 0));
+    public Thickness Padding
+    {
+        get => (Thickness)GetValue(PaddingProperty);
+        set => SetValue(PaddingProperty, value);
     }
 
 
@@ -209,6 +217,7 @@ internal class CodeEditorViewHandler : ViewHandler<CodeEditorView, CodeView>
         [nameof(CodeEditorView.LineNumberEnabled)] = MapLineNumberEnabled,
         [nameof(CodeEditorView.LineNumberTextColor)] = MapLineNumberTextColor,
         [nameof(CodeEditorView.TabLength)] = MapTabLength,
+        [nameof(CodeEditorView.Padding)] = MapPadding,
     };
 
 
@@ -283,4 +292,10 @@ internal class CodeEditorViewHandler : ViewHandler<CodeEditorView, CodeView>
     {
         handler.NativeView.SetTabLength(view.TabLength);
     }
+    private static void MapPadding(CodeEditorViewHandler handler, CodeEditorView view)
+    {
+        handler.NativeView.SetPadding(Util.DpParse(view.Padding.Left), Util.DpParse(view.Padding.Top), Util.DpParse(view.Padding.Right), Util.DpParse(view.Padding.Bottom));
+    }
+
+
 }

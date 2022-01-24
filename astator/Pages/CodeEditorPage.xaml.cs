@@ -16,6 +16,7 @@ namespace astator
             if (!path.EndsWith(".cs"))
             {
                 this.editor.LineNumberEnabled = false;
+                this.editor.Padding = new Thickness(10, 0, 10, 0);
             }
         }
 
@@ -29,7 +30,7 @@ namespace astator
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.ToString());
+                ScriptLogger.Log(ex.ToString());
                 Globals.Toast("ÎÄ¼þ±£´æÊ§°Ü: " + ex.ToString());
             }
         }

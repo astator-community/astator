@@ -1,12 +1,8 @@
-﻿using Android.Views;
-using astator.Core.Script;
-using astator.Core.UI.Floaty;
+﻿using astator.Core.Script;
 using astator.NugetManager;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Emit;
-using Microsoft.Maui.Controls;
-using Microsoft.Maui.Platform;
 using Newtonsoft.Json;
 using NuGet.Versioning;
 using System;
@@ -15,6 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Runtime.Loader;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -30,7 +27,7 @@ namespace astator.Core.Engine
         /// <summary>
         /// sdk引用
         /// </summary>
-        private static List<MetadataReference> References;
+        private static List<MetadataReference> References { get => SdkReferences.References; }
 
         /// <summary>
         /// 动态域
@@ -57,49 +54,17 @@ namespace astator.Core.Engine
         /// </summary>
         private readonly string rootDir;
 
-        private TipsView tipsView;
-        private AppFloatyWindow tipsFloaty;
-
-        public void ShowTipsView()
-        {
-            Globals.RunOnUiThread(() =>
-            {
-                this.tipsView = new TipsView
-                {
-                    Radius = 30
-                };
-                this.tipsView.ChangeTipsText("正在初始化...");
-                var view = this.tipsView.ToNative(Application.Current.MainPage.Handler.MauiContext);
-                this.tipsFloaty = new AppFloatyWindow(view, gravity: GravityFlags.Center);
-            });
-        }
-
-        public void ChangeTipsText(string text)
-        {
-            Globals.RunOnUiThread(() => this.tipsView?.ChangeTipsText(text));
-        }
-
-        public void RemoveTipsFloaty()
-        {
-            Globals.RunOnUiThread(() => this.tipsFloaty?.Remove());
-        }
+        private readonly List<string> DefaultAssemblyNames = new();
 
 
         public ScriptEngine(string rootDir)
         {
-            ShowTipsView();
-
             this.rootDir = rootDir;
             this.alc = new Domain();
 
-            var sdkDir = Android.App.Application.Context.GetExternalFilesDir("Sdk").ToString();
-            if (References is null)
+            foreach (var assembly in AssemblyLoadContext.Default.Assemblies)
             {
-                References = new();
-                foreach (var path in Directory.GetFiles(sdkDir, "*.dll", SearchOption.AllDirectories))
-                {
-                    References.Add(MetadataReference.CreateFromFile(path));
-                }
+                this.DefaultAssemblyNames.Add(assembly.FullName);
             }
         }
 
@@ -120,7 +85,7 @@ namespace astator.Core.Engine
         /// </summary>
         public void ParseAllCS()
         {
-            ChangeTipsText("正在解析cs文件...");
+            ScriptLogger.Log("正在解析cs文件...");
 
             var scripts = Directory.GetFiles(this.rootDir, "*.cs", SearchOption.AllDirectories);
 
@@ -153,6 +118,13 @@ namespace astator.Core.Engine
             }
 
             this.scriptReferences.Add(MetadataReference.CreateFromFile(path));
+
+            var name = AssemblyName.GetAssemblyName(path).FullName;
+            if (!this.DefaultAssemblyNames.Contains(name))
+            {
+                _ = new WeakReference<Assembly>(this.alc.LoadFromAssemblyPath(path));
+            }
+
             return true;
         }
 
@@ -171,14 +143,14 @@ namespace astator.Core.Engine
         /// <returns></returns>
         public EmitResult Compile()
         {
-            ChangeTipsText("正在编译...");
+            ScriptLogger.Log("正在编译...");
 
             var assemblyName = Path.GetRandomFileName();
             var compilation = CSharpCompilation.Create(
                 assemblyName,
                 references: References.Concat(this.scriptReferences).ToList(),
                 syntaxTrees: this.trees,
-                options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary, optimizationLevel: OptimizationLevel.Release));
+                options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary, optimizationLevel: OptimizationLevel.Debug));
 
             using var dll = new MemoryStream();
             using var pdb = new MemoryStream();
@@ -191,8 +163,6 @@ namespace astator.Core.Engine
                 this.assembly = new WeakReference<Assembly>(this.alc.LoadFromStream(dll, pdb));
             }
 
-            RemoveTipsFloaty();
-
             return result;
         }
 
@@ -203,7 +173,7 @@ namespace astator.Core.Engine
         /// <returns></returns>
         public EmitResult Compile(string outputPath)
         {
-            ChangeTipsText("正在编译...");
+            ScriptLogger.Log("正在编译...");
 
             var assemblyName = Path.GetRandomFileName();
             var compilation = CSharpCompilation.Create(
@@ -218,13 +188,51 @@ namespace astator.Core.Engine
             if (result.Success)
             {
                 dll.Seek(0, SeekOrigin.Begin);
+
+                if (!Directory.Exists(Path.GetDirectoryName(outputPath)))
+                {
+                    Directory.CreateDirectory(Path.GetDirectoryName(outputPath));
+                }
+
                 using var fs = new FileStream(outputPath, FileMode.OpenOrCreate);
                 dll.CopyTo(fs);
             }
 
-            RemoveTipsFloaty();
-
             return result;
+        }
+
+        public bool LoadAssemblyFromPath()
+        {
+            try
+            {
+                var dllPath = Path.Combine(this.rootDir, "compile.dll");
+                if (!File.Exists(dllPath))
+                {
+                    ScriptLogger.Error($"dll路径不存在: {dllPath}");
+                    return false;
+                }
+
+                this.assembly = new WeakReference<Assembly>(this.alc.LoadFromAssemblyPath(dllPath));
+
+                var refs = Directory.GetFiles(Path.Combine(this.rootDir, "ref"));
+                if (refs.Any())
+                {
+                    foreach (var r in refs)
+                    {
+                        if (!LoadReference(r))
+                        {
+                            return false;
+                        }
+                    }
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                ScriptLogger.Error(ex.ToString());
+                return false;
+            }
+
         }
 
         /// <summary>
@@ -327,7 +335,7 @@ namespace astator.Core.Engine
 
             try
             {
-                ChangeTipsText("正在还原包引用...");
+                ScriptLogger.Log("正在还原包引用...");
 
                 var xd = XDocument.Load(projectPath);
                 var itemGroup = xd.Descendants("ItemGroup");
@@ -336,7 +344,7 @@ namespace astator.Core.Engine
 
                 if (packageInfos is not null && packageInfos.Any())
                 {
-                    ChangeTipsText("正在载入依赖项...");
+                    ScriptLogger.Log("正在载入依赖项...");
 
                     if (!LoadPackageReference(packageInfos))
                     {
@@ -360,7 +368,7 @@ namespace astator.Core.Engine
         {
             foreach (var info in infos)
             {
-                foreach (var p in info.Path)
+                foreach (var p in info.Paths)
                 {
                     if (!LoadReference(p))
                     {
@@ -375,9 +383,9 @@ namespace astator.Core.Engine
         {
             var references = from element in itemGroup.Elements()
                              where element.Name == "Reference"
-                             from attr in element.Attributes()
-                             where attr.Value.EndsWith(".dll")
-                             select attr.Value;
+                             from child in element.Elements()
+                             where child.Value.EndsWith(".dll")
+                             select child.Value;
 
             foreach (var path in references)
             {
@@ -404,7 +412,7 @@ namespace astator.Core.Engine
                 var version = await NugetCommands.ParseVersion(pkgId,
                     group.Where(x => x.Name == "Version").Select(x => x.Value).FirstOrDefault() ?? "*");
 
-                packageReferences.Add(pkgId!, version);
+                packageReferences.Add(pkgId, version);
             }
 
             if (!File.Exists(restorePath))
@@ -419,20 +427,26 @@ namespace astator.Core.Engine
             var storeInfos = JsonConvert.DeserializeObject<List<PackageInfo>>(File.ReadAllText(restorePath));
 
             var isNeedRestore = false;
+            var notStorePackageReferences = new Dictionary<string, NuGetVersion>();
+
+            foreach (var r in packageReferences)
+            {
+                notStorePackageReferences.Add(r.Key, r.Value);
+            }
 
             if (storeInfos is not null)
             {
-                foreach (var r in packageReferences)
+                foreach (var r in notStorePackageReferences)
                 {
                     if (PackageInfo.Exists(storeInfos, r))
                     {
-                        packageReferences.Remove(r.Key);
+                        notStorePackageReferences.Remove(r.Key);
                     }
                 }
 
                 foreach (var info in storeInfos)
                 {
-                    foreach (var path in info.Path)
+                    foreach (var path in info.Paths)
                     {
                         if (!File.Exists(path))
                         {
@@ -448,14 +462,10 @@ namespace astator.Core.Engine
                 }
             }
 
-
-            if (packageReferences.Any() || isNeedRestore)
+            if (notStorePackageReferences.Any() || isNeedRestore)
             {
                 var transitiveDependences = await NugetCommands.ListPackageTransitiveDependenceAsync(packageReferences);
-                storeInfos = await NugetCommands.GetPackageInfosAsync(transitiveDependences, () =>
-                {
-                    ChangeTipsText("正在下载缺少的包...");
-                });
+                storeInfos = await NugetCommands.GetPackageInfosAsync(transitiveDependences);
                 File.WriteAllText(restorePath, JsonConvert.SerializeObject(storeInfos, Formatting.Indented));
             }
 

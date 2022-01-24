@@ -39,7 +39,7 @@ internal class StringChunk : BaseChunk
 
         //var packageName = Android.App.Application.Context.ApplicationContext.PackageName;
 
-        var packageName = "com.companyname.astator";
+        var packageName = "com.astator.astator";
 
         for (var i = 0; i < this.StringCount; i++)
         {
@@ -76,7 +76,6 @@ internal class StringChunk : BaseChunk
         foreach (var str in this.Strings)
         {
             stream.WriteInt32(stringOffset);
-            Console.WriteLine(stringOffset);
             if (this.IsUTF8)
             {
                 stringOffset += str.Length + 3;

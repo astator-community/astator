@@ -13,6 +13,7 @@ namespace astator.Pages
             ScriptLogger.AddCallback("logPage", AddLogText);
 
             InitLogList();
+            ScriptLogger.Error("test");
         }
 
         private void InitLogList()
@@ -79,7 +80,6 @@ namespace astator.Pages
 
         public void Delete_Clicked(object sender, EventArgs e)
         {
-
             var alert = new AlertDialog
                 .Builder(Globals.AppContext)
                 .SetTitle("清空日志")
@@ -93,6 +93,14 @@ namespace astator.Pages
                 .SetNegativeButton("取消", (s, e) => { });
 
             alert.Show();
+
+            //var result = await DisplayAlert("清空日志", "确认清空吗?", "确认", "取消");
+            //if (result)
+            //{
+            //    this.LogLayout.Clear();
+            //    var path = Path.Combine(MauiApplication.Current.GetExternalFilesDir("Log").ToString(), "log.txt");
+            //    File.WriteAllText(path, string.Empty);
+            //}
 
         }
 

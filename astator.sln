@@ -25,7 +25,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "astator.ApkBuilder", "libra
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "astator.NugetManager", "library\astator.NugetManager\astator.NugetManager.csproj", "{53DF9CC3-B7DD-4C0F-B6BD-0EB685B0BBEA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeViewBinding", "library\3rdparty\CodeViewBinding\CodeViewBinding.csproj", "{376B5943-DB5B-4E7A-B419-49412AF01E1A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeViewBinding", "library\3rdparty\CodeViewBinding\CodeViewBinding.csproj", "{376B5943-DB5B-4E7A-B419-49412AF01E1A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "packages", "packages", "{CE6DEA9A-DBDF-4D7D-84A0-BE0E4963D82F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "astator.Sdk", "packages\astator.Sdk\astator.Sdk.csproj", "{6B02661C-0F0C-468D-95D4-043391E63A79}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -286,6 +290,26 @@ Global
 		{376B5943-DB5B-4E7A-B419-49412AF01E1A}.Release|x86.ActiveCfg = Release|Any CPU
 		{376B5943-DB5B-4E7A-B419-49412AF01E1A}.Release|x86.Build.0 = Release|Any CPU
 		{376B5943-DB5B-4E7A-B419-49412AF01E1A}.Release|x86.Deploy.0 = Release|Any CPU
+		{6B02661C-0F0C-468D-95D4-043391E63A79}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6B02661C-0F0C-468D-95D4-043391E63A79}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6B02661C-0F0C-468D-95D4-043391E63A79}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{6B02661C-0F0C-468D-95D4-043391E63A79}.Debug|ARM.Build.0 = Debug|Any CPU
+		{6B02661C-0F0C-468D-95D4-043391E63A79}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{6B02661C-0F0C-468D-95D4-043391E63A79}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{6B02661C-0F0C-468D-95D4-043391E63A79}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{6B02661C-0F0C-468D-95D4-043391E63A79}.Debug|x64.Build.0 = Debug|Any CPU
+		{6B02661C-0F0C-468D-95D4-043391E63A79}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{6B02661C-0F0C-468D-95D4-043391E63A79}.Debug|x86.Build.0 = Debug|Any CPU
+		{6B02661C-0F0C-468D-95D4-043391E63A79}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6B02661C-0F0C-468D-95D4-043391E63A79}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6B02661C-0F0C-468D-95D4-043391E63A79}.Release|ARM.ActiveCfg = Release|Any CPU
+		{6B02661C-0F0C-468D-95D4-043391E63A79}.Release|ARM.Build.0 = Release|Any CPU
+		{6B02661C-0F0C-468D-95D4-043391E63A79}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{6B02661C-0F0C-468D-95D4-043391E63A79}.Release|ARM64.Build.0 = Release|Any CPU
+		{6B02661C-0F0C-468D-95D4-043391E63A79}.Release|x64.ActiveCfg = Release|Any CPU
+		{6B02661C-0F0C-468D-95D4-043391E63A79}.Release|x64.Build.0 = Release|Any CPU
+		{6B02661C-0F0C-468D-95D4-043391E63A79}.Release|x86.ActiveCfg = Release|Any CPU
+		{6B02661C-0F0C-468D-95D4-043391E63A79}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -301,6 +325,7 @@ Global
 		{4D43CA84-98D5-4267-9A12-6A3AB6BE3A95} = {F623A1BD-2203-48F5-BD56-0376F3A0DA4A}
 		{53DF9CC3-B7DD-4C0F-B6BD-0EB685B0BBEA} = {F623A1BD-2203-48F5-BD56-0376F3A0DA4A}
 		{376B5943-DB5B-4E7A-B419-49412AF01E1A} = {3FD99A41-10D9-4B16-B69A-05735B4F938B}
+		{6B02661C-0F0C-468D-95D4-043391E63A79} = {CE6DEA9A-DBDF-4D7D-84A0-BE0E4963D82F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5EC10676-714D-4A88-AE8C-79DAB8F783B4}

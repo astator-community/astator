@@ -67,12 +67,12 @@ namespace astator
             if (Directory.Exists(dir))
             {
                 this.AttribBtn.Tag = "delete";
-                this.AttribBtn.Source = "file_delete.png";
+                this.AttribBtn.Source = "delete.png";
             }
             else
             {
                 this.AttribBtn.Tag = "download";
-                this.AttribBtn.Source = "file_download.png";
+                this.AttribBtn.Source = "download.png";
             }
 
 

@@ -38,13 +38,13 @@
             </GridLayout>
             <v:CustomImageButton
                 x:Name="AttribBtn"
-                Padding="18,12,6,12"
+                Padding="18,16,6,8"
                 BackgroundColor="{DynamicResource PrimaryColor}"
                 Clicked="AttribBtn_Clicked"
                 GridLayout.Column="1"
-                HeightRequest="55"
+                HeightRequest="50"
                 VerticalOptions="Center"
-                WidthRequest="55" />
+                WidthRequest="50" />
         </GridLayout>
         <ScrollView GridLayout.Row="2">
 

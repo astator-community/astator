@@ -7,30 +7,34 @@ namespace astator.ApkBuilder;
 
 public class ApkBuilder
 {
-    private static readonly string templatePath = Path.Combine(Android.App.Application.Context.GetExternalFilesDir("tempalte").ToString(), "tempalte.apk");
+    private static readonly string templatePath = Path.Combine(Android.App.Application.Context.GetExternalFilesDir("template").ToString(), "template.apk");
 
-    public static bool Build(string outputPath, string injectDir, string versionName, string packageName, string labelName)
+    //注意: 在debug模式下打包的apk是无法打开的
+    public static bool Build(string outputDir, string projectPath, string versionName, string packageName, string labelName)
     {
-        var alignedPath = outputPath[0..^4] + "-aligned.apk";
+        var apkPath = Path.Combine(outputDir, $"{labelName}_{versionName}.apk");
+        var alignedPath = Path.Combine(outputDir, $"{labelName}_{versionName}-aligned.apk");
+
         try
         {
+            CheckTemplateApk();
             if (!File.Exists(templatePath))
             {
-#if DEBUG
-                CopyTemplate();
-#else
-                Console.WriteLine($"{templatePath}不存在!");
+                Console.WriteLine("模板apk不存在!");
                 return false;
-#endif
             }
 
-            using var fs = new FileStream(outputPath, FileMode.Create);
+            Console.WriteLine("正在修改apk...");
+
+            using var fs = new FileStream(apkPath, FileMode.Create);
 
             fs.Write(GetTemplateBytes());
 
             using var zip = new ZipArchive(fs, ZipArchiveMode.Update);
 
-            var entries = zip.Entries;
+            zip.CreateEntryFromFile(projectPath, "assets/Resources/project.zip");
+
+            var entries = zip.Entries.ToList();
 
             for (var i = 0; i < entries.Count; i++)
             {
@@ -60,20 +64,35 @@ public class ApkBuilder
                     var arscBytes = AndroidResources.Build(bytes, packageName);
                     stream.Write(arscBytes);
                 }
+                else if (entry.FullName.EndsWith(".RSA") || entry.FullName.EndsWith(".SF") || entry.FullName.EndsWith(".MF"))
+                {
+                    entry.Delete();
+                }
             }
 
+            Console.WriteLine("正在进行v1签名...");
             if (ApkSignerV1.Sign(zip))
             {
                 zip.Dispose();
                 fs.Dispose();
 
-                var aligned = Com.Mcal.Zipalign.Utils.ZipAligner.ZipAlign(outputPath, alignedPath);
+                Console.WriteLine("正在进行zip对齐...");
+                var aligned = Com.Mcal.Zipalign.Utils.ZipAligner.ZipAlign(apkPath, alignedPath);
 
-                return ApkSignerV2.Sign(alignedPath, outputPath);
+                if (aligned)
+                {
+                    Console.WriteLine("正在进行v2签名...");
+
+                    var result = ApkSignerV2.Sign(alignedPath, apkPath);
+                    if (result)
+                    {
+                        Console.WriteLine($"打包apk成功, 保存路径: {apkPath}");
+                    }
+                    return result;
+                }
             }
 
             return false;
-
         }
         catch (Exception ex)
         {
@@ -91,21 +110,23 @@ public class ApkBuilder
     {
         using var fs = new FileStream(templatePath, FileMode.Open);
         var bytes = new byte[fs.Length];
-        fs.Position = 0;
         fs.Read(bytes);
         return bytes;
     }
 
-    private static async void CopyTemplate()
+    private static void CheckTemplateApk()
     {
-        using var fs = new FileStream(templatePath, FileMode.Create);
-        using var source = await FileSystem.OpenAppPackageFileAsync("Resources/template.apk");
-        var bytes = new byte[1024];
-
-        var len = 0;
-        while ((len = source.Read(bytes)) > 0)
+        var basePath = Android.App.Application.Context.PackageManager.GetApplicationInfo(Android.App.Application.Context.PackageName, 0).SourceDir;
+        if (File.Exists(basePath))
         {
-            fs.Write(bytes, 0, len);
+            if (File.Exists(templatePath))
+            {
+                if (File.GetLastWriteTime(basePath) <= File.GetLastWriteTime(templatePath))
+                {
+                    return;
+                }
+            }
+            File.Copy(basePath, templatePath, true);
         }
     }
 

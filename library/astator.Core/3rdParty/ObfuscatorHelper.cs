@@ -1,6 +1,8 @@
-﻿using Obfuscar;
+﻿using astator.Core.Engine;
+using Obfuscar;
 using System;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace astator.Core.ThirdParty
 {
@@ -13,14 +15,16 @@ namespace astator.Core.ThirdParty
         /// 待混淆程序集路径
         /// </summary>
         public string DllPath = string.Empty;
+
+        /// <summary>
+        /// 引用程序集路径
+        /// </summary>
+        public string AssemblySearchPath = string.Empty;
+
         /// <summary>
         /// 生成输出目录
         /// </summary>
         public string OutputDir = string.Empty;
-        /// <summary>
-        /// 入口类名称
-        /// </summary>
-        public string EntryType = string.Empty;
         /// <summary>
         /// 是否重命名属性, 默认true
         /// </summary>
@@ -88,35 +92,33 @@ namespace astator.Core.ThirdParty
                 throw new Exception("dll路径不合法");
             }
 
-            if (rules.OutputDir is null)
+            if (string.IsNullOrEmpty(rules.OutputDir))
             {
                 rules.OutputDir = Path.Combine(Path.GetDirectoryName(rules.DllPath), "obfuscator");
             }
 
-            if (rules.EntryType is null)
-            {
-                ScriptLogger.Warn("未指定入口类名称!");
-            }
+            var net6Dir = Path.Combine(SdkReferences.SdkDir, "net6.0");
+            var mauiDir = Path.Combine(SdkReferences.SdkDir, "maui");
 
             var xml =
                 $@"<?xml version='1.0'?>
                     <Obfuscator>
                         <Var name = ""OutPath"" value = ""{rules.OutputDir}"" />
-                        <Var name = ""RenameProperties"" value = ""{rules.RenameProperties}"" />
-                        <Var name = ""RenameEvents"" value = ""{rules.RenameEvents}"" />
-                        <Var name = ""RenameFields"" value = ""{rules.RenameFields}"" />
-                        <Var name = ""KeepPublicApi"" value = ""{rules.KeepPublicApi}"" />
-                        <Var name = ""HidePrivateApi"" value = ""{rules.HidePrivateApi}"" />
-                        <Var name = ""ReuseNames"" value = ""{rules.ReuseNames}"" />
-                        <Var name = ""UseUnicodeNames"" value = ""{rules.UseUnicodeNames}"" />
-                        <Var name = ""UseKoreanNames"" value = ""{rules.UseKoreanNames}"" />
-                        <Var name = ""HideStrings"" value = ""{rules.HideStrings}"" />
-                        <Var name = ""OptimizeMethods"" value = ""{rules.OptimizeMethods}"" />
-                        <AssemblySearchPath path=""{Android.App.Application.Context.GetExternalFilesDir("Sdk")}"" />
-   
-                        <Module file = ""{rules.DllPath}"">
-                            <SkipMethod type=""{rules.EntryType}"" attrib = ""public"" rx = "".*"" />
-                        </Module>
+                        <Var name = ""RenameProperties"" value = ""{rules.RenameProperties.ToString().ToLower()}"" />
+                        <Var name = ""RenameEvents"" value = ""{rules.RenameEvents.ToString().ToLower()}"" />
+                        <Var name = ""RenameFields"" value = ""{rules.RenameFields.ToString().ToLower()}"" />
+                        <Var name = ""KeepPublicApi"" value = ""{rules.KeepPublicApi.ToString().ToLower()}"" />
+                        <Var name = ""HidePrivateApi"" value = ""{rules.HidePrivateApi.ToString().ToLower()}"" />
+                        <Var name = ""ReuseNames"" value = ""{rules.ReuseNames.ToString().ToLower()}"" />
+                        <Var name = ""UseUnicodeNames"" value = ""{rules.UseUnicodeNames.ToString().ToLower()}"" />
+                        <Var name = ""UseKoreanNames"" value = ""{rules.UseKoreanNames.ToString().ToLower()}"" />
+                        <Var name = ""HideStrings"" value = ""{rules.HideStrings.ToString().ToLower()}"" />
+                        <Var name = ""OptimizeMethods"" value = ""{rules.OptimizeMethods.ToString().ToLower()}"" />
+                        <AssemblySearchPath path=""{net6Dir}"" />
+                        <AssemblySearchPath path=""{mauiDir}"" />
+                        <AssemblySearchPath path=""{rules.AssemblySearchPath}"" />
+
+                        <Module file = ""{rules.DllPath}""/>
                     </Obfuscator >
                      ";
 

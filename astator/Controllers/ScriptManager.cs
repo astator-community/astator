@@ -5,6 +5,7 @@ using astator.Core;
 using astator.Core.Engine;
 using astator.Core.Script;
 using astator.Core.UI;
+using astator.NugetManager;
 using System.Collections.Concurrent;
 using System.Reflection;
 using Application = Android.App.Application;
@@ -53,27 +54,45 @@ public class ScriptManager
     {
         return await Task.Run(async () =>
          {
+             TipsView tipsView = null;
+             Globals.RunOnUiThread(() => tipsView = new TipsView());
+             ScriptLogger.Log("正在初始化...");
+
+             if (string.IsNullOrEmpty(SdkReferences.SdkDir))
+             {
+                 await SdkReferences.Initialize();
+                 if (string.IsNullOrEmpty(SdkReferences.SdkDir))
+                 {
+                     tipsView.Close();
+                     ScriptLogger.Error("获取sdk失败!");
+                     return null;
+                 }
+             }
+
              var id = Path.GetFileNameWithoutExtension(path);
              GetId(ref id);
 
-             var projectDir = Path.GetDirectoryName(path);
+             var rootDir = Path.GetDirectoryName(path);
 
-             var engine = new ScriptEngine(projectDir);
+             var engine = new ScriptEngine(rootDir);
 
              if (!await engine.Restore())
              {
-                 engine.RemoveTipsFloaty();
+                 tipsView.Close();
                  return null;
              }
 
              engine.ParseAllCS();
 
              var emitResult = engine.Compile();
+
+             tipsView.Close();
+
              if (!emitResult.Success)
              {
                  foreach (var item in emitResult.Diagnostics)
                  {
-                     Logger.Error("编译失败: " + item.ToString());
+                     ScriptLogger.Error("编译失败: " + item.ToString());
                  }
                  return null;
              }
@@ -81,7 +100,7 @@ public class ScriptManager
              var method = engine.GetScriptEntryMethodInfo(Path.GetFileName(path));
              if (method is null)
              {
-                 Logger.Error("未找到入口方法!");
+                 ScriptLogger.Error("未找到入口方法!");
                  return null;
              }
              var isUiMode = method.GetCustomAttribute<ScriptEntryMethod>().IsUIMode;
@@ -93,7 +112,7 @@ public class ScriptManager
              if (isUiMode)
              {
                  var activity = await StartScriptActivity(id);
-                 runtime = new ScriptRuntime(id, engine, activity, projectDir);
+                 runtime = new ScriptRuntime(id, engine, activity, rootDir);
 
                  Device.BeginInvokeOnMainThread(() =>
                  {
@@ -103,13 +122,13 @@ public class ScriptManager
                      }
                      catch (Exception ex)
                      {
-                         Logger.Error(ex.ToString());
+                         ScriptLogger.Error(ex.ToString());
                      }
                  });
              }
              else
              {
-                 runtime = new ScriptRuntime(id, engine, projectDir);
+                 runtime = new ScriptRuntime(id, engine, rootDir);
 
                  runtime.Threads.Start(() =>
                  {
@@ -123,30 +142,49 @@ public class ScriptManager
          });
     }
 
-    public async Task<ScriptRuntime> RunProject(string projectDir)
+    public async Task<ScriptRuntime> RunProject(string rootDir)
     {
         return await Task.Run(async () =>
         {
-            var csprojPath = Directory.GetFiles(projectDir, "*.csproj", SearchOption.AllDirectories).First();
+            TipsView tipsView = null;
+            Globals.RunOnUiThread(() => tipsView = new TipsView());
+            ScriptLogger.Log("正在初始化...");
+
+            if (string.IsNullOrEmpty(SdkReferences.SdkDir))
+            {
+                await SdkReferences.Initialize();
+                if (string.IsNullOrEmpty(SdkReferences.SdkDir))
+                {
+                    tipsView.Close();
+                    ScriptLogger.Error("获取sdk失败!");
+                    return null;
+                }
+            }
+
+            var csprojPath = Directory.GetFiles(rootDir, "*.csproj", SearchOption.AllDirectories).First();
 
             var id = Path.GetFileNameWithoutExtension(csprojPath);
             GetId(ref id);
 
-            var engine = new ScriptEngine(projectDir);
+            var engine = new ScriptEngine(rootDir);
 
             if (!await engine.Restore())
             {
+                tipsView.Close();
                 return null;
             }
 
             engine.ParseAllCS();
 
             var emitResult = engine.Compile();
+
+            tipsView.Close();
+
             if (!emitResult.Success)
             {
                 foreach (var item in emitResult.Diagnostics)
                 {
-                    Logger.Error("编译失败: " + item.ToString());
+                    ScriptLogger.Error("编译失败: " + item.ToString());
                 }
                 return null;
             }
@@ -154,7 +192,7 @@ public class ScriptManager
             var method = engine.GetProjectEntryMethodInfo();
             if (method is null)
             {
-                Logger.Error("未找到入口方法!");
+                ScriptLogger.Error("未找到入口方法!");
                 return null;
             }
             var isUiMode = method.GetCustomAttribute<ProjectEntryMethod>().IsUIMode;
@@ -166,7 +204,7 @@ public class ScriptManager
             if (isUiMode)
             {
                 var activity = await StartScriptActivity(id);
-                runtime = new ScriptRuntime(id, engine, activity, projectDir);
+                runtime = new ScriptRuntime(id, engine, activity, rootDir);
 
                 Device.BeginInvokeOnMainThread(() =>
                 {
@@ -176,13 +214,83 @@ public class ScriptManager
                     }
                     catch (Exception ex)
                     {
-                        Logger.Error(ex.ToString());
+                        ScriptLogger.Error(ex.ToString());
                     }
                 });
             }
             else
             {
-                runtime = new ScriptRuntime(id, engine, projectDir);
+                runtime = new ScriptRuntime(id, engine, rootDir);
+
+                runtime.Threads.Start(() =>
+                {
+                    ScriptEngine.Execute(method, runtime);
+                });
+            }
+
+            this.runtimes.TryAdd(id, runtime);
+
+            return runtime;
+        });
+    }
+
+    public async Task<ScriptRuntime> RunProjectFromDll(string rootDir)
+    {
+        return await Task.Run(async () =>
+        {
+            var id = "prject";
+            GetId(ref id);
+
+            if (string.IsNullOrEmpty(SdkReferences.SdkDir))
+            {
+                await SdkReferences.Initialize();
+                if (string.IsNullOrEmpty(SdkReferences.SdkDir))
+                {
+                    ScriptLogger.Error("获取sdk失败!");
+                    return null;
+                }
+            }
+
+            var engine = new ScriptEngine(rootDir);
+
+            if (!engine.LoadAssemblyFromPath())
+            {
+                ScriptLogger.Error("加载dll失败!");
+                return null;
+            }
+
+            var method = engine.GetProjectEntryMethodInfo();
+            if (method is null)
+            {
+                ScriptLogger.Error("未找到入口方法!");
+                return null;
+            }
+            var isUiMode = method.GetCustomAttribute<ProjectEntryMethod>().IsUIMode;
+
+            ScriptLogger.Log("脚本开始运行: " + id);
+
+            ScriptRuntime runtime;
+
+            if (isUiMode)
+            {
+                var activity = await StartScriptActivity(id);
+                runtime = new ScriptRuntime(id, engine, activity, rootDir);
+
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    try
+                    {
+                        ScriptEngine.Execute(method, runtime);
+                    }
+                    catch (Exception ex)
+                    {
+                        ScriptLogger.Error(ex.ToString());
+                    }
+                });
+            }
+            else
+            {
+                runtime = new ScriptRuntime(id, engine, rootDir);
 
                 runtime.Threads.Start(() =>
                 {

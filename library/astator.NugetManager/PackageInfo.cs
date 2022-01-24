@@ -1,18 +1,18 @@
-﻿using NuGet.Versioning;
-using System.Text.Json.Serialization;
+﻿using Newtonsoft.Json;
+using NuGet.Versioning;
 
 namespace astator.NugetManager;
 
 public class PackageInfo
 {
-    [JsonPropertyName("name")]
+    [JsonProperty("name")]
     public string Name { get; set; } = string.Empty;
 
-    [JsonPropertyName("version")]
+    [JsonProperty("version")]
     public string Version { get; set; } = string.Empty;
 
-    [JsonPropertyName("path")]
-    public List<string> Path { get; set; } = new();
+    [JsonProperty("paths")]
+    public List<string> Paths { get; set; } = new();
 
 
     public bool Exists(PackageInfo other)

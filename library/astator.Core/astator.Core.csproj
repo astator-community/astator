@@ -14,7 +14,7 @@
 		<SupportedOSPlatformVersion>24.0</SupportedOSPlatformVersion>
 		
 		<Authors>yiszza</Authors>
-		<Version>0.0.3</Version>
+		<Version>0.1.0</Version>
 		<PackageProjectUrl>https://github.com/astator-community/astator</PackageProjectUrl>
 		<Company>astator</Company>
 		<Description>用于astator脚本的开发</Description>
@@ -29,10 +29,8 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\3rdparty\Obfuscar\Obfuscar\Obfuscar.csproj">
-			<PrivateAssets>all</PrivateAssets>
 		</ProjectReference>
 		<ProjectReference Include="..\astator.NugetManager\astator.NugetManager.csproj">
-			<PrivateAssets>all</PrivateAssets>
 		</ProjectReference>
 	</ItemGroup>
 
@@ -49,11 +47,4 @@
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	</ItemGroup>
-
-	<Target Name="IncludeAllDependencies" BeforeTargets="_GetPackageFiles">
-		<ItemGroup>
-			<None Include="$(OutputPath)\net6.0-android\*.*" Exclude="$(OutputPath)\net6.0-android\*.exe;$(OutputPath)\net6.0-android\*.pdb" Pack="True" PackagePath="lib\net6.0-android31.0" />
-		</ItemGroup>
-	</Target>
-
 </Project>

@@ -16,10 +16,7 @@ public class NugetCommands
     {
         //net6.0
         "Microsoft.CSharp",
-        "Microsoft.VisualBasic.Core",
-        "Microsoft.VisualBasic",
         "Microsoft.Win32.Primitives",
-        "Microsoft.Win32.Registry",
         "mscorlib",
         "netstandard",
         "System.AppContext",
@@ -264,6 +261,7 @@ public class NugetCommands
         "Xamarin.AndroidX.ViewPager2",
         "Xamarin.Google.Android.Material",
         "Xamarin.Google.Guava.ListenableFuture",
+        "Mono.Android"
     };
 
     private static readonly string[] frameworkNames = new[]
@@ -399,7 +397,7 @@ public class NugetCommands
         });
     }
 
-    public static async Task<List<PackageInfo>> GetPackageInfosAsync(Dictionary<string, NuGetVersion> dependences, Action downloadCallback = null)
+    public static async Task<List<PackageInfo>> GetPackageInfosAsync(Dictionary<string, NuGetVersion> dependences)
     {
         return await Task.Run(async () =>
         {
@@ -410,7 +408,7 @@ public class NugetCommands
 
                 if (!Directory.Exists(dir))
                 {
-                    downloadCallback?.Invoke();
+                    Console.WriteLine("正在下载缺少的包...");
                     if (!await DownLoadPackageAsync(dependence.Key, dependence.Value))
                     {
                         throw new DownloadPackageException(dependence.Key);
@@ -445,7 +443,7 @@ public class NugetCommands
                 {
                     if (f.EndsWith(".dll"))
                     {
-                        packageInfo.Path.Add(f);
+                        packageInfo.Paths.Add(f);
                     }
                 }
                 result.Add(packageInfo);

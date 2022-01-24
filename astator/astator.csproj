@@ -23,6 +23,7 @@
 
 		<SupportedOSPlatformVersion Condition="'$(TargetFramework)' == 'net6.0-android'">24.0</SupportedOSPlatformVersion>
 		<AndroidPackageFormat>apk</AndroidPackageFormat>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -43,11 +44,15 @@
 
 	<ItemGroup>
 	  <PackageReference Include="System.Collections.Concurrent" Version="4.3.0" />
+	  <PackageReference Include="System.Runtime.Loader" Version="4.3.0" />
 	</ItemGroup>
 
 
 	<ItemGroup>
 	  <MauiXaml Update="Pages\AboutPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Pages\ApkBuilderPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Pages\CodeEditorPage.xaml">
@@ -92,12 +97,10 @@
 		<AndroidNativeLibrary Include="Resources\JNI\*\*" />
 	</ItemGroup>
 
-	<ItemGroup Condition="'$(Configuration)' == 'Debug'">
-	  <MauiAsset Include="Resources\ScriptFiles\*" />
-	</ItemGroup>
-
 	<ItemGroup>
 	  <None Remove="Platforms\Android\Resources\values\styles.xml" />
+	  <None Remove="Resources\Images\add.svg" />
+	  <None Remove="Resources\Images\download.svg" />
 	  <None Remove="Resources\Images\more.svg" />
 	  <None Remove="Resources\Images\save.svg" />
 	</ItemGroup>
@@ -112,6 +115,9 @@
 
 
 	<ItemGroup>
+	  <Reference Include="ApkBuilderBinding">
+	    <HintPath>..\library\3rdparty\ApkBuilderBinding\bin\Release\net6.0-android\ApkBuilderBinding.dll</HintPath>
+	  </Reference>
 	  <Reference Include="CodeViewBinding">
 	    <HintPath>..\library\3rdparty\CodeViewBinding\bin\Release\net6.0-android\CodeViewBinding.dll</HintPath>
 	  </Reference>

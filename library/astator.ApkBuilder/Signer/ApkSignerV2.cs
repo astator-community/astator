@@ -1,4 +1,6 @@
-﻿using Java.Nio;
+﻿using Android.Runtime;
+using Java.Math;
+using Java.Nio;
 using Java.Security;
 using Java.Security.Cert;
 using System.Text;
@@ -14,9 +16,16 @@ internal class ApkSignerV2
         {
             var privateKey = Util.GetPrivateKey();
 
-            var config = ApkSignerV2Binding.CreateV2SignerConfigs(new IPrivateKey[] { privateKey }, new X509Certificate[] { ReadCertificate() }, new string[] { "SHA-256" });
+            var certificate = ApkSignerV2Binding.GetX509Certificate(Util.Certificate);
+            if (certificate is null)
+            {
+                return false;
+            }
 
 
+            var config = ApkSignerV2Binding.CreateV2SignerConfigs(new IPrivateKey[] { privateKey },
+                new X509Certificate[] { certificate },
+                new string[] { "SHA-256" });
 
             using var fs = new FileStream(alignedPath, FileMode.Open);
             var bytes = new byte[fs.Length];
@@ -38,17 +47,10 @@ internal class ApkSignerV2
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            Console.WriteLine(ex.ToString());
             return false;
         }
     }
-
-
-    private static X509Certificate ReadCertificate()
-    {
-        var ms = new MemoryStream(Encoding.UTF8.GetBytes(Util.Certificate));
-
-        var cf = CertificateFactory.GetInstance("X.509");
-        return (X509Certificate)cf.GenerateCertificate(ms);
-    }
 }
+
+

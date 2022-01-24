@@ -11,6 +11,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+	</ItemGroup>
+
+	<ItemGroup>
 	  <Reference Include="ApkBuilderBinding">
 	    <HintPath>..\3rdparty\ApkBuilderBinding\bin\Release\net6.0-android\ApkBuilderBinding.dll</HintPath>
 	  </Reference>

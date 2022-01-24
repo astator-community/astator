@@ -12,10 +12,15 @@
                 FontAttributes="Bold"
                 FontSize="28"
                 HorizontalOptions="Start"
-                Text="文档1"
+                Text="文档"
                 VerticalOptions="Center" />
         </GridLayout>
-        <GridLayout GridLayout.Row="1" />
+        <GridLayout GridLayout.Row="1">
+            <Label
+                HorizontalOptions="Center"
+                Text="待完善..."
+                VerticalOptions="Center" />
+        </GridLayout>
         <v:NavBarView ActiveTab="doc" GridLayout.Row="2" />
     </GridLayout>
 </ContentPage>

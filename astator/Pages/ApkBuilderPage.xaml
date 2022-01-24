@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage
-    x:Class="astator.AboutPage"
+    x:Class="astator.Pages.ApkBuilderPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:v="clr-namespace:astator.Views"
     NavigationPage.HasNavigationBar="False">
 
     <GridLayout RowDefinitions="55,*">
@@ -14,14 +13,10 @@
             FontSize="28"
             GridLayout.Column="0"
             HorizontalOptions="Start"
-            Text="关于"
+            Text="打包apk"
             VerticalOptions="Center" />
-
-        <GridLayout GridLayout.Row="1">
-            <Label
-                HorizontalOptions="Center"
-                Text="待完善..."
-                VerticalOptions="Center" />
-        </GridLayout>
+        <ScrollView GridLayout.Row="1" />
     </GridLayout>
+
+
 </ContentPage>

@@ -1,4 +1,3 @@
-using Android.Content;
 using astator.Controllers;
 using astator.Core;
 using astator.Core.Accessibility;
@@ -33,9 +32,7 @@ namespace astator.Pages
             {
                 if (ScriptAccessibilityService.Instance is null)
                 {
-                    var intent = new Intent(Android.Provider.Settings.ActionAccessibilitySettings);
-                    intent.SetFlags(ActivityFlags.NewTask);
-                    Globals.AppContext.StartActivity(intent);
+                    Globals.Permission.ReqAccessibilityService();
                 }
             }
             else

@@ -6,6 +6,7 @@ using Android.OS;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using astator.Core.Accessibility;
 using astator.Core.Graphics;
 using astator.Core.UI.Floaty;
 using System;
@@ -27,10 +28,7 @@ namespace astator.Core
         /// <param name="duration">持续时间, 默认ToastLength.Short</param>
         public static void Toast(string text, ToastLength duration = ToastLength.Short)
         {
-            RunOnUiThread(() =>
-            {
-                Android.Widget.Toast.MakeText(Application.Context, text, duration).Show();
-            });
+            RunOnUiThread(() => Android.Widget.Toast.MakeText(Application.Context, text, duration).Show());
         }
 
         /// <summary>
@@ -39,10 +37,7 @@ namespace astator.Core
         /// <param name="action"></param>
         public static void RunOnUiThread(Action action)
         {
-            (AppContext as Activity)?.RunOnUiThread(() =>
-            {
-                action.Invoke();
-            });
+            (AppContext as Activity)?.RunOnUiThread(() => action.Invoke());
         }
 
         /// <summary>
@@ -163,6 +158,25 @@ namespace astator.Core
                        }
                    });
                 }
+            }
+
+            /// <summary>
+            /// 检查无障碍服务是否开启
+            /// </summary>
+            /// <returns></returns>
+            public static bool CheckAccessibilityService()
+            {
+                return ScriptAccessibilityService.Instance is not null;
+            }
+
+            /// <summary>
+            /// 跳转到系统无障碍服务界面
+            /// </summary>
+            public static void ReqAccessibilityService()
+            {
+                var intent = new Intent(Android.Provider.Settings.ActionAccessibilitySettings);
+                intent.SetFlags(ActivityFlags.NewTask);
+                AppContext.StartActivity(intent);
             }
         }
 

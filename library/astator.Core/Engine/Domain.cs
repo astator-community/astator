@@ -7,11 +7,7 @@ namespace astator.Core.Engine
 
         public Domain() : base(true)
         {
+
         }
-
-        //protected override Assembly? Load(AssemblyName assemblyName)
-        //{
-
-        //}
     }
 }

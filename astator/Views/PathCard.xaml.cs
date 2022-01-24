@@ -63,24 +63,41 @@ namespace astator.Views
             {
                 var menu = new AndroidX.AppCompat.Widget.PopupMenu(Globals.AppContext, view, (int)GravityFlags.Right);
 
-                if (this.PathName.EndsWith(".csproj"))
+                //if (this.TypeImageSource == "dir.png")
+                //{
+                //    menu.Menu.Add("重命名");
+                //    menu.Menu.Add("删除");
+                //}
+                //else
                 {
-                    menu.Menu.Add("运行项目");
-                    menu.Menu.Add("打包apk");
-                    menu.Menu.Add("编译dll");
-                }
-                else if (this.PathName.EndsWith(".cs"))
-                {
-                    menu.Menu.Add("运行脚本");
+                    if (this.PathName.EndsWith(".csproj"))
+                    {
+                        menu.Menu.Add("运行项目");
+                        menu.Menu.Add("打包apk");
+                        menu.Menu.Add("编译dll");
+                    }
+                    else if (this.PathName.EndsWith(".cs"))
+                    {
+                        menu.Menu.Add("运行脚本");
+                    }
+                    else if (this.PathName.EndsWith(".dll"))
+                    {
+                        menu.Menu.Add("dll");
+                    }
+
+                    menu.Menu.Add("其他应用打开");
                 }
 
-                menu.Menu.Add("其他应用打开");
 
                 menu.SetOnMenuItemClickListener(new OnMenuItemClickListener((item) =>
                 {
                     if (item.TitleFormatted.ToString() == "运行项目")
                     {
                         _ = ScriptManager.Instance.RunProject(Path.GetDirectoryName(this.Tag.ToString()));
+                    }
+                    if (item.TitleFormatted.ToString() == "dll")
+                    {
+                        _ = ScriptManager.Instance.RunProjectFromDll(Path.GetDirectoryName(this.Tag.ToString()));
                     }
                     else if (item.TitleFormatted.ToString() == "运行脚本")
                     {
@@ -103,6 +120,20 @@ namespace astator.Views
 
                         Globals.AppContext.StartActivity(intent);
                     }
+                    else if (item.TitleFormatted.ToString() == "打包apk")
+                    {
+                        var path = this.Tag.ToString();
+                        var apkbuilderer = new ApkBuilderer(Path.GetDirectoryName(path));
+                        _ = apkbuilderer.Build();
+                    }
+                    else if (item.TitleFormatted.ToString() == "编译dll")
+                    {
+
+                        var path = this.Tag.ToString();
+                        var apkbuilderer = new ApkBuilderer(Path.GetDirectoryName(path));
+                        _ = apkbuilderer.CompileDll();
+                    }
+
                     return true;
                 }));
 

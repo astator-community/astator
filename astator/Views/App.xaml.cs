@@ -12,10 +12,6 @@ namespace astator
         {
             InitializeComponent();
 
-#if DEBUG
-            ReleaseScriptFiles();
-#endif
-
             Console.SetOut(new ScriptConsole());
 
             if (Android.App.Application.Context.PackageName == "com.astator.astator")
@@ -48,7 +44,12 @@ namespace astator
                 {
                     var PackageUndateTime = Android.App.Application.Context.PackageManager.GetPackageInfo(Android.App.Application.Context.PackageName, 0).LastUpdateTime;
 
-                    var lastUpdateTime = long.Parse(File.ReadAllText(Path.Combine(outputDir, "lastUpdateTime.txt")));
+                    long lastUpdateTime = 0;
+
+                    if (File.Exists(Path.Combine(outputDir, "lastUpdateTime.txt")))
+                    {
+                        lastUpdateTime = long.Parse(File.ReadAllText(Path.Combine(outputDir, "lastUpdateTime.txt")));
+                    }
 
                     if (PackageUndateTime > lastUpdateTime)
                     {
@@ -60,20 +61,19 @@ namespace astator
                     ReleaseProject();
                 }
 
-                var runtime = await ScriptManager.Instance.RunProject(outputDir);
+                var runtime = await ScriptManager.Instance.RunProjectFromDll(outputDir);
                 runtime.IsExitAppOnStoped = runtime.IsUiMode;
             }
             catch (Exception ex)
             {
                 ScriptLogger.Error(ex.Message);
             }
-
         }
 
         private static void ReleaseProject()
         {
             var outputDir = Android.App.Application.Context.GetExternalFilesDir("project").ToString();
-            using var stream = Android.App.Application.Context.Assets.Open(Path.Combine("Resources/ScriptFiles/project.zip"));
+            using var stream = Android.App.Application.Context.Assets.Open(Path.Combine("Resources/project.zip"));
             using var zip = new ZipArchive(stream);
 
             if (Directory.Exists(outputDir))
@@ -85,40 +85,5 @@ namespace astator
 
             File.WriteAllText(Path.Combine(outputDir, "lastUpdateTime.txt"), Java.Lang.JavaSystem.CurrentTimeMillis().ToString());
         }
-
-        private static void ReleaseScriptFiles()
-        {
-            var sdkPaths = from path in Android.App.Application.Context.Assets.List("Resources/ScriptFiles")
-                           orderby path descending
-                           select path;
-
-            var sdkPath = sdkPaths.First();
-            if (string.IsNullOrEmpty(sdkPath))
-            {
-                return;
-            }
-
-            var sdkFileName = sdkPath[sdkPath.LastIndexOf("v")..];
-            var version = sdkFileName[1..sdkFileName.IndexOf('-')];
-            var outputDir = Android.App.Application.Context.GetExternalFilesDir("sdk").ToString();
-            var versionPath = Path.Combine(outputDir, "version.txt");
-            if (!File.Exists(versionPath) || int.Parse(version) > int.Parse(File.ReadAllText(versionPath)))
-            {
-                Directory.Delete(outputDir, true);
-
-                using (var stream = Android.App.Application.Context.Assets.Open(Path.Combine("Resources/ScriptFiles", sdkPath)))
-                {
-                    using var zip = new ZipArchive(stream);
-
-                    if (!Directory.Exists(outputDir))
-                    {
-                        Directory.CreateDirectory(outputDir);
-                    }
-                    zip.ExtractToDirectory(outputDir, true);
-                }
-                File.WriteAllText(versionPath, version);
-            };
-        }
-
     }
 }
