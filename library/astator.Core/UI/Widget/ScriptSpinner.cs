@@ -2,6 +2,7 @@
 using Android.Graphics.Drawables;
 using Android.Views;
 using Android.Widget;
+using AndroidX.AppCompat.Widget;
 using astator.Core.Exceptions;
 using System;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ using System.Linq;
 
 namespace astator.Core.UI.Widget
 {
-    public class ScriptSpinner : Spinner, IScriptView
+    public class ScriptSpinner : AppCompatSpinner, IScriptView
     {
         public class SpinnerAdapter<T> : ArrayAdapter<T>
         {

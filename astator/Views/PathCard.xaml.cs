@@ -80,10 +80,6 @@ namespace astator.Views
                     {
                         menu.Menu.Add("运行脚本");
                     }
-                    else if (this.PathName.EndsWith(".dll"))
-                    {
-                        menu.Menu.Add("dll");
-                    }
 
                     menu.Menu.Add("其他应用打开");
                 }
@@ -94,10 +90,6 @@ namespace astator.Views
                     if (item.TitleFormatted.ToString() == "运行项目")
                     {
                         _ = ScriptManager.Instance.RunProject(Path.GetDirectoryName(this.Tag.ToString()));
-                    }
-                    if (item.TitleFormatted.ToString() == "dll")
-                    {
-                        _ = ScriptManager.Instance.RunProjectFromDll(Path.GetDirectoryName(this.Tag.ToString()));
                     }
                     else if (item.TitleFormatted.ToString() == "运行脚本")
                     {

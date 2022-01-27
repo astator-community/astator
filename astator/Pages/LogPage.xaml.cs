@@ -1,6 +1,8 @@
 using AndroidX.AppCompat.App;
+using astator.Controllers;
 using astator.Core;
 using NLog;
+using System.IO.Compression;
 
 namespace astator.Pages
 {
@@ -13,7 +15,11 @@ namespace astator.Pages
             ScriptLogger.AddCallback("logPage", AddLogText);
 
             InitLogList();
-            ScriptLogger.Error("test");
+
+            if (Android.App.Application.Context.PackageName != "com.astator.astator")
+            {
+                RunProject();
+            }
         }
 
         private void InitLogList()
@@ -59,7 +65,7 @@ namespace astator.Pages
         }
         public void AddLogText(LogArgs message)
         {
-            _ = Device.InvokeOnMainThreadAsync(() =>
+            Globals.RunOnUiThread(() =>
             {
                 var label = new Label
                 {
@@ -107,6 +113,57 @@ namespace astator.Pages
         private async void LogLayout_ChildAdded(object sender, EventArgs e)
         {
             await this.LogScrollView.ScrollToAsync(this.LogScrollView, ScrollToPosition.End, true);
+        }
+
+        private static async void RunProject()
+        {
+            try
+            {
+                var outputDir = Android.App.Application.Context.GetExternalFilesDir("project").ToString();
+                if (Directory.Exists(outputDir))
+                {
+                    var PackageUndateTime = Android.App.Application.Context.PackageManager.GetPackageInfo(Android.App.Application.Context.PackageName, 0).LastUpdateTime;
+
+                    long lastUpdateTime = 0;
+
+                    if (File.Exists(Path.Combine(outputDir, "lastUpdateTime.txt")))
+                    {
+                        lastUpdateTime = long.Parse(File.ReadAllText(Path.Combine(outputDir, "lastUpdateTime.txt")));
+                    }
+
+                    if (PackageUndateTime > lastUpdateTime)
+                    {
+                        ReleaseProject();
+                    }
+                }
+                else
+                {
+                    ReleaseProject();
+                }
+
+                var runtime = await ScriptManager.Instance.RunProjectFromDll(outputDir);
+                runtime.IsExitAppOnStoped = runtime.IsUiMode;
+            }
+            catch (Exception ex)
+            {
+                ScriptLogger.Error(ex.Message);
+            }
+        }
+
+        private static void ReleaseProject()
+        {
+            var outputDir = Android.App.Application.Context.GetExternalFilesDir("project").ToString();
+            using var stream = Android.App.Application.Context.Assets.Open(Path.Combine("Resources/project.zip"));
+            using var zip = new ZipArchive(stream);
+
+            if (Directory.Exists(outputDir))
+            {
+                Directory.Delete(outputDir, true);
+            }
+            Directory.CreateDirectory(outputDir);
+            zip.ExtractToDirectory(outputDir, true);
+
+            File.WriteAllText(Path.Combine(outputDir, "lastUpdateTime.txt"), Java.Lang.JavaSystem.CurrentTimeMillis().ToString());
         }
     }
 }

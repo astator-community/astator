@@ -8,31 +8,30 @@
 		<SingleProject>true</SingleProject>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<EnablePreviewMsixTooling>true</EnablePreviewMsixTooling>
-    
+
 		<!-- Display name -->
 		<ApplicationTitle>astator</ApplicationTitle>
 
 		<!-- App Identifier -->
 		<ApplicationId>com.astator.astator</ApplicationId>
 
+		<Version>0.1.0</Version>
 		<!-- Versions -->
-		<ApplicationVersion>1</ApplicationVersion>
+		<ApplicationVersion>220124</ApplicationVersion>
 
 		<!-- Required for C# Hot Reload -->
 		<UseInterpreter Condition="'$(Configuration)' == 'Debug'">True</UseInterpreter>
 
 		<SupportedOSPlatformVersion Condition="'$(TargetFramework)' == 'net6.0-android'">24.0</SupportedOSPlatformVersion>
 		<AndroidPackageFormat>apk</AndroidPackageFormat>
-		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+
 	</PropertyGroup>
 
 	<ItemGroup>
 		<!-- App Icon -->
-
 		<MauiIcon Include="Resources\appicon.png" Color="#8000ff" />
 
 		<!-- Splash Screen -->
-
 		<MauiSplashScreen Include="Resources\appiconfg.svg" Color="#8000ff" />
 
 		<!-- Images -->
@@ -43,54 +42,53 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="System.Collections.Concurrent" Version="4.3.0" />
-	  <PackageReference Include="System.Runtime.Loader" Version="4.3.0" />
+		<PackageReference Include="System.Collections.Concurrent" Version="4.3.0" />
 	</ItemGroup>
 
 
 	<ItemGroup>
-	  <MauiXaml Update="Pages\AboutPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Pages\ApkBuilderPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Pages\CodeEditorPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Pages\DocPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Pages\FloatyFastRunner.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Pages\HomePage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Pages\LogPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Pages\NugetPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Pages\PackageInfoPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Pages\ScriptLogPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Pages\SettingsPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Views\NavBarView.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Views\PathCard.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Views\PackageInfoCard.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
+		<MauiXaml Update="Pages\AboutPage.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
+		<MauiXaml Update="Pages\ApkBuilderPage.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
+		<MauiXaml Update="Pages\CodeEditorPage.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
+		<MauiXaml Update="Pages\DocPage.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
+		<MauiXaml Update="Pages\FloatyFastRunner.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
+		<MauiXaml Update="Pages\HomePage.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
+		<MauiXaml Update="Pages\LogPage.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
+		<MauiXaml Update="Pages\NugetPage.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
+		<MauiXaml Update="Pages\PackageInfoPage.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
+		<MauiXaml Update="Pages\ScriptLogPage.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
+		<MauiXaml Update="Pages\SettingsPage.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
+		<MauiXaml Update="Views\NavBarView.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
+		<MauiXaml Update="Views\PathCard.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
+		<MauiXaml Update="Views\PackageInfoCard.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -98,39 +96,49 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Remove="Platforms\Android\Resources\values\styles.xml" />
-	  <None Remove="Resources\Images\add.svg" />
-	  <None Remove="Resources\Images\download.svg" />
-	  <None Remove="Resources\Images\more.svg" />
-	  <None Remove="Resources\Images\save.svg" />
+		<None Remove="Platforms\Android\Resources\values\styles.xml" />
+		<None Remove="Resources\Images\add.svg" />
+		<None Remove="Resources\Images\download.svg" />
+		<None Remove="Resources\Images\more.svg" />
+		<None Remove="Resources\Images\save.svg" />
 	</ItemGroup>
 
 
- 
-	<ItemGroup>
-	  <ProjectReference Include="..\library\astator.ApkBuilder\astator.ApkBuilder.csproj" />
-	  <ProjectReference Include="..\library\astator.Core\astator.Core.csproj" />
-	  <ProjectReference Include="..\library\astator.NugetManager\astator.NugetManager.csproj" />
-	</ItemGroup>
-
 
 	<ItemGroup>
-	  <Reference Include="ApkBuilderBinding">
-	    <HintPath>..\library\3rdparty\ApkBuilderBinding\bin\Release\net6.0-android\ApkBuilderBinding.dll</HintPath>
-	  </Reference>
-	  <Reference Include="CodeViewBinding">
-	    <HintPath>..\library\3rdparty\CodeViewBinding\bin\Release\net6.0-android\CodeViewBinding.dll</HintPath>
-	  </Reference>
-	  <Reference Include="PaddleOcrBinding">
-	    <HintPath>..\library\3rdparty\PaddleOcrBinding\bin\Release\net6.0-android\PaddleOcrBinding.dll</HintPath>
-	  </Reference>
+		<ProjectReference Include="..\library\astator.ApkBuilder\astator.ApkBuilder.csproj" />
+		<ProjectReference Include="..\library\astator.Core\astator.Core.csproj" />
+		<ProjectReference Include="..\library\astator.NugetManager\astator.NugetManager.csproj" />
 	</ItemGroup>
 
 
 	<ItemGroup>
-	  <Compile Update="Views\PathCard.xaml.cs">
-	    <DependentUpon>PathCard.xaml</DependentUpon>
-	  </Compile>
+		<Reference Include="ApkBuilderBinding">
+			<HintPath>..\library\3rdparty\ApkBuilderBinding\bin\Release\net6.0-android\ApkBuilderBinding.dll</HintPath>
+		</Reference>
+		<Reference Include="CodeViewBinding">
+			<HintPath>..\library\3rdparty\CodeViewBinding\bin\Release\net6.0-android\CodeViewBinding.dll</HintPath>
+		</Reference>
+		<Reference Include="PaddleOcrBinding">
+			<HintPath>..\library\3rdparty\PaddleOcrBinding\bin\Release\net6.0-android\PaddleOcrBinding.dll</HintPath>
+		</Reference>
+	</ItemGroup>
+
+
+	<ItemGroup>
+		<Compile Update="Views\PathCard.xaml.cs">
+			<DependentUpon>PathCard.xaml</DependentUpon>
+		</Compile>
+	</ItemGroup>
+
+
+	<ItemGroup>
+	  <None Include="Platforms\Android\ActivityResultCallback.cs" />
+	</ItemGroup>
+
+
+	<ItemGroup>
+	  <_MauiCompileToAdd Remove="Platforms\Android\ActivityResultCallback.cs" />
 	</ItemGroup>
 
 </Project>

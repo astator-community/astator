@@ -126,7 +126,7 @@ namespace astator.Core.Graphics
 
             var notification = new NotificationCompat.Builder(this, "1000")
               .SetContentTitle("截屏服务正在运行中")
-              .SetSmallIcon(IconCompat.TypeUnknown)
+              .SetSmallIcon(IconCompat.CreateWithResource(this, Android.Resource.Drawable.SymDefAppIcon))
               .Build();
 
             StartForeground(1000, notification);

@@ -2,7 +2,6 @@
 using Obfuscar;
 using System;
 using System.IO;
-using System.Threading.Tasks;
 
 namespace astator.Core.ThirdParty
 {

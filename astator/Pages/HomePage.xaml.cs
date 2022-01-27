@@ -13,17 +13,7 @@ namespace astator.Pages
         public HomePage()
         {
             InitializeComponent();
-        }
 
-        protected override void OnAppearing()
-        {
-            base.OnAppearing();
-            MainActivity.Instance.OnKeyDownCallback = OnKeyDown;
-
-            if (!string.IsNullOrEmpty(this.rootDir))
-            {
-                return;
-            }
             this.rootDir = Android.OS.Environment.GetExternalStoragePublicDirectory("astator").ToString();
 
             if (!Directory.Exists(this.rootDir))
@@ -41,6 +31,13 @@ namespace astator.Pages
             UpdateDirTbs(scriptDir);
         }
 
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+            MainActivity.Instance.OnKeyDownCallback = OnKeyDown;
+
+        }
+
         protected override void OnDisappearing()
         {
             base.OnDisappearing();
@@ -49,7 +46,7 @@ namespace astator.Pages
 
         private void ShowFiles(string directory)
         {
-            this.FilesLayout.Children.Clear();
+            this.FilesLayout.Clear();
             var dirs = Directory.EnumerateDirectories(directory, "*", SearchOption.TopDirectoryOnly);
             foreach (var dir in dirs)
             {
@@ -66,7 +63,7 @@ namespace astator.Pages
 
                 card.Clicked += Dir_Clicked;
 
-                this.FilesLayout.Children.Add(card);
+                this.FilesLayout.Add(card);
             }
 
             var files = Directory.EnumerateFiles(directory, "", SearchOption.TopDirectoryOnly);
@@ -85,7 +82,7 @@ namespace astator.Pages
                     IsAddMenu = true
                 };
                 card.Clicked += File_Clicked;
-                this.FilesLayout.Children.Add(card);
+                this.FilesLayout.Add(card);
             }
         }
 

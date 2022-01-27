@@ -5,7 +5,6 @@ using astator.Core;
 using astator.Core.Engine;
 using astator.Core.Script;
 using astator.Core.UI;
-using astator.NugetManager;
 using System.Collections.Concurrent;
 using System.Reflection;
 using Application = Android.App.Application;

@@ -1,9 +1,9 @@
 ﻿using Android.Widget;
-using astator.Core.UI;
 using Com.Amrdeveloper.Codeview;
 using Java.Util.Regex;
 using Microsoft.Maui.Handlers;
 using Microsoft.Maui.Platform;
+using Util = astator.Core.UI.Util;
 
 namespace astator.Views;
 

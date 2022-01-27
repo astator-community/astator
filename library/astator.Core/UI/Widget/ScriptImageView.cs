@@ -2,6 +2,7 @@
 using Android.Graphics.Drawables;
 using Android.Views;
 using Android.Widget;
+using AndroidX.AppCompat.Widget;
 using astator.Core.Exceptions;
 using System;
 using System.IO;
@@ -10,7 +11,7 @@ using Path = Android.Graphics.Path;
 
 namespace astator.Core.UI.Widget
 {
-    public class ScriptImageView : ImageView, IScriptView
+    public class ScriptImageView : AppCompatImageView, IScriptView
     {
         public new string Id { get; set; } = string.Empty;
         private OnAttachedListener onAttachedListener;

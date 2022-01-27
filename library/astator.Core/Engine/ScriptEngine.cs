@@ -27,7 +27,7 @@ namespace astator.Core.Engine
         /// <summary>
         /// sdk引用
         /// </summary>
-        private static List<MetadataReference> References { get => SdkReferences.References; }
+        private static List<MetadataReference> References => SdkReferences.References;
 
         /// <summary>
         /// 动态域

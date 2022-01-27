@@ -3,13 +3,14 @@ using Android.Graphics.Drawables;
 using Android.Text.Util;
 using Android.Views;
 using Android.Widget;
+using AndroidX.AppCompat.Widget;
 using System;
 using static Android.Text.TextUtils;
 using static Android.Views.ViewGroup;
 
 namespace astator.Core.UI.Widget
 {
-    public class ScriptButton : Button, IScriptView
+    public class ScriptButton : AppCompatButton, IScriptView
     {
         public new string Id { get; set; } = string.Empty;
         private OnAttachedListener onAttachedListener;

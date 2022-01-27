@@ -6,8 +6,10 @@ using Android.OS;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using AndroidX.Activity.Result;
 using astator.Core.Accessibility;
 using astator.Core.Graphics;
+using astator.Core.UI;
 using astator.Core.UI.Floaty;
 using System;
 using System.Collections.Generic;
@@ -37,7 +39,7 @@ namespace astator.Core
         /// <param name="action"></param>
         public static void RunOnUiThread(Action action)
         {
-            (AppContext as Activity)?.RunOnUiThread(() => action.Invoke());
+            (AppContext as Activity)?.RunOnUiThread(action);
         }
 
         /// <summary>
@@ -62,28 +64,28 @@ namespace astator.Core
         }
 
         /// <summary>
-        /// 启动一个activity
-        /// </summary>
-        /// <param name="intent">意图</param>
-        public static void StartActivity(Intent intent)
-        {
-            AppContext.StartActivity(intent);
-        }
-
-
-        /// <summary>
         /// 权限类
         /// </summary>
         public class Permission
         {
+            public static LifecycleObserver LifecycleObserver { get; set; }
+
             /// <summary>
-            /// 权限枚举
+            /// 启动一个activity
             /// </summary>
-            public enum RequestFlags
+            /// <param name="intent">意图</param>
+            public static void StartActivity(Intent intent)
             {
-                MediaProjection = 1000,
-                FloatyWindow = 1001,
-                ExternalStorage = 1002
+                AppContext.StartActivity(intent);
+            }
+
+            /// <summary>
+            /// 启动一个activity并获取回传数据
+            /// </summary>
+            /// <param name="intent">意图</param>
+            public static void StartActivityForResult(Intent intent, Action<ActivityResult> callback)
+            {
+                LifecycleObserver.StartActivityForResult(intent, callback);
             }
 
             /// <summary>
@@ -96,13 +98,20 @@ namespace astator.Core
                     return;
                 }
 
-                Task.Run(() =>
+                var manager = (MediaProjectionManager)AppContext.GetSystemService("media_projection");
+                var intent = manager.CreateScreenCaptureIntent();
+                LifecycleObserver.StartActivityForResult(intent,
+                result =>
                 {
-                    var manager = (MediaProjectionManager)AppContext.GetSystemService("media_projection");
-                    if (manager is not null)
+                    var intent = new Intent(AppContext, typeof(ScreenCapturer));
+                    intent.PutExtra("data", result.Data);
+                    if (OperatingSystem.IsAndroidVersionAtLeast(26))
                     {
-                        var intent = manager.CreateScreenCaptureIntent();
-                        (AppContext as Activity).StartActivityForResult(intent, (int)RequestFlags.MediaProjection);
+                        AppContext.StartForegroundService(intent);
+                    }
+                    else
+                    {
+                        AppContext.StartService(intent);
                     }
                 });
             }
@@ -123,7 +132,12 @@ namespace astator.Core
             {
                 if (!Android.Provider.Settings.CanDrawOverlays(AppContext))
                 {
-                    (AppContext as Activity).StartActivityForResult(new Intent(Android.Provider.Settings.ActionManageOverlayPermission, Android.Net.Uri.Parse("package:" + AppContext.PackageName)), (int)RequestFlags.FloatyWindow);
+                    var intent = new Intent(Android.Provider.Settings.ActionManageOverlayPermission, Android.Net.Uri.Parse("package:" + AppContext.PackageName));
+                    LifecycleObserver.StartActivityForResult(intent,
+                        result =>
+                        {
+                            AppContext.StartService(new(AppContext, typeof(FloatyService)));
+                        });
                 }
             }
 
@@ -177,6 +191,16 @@ namespace astator.Core
                 var intent = new Intent(Android.Provider.Settings.ActionAccessibilitySettings);
                 intent.SetFlags(ActivityFlags.NewTask);
                 AppContext.StartActivity(intent);
+            }
+
+            /// <summary>
+            /// 权限动态申请
+            /// </summary>
+            /// <param name="permissions">权限字符串数组</param>
+            /// <param name="callback">申请结果回调</param>
+            public static void ReqPermissions(string[] permissions, Action<bool> callback)
+            {
+                LifecycleObserver?.ReqPermissions(permissions, callback);
             }
         }
 

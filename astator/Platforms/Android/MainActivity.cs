@@ -7,10 +7,9 @@ using Android.Runtime;
 using Android.Views;
 using astator.Core;
 using astator.Core.Broadcast;
-using astator.Core.Graphics;
-using astator.Core.UI.Floaty;
+using astator.Core.UI;
+using astator.Pages;
 using Microsoft.Maui.Platform;
-using static astator.Core.Globals.Permission;
 
 namespace astator
 {
@@ -26,42 +25,65 @@ namespace astator
             Instance = this;
             Globals.AppContext = this;
 
-            try
+            this.Window.ClearFlags(WindowManagerFlags.TranslucentStatus);
+            this.Window.AddFlags(WindowManagerFlags.DrawsSystemBarBackgrounds);
+            this.Window.SetStatusBarColor(((Color)Microsoft.Maui.Controls.Application.Current.Resources["PrimaryColor"]).ToNative());
+            this.Window.DecorView.SystemUiVisibility = (StatusBarVisibility)SystemUiFlags.LightStatusBar;
+
+            if (OperatingSystem.IsAndroidVersionAtLeast(30))
             {
-                this.Window.ClearFlags(WindowManagerFlags.TranslucentStatus);
-                this.Window.AddFlags(WindowManagerFlags.DrawsSystemBarBackgrounds);
-                this.Window.SetStatusBarColor(((Color)Microsoft.Maui.Controls.Application.Current.Resources["PrimaryColor"]).ToNative());
-
-                this.Window.DecorView.SystemUiVisibility = (StatusBarVisibility)SystemUiFlags.LightStatusBar;
-
-                if (this.PackageManager.CheckPermission(Manifest.Permission.ReadExternalStorage, this.PackageName) != Permission.Granted && this.PackageManager.CheckPermission(Manifest.Permission.WriteExternalStorage, this.PackageName) != Permission.Granted)
+                if (!Android.OS.Environment.IsExternalStorageManager)
                 {
-                    var permissions = new string[]
-                    {
-                        Manifest.Permission.ReadExternalStorage,
-                        Manifest.Permission.WriteExternalStorage
-                    };
-                    RequestPermissions(permissions, 1002);
+                    StartActivityForResult(new Intent(Android.Provider.Settings.ActionManageAllFilesAccessPermission), 3);
                 }
-
-                if (OperatingSystem.IsAndroidVersionAtLeast(30))
-                {
-                    if (!Android.OS.Environment.IsExternalStorageManager)
-                    {
-                        StartActivityForResult(new Intent(Android.Provider.Settings.ActionManageAllFilesAccessPermission), 3);
-                    }
-                }
-
-                var filter = new IntentFilter();
-                filter.AddAction(Intent.ActionConfigurationChanged);
-                filter.AddAction(Intent.CategoryHome);
-
-                RegisterReceiver(ScriptBroadcastReceiver.Instance, filter);
             }
-            catch { }
 
             base.OnCreate(savedInstanceState);
             Platform.Init(this, savedInstanceState);
+
+
+            var permissionLifecycleObserver = new LifecycleObserver(this);
+            this.Lifecycle.AddObserver(permissionLifecycleObserver);
+            Globals.Permission.LifecycleObserver = permissionLifecycleObserver;
+
+            var permissions = new string[]
+            {
+                Manifest.Permission.ReadExternalStorage,
+                Manifest.Permission.WriteExternalStorage
+            };
+
+
+            Globals.Permission.ReqPermissions(permissions, result =>
+            {
+                if (result)
+                {
+                    var mainPage = Microsoft.Maui.Controls.Application.Current.MainPage as NavigationPage;
+                    var carouselPage = mainPage.RootPage as CarouselPage;
+                    if (this.PackageName == "com.astator.astator")
+                    {
+                        carouselPage.Children.Add(new HomePage());
+                        carouselPage.Children.Add(new LogPage());
+                        carouselPage.Children.Add(new DocPage());
+                        carouselPage.Children.Add(new SettingsPage());
+                    }
+                    else
+                    {
+                        carouselPage.Children.Add(new LogPage());
+                    }
+                }
+                else
+                {
+                    new AndroidX.AppCompat.App.AlertDialog
+                      .Builder(Globals.AppContext)
+                      .SetTitle("错误")
+                      .SetMessage("请求读写权限失败, 应用退出!")
+                      .SetPositiveButton("确认", (s, e) =>
+                      {
+                          Process.KillProcess(Process.MyPid());
+                      })
+                      .Show();
+                }
+            });
         }
 
         protected override void OnDestroy()
@@ -75,32 +97,7 @@ namespace astator
             Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
 
             base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
-        }
 
-
-        protected override void OnActivityResult(int requestCode, Result resultCode, Intent data)
-        {
-            base.OnActivityResult(requestCode, resultCode, data);
-            if (resultCode == Result.Ok)
-            {
-                if (requestCode == (int)RequestFlags.MediaProjection)
-                {
-                    Intent intent = new(this, typeof(ScreenCapturer));
-                    intent.PutExtra("data", data);
-                    if (OperatingSystem.IsAndroidVersionAtLeast(26))
-                    {
-                        StartService(intent);
-                    }
-                    else
-                    {
-                        StartService(intent);
-                    }
-                }
-                else if (requestCode == (int)RequestFlags.FloatyWindow)
-                {
-                    StartService(new(this, typeof(FloatyService)));
-                }
-            }
         }
 
 
@@ -112,7 +109,6 @@ namespace astator
 
             if (!result && keyCode == Keycode.Back)
             {
-
                 var pages = Microsoft.Maui.Controls.Application.Current.MainPage.Navigation.NavigationStack;
                 if (pages.Count > 1)
                 {

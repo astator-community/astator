@@ -2,6 +2,7 @@ using astator.Controllers;
 using astator.Core;
 using astator.Core.Accessibility;
 using astator.Core.Graphics;
+using Java.Net;
 using System.IO.Compression;
 using System.Net;
 using System.Net.Sockets;
@@ -79,7 +80,7 @@ namespace astator.Pages
             {
                 try
                 {
-                    var hostAddress = Util.GetLocalHostAddress() ?? "127.0.0.1";
+                    var hostAddress = GetLocalHostAddress() ?? "127.0.0.1";
                     this.tokenSource = new CancellationTokenSource();
                     this.tcpListener = new TcpListener(IPAddress.Parse(hostAddress), 1024);
                     this.tcpListener.Start();
@@ -107,6 +108,25 @@ namespace astator.Pages
                 this.tcpListener?.Stop();
                 this.tcpListener = null;
             }
+        }
+
+        private static string GetLocalHostAddress()
+        {
+            var ie = NetworkInterface.NetworkInterfaces;
+            while (ie.HasMoreElements)
+            {
+                var intf = ie.NextElement() as NetworkInterface;
+                var enumIpAddr = intf.InetAddresses;
+                while (enumIpAddr.HasMoreElements)
+                {
+                    var inetAddress = enumIpAddr.NextElement() as InetAddress;
+                    if (!inetAddress.IsLoopbackAddress && inetAddress.HostAddress.StartsWith("192.168."))
+                    {
+                        return inetAddress.HostAddress.ToString();
+                    }
+                }
+            }
+            return null;
         }
 
         private static void ConnectAsync(TcpClient client)

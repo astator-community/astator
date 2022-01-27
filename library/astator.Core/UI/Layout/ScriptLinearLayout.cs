@@ -2,11 +2,12 @@
 using Android.Graphics.Drawables;
 using Android.Views;
 using Android.Widget;
+using AndroidX.AppCompat.Widget;
 using astator.Core.Exceptions;
 using System;
 namespace astator.Core.UI.Layout
 {
-    public class ScriptLinearLayout : LinearLayout, IScriptView
+    public class ScriptLinearLayout : LinearLayoutCompat, IScriptView
     {
         public new string Id { get; set; } = string.Empty;
         private OnAttachedListener onAttachedListener;
@@ -53,18 +54,18 @@ namespace astator.Core.UI.Layout
                 {
                     try
                     {
-                        if (value is int)
+                        if (value is int v)
                         {
-                            this.Orientation = (Orientation)value;
+                            this.Orientation = v;
                         }
                         if (value is string temp)
                         {
-                            this.Orientation = (Orientation)int.Parse(temp);
+                            this.Orientation = int.Parse(temp);
                         }
                     }
                     catch
                     {
-                        this.Orientation = Util.EnumParse<Orientation>(value);
+                        this.Orientation = (int)Util.EnumParse<Orientation>(value);
                     }
                     break;
                 }

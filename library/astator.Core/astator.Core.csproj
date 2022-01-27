@@ -18,6 +18,7 @@
 		<PackageProjectUrl>https://github.com/astator-community/astator</PackageProjectUrl>
 		<Company>astator</Company>
 		<Description>用于astator脚本的开发</Description>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
 
 	<ItemGroup>

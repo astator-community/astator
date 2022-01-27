@@ -1,6 +1,5 @@
 ﻿using Android.AccessibilityServices;
 using Android.App;
-using Android.Views;
 using Android.Views.Accessibility;
 using AndroidX.Core.App;
 using AndroidX.Core.Graphics.Drawable;
@@ -34,20 +33,11 @@ namespace astator.Core.Accessibility
 
             var notification = new NotificationCompat.Builder(this, "1001")
               .SetContentTitle("无障碍服务正在运行中")
-              .SetSmallIcon(IconCompat.TypeUnknown)
+              .SetSmallIcon(IconCompat.CreateWithResource(this, Android.Resource.Drawable.SymDefAppIcon))
               .Build();
 
             StartForeground(1001, notification);
 
-        }
-
-        protected override bool OnKeyEvent(KeyEvent e)
-        {
-            //if (e.KeyCode == Keycode.VolumeDown)
-            //{
-
-            //}
-            return base.OnKeyEvent(e);
         }
 
         public override void OnAccessibilityEvent(AccessibilityEvent e)

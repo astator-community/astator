@@ -100,7 +100,7 @@ namespace astator.Core
             config.LoggingRules.Add(new LoggingRule("*", LogLevel.Trace, fileTarget));
 
             this.logger = LogManager.Setup().
-                SetupExtensions(s => s.AutoLoadAssemblies(false)).
+                SetupExtensions(s => s.AutoLoadAssemblies(true)).
                 LoadConfiguration(config).
                 GetCurrentClassLogger();
         }

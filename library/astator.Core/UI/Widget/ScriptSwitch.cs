@@ -4,6 +4,7 @@ using Android.Graphics.Drawables;
 using Android.Text.Util;
 using Android.Views;
 using Android.Widget;
+using AndroidX.AppCompat.Widget;
 using astator.Core.Exceptions;
 using System;
 using static Android.Text.TextUtils;
@@ -11,7 +12,7 @@ using static Android.Views.ViewGroup;
 
 namespace astator.Core.UI.Widget
 {
-    public class ScriptSwitch : Switch, IScriptView
+    public class ScriptSwitch : SwitchCompat, IScriptView
     {
         public new string Id { get; set; } = string.Empty;
         private OnAttachedListener onAttachedListener;

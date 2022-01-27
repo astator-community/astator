@@ -1,12 +1,12 @@
 ﻿using Android.Graphics;
 using Android.Graphics.Drawables;
 using Android.Views;
-using Android.Widget;
+using AndroidX.AppCompat.Widget;
 using astator.Core.Exceptions;
 using System;
 namespace astator.Core.UI.Layout
 {
-    public class ScriptFrameLayout : FrameLayout, IScriptView
+    public class ScriptFrameLayout : ContentFrameLayout, IScriptView
     {
         public new string Id { get; set; } = string.Empty;
         private OnAttachedListener onAttachedListener;
@@ -51,14 +51,14 @@ namespace astator.Core.UI.Layout
                 }
                 case "w":
                 {
-                    var lp = this.LayoutParameters as FrameLayout.LayoutParams ?? new(this.LayoutParameters as MarginLayoutParams ?? new(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.MatchParent));
+                    var lp = this.LayoutParameters as LayoutParams ?? new(this.LayoutParameters as MarginLayoutParams ?? new(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.MatchParent));
                     lp.Width = Util.DpParse(value);
                     this.LayoutParameters = lp;
                     break;
                 }
                 case "h":
                 {
-                    var lp = this.LayoutParameters as FrameLayout.LayoutParams ?? new(this.LayoutParameters as MarginLayoutParams ?? new(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.MatchParent));
+                    var lp = this.LayoutParameters as LayoutParams ?? new(this.LayoutParameters as MarginLayoutParams ?? new(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.MatchParent));
                     lp.Height = Util.DpParse(value);
                     this.LayoutParameters = lp;
                     break;
@@ -98,14 +98,14 @@ namespace astator.Core.UI.Layout
                             margin[3] = Util.DpParse(strArr[3]);
                         }
                     }
-                    var lp = this.LayoutParameters as FrameLayout.LayoutParams ?? new(this.LayoutParameters as MarginLayoutParams ?? new(LayoutParams.MatchParent, LayoutParams.MatchParent));
+                    var lp = this.LayoutParameters as LayoutParams ?? new(this.LayoutParameters as MarginLayoutParams ?? new(LayoutParams.MatchParent, LayoutParams.MatchParent));
                     lp.SetMargins(margin[0], margin[1], margin[2], margin[3]);
                     this.LayoutParameters = lp;
                     break;
                 }
                 case "layoutGravity":
                 {
-                    var lp = this.LayoutParameters as FrameLayout.LayoutParams ?? new(this.LayoutParameters as MarginLayoutParams ?? new(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.MatchParent));
+                    var lp = this.LayoutParameters as LayoutParams ?? new(this.LayoutParameters as MarginLayoutParams ?? new(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.MatchParent));
                     lp.Gravity = Util.EnumParse<GravityFlags>(value);
                     this.LayoutParameters = lp;
                     break;
@@ -199,18 +199,18 @@ namespace astator.Core.UI.Layout
             {
                 "w" => new Func<object>(() =>
                 {
-                    var lp = this.LayoutParameters as FrameLayout.LayoutParams ?? new(this.LayoutParameters as MarginLayoutParams ?? new(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.MatchParent));
+                    var lp = this.LayoutParameters as LayoutParams ?? new(this.LayoutParameters as MarginLayoutParams ?? new(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.MatchParent));
                     return lp.Width;
                 }),
                 "h" => new Func<object>(() =>
                 {
-                    var lp = this.LayoutParameters as FrameLayout.LayoutParams ?? new(this.LayoutParameters as MarginLayoutParams ?? new(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.MatchParent));
+                    var lp = this.LayoutParameters as LayoutParams ?? new(this.LayoutParameters as MarginLayoutParams ?? new(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.MatchParent));
                     return lp.Height;
                 }),
                 "margin" => new Func<object>(() =>
                 {
                     var margin = new int[4];
-                    var lp = this.LayoutParameters as FrameLayout.LayoutParams ?? new(this.LayoutParameters as MarginLayoutParams ?? new(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.MatchParent));
+                    var lp = this.LayoutParameters as LayoutParams ?? new(this.LayoutParameters as MarginLayoutParams ?? new(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.MatchParent));
                     margin[0] = lp.LeftMargin;
                     margin[1] = lp.TopMargin;
                     margin[2] = lp.RightMargin;
@@ -219,7 +219,7 @@ namespace astator.Core.UI.Layout
                 }),
                 "layoutGravity" => new Func<object>(() =>
                 {
-                    var lp = this.LayoutParameters as FrameLayout.LayoutParams ?? new(this.LayoutParameters as MarginLayoutParams ?? new(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.MatchParent));
+                    var lp = this.LayoutParameters as LayoutParams ?? new(this.LayoutParameters as MarginLayoutParams ?? new(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.MatchParent));
                     return lp.Gravity;
                 }),
                 "padding" => new int[] { this.PaddingLeft, this.PaddingTop, this.PaddingRight, this.PaddingBottom },
