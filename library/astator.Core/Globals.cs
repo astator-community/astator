@@ -91,7 +91,7 @@ namespace astator.Core
             /// <summary>
             /// 申请截图权限
             /// </summary>
-            public static void ReqScreenCap()
+            public static void ReqScreenCap(Action<bool> callback)
             {
                 if (CheckScreenCap())
                 {
@@ -103,16 +103,21 @@ namespace astator.Core
                 LifecycleObserver.StartActivityForResult(intent,
                 result =>
                 {
-                    var intent = new Intent(AppContext, typeof(ScreenCapturer));
-                    intent.PutExtra("data", result.Data);
-                    if (OperatingSystem.IsAndroidVersionAtLeast(26))
+                    var isOk = result.ResultCode == (int)Result.Ok;
+                    if (isOk)
                     {
-                        AppContext.StartForegroundService(intent);
+                        var intent = new Intent(AppContext, typeof(ScreenCapturer));
+                        intent.PutExtra("data", result.Data);
+                        if (OperatingSystem.IsAndroidVersionAtLeast(26))
+                        {
+                            AppContext.StartForegroundService(intent);
+                        }
+                        else
+                        {
+                            AppContext.StartService(intent);
+                        }
                     }
-                    else
-                    {
-                        AppContext.StartService(intent);
-                    }
+                    callback.Invoke(isOk);
                 });
             }
 
@@ -136,7 +141,10 @@ namespace astator.Core
                     LifecycleObserver.StartActivityForResult(intent,
                         result =>
                         {
-                            AppContext.StartService(new(AppContext, typeof(FloatyService)));
+                            if (Android.Provider.Settings.CanDrawOverlays(AppContext))
+                            {
+                                AppContext.StartService(new(AppContext, typeof(FloatyService)));
+                            }
                         });
                 }
             }
@@ -165,12 +173,12 @@ namespace astator.Core
                     AppContext.StartService(new(AppContext, typeof(FloatyService)));
 
                     await Task.Run(() =>
-                   {
-                       while (FloatyService.Instance is null)
-                       {
-                           System.Threading.Thread.Sleep(50);
-                       }
-                   });
+                    {
+                        while (FloatyService.Instance is null)
+                        {
+                            System.Threading.Thread.Sleep(50);
+                        }
+                    });
                 }
             }
 
@@ -196,11 +204,11 @@ namespace astator.Core
             /// <summary>
             /// 权限动态申请
             /// </summary>
-            /// <param name="permissions">权限字符串数组</param>
+            /// <param name="permission">权限值</param>
             /// <param name="callback">申请结果回调</param>
-            public static void ReqPermissions(string[] permissions, Action<bool> callback)
+            public static void ReqPermission(string permission, Action<bool> callback)
             {
-                LifecycleObserver?.ReqPermissions(permissions, callback);
+                LifecycleObserver?.ReqPermission(permission, callback);
             }
         }
 

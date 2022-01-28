@@ -37,26 +37,10 @@ public class LifecycleObserver : Java.Lang.Object, ILifecycleObserver
 
         this.permissionLauncher = this.registry.Register("permissions",
             context,
-            new ActivityResultContracts.RequestMultiplePermissions(),
-            new ActivityResultCallback(results =>
+            new ActivityResultContracts.RequestPermission(),
+            new ActivityResultCallback(result =>
             {
-                dynamic grantResults = null;
-                switch (results.Class.Name)
-                {
-                    case "androidx.collection.SimpleArrayMap":
-                        grantResults = results.JavaCast<AndroidX.Collection.SimpleArrayMap>();
-                        break;
-                    case "androidx.collection.ArrayMap":
-                        grantResults = results.JavaCast<AndroidX.Collection.ArrayMap>();
-                        break;
-                    case "java.util.HashMap":
-                        grantResults = results.JavaCast<Java.Util.HashMap>();
-                        break;
-                    default:
-                        ScriptLogger.Error($"ReqMultiplePermissions错误, 未对返回类型: {results.Class.Name} 进行处理!");
-                        return;
-                }
-                this.permissionCallback?.Invoke(!grantResults.ContainsValue(false));
+                this.permissionCallback?.Invoke((bool)result);
             }));
 
         this.startActivityLauncher = this.registry.Register("startActivity",
@@ -64,15 +48,14 @@ public class LifecycleObserver : Java.Lang.Object, ILifecycleObserver
             new ActivityResultContracts.StartActivityForResult(),
             new ActivityResultCallback(result =>
             {
-                var _result = result.JavaCast<ActivityResult>();
-                this.startActivityCallback?.Invoke(_result);
+                this.startActivityCallback?.Invoke(result.JavaCast<ActivityResult>());
             }));
     }
 
-    public void ReqPermissions(string[] permissions, Action<bool> callback)
+    public void ReqPermission(string permission, Action<bool> callback)
     {
         this.permissionCallback = callback;
-        this.permissionLauncher.Launch(permissions);
+        this.permissionLauncher.Launch(permission);
     }
 
     public void StartActivityForResult(Intent intent, Action<ActivityResult> callback)

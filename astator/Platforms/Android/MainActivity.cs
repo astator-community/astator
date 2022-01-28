@@ -30,14 +30,6 @@ namespace astator
             this.Window.SetStatusBarColor(((Color)Microsoft.Maui.Controls.Application.Current.Resources["PrimaryColor"]).ToNative());
             this.Window.DecorView.SystemUiVisibility = (StatusBarVisibility)SystemUiFlags.LightStatusBar;
 
-            if (OperatingSystem.IsAndroidVersionAtLeast(30))
-            {
-                if (!Android.OS.Environment.IsExternalStorageManager)
-                {
-                    StartActivityForResult(new Intent(Android.Provider.Settings.ActionManageAllFilesAccessPermission), 3);
-                }
-            }
-
             base.OnCreate(savedInstanceState);
             Platform.Init(this, savedInstanceState);
 
@@ -53,37 +45,71 @@ namespace astator
             };
 
 
-            Globals.Permission.ReqPermissions(permissions, result =>
+            Globals.Permission.ReqPermission(permissions[0], result =>
             {
-                if (result)
+                if (!result)
                 {
-                    var mainPage = Microsoft.Maui.Controls.Application.Current.MainPage as NavigationPage;
-                    var carouselPage = mainPage.RootPage as CarouselPage;
-                    if (this.PackageName == "com.astator.astator")
+                    NotPermissionExit();
+                }
+
+                Globals.Permission.ReqPermission(permissions[1], result =>
+                {
+                    if (!result)
                     {
-                        carouselPage.Children.Add(new HomePage());
-                        carouselPage.Children.Add(new LogPage());
-                        carouselPage.Children.Add(new DocPage());
-                        carouselPage.Children.Add(new SettingsPage());
+                        NotPermissionExit();
+                    }
+
+                    if (OperatingSystem.IsAndroidVersionAtLeast(30) && !Android.OS.Environment.IsExternalStorageManager)
+                    {
+                        Globals.Permission.StartActivityForResult(new Intent(Android.Provider.Settings.ActionManageAllFilesAccessPermission), result =>
+                        {
+                            if (OperatingSystem.IsAndroidVersionAtLeast(30) && Android.OS.Environment.IsExternalStorageManager)
+                            {
+                                InitializePage();
+                            }
+                            else
+                            {
+                                NotPermissionExit();
+                            }
+                        });
                     }
                     else
                     {
-                        carouselPage.Children.Add(new LogPage());
+                        InitializePage();
                     }
-                }
-                else
-                {
-                    new AndroidX.AppCompat.App.AlertDialog
-                      .Builder(Globals.AppContext)
-                      .SetTitle("错误")
-                      .SetMessage("请求读写权限失败, 应用退出!")
-                      .SetPositiveButton("确认", (s, e) =>
-                      {
-                          Process.KillProcess(Process.MyPid());
-                      })
-                      .Show();
-                }
+                });
             });
+        }
+
+        private static void NotPermissionExit()
+        {
+            new AndroidX.AppCompat.App.AlertDialog
+               .Builder(Globals.AppContext)
+               .SetTitle("错误")
+               .SetMessage("请求权限失败, 应用退出!")
+               .SetPositiveButton("确认", (s, e) =>
+               {
+                   Process.KillProcess(Process.MyPid());
+               })
+               .Show();
+        }
+
+
+        private void InitializePage()
+        {
+            var mainPage = Microsoft.Maui.Controls.Application.Current.MainPage as NavigationPage;
+            var carouselPage = mainPage.RootPage as CarouselPage;
+            if (this.PackageName == "com.astator.astator")
+            {
+                carouselPage.Children.Add(new HomePage());
+                carouselPage.Children.Add(new LogPage());
+                carouselPage.Children.Add(new DocPage());
+                carouselPage.Children.Add(new SettingsPage());
+            }
+            else
+            {
+                carouselPage.Children.Add(new LogPage());
+            }
         }
 
         protected override void OnDestroy()

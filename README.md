@@ -1,5 +1,5 @@
 # astator
-astator的目标是使用c#作为脚本的安卓自动化软件
+astator的目标是使用c#作为脚本的安卓自动化软件, 支持andorid 7.0 ~ android 12
 
 <br/>
 
@@ -20,12 +20,20 @@ astator的目标是使用c#作为脚本的安卓自动化软件
 ## 工作原理
 使用roslyn进行编译
 
-使用assemblyLoadContext进行插件隔离域的动态装卸
+使用assemblyLoadContext进行插件隔离域的热插拔
+
+<br/>
+
+## 已知问题
+
+未进行兼容性测试
+
+在国产模拟器中使用会触发崩溃, 猜测是.net6 android SDK本身的问题, 等maui发布正式版(2022 P2)再测试
 
 <br/>
 
 ## 鸣谢
-### 引用项目
+#### 引用项目
 - [Obfuscar](https://github.com/obfuscar/obfuscar)  :  代码混淆支持
 - [PaddleOCR](https://github.com/PaddlePaddle/PaddleOCR) :  OCR支持
 - [ApkSigner](https://android.googlesource.com/platform/build/+/dd910c5/tools/signapk/src/com/android/signapk) :  apkV2签名, android规定targetSdk为30以上的apk必须拥有V2签名
@@ -35,11 +43,10 @@ astator的目标是使用c#作为脚本的安卓自动化软件
 
 
 
-### 参考项目
+#### 参考项目
 - [tiny-sign](https://code.google.com/archive/p/tiny-sign/downloads) :  apkV1签名
 - [AndroidBinaryXml](https://github.com/senswrong/AndroidBinaryXml) :  安卓二进制xml解析
 
+<br/>
 
-
-
-
+## 如果你对astator感兴趣, 欢迎提交issues和PR

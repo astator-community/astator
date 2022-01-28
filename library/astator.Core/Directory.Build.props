@@ -1,10 +1,5 @@
 <Project>
   <PropertyGroup>
-    <Authors>yiszza</Authors>
-	<Version>0.0.3</Version>
-	<PackageProjectUrl>https://github.com/astator-community/astator</PackageProjectUrl>
-	<Company>astator</Company>
-	<Description>用于astator脚本的开发</Description>
 	<PackageIcon>icon.png</PackageIcon>
   </PropertyGroup>
 

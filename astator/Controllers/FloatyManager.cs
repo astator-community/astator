@@ -28,55 +28,53 @@ namespace astator.Controllers
 
         private readonly Dictionary<string, FloatyWindow> floatys = new();
 
-        public async void Show()
+        public bool IsShow()
         {
-            if (!await Globals.Permission.CheckFloaty())
+            return this.floatys.Count > 0;
+        }
+
+        public void Show()
+        {
+            var layout = new GridLayout
             {
-                Globals.Permission.ReqFloaty();
-            }
-            else
+                WidthRequest = 42,
+                HeightRequest = 42,
+                BackgroundColor = Colors.Transparent
+            };
+
+            layout.Add(new CustomImage
             {
-                var layout = new GridLayout
-                {
-                    WidthRequest = 42,
-                    HeightRequest = 42,
-                    BackgroundColor = Colors.Transparent
-                };
+                Source = "appicon.png",
+                IsCircle = true,
+                WidthRequest = 42,
+                HeightRequest = 42,
 
-                layout.Add(new CustomImage
-                {
-                    Source = "appicon.png",
-                    IsCircle = true,
-                    WidthRequest = 42,
-                    HeightRequest = 42,
+            });
 
-                });
+            var view = layout.ToNative(Application.Current.MainPage.Handler.MauiContext);
+            view.SetOnTouchListener(new OnTouchListener((v, e) =>
+            {
+                return IconFloaty_TouchListener(v, e);
+            }));
 
-                var view = layout.ToNative(Application.Current.MainPage.Handler.MauiContext);
-                view.SetOnTouchListener(new OnTouchListener((v, e) =>
-                {
-                    return IconFloaty_TouchListener(v, e);
-                }));
+            ScriptBroadcastReceiver.AddListener(Intent.ActionConfigurationChanged, () =>
+             {
+                 var width = Globals.Devices.Width;
+                 var layoutParams = view.LayoutParameters as WindowManagerLayoutParams;
 
-                ScriptBroadcastReceiver.AddListener(Intent.ActionConfigurationChanged, () =>
+                 if (layoutParams.X < width / 2)
                  {
-                     var width = Globals.Devices.Width;
-                     var layoutParams = view.LayoutParameters as WindowManagerLayoutParams;
+                     layoutParams.X = Core.UI.Util.DpParse(-10);
+                 }
+                 else
+                 {
+                     layoutParams.X = width - view.Width + Core.UI.Util.DpParse(10);
+                 }
+                 FloatyService.Instance.UpdateViewLayout(view, layoutParams);
+             });
 
-                     if (layoutParams.X < width / 2)
-                     {
-                         layoutParams.X = Core.UI.Util.DpParse(-10);
-                     }
-                     else
-                     {
-                         layoutParams.X = width - view.Width + Core.UI.Util.DpParse(10);
-                     }
-                     FloatyService.Instance.UpdateViewLayout(view, layoutParams);
-                 });
-
-                var window = new FloatyWindow(view, Core.UI.Util.DpParse(-10), Core.UI.Util.DpParse(100));
-                this.floatys.Add("iconFloaty", window);
-            }
+            var window = new FloatyWindow(view, Core.UI.Util.DpParse(-10), Core.UI.Util.DpParse(100));
+            this.floatys.Add("iconFloaty", window);
         }
 
         private float x;

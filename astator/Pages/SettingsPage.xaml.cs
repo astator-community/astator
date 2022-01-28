@@ -21,19 +21,25 @@ namespace astator.Pages
 
         protected override async void OnAppearing()
         {
-            await Task.Delay(500);
+            await Task.Delay(200);
             this.AccessibilityService.IsToggled = ScriptAccessibilityService.Instance is not null;
             this.CaptureService.IsToggled = ScreenCapturer.Instance is not null;
+            this.Floaty.IsToggled = FloatyManager.Instance.IsShow();
         }
 
 
-        private void AccessibilityService_Toggled(object sender, ToggledEventArgs e)
+        private async void AccessibilityService_Toggled(object sender, ToggledEventArgs e)
         {
             if (e.Value)
             {
                 if (ScriptAccessibilityService.Instance is null)
                 {
                     Globals.Permission.ReqAccessibilityService();
+                    await Task.Delay(200);
+                    if (ScriptAccessibilityService.Instance is null)
+                    {
+                        this.AccessibilityService.IsToggled = false;
+                    }
                 }
             }
             else
@@ -49,7 +55,13 @@ namespace astator.Pages
             {
                 if (ScreenCapturer.Instance is null)
                 {
-                    Globals.Permission.ReqScreenCap();
+                    Globals.Permission.ReqScreenCap(result =>
+                    {
+                        if (!result)
+                        {
+                            this.CaptureService.IsToggled = false;
+                        }
+                    });
                 }
             }
             else
@@ -58,11 +70,24 @@ namespace astator.Pages
             }
         }
 
-        private void Floaty_Toggled(object sender, ToggledEventArgs e)
+        private async void Floaty_Toggled(object sender, ToggledEventArgs e)
         {
             if (e.Value)
             {
-                FloatyManager.Instance.Show();
+                if (!Android.Provider.Settings.CanDrawOverlays(Globals.AppContext))
+                {
+                    Globals.Permission.ReqFloaty();
+                    this.Floaty.IsToggled = false;
+                }
+                else
+                {
+                    if (Core.UI.Floaty.FloatyService.Instance is null)
+                    {
+                        Globals.AppContext.StartService(new(Globals.AppContext, typeof(Core.UI.Floaty.FloatyService)));
+                        await Task.Delay(200);
+                    }
+                    FloatyManager.Instance.Show();
+                }
             }
             else
             {

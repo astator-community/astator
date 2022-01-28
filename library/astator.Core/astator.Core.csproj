@@ -14,11 +14,10 @@
 		<SupportedOSPlatformVersion>24.0</SupportedOSPlatformVersion>
 		
 		<Authors>yiszza</Authors>
-		<Version>0.1.0</Version>
+		<Version>0.1.1</Version>
 		<PackageProjectUrl>https://github.com/astator-community/astator</PackageProjectUrl>
 		<Company>astator</Company>
 		<Description>用于astator脚本的开发</Description>
-		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
 
 	<ItemGroup>
