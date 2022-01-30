@@ -181,7 +181,7 @@ namespace astator.Pages
                             {
                                 using var zipStream = new MemoryStream(data.Buffer);
                                 var directory = Path.Combine(MauiApplication.Current.ExternalCacheDir.ToString(), data.Description);
-                                DeleteOldCSFiles(directory);
+                                ClearProject(directory);
 
                                 using (var archive = new ZipArchive(zipStream))
                                 {
@@ -197,7 +197,7 @@ namespace astator.Pages
                                 using var zipStream = new MemoryStream(data.Buffer);
                                 var description = data.Description.Split("|");
                                 var directory = Path.Combine(MauiApplication.Current.ExternalCacheDir.ToString(), description[0]);
-                                DeleteOldCSFiles(directory);
+                                ClearProject(directory);
 
                                 using (var archive = new ZipArchive(zipStream))
                                 {
@@ -218,7 +218,7 @@ namespace astator.Pages
 
                                 using var zipStream = new MemoryStream(data.Buffer);
                                 var saveDirectory = Path.Combine(directory, data.Description);
-                                DeleteOldCSFiles(directory);
+                                ClearProject(directory);
 
                                 using var archive = new ZipArchive(zipStream);
                                 archive.ExtractToDirectory(saveDirectory, true);
@@ -273,22 +273,25 @@ namespace astator.Pages
             });
         }
 
-        private static void DeleteOldCSFiles(string directory)
+        private static void ClearProject(string directory)
         {
             if (!Directory.Exists(directory))
             {
                 return;
             }
 
-            var oldCSFiles = Directory.GetFiles(directory, "*.cs", SearchOption.AllDirectories);
-            if (!oldCSFiles.Any())
-            {
-                return;
-            }
+            var searchPatterns = new string[] {"*.cs","*.csproj" };
 
-            foreach (var oldCSFile in oldCSFiles)
+            foreach (var searchPattern in searchPatterns)
             {
-                File.Delete(oldCSFile);
+                var files = Directory.GetFiles(directory, searchPattern, SearchOption.AllDirectories);
+                if (files.Any())
+                {
+                    foreach (var f in files)
+                    {
+                        File.Delete(f);
+                    }
+                }
             }
         }
 

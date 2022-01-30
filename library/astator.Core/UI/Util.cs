@@ -11,7 +11,7 @@ namespace astator.Core.UI
     /// </summary>
     public static class DefaultValue
     {
-        public static int TextSize { get; } = 8;
+        public static int TextSize { get; } = 12;
         public static string TextColor { get; } = "#4a4a4d";
         public static string BackgroundColor { get; } = "#ffffff";
     }

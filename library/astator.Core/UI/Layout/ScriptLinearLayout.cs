@@ -7,7 +7,7 @@ using astator.Core.Exceptions;
 using System;
 namespace astator.Core.UI.Layout
 {
-    public class ScriptLinearLayout : LinearLayoutCompat, IScriptView
+    public class ScriptLinearLayout : LinearLayout, IScriptView
     {
         public new string Id { get; set; } = string.Empty;
         private OnAttachedListener onAttachedListener;
@@ -56,16 +56,16 @@ namespace astator.Core.UI.Layout
                     {
                         if (value is int v)
                         {
-                            this.Orientation = v;
+                            this.Orientation = (Orientation)v;
                         }
                         if (value is string temp)
                         {
-                            this.Orientation = int.Parse(temp);
+                            this.Orientation = (Orientation)int.Parse(temp);
                         }
                     }
                     catch
                     {
-                        this.Orientation = (int)Util.EnumParse<Orientation>(value);
+                        this.Orientation = Util.EnumParse<Orientation>(value);
                     }
                     break;
                 }
@@ -118,7 +118,7 @@ namespace astator.Core.UI.Layout
                             margin[3] = Util.DpParse(strArr[3]);
                         }
                     }
-                    var lp = this.LayoutParameters as FrameLayout.LayoutParams ?? new(this.LayoutParameters as MarginLayoutParams ?? new(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.MatchParent));
+                    var lp = this.LayoutParameters as FrameLayout.LayoutParams ?? new(this.LayoutParameters  ?? new(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.MatchParent));
                     lp.SetMargins(margin[0], margin[1], margin[2], margin[3]);
                     this.LayoutParameters = lp;
                     break;

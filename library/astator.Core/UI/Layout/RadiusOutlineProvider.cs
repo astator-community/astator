@@ -8,7 +8,7 @@ public class RadiusOutlineProvider : ViewOutlineProvider
     {
         this.radius = radius;
     }
-    public override void GetOutline(Android.Views.View view, Android.Graphics.Outline outline)
+    public override void GetOutline(View view, Android.Graphics.Outline outline)
     {
         outline.SetRoundRect(0, 0, view.Width, view.Height, this.radius);
     }

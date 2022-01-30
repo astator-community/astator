@@ -28,9 +28,20 @@ namespace astator.Core
         /// </summary>
         /// <param name="text">内容</param>
         /// <param name="duration">持续时间, 默认ToastLength.Short</param>
-        public static void Toast(string text, ToastLength duration = ToastLength.Short)
+        public static void Toast(object text, ToastLength duration = ToastLength.Short)
         {
-            RunOnUiThread(() => Android.Widget.Toast.MakeText(Application.Context, text, duration).Show());
+            RunOnUiThread(() => Android.Widget.Toast.MakeText(Application.Context, text.ToString(), duration).Show());
+        }
+
+        /// <summary>
+        /// 打印日志并toast
+        /// </summary>
+        /// <param name="text">内容</param>
+        /// <param name="duration">toast持续时间, 默认ToastLength.Short</param>
+        public static void ToastLog(object text, ToastLength duration = ToastLength.Short)
+        {
+            ScriptLogger.Log(text);
+            RunOnUiThread(() => Android.Widget.Toast.MakeText(Application.Context, text.ToString(), duration).Show());
         }
 
         /// <summary>

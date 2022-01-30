@@ -182,7 +182,6 @@ namespace astator.Core
                     callback.Invoke();
                 }
                 this.Floatys?.RemoveAll();
-                ScreenCapturer.Instance?.Dispose();
                 this.engine.UnExecute();
                 ScriptLogger.Log("脚本停止运行: " + this.ScriptId);
 

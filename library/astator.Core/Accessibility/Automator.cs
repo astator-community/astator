@@ -69,6 +69,7 @@ namespace astator.Core.Accessibility
 
             var result = from window in windows
                          where window.Type == AccessibilityWindowType.Application
+                         where window.Root is not null
                          select window;
 
             return result.First();

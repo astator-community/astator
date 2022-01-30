@@ -41,6 +41,7 @@ namespace astator.Core.Graphics
                 var image = this.imageReader.AcquireLatestImage();
                 if (image is not null)
                 {
+                    this.lastImage?.Close();
                     this.lastImage = image;
                 }
                 return this.lastImage;
@@ -68,10 +69,7 @@ namespace astator.Core.Graphics
         [return: GeneratedEnum]
         public override StartCommandResult OnStartCommand(Intent intent, [GeneratedEnum] StartCommandFlags flags, int startId)
         {
-            if (Instance is not null)
-            {
-                Instance.Dispose();
-            }
+            Instance?.Dispose();
 
             StartNotification();
 

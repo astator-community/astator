@@ -55,7 +55,6 @@ namespace astator.Core.UI.Widget
 
         public new string Id { get; set; } = string.Empty;
         private OnAttachedListener onAttachedListener;
-        private List<string> list = new();
         private int position;
         private Color textColor = Color.ParseColor(DefaultValue.TextColor);
         private Color backgroundColor = Color.ParseColor(DefaultValue.BackgroundColor);
@@ -63,6 +62,9 @@ namespace astator.Core.UI.Widget
         protected override void OnAttachedToWindow()
         {
             base.OnAttachedToWindow();
+
+            SetSelection(this.position);
+
             this.onAttachedListener?.OnAttached(this);
         }
         public ScriptSpinner(Android.Content.Context context, ViewArgs args) : base(context)
@@ -87,16 +89,6 @@ namespace astator.Core.UI.Widget
                     SetAttr(key, item.Value);
                 }
             }
-            if (this.list.Count != 0)
-            {
-                this.Adapter = new SpinnerAdapter<string>(context, Android.Resource.Layout.SimpleListItemChecked, this.list)
-                {
-                    TextColor = textColor,
-                    BackgroundColor = backgroundColor,
-                    TextSize = textSize,
-                };
-                SetSelection(this.position);
-            }
         }
         public void SetAttr(string key, object value)
         {
@@ -115,7 +107,15 @@ namespace astator.Core.UI.Widget
                 case "entries":
                 {
                     if (value is string temp)
-                        this.list = temp.Split("|").ToList();
+                    {
+                        var list = temp.Split("|").ToList();
+                        this.Adapter = new SpinnerAdapter<string>(this.Context, Android.Resource.Layout.SelectDialogItem, list)
+                        {
+                            TextColor = textColor,
+                            BackgroundColor = backgroundColor,
+                            TextSize = textSize,
+                        };
+                    }
                     break;
                 }
                 case "textColor":

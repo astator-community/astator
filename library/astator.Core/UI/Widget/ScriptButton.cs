@@ -4,6 +4,7 @@ using Android.Text.Util;
 using Android.Views;
 using Android.Widget;
 using AndroidX.AppCompat.Widget;
+using astator.Core.Exceptions;
 using System;
 using static Android.Text.TextUtils;
 using static Android.Views.ViewGroup;
@@ -59,7 +60,7 @@ namespace astator.Core.UI.Widget
                 }
                 case "textSize":
                 {
-                    SetTextSize(Android.Util.ComplexUnitType.Dip, Util.DpParse(value));
+                    SetTextSize(Android.Util.ComplexUnitType.Dip, Convert.ToInt32(value));
                     break;
                 }
                 case "textColor":
@@ -303,7 +304,7 @@ namespace astator.Core.UI.Widget
                     break;
                 }
                 default:
-                    throw new ArgumentException(key + ": 未定义属性!");
+                    throw new AttributeNotExistException(key);
             }
         }
         public object GetAttr(string key)
@@ -345,7 +346,7 @@ namespace astator.Core.UI.Widget
                 "rotation" => this.Rotation,
                 "translationX" => this.TranslationX,
                 "translationY" => this.TranslationY,
-                _ => throw new ArgumentException(key + ": 未定义属性!")
+                _ => throw new AttributeNotExistException(key)
             };
         }
         public void On(string key, object listener)

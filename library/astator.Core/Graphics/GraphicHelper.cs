@@ -14,9 +14,9 @@ namespace astator.Core.Graphics
         private int height = -1;
         private int rowStride = -1;
         private byte[] screenData;
-        private readonly short[][] redList = new short[256][];
-        private readonly int[] steps = new int[256];
-        private readonly int[] thresholdCapacity = new int[256];
+
+        private int[] redList;
+        private readonly int[] marks = new int[512];
 
         /// <summary>
         /// 静态构造函数
@@ -57,11 +57,7 @@ namespace astator.Core.Graphics
                 this.screenData = new byte[this.rowStride * this.height];
                 byteBuf.Position(0);
                 byteBuf.Get(this.screenData, 0, this.rowStride * this.height);
-                Array.Fill(this.thresholdCapacity, 19456);
-                for (var i = 0; i < 256; i++)
-                {
-                    Array.Resize(ref this.redList[i], 20480);
-                }
+                redList = new int[this.width * this.height * 2];
                 return true;
             }
             catch
@@ -114,26 +110,38 @@ namespace astator.Core.Graphics
         /// </summary>
         public void GetRedList()
         {
-            Array.Fill(this.steps, 0);
-            int location;
+            var lens = new int[256];
             for (var i = 0; i < this.height; i++)
             {
-                location = this.rowStride * i;
-                for (var j = 0; j < this.width; j++)
+                int location = this.rowStride * i;
+                for (var j = 0; j < this.width; j++, location += 4)
                 {
                     int k = this.screenData[location];
-                    var step = this.steps[k];
-                    if (step >= this.thresholdCapacity[k])
-                    {
-                        this.thresholdCapacity[k] = this.thresholdCapacity[k] + 20480;
-                        Array.Resize(ref this.redList[k], this.redList[k].Length + 20480);
-                    }
-                    this.redList[k][step] = (short)j;
-                    this.redList[k][step + 1] = (short)i;
-                    location += 4;
-                    this.steps[k] = step + 2;
+                    lens[k]++;
                 }
             }
+
+            Array.Fill(marks, 0);
+            var mark = 0;
+            for (int i = 0; i < 256; i++)
+            {
+                marks[i * 2] = mark;
+                mark += lens[i];
+            }
+
+            for (var i = 0; i < this.height; i++)
+            {
+                var location = this.rowStride * i;
+                for (var j = 0; j < this.width; j++, location += 4)
+                {
+                    var k = this.screenData[location];
+                    var step = marks[k * 2] + marks[k * 2 + 1];
+                    redList[step] = j;
+                    redList[step + 1] = i;
+                    marks[k * 2 + 1] += 2;
+                }
+            }
+
         }
 
         /// <summary>
@@ -351,25 +359,24 @@ namespace astator.Core.Graphics
         private Point FindMultiColor(int sx, int sy, int ex, int ey, int[] firstDescription, int[][] offsetDescription, int offsetLength)
         {
             var r = firstDescription[2];
-            var list = this.redList[r];
             int location;
-            for (int i = 0, length = this.steps[r] - 1; i < length; i += 2)
+            for (int i = this.marks[r * 2]; i < this.marks[r * 2 + 1]; i += 2)
             {
-                if (list[i] >= sx && list[i] <= ex && list[i + 1] >= sy && list[i + 1] <= ey)
+                if (redList[i] >= sx && redList[i] <= ex && redList[i + 1] >= sy && redList[i + 1] <= ey)
                 {
-                    location = list[i + 1] * this.rowStride + list[i] * 4;
+                    location = redList[i + 1] * this.rowStride + redList[i] * 4;
                     if (Math.Abs((this.screenData[location + 1] & 0xff) - firstDescription[3]) <= firstDescription[6])
                     {
                         if (Math.Abs((this.screenData[location + 2] & 0xff) - firstDescription[4]) <= firstDescription[7])
                         {
-                            if (CompareColorEx(offsetDescription, list[i], list[i + 1], offsetLength))
+                            if (CompareColorEx(offsetDescription, redList[i], redList[i + 1], offsetLength))
                             {
-                                return new Point(list[i], list[i + 1]);
+                                return new Point(redList[i], redList[i + 1]);
                             }
                         }
                     }
                 }
-                else if (list[i] > ex && list[i + 1] > ey)
+                else if (redList[i] > ex && redList[i + 1] > ey)
                 {
                     break;
                 }
@@ -523,26 +530,25 @@ namespace astator.Core.Graphics
         private List<Point> FindMultiColorEx(int sx, int sy, int ex, int ey, int[] firstDescription, int[][] offsetDescription)
         {
             var r = firstDescription[2];
-            var list = this.redList[r];
             int location;
             List<Point> result = new();
-            for (int i = 0, length = this.steps[r] - 1; i < length; i += 2)
+            for (int i = this.marks[r * 2]; i < this.marks[r * 2 + 1]; i += 2)
             {
-                if (list[i] >= sx && list[i] <= ex && list[i + 1] >= sy && list[i + 1] <= ey)
+                if (redList[i] >= sx && redList[i] <= ex && redList[i + 1] >= sy && redList[i + 1] <= ey)
                 {
-                    location = list[i + 1] * this.rowStride + list[i] * 4;
+                    location = redList[i + 1] * this.rowStride + redList[i] * 4;
                     if (Math.Abs((this.screenData[location + 1] & 0xff) - firstDescription[3]) <= firstDescription[6])
                     {
                         if (Math.Abs((this.screenData[location + 2] & 0xff) - firstDescription[4]) <= firstDescription[7])
                         {
-                            if (CompareColorEx(offsetDescription, list[i], list[i + 1], 1))
+                            if (CompareColorEx(offsetDescription, redList[i], redList[i + 1], 1))
                             {
-                                result.Add(new Point(list[i], list[i + 1]));
+                                result.Add(new Point(redList[i], redList[i + 1]));
                             }
                         }
                     }
                 }
-                else if (list[i] > ex && list[i + 1] > ey)
+                else if (redList[i] > ex && redList[i + 1] > ey)
                 {
                     break;
                 }

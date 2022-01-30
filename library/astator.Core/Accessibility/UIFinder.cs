@@ -10,6 +10,8 @@ public struct Rect
     public int Top { get; set; }
     public int Right { get; set; }
     public int Bottom { get; set; }
+    public int CenterX { get; set; }
+    public int CenterY { get; set; }
 
     public Rect(int left, int top, int right, int bottom)
     {
@@ -17,11 +19,13 @@ public struct Rect
         this.Top = top;
         this.Right = right;
         this.Bottom = bottom;
+        this.CenterX = (right - left) / 2 + left;
+        this.CenterY = (bottom - top) / 2 + top;
     }
 
     public override string ToString()
     {
-        return $"Rect: [left: {this.Left}, top: {this.Top}, right: {this.Right}, bottom: {this.Bottom}]";
+        return $"Rect: [left: {this.Left}, top: {this.Top}, right: {this.Right}, bottom: {this.Bottom}, centerX: {this.CenterX}, centerY: {this.CenterY}]";
     }
 }
 
@@ -196,8 +200,10 @@ public static class UIFinder
             }
         }
 
-        result = result.Concat(Find(childs, args)).ToList();
-
+        if (childs.Any())
+        {
+            result = result.Concat(Find(childs, args)).ToList();
+        }
         return result;
     }
 
@@ -218,7 +224,11 @@ public static class UIFinder
             }
         }
 
-        return FindOne(childs, args);
+        if (childs.Any())
+        {
+            return FindOne(childs, args);
+        }
+        return null;
     }
 
 
@@ -274,7 +284,7 @@ public static class UIFinder
             "PackageName" => nodeInfo.PackageName,
             "PackageNameStartsWith" => nodeInfo.PackageName,
             "PackageNameEndsWith" => nodeInfo.PackageName,
-            "Text" => nodeInfo.Text,
+            "Text" => nodeInfo.Text?.Trim(),
             "Description" => nodeInfo.ContentDescription,
             "Bounds" => nodeInfo.GetBounds(),
             "Checkable" => nodeInfo.Checkable,

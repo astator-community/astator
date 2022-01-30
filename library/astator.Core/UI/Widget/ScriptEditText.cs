@@ -83,7 +83,7 @@ namespace astator.Core.UI.Widget
                 }
                 case "textSize":
                 {
-                    SetTextSize(Android.Util.ComplexUnitType.Dip, Util.DpParse(value));
+                    SetTextSize(Android.Util.ComplexUnitType.Dip, Convert.ToInt32(value));
                     break;
                 }
                 case "textColor":

@@ -21,7 +21,7 @@ namespace astator.Core.UI.Widget
             this.onAttachedListener?.OnAttached(this);
         }
         public float[] Radius { get; set; } = new float[8];
-        private readonly string _workingDirectory;
+        private readonly string workingDirectory;
         protected override void OnDraw(Canvas canvas)
         {
             var path = new Path();
@@ -36,7 +36,7 @@ namespace astator.Core.UI.Widget
             {
                 return;
             }
-            this._workingDirectory = workingDirectory;
+            this.workingDirectory = workingDirectory;
             if (args["id"] is null)
             {
                 this.Id = $"{ GetType().Name }-{ UiManager.CreateCount }";
@@ -67,7 +67,7 @@ namespace astator.Core.UI.Widget
                         var path = temp;
                         if (!path.StartsWith("/"))
                         {
-                            path = System.IO.Path.Combine(this._workingDirectory, path);
+                            path = System.IO.Path.Combine(this.workingDirectory, path);
                         }
                         if (!File.Exists(path))
                         {

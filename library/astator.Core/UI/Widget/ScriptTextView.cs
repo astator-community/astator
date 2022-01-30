@@ -22,7 +22,6 @@ namespace astator.Core.UI.Widget
         }
         public ScriptTextView(Android.Content.Context context, ViewArgs args) : base(context)
         {
-            this.LayoutParameters = new MarginLayoutParams(this.LayoutParameters ?? new(LayoutParams.WrapContent, LayoutParams.WrapContent));
             if (args is null)
             {
                 return;
@@ -60,7 +59,7 @@ namespace astator.Core.UI.Widget
                 }
                 case "textSize":
                 {
-                    SetTextSize(Android.Util.ComplexUnitType.Dip, Util.DpParse(value));
+                    SetTextSize(Android.Util.ComplexUnitType.Dip, Convert.ToInt32(value));
                     break;
                 }
                 case "textColor":
@@ -121,6 +120,7 @@ namespace astator.Core.UI.Widget
                         {
                             this.AutoLinkMask = MatchOptions.All;
                         }
+                        this.Text = this.Text.ToString();
                     }
                     break;
                 }
@@ -199,7 +199,7 @@ namespace astator.Core.UI.Widget
                             margin[3] = Util.DpParse(strArr[3]);
                         }
                     }
-                    var lp = this.LayoutParameters as FrameLayout.LayoutParams ?? new(this.LayoutParameters as MarginLayoutParams ?? new(ViewGroup.LayoutParams.WrapContent, ViewGroup.LayoutParams.WrapContent));
+                    var lp = this.LayoutParameters as FrameLayout.LayoutParams ?? new(this.LayoutParameters ?? new(ViewGroup.LayoutParams.WrapContent, ViewGroup.LayoutParams.WrapContent));
                     lp.SetMargins(margin[0], margin[1], margin[2], margin[3]);
                     this.LayoutParameters = lp;
                     break;
@@ -211,7 +211,7 @@ namespace astator.Core.UI.Widget
                 }
                 case "layoutGravity":
                 {
-                    var lp = this.LayoutParameters as FrameLayout.LayoutParams ?? new(this.LayoutParameters as MarginLayoutParams ?? new(ViewGroup.LayoutParams.WrapContent, ViewGroup.LayoutParams.WrapContent));
+                    var lp = this.LayoutParameters as FrameLayout.LayoutParams ?? new(this.LayoutParameters ?? new(ViewGroup.LayoutParams.WrapContent, ViewGroup.LayoutParams.WrapContent));
                     lp.Gravity = Util.EnumParse<GravityFlags>(value);
                     this.LayoutParameters = lp;
                     break;

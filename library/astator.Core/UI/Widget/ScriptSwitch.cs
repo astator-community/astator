@@ -15,7 +15,11 @@ namespace astator.Core.UI.Widget
     public class ScriptSwitch : SwitchCompat, IScriptView
     {
         public new string Id { get; set; } = string.Empty;
+
+        private Color trackColor = Color.ParseColor("#2B0B98");
+
         private OnAttachedListener onAttachedListener;
+
         protected override void OnAttachedToWindow()
         {
             base.OnAttachedToWindow();
@@ -23,7 +27,7 @@ namespace astator.Core.UI.Widget
         }
         public ScriptSwitch(Android.Content.Context context, ViewArgs args) : base(context)
         {
-            this.LayoutParameters = new MarginLayoutParams(this.LayoutParameters ?? new(LayoutParams.WrapContent, LayoutParams.WrapContent));
+            this.LayoutParameters = new MarginLayoutParams(this.LayoutParameters ?? new(LayoutParams.MatchParent, LayoutParams.WrapContent));
             if (args is null)
             {
                 return;
@@ -43,7 +47,27 @@ namespace astator.Core.UI.Widget
                     SetAttr(key, item.Value);
                 }
             }
+
+
+            this.CheckedChange += (s, e) =>
+            {
+                if (e.IsChecked)
+                {
+                    this.TrackTintList = ColorStateList.ValueOf(trackColor);
+                }
+                else
+                {
+                    this.TrackTintList = ColorStateList.ValueOf(Color.ParseColor("#bdbdbd"));
+                }
+            };
+
+            if (this.Checked)
+            {
+                this.TrackTintList = ColorStateList.ValueOf(trackColor);
+            }
         }
+
+
         public void SetAttr(string key, object value)
         {
             switch (key)
@@ -63,8 +87,8 @@ namespace astator.Core.UI.Widget
                 {
                     if (value is string temp)
                     {
-                        this.ThumbDrawable?.SetColorFilter(new PorterDuffColorFilter(Color.ParseColor(temp), PorterDuff.Mode.Multiply));
-                        this.TrackTintList = ColorStateList.ValueOf(Color.ParseColor(temp));
+                        trackColor = Color.ParseColor(temp);
+                        this.ThumbDrawable?.SetColorFilter(new PorterDuffColorFilter(trackColor, PorterDuff.Mode.Multiply));
                     }
                     break;
                 }
@@ -76,7 +100,7 @@ namespace astator.Core.UI.Widget
                 }
                 case "textSize":
                 {
-                    SetTextSize(Android.Util.ComplexUnitType.Dip, Util.DpParse(value));
+                    SetTextSize(Android.Util.ComplexUnitType.Dip, Convert.ToInt32(value));
                     break;
                 }
                 case "textColor":
@@ -206,7 +230,7 @@ namespace astator.Core.UI.Widget
                             margin[3] = Util.DpParse(strArr[3]);
                         }
                     }
-                    var lp = this.LayoutParameters as FrameLayout.LayoutParams ?? new(this.LayoutParameters as MarginLayoutParams ?? new(ViewGroup.LayoutParams.WrapContent, ViewGroup.LayoutParams.WrapContent));
+                    var lp = this.LayoutParameters as FrameLayout.LayoutParams ?? new(this.LayoutParameters as MarginLayoutParams ?? new(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.WrapContent));
                     lp.SetMargins(margin[0], margin[1], margin[2], margin[3]);
                     this.LayoutParameters = lp;
                     break;
@@ -218,7 +242,7 @@ namespace astator.Core.UI.Widget
                 }
                 case "layoutGravity":
                 {
-                    var lp = this.LayoutParameters as FrameLayout.LayoutParams ?? new(this.LayoutParameters as MarginLayoutParams ?? new(ViewGroup.LayoutParams.WrapContent, ViewGroup.LayoutParams.WrapContent));
+                    var lp = this.LayoutParameters as FrameLayout.LayoutParams ?? new(this.LayoutParameters as MarginLayoutParams ?? new(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.WrapContent));
                     lp.Gravity = Util.EnumParse<GravityFlags>(value);
                     this.LayoutParameters = lp;
                     break;
@@ -326,7 +350,7 @@ namespace astator.Core.UI.Widget
                 "margin" => new Func<object>(() =>
                 {
                     var margin = new int[4];
-                    var lp = this.LayoutParameters as FrameLayout.LayoutParams ?? new(this.LayoutParameters as MarginLayoutParams ?? new(ViewGroup.LayoutParams.WrapContent, ViewGroup.LayoutParams.WrapContent));
+                    var lp = this.LayoutParameters as FrameLayout.LayoutParams ?? new(this.LayoutParameters as MarginLayoutParams ?? new(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.WrapContent));
                     margin[0] = lp.LeftMargin;
                     margin[1] = lp.TopMargin;
                     margin[2] = lp.RightMargin;
@@ -336,7 +360,7 @@ namespace astator.Core.UI.Widget
                 "gravity" => this.Gravity,
                 "layoutGravity" => new Func<object>(() =>
                 {
-                    var lp = this.LayoutParameters as FrameLayout.LayoutParams ?? new(this.LayoutParameters as MarginLayoutParams ?? new(ViewGroup.LayoutParams.WrapContent, ViewGroup.LayoutParams.WrapContent));
+                    var lp = this.LayoutParameters as FrameLayout.LayoutParams ?? new(this.LayoutParameters as MarginLayoutParams ?? new(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.WrapContent));
                     return lp.Gravity;
                 }),
                 "padding" => new int[] { this.PaddingLeft, this.PaddingTop, this.PaddingRight, this.PaddingBottom },

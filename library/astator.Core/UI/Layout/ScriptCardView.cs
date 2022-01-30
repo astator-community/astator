@@ -4,6 +4,7 @@ using Android.Graphics.Drawables;
 using Android.Views;
 using Android.Widget;
 using AndroidX.CardView.Widget;
+using astator.Core.Exceptions;
 using System;
 
 namespace astator.Core.UI.Layout
@@ -210,7 +211,7 @@ namespace astator.Core.UI.Layout
                     break;
                 }
                 default:
-                    throw new ArgumentException(key + ": 未定义属性!");
+                    throw new AttributeNotExistException(key);
             }
         }
         public object GetAttr(string key)
@@ -250,7 +251,7 @@ namespace astator.Core.UI.Layout
                 "rotation" => this.Rotation,
                 "translationX" => this.TranslationX,
                 "translationY" => this.TranslationY,
-                _ => throw new ArgumentException(key + ": 未定义属性!")
+                _ => throw new AttributeNotExistException(key)
             };
         }
         public void On(string key, object callback)

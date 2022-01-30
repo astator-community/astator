@@ -10,10 +10,11 @@ namespace astator.Core.UI.Layout
     {
         public new string Id { get; set; } = string.Empty;
         private OnAttachedListener onAttachedListener;
-        private int _position;
+        private int position;
         protected override void OnAttachedToWindow()
         {
             base.OnAttachedToWindow();
+            Check(GetChildAt(position).Id);
             this.onAttachedListener?.OnAttached(this);
         }
         public new ScriptRadioGroup AddView(View child)
@@ -48,7 +49,7 @@ namespace astator.Core.UI.Layout
                 case "position":
                 {
                     if (value is string temp)
-                        this._position = int.Parse(temp.Trim()); break;
+                        this.position = int.Parse(temp.Trim()); break;
                 }
                 case "orientation":
                 {
