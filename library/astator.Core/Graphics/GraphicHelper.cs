@@ -13,9 +13,10 @@ namespace astator.Core.Graphics
         private int width = -1;
         private int height = -1;
         private int rowStride = -1;
+        private int pxFormat = -1;
         private byte[] screenData;
 
-        private int[] redList;
+        private short[] redList;
         private readonly int[] marks = new int[512];
 
         /// <summary>
@@ -54,10 +55,11 @@ namespace astator.Core.Graphics
                 this.width = image.Width;
                 this.height = image.Height;
                 this.rowStride = image.GetPlanes()[0].RowStride;
+                this.pxFormat = this.rowStride / this.width;
                 this.screenData = new byte[this.rowStride * this.height];
                 byteBuf.Position(0);
                 byteBuf.Get(this.screenData, 0, this.rowStride * this.height);
-                redList = new int[this.width * this.height * 2];
+                this.redList = new short[this.width * this.height * 2];
                 return true;
             }
             catch
@@ -108,40 +110,42 @@ namespace astator.Core.Graphics
         /// <summary>
         /// 获取所有r值对应的坐标
         /// </summary>
-        public void GetRedList()
+        public unsafe void GetRedList()
         {
-            var lens = new int[256];
-            for (var i = 0; i < this.height; i++)
+            fixed (byte* ptr = &this.screenData[0])
             {
-                int location = this.rowStride * i;
-                for (var j = 0; j < this.width; j++, location += 4)
+                var lens = new int[256];
+                for (var i = 0; i < this.height; i++)
                 {
-                    int k = this.screenData[location];
-                    lens[k]++;
+                    var location = this.rowStride * i;
+                    for (var j = 0; j < this.width; j++, location += this.pxFormat)
+                    {
+                        int k = ptr[location];
+                        lens[k]++;
+                    }
+                }
+
+                var mark = 0;
+                for (var i = 0; i < 256; i++)
+                {
+                    this.marks[i * 2] = mark;
+                    this.marks[i * 2 + 1] = mark;
+                    mark += lens[i] * 2;
+                }
+
+                for (short i = 0; i < this.height; i++)
+                {
+                    var location = this.rowStride * i;
+                    for (short j = 0; j < this.width; j++, location += this.pxFormat)
+                    {
+                        var k = ptr[location];
+                        var step = this.marks[k * 2] + this.marks[k * 2 + 1];
+                        this.redList[step] = j;
+                        this.redList[step + 1] = i;
+                        this.marks[k * 2 + 1] += 2;
+                    }
                 }
             }
-
-            Array.Fill(marks, 0);
-            var mark = 0;
-            for (int i = 0; i < 256; i++)
-            {
-                marks[i * 2] = mark;
-                mark += lens[i];
-            }
-
-            for (var i = 0; i < this.height; i++)
-            {
-                var location = this.rowStride * i;
-                for (var j = 0; j < this.width; j++, location += 4)
-                {
-                    var k = this.screenData[location];
-                    var step = marks[k * 2] + marks[k * 2 + 1];
-                    redList[step] = j;
-                    redList[step + 1] = i;
-                    marks[k * 2 + 1] += 2;
-                }
-            }
-
         }
 
         /// <summary>
@@ -174,7 +178,7 @@ namespace astator.Core.Graphics
         {
             if (x >= 0 && x < this.width && y >= 0 && y < this.height)
             {
-                var location = x * 4 + y * this.rowStride;
+                var location = x * this.pxFormat + y * this.rowStride;
                 var result = new int[3];
                 result[0] = this.screenData[location];
                 result[1] = this.screenData[location + 1];
@@ -204,11 +208,123 @@ namespace astator.Core.Graphics
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
-        /// <returns>颜色字符串, 例如:"0xffffff"</returns>
+        /// <returns>颜色值, 例如:0xffffff</returns>
         public int GetPixelHex(int x, int y)
         {
             var result = GetPixel(x, y);
             return (result[0] & 0xff) << 16 | (result[1] & 0xff) << 8 | (result[2] & 0xff);
+        }
+
+        /// <summary>
+        /// 解析比色色组
+        /// </summary>
+        /// <param name="description">色组字符串</param>
+        /// <returns></returns>
+        public int[][] ParseCmpColorString(string description)
+        {
+            var desc = description.Split(",");
+            var result = new int[desc.Length][];
+            for (var i = 0; i < desc.Length; i++)
+            {
+                result[i] = new int[9];
+                var currentDesc = desc[i].Trim().Split("|");
+                result[i][0] = int.Parse(currentDesc[0]);
+                result[i][1] = int.Parse(currentDesc[1]);
+
+                var color = Convert.ToInt32(currentDesc[2], 16);
+                result[i][2] = (color & 0xff0000) >> 16;
+                result[i][3] = (color & 0xff00) >> 8;
+                result[i][4] = color & 0xff;
+                result[i][5] = result[i][6] = result[i][7] = result[i][8] = 0;
+                if (currentDesc.Length >= 4)
+                {
+                    if (currentDesc[3].StartsWith("0x"))
+                    {
+                        var offsetColor = Convert.ToInt32(currentDesc[3], 16);
+                        result[i][5] = (offsetColor & 0xff0000) >> 16;
+                        result[i][6] = (offsetColor & 0xff00) >> 8;
+                        result[i][7] = offsetColor & 0xff;
+                    }
+                    else
+                    {
+                        result[i][8] = int.Parse(currentDesc[3]);
+                    }
+
+                    if (currentDesc.Length == 5)
+                    {
+                        result[i][8] = int.Parse(currentDesc[4]);
+                    }
+                }
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// 解析找色色组
+        /// </summary>
+        /// <param name="description">色组字符串</param>
+        /// <returns></returns>
+        public int[][] ParseFindColorString(string description)
+        {
+            var desc = description.Split(",");
+            var result = new int[desc.Length][];
+
+            {
+                result[0] = new int[9];
+                var currentDesc = desc[0].Trim().Split("|");
+                result[0][0] = int.Parse(currentDesc[0]);
+                result[0][1] = int.Parse(currentDesc[1]);
+
+                var color = Convert.ToInt32(currentDesc[2], 16);
+                result[0][2] = (color & 0xff0000) >> 16;
+                result[0][3] = (color & 0xff00) >> 8;
+                result[0][4] = color & 0xff;
+                result[0][5] = result[0][6] = result[0][7] = result[0][8] = 0;
+                if (currentDesc.Length >= 4)
+                {
+                    if (currentDesc[3].StartsWith("0x"))
+                    {
+                        var offsetColor = Convert.ToInt32(currentDesc[3], 16);
+                        result[0][5] = (offsetColor & 0xff0000) >> 16;
+                        result[0][6] = (offsetColor & 0xff00) >> 8;
+                        result[0][7] = offsetColor & 0xff;
+                    }
+                }
+            }
+
+            for (var i = 1; i < desc.Length; i++)
+            {
+                result[i] = new int[9];
+                var currentDesc = desc[i].Trim().Split("|");
+                result[i][0] = int.Parse(currentDesc[0]) - result[0][0];
+                result[i][1] = int.Parse(currentDesc[1]) - result[0][1];
+
+                var color = Convert.ToInt32(currentDesc[2], 16);
+                result[i][2] = (color & 0xff0000) >> 16;
+                result[i][3] = (color & 0xff00) >> 8;
+                result[i][4] = color & 0xff;
+                result[i][5] = result[i][6] = result[i][7] = result[i][8] = 0;
+                if (currentDesc.Length >= 4)
+                {
+                    if (currentDesc[3].StartsWith("0x"))
+                    {
+                        var offsetColor = Convert.ToInt32(currentDesc[3], 16);
+                        result[i][5] = (offsetColor & 0xff0000) >> 16;
+                        result[i][6] = (offsetColor & 0xff00) >> 8;
+                        result[i][7] = offsetColor & 0xff;
+                    }
+                    else
+                    {
+                        result[i][8] = int.Parse(currentDesc[3]);
+                    }
+
+                    if (currentDesc.Length == 5)
+                    {
+                        result[i][8] = int.Parse(currentDesc[4]);
+                    }
+                }
+            }
+            return result;
         }
 
         private bool CompareColor(int[] description, int offsetX, int offsetY, int offsetLength)
@@ -233,7 +349,7 @@ namespace astator.Core.Graphics
                 var _y = offsetPoint[i].Y;
                 if (_x >= 0 && _x < this.width && _y >= 0 && _y < this.height)
                 {
-                    var location = _x * 4 + _y * this.rowStride;
+                    var location = _y * this.rowStride + _x * this.pxFormat;
                     if (Math.Abs((this.screenData[location] & 0xff) - description[2]) <= description[5])
                     {
                         if (Math.Abs((this.screenData[location + 1] & 0xff) - description[3]) <= description[6])
@@ -356,32 +472,36 @@ namespace astator.Core.Graphics
             return false;
         }
 
-        private Point FindMultiColor(int sx, int sy, int ex, int ey, int[] firstDescription, int[][] offsetDescription, int offsetLength)
+        private unsafe Point FindMultiColor(int sx, int sy, int ex, int ey, int[] firstDescription, int[][] offsetDescription, int offsetLength)
         {
-            var r = firstDescription[2];
-            int location;
-            for (int i = this.marks[r * 2]; i < this.marks[r * 2 + 1]; i += 2)
+            var red = firstDescription[2];
+            fixed (short* ptr = &this.redList[this.marks[red * 2]])
             {
-                if (redList[i] >= sx && redList[i] <= ex && redList[i + 1] >= sy && redList[i + 1] <= ey)
+                for (int i = 0, end = this.marks[red * 2 + 1] - this.marks[red * 2]; i < end; i += 2)
                 {
-                    location = redList[i + 1] * this.rowStride + redList[i] * 4;
-                    if (Math.Abs((this.screenData[location + 1] & 0xff) - firstDescription[3]) <= firstDescription[6])
+                    var x = ptr[i];
+                    var y = ptr[i + 1];
+                    if (x >= sx && x <= ex && y >= sy && y <= ey)
                     {
-                        if (Math.Abs((this.screenData[location + 2] & 0xff) - firstDescription[4]) <= firstDescription[7])
+                        var location = y * this.rowStride + x * this.pxFormat;
+                        if (Math.Abs((this.screenData[location + 1] & 0xff) - firstDescription[3]) <= firstDescription[6])
                         {
-                            if (CompareColorEx(offsetDescription, redList[i], redList[i + 1], offsetLength))
+                            if (Math.Abs((this.screenData[location + 2] & 0xff) - firstDescription[4]) <= firstDescription[7])
                             {
-                                return new Point(redList[i], redList[i + 1]);
+                                if (CompareColorEx(offsetDescription, x, y, offsetLength))
+                                {
+                                    return new Point(x, y);
+                                }
                             }
                         }
                     }
+                    else if (x > ex && y > ey)
+                    {
+                        break;
+                    }
                 }
-                else if (redList[i] > ex && redList[i + 1] > ey)
-                {
-                    break;
-                }
+                return new Point(-1, -1);
             }
-            return new Point(-1, -1);
         }
 
         /// <summary>
@@ -527,37 +647,41 @@ namespace astator.Core.Graphics
             return FindMultiColorLoop(range[0], range[1], range[2], range[3], description, sim, isOffset, timeout, timelag, sign);
         }
 
-        private List<Point> FindMultiColorEx(int sx, int sy, int ex, int ey, int[] firstDescription, int[][] offsetDescription)
+        private unsafe List<Point> FindMultiColorEx(int sx, int sy, int ex, int ey, int[] firstDescription, int[][] offsetDescription)
         {
-            var r = firstDescription[2];
-            int location;
-            List<Point> result = new();
-            for (int i = this.marks[r * 2]; i < this.marks[r * 2 + 1]; i += 2)
+            var result = new List<Point>();
+            var red = firstDescription[2];
+            fixed (short* ptr = &this.redList[this.marks[red * 2]])
             {
-                if (redList[i] >= sx && redList[i] <= ex && redList[i + 1] >= sy && redList[i + 1] <= ey)
+                for (int i = 0, end = this.marks[red * 2 + 1] - this.marks[red * 2]; i < end; i += 2)
                 {
-                    location = redList[i + 1] * this.rowStride + redList[i] * 4;
-                    if (Math.Abs((this.screenData[location + 1] & 0xff) - firstDescription[3]) <= firstDescription[6])
+                    var x = ptr[i];
+                    var y = ptr[i + 1];
+                    if (x >= sx && x <= ex && y >= sy && y <= ey)
                     {
-                        if (Math.Abs((this.screenData[location + 2] & 0xff) - firstDescription[4]) <= firstDescription[7])
+                        var location = y * this.rowStride + x * this.pxFormat;
+                        if (Math.Abs((this.screenData[location + 1] & 0xff) - firstDescription[3]) <= firstDescription[6])
                         {
-                            if (CompareColorEx(offsetDescription, redList[i], redList[i + 1], 1))
+                            if (Math.Abs((this.screenData[location + 2] & 0xff) - firstDescription[4]) <= firstDescription[7])
                             {
-                                result.Add(new Point(redList[i], redList[i + 1]));
+                                if (CompareColorEx(offsetDescription, x, y, 1))
+                                {
+                                    result.Add(new Point(this.redList[i], this.redList[i + 1]));
+                                }
                             }
                         }
                     }
+                    else if (x > ex && y > ey)
+                    {
+                        break;
+                    }
                 }
-                else if (redList[i] > ex && redList[i + 1] > ey)
-                {
-                    break;
-                }
+                return result;
             }
-            return result;
         }
 
         /// <summary>
-        /// 多点找色
+        /// 多点找色ex
         /// </summary>
         /// <param name="sx">查找范围: startX</param>
         /// <param name="sy">查找范围: startY</param>

@@ -14,7 +14,7 @@ namespace astator.Core.UI.Layout
         protected override void OnAttachedToWindow()
         {
             base.OnAttachedToWindow();
-            Check(GetChildAt(position).Id);
+            Check(GetChildAt(this.position).Id);
             this.onAttachedListener?.OnAttached(this);
         }
         public new ScriptRadioGroup AddView(View child)

@@ -2,7 +2,6 @@
 using Android.Graphics.Drawables;
 using Android.Views;
 using Android.Widget;
-using AndroidX.AppCompat.Widget;
 using astator.Core.Exceptions;
 using System;
 namespace astator.Core.UI.Layout
@@ -118,7 +117,7 @@ namespace astator.Core.UI.Layout
                             margin[3] = Util.DpParse(strArr[3]);
                         }
                     }
-                    var lp = this.LayoutParameters as FrameLayout.LayoutParams ?? new(this.LayoutParameters  ?? new(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.MatchParent));
+                    var lp = this.LayoutParameters as FrameLayout.LayoutParams ?? new(this.LayoutParameters ?? new(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.MatchParent));
                     lp.SetMargins(margin[0], margin[1], margin[2], margin[3]);
                     this.LayoutParameters = lp;
                     break;

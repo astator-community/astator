@@ -15,9 +15,9 @@
 		<!-- App Identifier -->
 		<ApplicationId>com.astator.astator</ApplicationId>
 
-		<Version>0.1.0</Version>
+		<Version>0.1.1</Version>
 		<!-- Versions -->
-		<ApplicationVersion>220128</ApplicationVersion>
+		<ApplicationVersion>220130</ApplicationVersion>
 
 		<!-- Required for C# Hot Reload -->
 		<UseInterpreter Condition="'$(Configuration)' == 'Debug'">True</UseInterpreter>

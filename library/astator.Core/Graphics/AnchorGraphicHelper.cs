@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 namespace astator.Core.Graphics
 {
@@ -187,51 +188,59 @@ namespace astator.Core.Graphics
         }
 
         /// <summary>
-        /// 获取与运行分辨率相关的比色色组
+        /// 解析与运行分辨率相关的比色色组
         /// </summary>
-        /// <param name="devWidth">开发分辨率的宽</param>
-        /// <param name="devHeight">开发分辨率的高</param>
-        /// <param name="description">锚点色组</param>
+        /// <param name="description">锚点色组字符串</param>
         /// <returns></returns>
-        public int[][] GetCmpColorArray(int devWidth, int devHeight, int[][] description)
+        public int[][] ParseCmpColorString(string description)
         {
+            // var desccc = "1280,720,left|100|500|0xffffff,left|100|500|0xffffff";
+            var desc = description.Split(",");
+            var devWidth = int.Parse(desc[0].Trim());
+            var devHeight = int.Parse(desc[1].Trim());
             var multiple = (this.bottom - this.top + 1.0) / devHeight;
-            var result = new int[description.Length][];
-            for (var i = 0; i < description.Length; i++)
+
+            var descSpan = desc.AsSpan(2);
+            var result = new int[descSpan.Length][];
+            for (var i = 0; i < descSpan.Length; i++)
             {
                 result[i] = new int[9];
-                if (description[i][0] == LEFT || description[i][0] == NONE)
+                var currentDesc = descSpan[i].Trim().Split("|");
+                if (currentDesc[0] == "left" || currentDesc[0] == "none")
                 {
-                    result[i][0] = Round(description[i][1] * multiple) + this.left;
+                    result[i][0] = Round(int.Parse(currentDesc[1]) * multiple) + this.left;
                 }
-                else if (description[i][0] == CENTER)
+                else if (currentDesc[0] == "center")
                 {
-                    result[i][0] = Round(this.center - (devWidth / 2.0 - description[i][1] - 1) * multiple);
+                    result[i][0] = Round(this.center - (devWidth / 2.0 - int.Parse(currentDesc[1]) - 1) * multiple);
                 }
-                else if (description[i][0] == RIGHT)
+                else if (currentDesc[0] == "right")
                 {
-                    result[i][0] = Round(this.right - (devWidth - description[i][1] - 1) * multiple);
+                    result[i][0] = Round(this.right - (devWidth - int.Parse(currentDesc[1]) - 1) * multiple);
                 }
-                result[i][1] = Round(description[i][2] * multiple) + this.top;
-                result[i][2] = (description[i][3] & 0xff0000) >> 16;
-                result[i][3] = (description[i][3] & 0xff00) >> 8;
-                result[i][4] = description[i][3] & 0xff;
+                result[i][1] = Round(int.Parse(currentDesc[2]) * multiple) + this.top;
+                var color = Convert.ToInt32(currentDesc[3], 16);
+                result[i][2] = (color & 0xff0000) >> 16;
+                result[i][3] = (color & 0xff00) >> 8;
+                result[i][4] = color & 0xff;
                 result[i][5] = result[i][6] = result[i][7] = result[i][8] = 0;
-                if (description[i].Length >= 5)
+                if (currentDesc.Length >= 5)
                 {
-                    if (description[i].Length == 6)
+                    if (currentDesc[4].StartsWith("0x"))
                     {
-                        result[i][8] = description[i][5];
-                    }
-                    else if (description[i][4] == 1)
-                    {
-                        result[i][8] = description[i][4];
+                        var offsetColor = Convert.ToInt32(currentDesc[4], 16);
+                        result[i][5] = (offsetColor & 0xff0000) >> 16;
+                        result[i][6] = (offsetColor & 0xff00) >> 8;
+                        result[i][7] = offsetColor & 0xff;
                     }
                     else
                     {
-                        result[i][5] = (description[i][4] & 0xff0000) >> 16;
-                        result[i][6] = (description[i][4] & 0xff00) >> 8;
-                        result[i][7] = description[i][4] & 0xff;
+                        result[i][8] = int.Parse(currentDesc[4]);
+                    }
+
+                    if (currentDesc.Length == 6)
+                    {
+                        result[i][8] = int.Parse(currentDesc[5]);
                     }
                 }
             }
@@ -239,75 +248,90 @@ namespace astator.Core.Graphics
         }
 
         /// <summary>
-        /// 获取与运行分辨率相关的找色色组
+        /// 解析与运行分辨率相关的找色色组
         /// </summary>
-        /// <param name="devWidth">开发分辨率的宽</param>
-        /// <param name="devHeight">开发分辨率的高</param>
-        /// <param name="description">锚点色组</param>
+        /// <param name="description">锚点色组字符串</param>
         /// <returns></returns>
-        public int[][] GetFindColorArray(int devWidth, int devHeight, int[][] description)
+        public int[][] ParseFindColorString(string description)
         {
-            var result = new int[description.Length][];
-            result[0] = new int[9];
+            var desc = description.Split(",");
+            var devWidth = int.Parse(desc[0].Trim());
+            var devHeight = int.Parse(desc[1].Trim());
             var multiple = (this.bottom - this.top + 1.0) / devHeight;
-            if (description[0][0] == LEFT || description[0][0] == NONE)
+
+            var descSpan = desc.AsSpan(2);
+            var result = new int[descSpan.Length][];
+
+
             {
-                result[0][0] = Round(description[0][1] * multiple) + this.left;
+                result[0] = new int[9];
+                var currentDesc = descSpan[0].Trim().Split("|");
+                if (currentDesc[0] == "left" || currentDesc[0] == "none")
+                {
+                    result[0][0] = Round(int.Parse(currentDesc[1]) * multiple) + this.left;
+                }
+                else if (currentDesc[0] == "center")
+                {
+                    result[0][0] = Round(this.center - (devWidth / 2.0 - int.Parse(currentDesc[1]) - 1) * multiple);
+                }
+                else if (currentDesc[0] == "right")
+                {
+                    result[0][0] = Round(this.right - (devWidth - int.Parse(currentDesc[1]) - 1) * multiple);
+                }
+                result[0][1] = Round(int.Parse(currentDesc[2]) * multiple) + this.top;
+                var color = Convert.ToInt32(currentDesc[3], 16);
+                result[0][2] = (color & 0xff0000) >> 16;
+                result[0][3] = (color & 0xff00) >> 8;
+                result[0][4] = color & 0xff;
+                result[0][5] = result[0][6] = result[0][7] = result[0][8] = 0;
+                if (currentDesc.Length >= 5)
+                {
+                    var offsetColor = Convert.ToInt32(currentDesc[4], 16);
+                    result[0][5] = (offsetColor & 0xff0000) >> 16;
+                    result[0][6] = (offsetColor & 0xff00) >> 8;
+                    result[0][7] = offsetColor & 0xff;
+                }
             }
-            else if (description[0][0] == CENTER)
-            {
-                result[0][0] = Round(this.center - (devWidth / 2.0 - description[0][1] - 1) * multiple);
-            }
-            else if (description[0][0] == RIGHT)
-            {
-                result[0][0] = Round(this.right - (devWidth - description[0][1] - 1) * multiple);
-            }
-            result[0][1] = Round(description[0][2] * multiple);
-            result[0][2] = (description[0][3] & 0xff0000) >> 16;
-            result[0][3] = (description[0][3] & 0xff00) >> 8;
-            result[0][4] = description[0][3] & 0xff;
-            result[0][5] = result[0][6] = result[0][7] = 0;
-            if (description[0].Length == 5)
-            {
-                result[0][5] = (description[0][4] & 0xff0000) >> 16;
-                result[0][6] = (description[0][4] & 0xff00) >> 8;
-                result[0][7] = description[0][4] & 0xff;
-            }
-            for (var i = 1; i < description.Length; i++)
+
+            for (var i = 1; i < descSpan.Length; i++)
             {
                 result[i] = new int[9];
-                if (description[i][0] == LEFT || description[i][0] == NONE)
+                var currentDesc = descSpan[i].Trim().Split("|");
+                if (currentDesc[0] == "left" || currentDesc[0] == "none")
                 {
-                    result[i][0] = Round(description[i][1] * multiple) + this.left - result[0][0];
+                    result[i][0] = Round(int.Parse(currentDesc[1]) * multiple) + this.left - result[0][0];
                 }
-                else if (description[i][0] == CENTER)
+                else if (currentDesc[0] == "center")
                 {
-                    result[i][0] = Round(this.center - (devWidth / 2.0 - description[i][1] - 1) * multiple) - result[0][0];
+                    result[i][0] = Round(this.center - (devWidth / 2.0 - int.Parse(currentDesc[1]) - 1) * multiple) - result[0][0];
                 }
-                else if (description[i][0] == RIGHT)
+                else if (currentDesc[0] == "right")
                 {
-                    result[i][0] = Round(this.right - (devWidth - description[i][1] - 1) * multiple) - result[0][0];
+                    result[i][0] = Round(this.right - (devWidth - int.Parse(currentDesc[1]) - 1) * multiple) - result[0][0];
                 }
-                result[i][1] = Round(description[i][2] * multiple) + this.top - result[0][1];
-                result[i][2] = (description[i][3] & 0xff0000) >> 16;
-                result[i][3] = (description[i][3] & 0xff00) >> 8;
-                result[i][4] = description[i][3] & 0xff;
+                result[i][1] = Round(int.Parse(currentDesc[2]) * multiple) + this.top - result[0][1];
+                var color = Convert.ToInt32(currentDesc[3], 16);
+                result[i][2] = (color & 0xff0000) >> 16;
+                result[i][3] = (color & 0xff00) >> 8;
+                result[i][4] = color & 0xff;
                 result[i][5] = result[i][6] = result[i][7] = result[i][8] = 0;
-                if (description[i].Length >= 5)
+                if (currentDesc.Length >= 5)
                 {
-                    if (description[i].Length == 6)
+                    if (currentDesc[4].StartsWith("0x"))
                     {
-                        result[i][8] = description[i][5];
-                    }
-                    else if (description[i][4] == 1)
-                    {
-                        result[i][8] = description[i][4];
+                        var offsetColor = Convert.ToInt32(currentDesc[4], 16);
+                        result[i][5] = (offsetColor & 0xff0000) >> 16;
+                        result[i][6] = (offsetColor & 0xff00) >> 8;
+                        result[i][7] = offsetColor & 0xff;
                     }
                     else
                     {
-                        result[i][5] = (description[i][4] & 0xff0000) >> 16;
-                        result[i][6] = (description[i][4] & 0xff00) >> 8;
-                        result[i][7] = description[i][4] & 0xff;
+                        result[i][8] = int.Parse(currentDesc[4]);
+                    }
+
+                    if (currentDesc.Length == 6)
+                    {
+                        result[i][8] = int.Parse(currentDesc[5]);
                     }
                 }
             }

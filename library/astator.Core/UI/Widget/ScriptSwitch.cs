@@ -49,11 +49,11 @@ namespace astator.Core.UI.Widget
             }
 
 
-            this.CheckedChange += (s, e) =>
+            CheckedChange += (s, e) =>
             {
                 if (e.IsChecked)
                 {
-                    this.TrackTintList = ColorStateList.ValueOf(trackColor);
+                    this.TrackTintList = ColorStateList.ValueOf(this.trackColor);
                 }
                 else
                 {
@@ -63,7 +63,7 @@ namespace astator.Core.UI.Widget
 
             if (this.Checked)
             {
-                this.TrackTintList = ColorStateList.ValueOf(trackColor);
+                this.TrackTintList = ColorStateList.ValueOf(this.trackColor);
             }
         }
 
@@ -87,8 +87,8 @@ namespace astator.Core.UI.Widget
                 {
                     if (value is string temp)
                     {
-                        trackColor = Color.ParseColor(temp);
-                        this.ThumbDrawable?.SetColorFilter(new PorterDuffColorFilter(trackColor, PorterDuff.Mode.Multiply));
+                        this.trackColor = Color.ParseColor(temp);
+                        this.ThumbDrawable?.SetColorFilter(new PorterDuffColorFilter(this.trackColor, PorterDuff.Mode.Multiply));
                     }
                     break;
                 }
