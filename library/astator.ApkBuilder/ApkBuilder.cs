@@ -1,6 +1,7 @@
 ﻿using astator.ApkBuilder.Arsc;
 using astator.ApkBuilder.Axml;
 using astator.ApkBuilder.Signer;
+using astator.TipsView;
 using System.IO.Compression;
 
 namespace astator.ApkBuilder;
@@ -24,7 +25,7 @@ public class ApkBuilder
                 return false;
             }
 
-            Console.WriteLine("正在修改apk...");
+            TipsViewImpl.ChangeTipsText("正在修改apk...");
 
             using var fs = new FileStream(apkPath, FileMode.Create);
 
@@ -70,23 +71,23 @@ public class ApkBuilder
                 }
             }
 
-            Console.WriteLine("正在进行v1签名...");
+            TipsViewImpl.ChangeTipsText("正在进行v1签名...");
             if (ApkSignerV1.Sign(zip))
             {
                 zip.Dispose();
                 fs.Dispose();
 
-                Console.WriteLine("正在进行zip对齐...");
+                TipsViewImpl.ChangeTipsText("正在进行zip对齐...");
                 var aligned = Com.Mcal.Zipalign.Utils.ZipAligner.ZipAlign(apkPath, alignedPath);
 
                 if (aligned)
                 {
-                    Console.WriteLine("正在进行v2签名...");
+                    TipsViewImpl.ChangeTipsText("正在进行v2签名...");
 
                     var result = ApkSignerV2.Sign(alignedPath, apkPath);
                     if (result)
                     {
-                        Console.WriteLine($"打包apk成功, 保存路径: {apkPath}");
+                        TipsViewImpl.ChangeTipsText($"打包apk成功, 保存路径: {apkPath}");
                     }
                     return result;
                 }

@@ -1,8 +1,8 @@
-﻿using astator.Core.UI;
-using astator.Core.UI.Widget;
+﻿using astator.Core.UI.Base;
+using astator.Core.UI.Controls;
 using Microsoft.Maui.Handlers;
 using Microsoft.Maui.Platform;
-using static astator.Core.UI.Widget.ScriptSpinner;
+using static astator.Core.UI.Controls.ScriptSpinner;
 
 namespace astator.Views;
 

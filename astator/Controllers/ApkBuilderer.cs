@@ -1,8 +1,8 @@
 ﻿using astator.Core;
 using astator.Core.Engine;
-using astator.Core.Script;
 using astator.Core.ThirdParty;
 using astator.NugetManager;
+using astator.TipsView;
 using Newtonsoft.Json;
 using System.IO.Compression;
 using System.Xml.Linq;
@@ -38,7 +38,7 @@ public class ApkBuilderer
 
     public async Task<bool> Build()
     {
-        var tipsView = new TipsView();
+        TipsViewImpl.Show();
 
         return await Task.Run(async () =>
         {
@@ -89,7 +89,7 @@ public class ApkBuilderer
             }
             finally
             {
-                tipsView.Close();
+                TipsViewImpl.Hide();
             }
         });
     }
@@ -98,7 +98,7 @@ public class ApkBuilderer
     {
         try
         {
-            ScriptLogger.Log("正在打包项目...");
+            TipsViewImpl.ChangeTipsText("正在打包项目...");
             using var fs = new FileStream(this.projectPath, FileMode.Create);
             using var zip = new ZipArchive(fs, ZipArchiveMode.Update);
 
@@ -140,7 +140,7 @@ public class ApkBuilderer
 
     public async Task<bool> CompileDll(bool createTipsView = true)
     {
-        var tipsView = createTipsView ? new TipsView() : null;
+        if (createTipsView) TipsViewImpl.Show();
         return await Task.Run(async () =>
         {
             try
@@ -150,7 +150,7 @@ public class ApkBuilderer
                     await SdkReferences.Initialize();
                     if (string.IsNullOrEmpty(SdkReferences.SdkDir))
                     {
-                        tipsView.Close();
+                        if (createTipsView) TipsViewImpl.Hide();
                         ScriptLogger.Error("获取sdk失败!");
                         return false;
                     }
@@ -198,7 +198,7 @@ public class ApkBuilderer
 
                 if (isObfuscate)
                 {
-                    ScriptLogger.Log("正在混淆dll...");
+                    TipsViewImpl.ChangeTipsText("正在混淆dll...");
                     var rules = new ObfuscatorRules
                     {
                         DllPath = dllPath,
@@ -223,7 +223,7 @@ public class ApkBuilderer
             }
             finally
             {
-                tipsView?.Close();
+                if (createTipsView) TipsViewImpl.Hide();
             }
         });
     }

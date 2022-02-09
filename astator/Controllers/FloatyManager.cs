@@ -2,7 +2,7 @@
 using Android.Views;
 using astator.Core;
 using astator.Core.Broadcast;
-using astator.Core.UI;
+using astator.Core.UI.Base;
 using astator.Core.UI.Floaty;
 using astator.Pages;
 using astator.Views;
@@ -64,16 +64,16 @@ namespace astator.Controllers
 
                  if (layoutParams.X < width / 2)
                  {
-                     layoutParams.X = Core.UI.Util.DpParse(-10);
+                     layoutParams.X = Core.UI.Base.Util.DpParse(-10);
                  }
                  else
                  {
-                     layoutParams.X = width - view.Width + Core.UI.Util.DpParse(10);
+                     layoutParams.X = width - view.Width + Core.UI.Base.Util.DpParse(10);
                  }
                  FloatyService.Instance.UpdateViewLayout(view, layoutParams);
              });
 
-            var window = new FloatyWindow(view, Core.UI.Util.DpParse(-10), Core.UI.Util.DpParse(100));
+            var window = new FloatyWindow(view, Core.UI.Base.Util.DpParse(-10), Core.UI.Base.Util.DpParse(100));
             this.floatys.Add("iconFloaty", window);
         }
 
@@ -121,11 +121,11 @@ namespace astator.Controllers
 
                     if (layoutParams.X < width / 2)
                     {
-                        layoutParams.X = Core.UI.Util.DpParse(-10);
+                        layoutParams.X = Core.UI.Base.Util.DpParse(-10);
                     }
                     else
                     {
-                        layoutParams.X = width - v.Width + Core.UI.Util.DpParse(10);
+                        layoutParams.X = width - v.Width + Core.UI.Base.Util.DpParse(10);
                     }
                     FloatyService.Instance.UpdateViewLayout(v, layoutParams);
                     this.isMoving = false;

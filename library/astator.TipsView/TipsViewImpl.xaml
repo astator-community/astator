@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<GridLayout
+    x:Class="astator.TipsView.TipsViewImpl"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    BackgroundColor="#66666666"
+    HeightRequest="150"
+    WidthRequest="250">
+    <RefreshView
+        BackgroundColor="#f0f3f6"
+        IsRefreshing="True"
+        RefreshColor="#2F88FF">
+        <GridLayout
+            BackgroundColor="#66666666"
+            HeightRequest="150"
+            WidthRequest="250">
+            <Label
+                x:Name="Tips"
+                Margin="0,10"
+                FontAttributes="Bold"
+                FontSize="14"
+                HorizontalOptions="Center"
+                HorizontalTextAlignment="Center"
+                TextColor="#f0f3f6"
+                VerticalOptions="End"
+                WidthRequest="250" />
+        </GridLayout>
+    </RefreshView>
+</GridLayout>

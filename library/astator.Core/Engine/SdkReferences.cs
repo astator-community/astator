@@ -1,4 +1,5 @@
 ﻿using astator.NugetManager;
+using astator.TipsView;
 using Microsoft.CodeAnalysis;
 using System.Collections.Generic;
 using System.IO;
@@ -27,7 +28,7 @@ public static class SdkReferences
                 var dir = Path.Combine(NugetCommands.NugetDirectory, id, version.ToString());
                 if (!Directory.Exists(dir))
                 {
-                    ScriptLogger.Log("正在下载sdk引用包...");
+                    TipsViewImpl.ChangeTipsText("正在下载sdk引用包...");
                     if (!await NugetCommands.DownLoadPackageAsync(id, version))
                     {
                         ScriptLogger.Error("下载sdk失败!");
@@ -43,7 +44,7 @@ public static class SdkReferences
 
     public static async Task Initialize()
     {
-        ScriptLogger.Log("正在初始化sdk引用...");
+        TipsViewImpl.ChangeTipsText("正在初始化sdk引用...");
 
         var assemblyNames = new List<string>();
         await CheckSdk();

@@ -146,7 +146,10 @@ namespace astator.Core
             for (var i = 0; i < items.Length; i++)
             {
                 if (i > 0)
+                {
                     message.Append(' ');
+                }
+
                 message.Append(items[i].ToString());
             }
             return message;

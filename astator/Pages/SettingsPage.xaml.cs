@@ -280,7 +280,7 @@ namespace astator.Pages
                 return;
             }
 
-            var searchPatterns = new string[] {"*.cs","*.csproj" };
+            var searchPatterns = new string[] { "*.cs", "*.csproj" };
 
             foreach (var searchPattern in searchPatterns)
             {

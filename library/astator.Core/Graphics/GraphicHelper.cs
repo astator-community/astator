@@ -157,9 +157,15 @@ namespace astator.Core.Graphics
         {
             var local = (int)((num - (int)num) * 100);
             if (local / 10 >= 6)
+            {
                 return (int)num + 1;
+            }
+
             if (local / 10 <= 4)
+            {
                 return (int)num;
+            }
+
             if (local % 10 == 0)
             {
                 if ((int)num % 2 == 0)

@@ -15,6 +15,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\astator.TipsView\astator.TipsView.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
 	  <Reference Include="ApkBuilderBinding">
 	    <HintPath>..\3rdparty\ApkBuilderBinding\bin\Release\net6.0-android\ApkBuilderBinding.dll</HintPath>
 	  </Reference>

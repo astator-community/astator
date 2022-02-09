@@ -1,5 +1,6 @@
 ﻿using astator.Core.Script;
 using astator.NugetManager;
+using astator.TipsView;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Emit;
@@ -85,7 +86,7 @@ namespace astator.Core.Engine
         /// </summary>
         public void ParseAllCS()
         {
-            ScriptLogger.Log("正在解析cs文件...");
+            TipsViewImpl.ChangeTipsText("正在解析cs文件...");
 
             var scripts = Directory.GetFiles(this.rootDir, "*.cs", SearchOption.AllDirectories);
 
@@ -143,7 +144,7 @@ namespace astator.Core.Engine
         /// <returns></returns>
         public EmitResult Compile()
         {
-            ScriptLogger.Log("正在编译...");
+            TipsViewImpl.ChangeTipsText("正在编译...");
 
             var assemblyName = Path.GetRandomFileName();
             var compilation = CSharpCompilation.Create(
@@ -173,7 +174,7 @@ namespace astator.Core.Engine
         /// <returns></returns>
         public EmitResult Compile(string outputPath)
         {
-            ScriptLogger.Log("正在编译...");
+            TipsViewImpl.ChangeTipsText("正在编译...");
 
             var assemblyName = Path.GetRandomFileName();
             var compilation = CSharpCompilation.Create(
@@ -335,7 +336,7 @@ namespace astator.Core.Engine
 
             try
             {
-                ScriptLogger.Log("正在还原包引用...");
+                TipsViewImpl.ChangeTipsText("正在还原包引用...");
 
                 var xd = XDocument.Load(projectPath);
                 var itemGroup = xd.Descendants("ItemGroup");
@@ -344,7 +345,7 @@ namespace astator.Core.Engine
 
                 if (packageInfos is not null && packageInfos.Any())
                 {
-                    ScriptLogger.Log("正在载入依赖项...");
+                    TipsViewImpl.ChangeTipsText("正在载入依赖项...");
 
                     if (!LoadPackageReference(packageInfos))
                     {

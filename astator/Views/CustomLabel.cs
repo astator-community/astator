@@ -1,4 +1,4 @@
-﻿using astator.Core.UI;
+﻿using astator.Core.UI.Base;
 
 namespace astator.Views;
 

@@ -33,6 +33,7 @@
 		</ProjectReference>
 		<ProjectReference Include="..\astator.NugetManager\astator.NugetManager.csproj">
 		</ProjectReference>
+		<ProjectReference Include="..\astator.TipsView\astator.TipsView.csproj" />
 	</ItemGroup>
 
 
@@ -40,12 +41,5 @@
 	  <Reference Include="PaddleOcrBinding">
 	    <HintPath>..\3rdparty\PaddleOcrBinding\bin\Release\net6.0-android\PaddleOcrBinding.dll</HintPath>
 	  </Reference>
-	</ItemGroup>
-
-
-	<ItemGroup>
-	  <MauiXaml Update="Script\TipsView.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
 	</ItemGroup>
 </Project>

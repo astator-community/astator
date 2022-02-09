@@ -2,7 +2,7 @@ using Android.Content;
 using Android.Views;
 using astator.Controllers;
 using astator.Core;
-using astator.Core.UI;
+using astator.Core.UI.Base;
 using Microsoft.Maui.Platform;
 
 namespace astator.Views

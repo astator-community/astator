@@ -24,6 +24,7 @@ namespace astator
         {
             Instance = this;
             Globals.AppContext = this;
+            TipsView.TipsViewImpl.AppContext = this;
 
             this.Window.ClearFlags(WindowManagerFlags.TranslucentStatus);
             this.Window.AddFlags(WindowManagerFlags.DrawsSystemBarBackgrounds);

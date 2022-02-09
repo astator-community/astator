@@ -109,6 +109,7 @@
 		<ProjectReference Include="..\library\astator.ApkBuilder\astator.ApkBuilder.csproj" />
 		<ProjectReference Include="..\library\astator.Core\astator.Core.csproj" />
 		<ProjectReference Include="..\library\astator.NugetManager\astator.NugetManager.csproj" />
+		<ProjectReference Include="..\library\astator.TipsView\astator.TipsView.csproj" />
 	</ItemGroup>
 
 

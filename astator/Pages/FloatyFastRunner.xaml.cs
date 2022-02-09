@@ -1,5 +1,5 @@
 using astator.Controllers;
-using astator.Core.UI.Layout;
+using astator.Core.UI.Base;
 using astator.Views;
 using Microsoft.Maui.Platform;
 

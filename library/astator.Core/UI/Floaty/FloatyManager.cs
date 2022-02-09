@@ -1,9 +1,11 @@
 ﻿using Android.Content;
 using Android.Views;
-using astator.Core.UI.Layout;
-using astator.Core.UI.Widget;
+using astator.Core.UI.Base;
+using astator.Core.UI.Controls;
+using astator.Core.UI.Layouts;
 using System;
 using System.Collections.Generic;
+
 namespace astator.Core.UI.Floaty
 {
 
@@ -20,19 +22,21 @@ namespace astator.Core.UI.Floaty
 
         private readonly string directory = string.Empty;
 
-        private readonly Dictionary<string, IScriptView> childs = new();
+        private readonly Dictionary<string, IView> childs = new();
 
         /// <summary>
         /// 控件索引器
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public IScriptView this[string key]
+        public IView this[string key]
         {
             set
             {
                 if (value is not null)
+                {
                     this.childs[key] = value;
+                }
             }
             get
             {

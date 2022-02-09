@@ -4,7 +4,8 @@ using Android.Views;
 using astator.Core;
 using astator.Core.Engine;
 using astator.Core.Script;
-using astator.Core.UI;
+using astator.Core.UI.Base;
+using astator.TipsView;
 using System.Collections.Concurrent;
 using System.Reflection;
 using Application = Android.App.Application;
@@ -53,16 +54,15 @@ public class ScriptManager
     {
         return await Task.Run(async () =>
          {
-             TipsView tipsView = null;
-             Globals.RunOnUiThread(() => tipsView = new TipsView());
-             ScriptLogger.Log("正在初始化...");
+             TipsViewImpl.Show();
+             TipsViewImpl.ChangeTipsText("正在初始化...");
 
              if (string.IsNullOrEmpty(SdkReferences.SdkDir))
              {
                  await SdkReferences.Initialize();
                  if (string.IsNullOrEmpty(SdkReferences.SdkDir))
                  {
-                     tipsView.Close();
+                     TipsViewImpl.Hide();
                      ScriptLogger.Error("获取sdk失败!");
                      return null;
                  }
@@ -77,7 +77,7 @@ public class ScriptManager
 
              if (!await engine.Restore())
              {
-                 tipsView.Close();
+                 TipsViewImpl.Hide();
                  return null;
              }
 
@@ -85,7 +85,7 @@ public class ScriptManager
 
              var emitResult = engine.Compile();
 
-             tipsView.Close();
+             TipsViewImpl.Hide();
 
              if (!emitResult.Success)
              {
@@ -145,16 +145,15 @@ public class ScriptManager
     {
         return await Task.Run(async () =>
         {
-            TipsView tipsView = null;
-            Globals.RunOnUiThread(() => tipsView = new TipsView());
-            ScriptLogger.Log("正在初始化...");
+            TipsViewImpl.Show();
+            TipsViewImpl.ChangeTipsText("正在初始化...");
 
             if (string.IsNullOrEmpty(SdkReferences.SdkDir))
             {
                 await SdkReferences.Initialize();
                 if (string.IsNullOrEmpty(SdkReferences.SdkDir))
                 {
-                    tipsView.Close();
+                    TipsViewImpl.Hide();
                     ScriptLogger.Error("获取sdk失败!");
                     return null;
                 }
@@ -169,7 +168,7 @@ public class ScriptManager
 
             if (!await engine.Restore())
             {
-                tipsView.Close();
+                TipsViewImpl.Hide();
                 return null;
             }
 
@@ -177,7 +176,7 @@ public class ScriptManager
 
             var emitResult = engine.Compile();
 
-            tipsView.Close();
+            TipsViewImpl.Hide();
 
             if (!emitResult.Success)
             {

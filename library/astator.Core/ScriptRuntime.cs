@@ -1,6 +1,7 @@
 ﻿using astator.Core.Engine;
 using astator.Core.Threading;
 using astator.Core.UI;
+using astator.Core.UI.Base;
 using astator.Core.UI.Floaty;
 using System;
 using System.Collections.Generic;

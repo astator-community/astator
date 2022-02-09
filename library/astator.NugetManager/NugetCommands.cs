@@ -1,5 +1,6 @@
 ﻿
 
+using astator.TipsView;
 using NuGet.Common;
 using NuGet.Packaging;
 using NuGet.Protocol;
@@ -408,7 +409,7 @@ public class NugetCommands
 
                 if (!Directory.Exists(dir))
                 {
-                    Console.WriteLine("正在下载缺少的包...");
+                    TipsViewImpl.ChangeTipsText("正在下载缺少的包...");
                     if (!await DownLoadPackageAsync(dependence.Key, dependence.Value))
                     {
                         throw new DownloadPackageException(dependence.Key);

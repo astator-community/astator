@@ -1,5 +1,5 @@
 ﻿using Android.Views;
-using astator.Core.UI;
+using astator.Core.UI.Base;
 using Microsoft.Maui.Platform;
 
 namespace astator.Views;
