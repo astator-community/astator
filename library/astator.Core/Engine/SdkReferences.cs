@@ -24,7 +24,7 @@ public static class SdkReferences
             if (string.IsNullOrEmpty(SdkDir))
             {
                 var id = "astator.Sdk";
-                var version = await NugetCommands.ParseVersion(id, "*");
+                var version = await NugetCommands.ParseVersion(id, "0.1.1");
                 var dir = Path.Combine(NugetCommands.NugetDirectory, id, version.ToString());
                 if (!Directory.Exists(dir))
                 {
