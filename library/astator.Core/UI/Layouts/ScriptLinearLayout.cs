@@ -6,7 +6,7 @@ namespace astator.Core.UI.Layouts;
 
 public class ScriptLinearLayout : LinearLayout, ILayout
 {
-    public string CustomId { get; set; } = string.Empty;
+    public string CustomId { get; set; }
 
     public OnAttachedListener OnAttachedListener { get; set; }
     protected override void OnAttachedToWindow()
@@ -14,22 +14,14 @@ public class ScriptLinearLayout : LinearLayout, ILayout
         base.OnAttachedToWindow();
         this.OnAttachedListener?.OnAttached(this);
     }
-    ILayout ILayout.AddView(View view)
+    public new ILayout AddView(View view)
     {
         base.AddView(view);
         return this;
     }
     public ScriptLinearLayout(Android.Content.Context context, ViewArgs args) : base(context)
     {
-        if (args is null)
-        {
-            return;
-        }
-        if (args["id"] is null)
-        {
-            this.CustomId = $"{ GetType().Name }-{ UiManager.CreateCount }";
-            UiManager.CreateCount++;
-        }
+        this.SetCustomId(ref args);
         foreach (var item in args)
         {
             SetAttr(item.Key.ToString(), item.Value);

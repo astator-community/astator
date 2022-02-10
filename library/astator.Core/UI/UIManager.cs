@@ -12,14 +12,14 @@ public class UiManager : IManager
 {
     internal static int CreateCount { get; set; } = 0;
 
-    private readonly Activity activity;
+    private readonly Activity context;
 
     /// <summary>
     /// 全局lisistener
     /// </summary>
     private readonly Dictionary<string, Dictionary<string, object>> globalListeners = new();
 
-    private readonly string directory;
+    private readonly string workDir;
 
     private readonly Dictionary<string, IView> childs = new();
 
@@ -50,8 +50,8 @@ public class UiManager : IManager
     public UiManager(Activity activity, string directory)
     {
         CreateCount = 0;
-        this.activity = activity;
-        this.directory = directory;
+        this.context = activity;
+        this.workDir = directory;
     }
 
     /// <summary>
@@ -70,7 +70,7 @@ public class UiManager : IManager
     /// <param name="layout"></param>
     public void Show(View layout)
     {
-        this.activity.SetContentView(layout);
+        this.context.SetContentView(layout);
     }
 
     /// <summary>
@@ -106,7 +106,7 @@ public class UiManager : IManager
 
     public ScriptScrollView CreateScrollView(ViewArgs args = null)
     {
-        var result = new ScriptScrollView(this.activity, args);
+        var result = new ScriptScrollView(this.context, args);
         if (this.globalListeners.ContainsKey("scroll"))
         {
             foreach (var listener in this.globalListeners["scroll"])
@@ -119,7 +119,7 @@ public class UiManager : IManager
 
     public ScriptWebView CreateWebView(ViewArgs args = null)
     {
-        var result = new ScriptWebView(this.activity, args);
+        var result = new ScriptWebView(this.context, args);
         if (this.globalListeners.ContainsKey("web"))
         {
             foreach (var listener in this.globalListeners["web"])
@@ -132,7 +132,7 @@ public class UiManager : IManager
 
     public ScriptSwitch CreateSwitch(ViewArgs args = null)
     {
-        var result = new ScriptSwitch(this.activity, args);
+        var result = new ScriptSwitch(this.context, args);
         if (this.globalListeners.ContainsKey("switch"))
         {
             foreach (var listener in this.globalListeners["switch"])
@@ -145,7 +145,7 @@ public class UiManager : IManager
 
     public ScriptCheckBox CreateCheckBox(ViewArgs args = null)
     {
-        var result = new ScriptCheckBox(this.activity, args);
+        var result = new ScriptCheckBox(this.context, args);
         if (this.globalListeners.ContainsKey("check"))
         {
             foreach (var listener in this.globalListeners["check"])
@@ -158,7 +158,7 @@ public class UiManager : IManager
 
     public ScriptImageView CreateImageView(ViewArgs args = null)
     {
-        var result = new ScriptImageView(this.activity, this.directory, args);
+        var result = new ScriptImageView(this.context, this.workDir, args);
         if (this.globalListeners.ContainsKey("img"))
         {
             foreach (var listener in this.globalListeners["img"])
@@ -171,7 +171,7 @@ public class UiManager : IManager
 
     public ScriptButton CreateButton(ViewArgs args = null)
     {
-        var result = new ScriptButton(this.activity, args);
+        var result = new ScriptButton(this.context, args);
         if (this.globalListeners.ContainsKey("btn"))
         {
             foreach (var listener in this.globalListeners["btn"])
@@ -184,7 +184,7 @@ public class UiManager : IManager
 
     public ScriptLinearLayout CreateLinearLayout(ViewArgs args = null)
     {
-        var result = new ScriptLinearLayout(this.activity, args);
+        var result = new ScriptLinearLayout(this.context, args);
         if (this.globalListeners.ContainsKey("linear"))
         {
             foreach (var listener in this.globalListeners["linear"])
@@ -197,7 +197,7 @@ public class UiManager : IManager
 
     public ScriptFrameLayout CreateFrameLayout(ViewArgs args = null)
     {
-        var result = new ScriptFrameLayout(this.activity, args);
+        var result = new ScriptFrameLayout(this.context, args);
         if (this.globalListeners.ContainsKey("frame"))
         {
             foreach (var listener in this.globalListeners["frame"])
@@ -210,7 +210,7 @@ public class UiManager : IManager
 
     public ScriptEditText CreateEditText(ViewArgs args = null)
     {
-        var result = new ScriptEditText(this.activity, args);
+        var result = new ScriptEditText(this.context, args);
         if (this.globalListeners.ContainsKey("edit"))
         {
             foreach (var listener in this.globalListeners["edit"])
@@ -223,7 +223,7 @@ public class UiManager : IManager
 
     public ScriptTextView CreateTextView(ViewArgs args = null)
     {
-        var result = new ScriptTextView(this.activity, args);
+        var result = new ScriptTextView(this.context, args);
         if (this.globalListeners.ContainsKey("text"))
         {
             foreach (var listener in this.globalListeners["text"])
@@ -236,7 +236,7 @@ public class UiManager : IManager
 
     public ScriptSpinner CreateSpinner(ViewArgs args = null)
     {
-        var result = new ScriptSpinner(this.activity, args);
+        var result = new ScriptSpinner(this.context, args);
         if (this.globalListeners.ContainsKey("spinner"))
         {
             foreach (var listener in this.globalListeners["spinner"])
@@ -249,7 +249,7 @@ public class UiManager : IManager
 
     public ScriptViewPager CreateViewPager(ViewArgs args = null)
     {
-        var result = new ScriptViewPager(this.activity, args);
+        var result = new ScriptViewPager(this.context, args);
         if (this.globalListeners.ContainsKey("viewPager"))
         {
             foreach (var listener in this.globalListeners["viewPager"])
@@ -262,7 +262,7 @@ public class UiManager : IManager
 
     public ScriptRadioGroup CreateRadioGroup(ViewArgs args = null)
     {
-        var result = new ScriptRadioGroup(this.activity, args);
+        var result = new ScriptRadioGroup(this.context, args);
         if (this.globalListeners.ContainsKey("radioGroup"))
         {
             foreach (var listener in this.globalListeners["radioGroup"])
@@ -275,7 +275,7 @@ public class UiManager : IManager
 
     public ScriptRadioButton CreateRadioButton(ViewArgs args = null)
     {
-        var result = new ScriptRadioButton(this.activity, args);
+        var result = new ScriptRadioButton(this.context, args);
         if (this.globalListeners.ContainsKey("radio"))
         {
             foreach (var listener in this.globalListeners["radio"])
@@ -288,7 +288,7 @@ public class UiManager : IManager
 
     public ScriptCardView CreateCardView(ViewArgs args = null)
     {
-        var result = new ScriptCardView(this.activity, args);
+        var result = new ScriptCardView(this.context, args);
         if (this.globalListeners.ContainsKey("card"))
         {
             foreach (var listener in this.globalListeners["card"])
@@ -298,6 +298,46 @@ public class UiManager : IManager
         }
         return result;
     }
+
+    public ScriptImageButton CreateImageButton(ViewArgs args = null)
+    {
+        var result = new ScriptImageButton(this.context, this.workDir, args);
+        if (this.globalListeners.ContainsKey("img"))
+        {
+            foreach (var listener in this.globalListeners["img"])
+            {
+                result.On(listener.Key, listener.Value);
+            }
+        }
+        return result;
+    }
+
+    public ScriptTabbedPage CreateTabbedPage(ViewArgs args = null)
+    {
+        var result = new ScriptTabbedPage(this.context, this.workDir, args);
+        if (this.globalListeners.ContainsKey("tabPage"))
+        {
+            foreach (var listener in this.globalListeners["tabPage"])
+            {
+                result.On(listener.Key, listener.Value);
+            }
+        }
+        return result;
+    }
+
+    public ScriptTabbedView CreateTabbedView(ViewArgs args = null)
+    {
+        var result = new ScriptTabbedView(this.context, args);
+        if (this.globalListeners.ContainsKey("tabView"))
+        {
+            foreach (var listener in this.globalListeners["tabView"])
+            {
+                result.On(listener.Key, listener.Value);
+            }
+        }
+        return result;
+    }
+
 
     /// <summary>
     /// 添加全局listener, 仅在创建view之前添加有效

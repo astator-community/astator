@@ -52,7 +52,7 @@ public class ScriptSpinner : AppCompatSpinner, IControl
         }
     }
 
-    public string CustomId { get; set; } = string.Empty;
+    public string CustomId { get; set; }
     public OnAttachedListener OnAttachedListener { get; set; }
 
     private string entries;
@@ -70,17 +70,8 @@ public class ScriptSpinner : AppCompatSpinner, IControl
     public ScriptSpinner(Android.Content.Context context, ViewArgs args) : base(context)
     {
         this.LayoutParameters = new MarginLayoutParams(this.LayoutParameters ?? new(LayoutParams.MatchParent, LayoutParams.MatchParent));
-        if (args is null)
-        {
-            return;
-        }
-        if (args["id"] is null)
-        {
-            this.CustomId = $"{ GetType().Name }-{ UiManager.CreateCount }";
-            UiManager.CreateCount++;
-        }
 
-
+        this.SetCustomId(ref args);
         if (args["textColor"] is not null)
         {
             if (args["textColor"] is string temp)

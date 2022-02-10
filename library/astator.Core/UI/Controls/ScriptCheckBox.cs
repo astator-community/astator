@@ -8,7 +8,7 @@ namespace astator.Core.UI.Controls;
 
 public class ScriptCheckBox : CheckBox, IControl
 {
-    public string CustomId { get; set; } = string.Empty;
+    public string CustomId { get; set; }
     public OnAttachedListener OnAttachedListener { get; set; }
 
     protected override void OnAttachedToWindow()
@@ -19,19 +19,9 @@ public class ScriptCheckBox : CheckBox, IControl
 
     public ScriptCheckBox(Android.Content.Context context, ViewArgs args) : base(context)
     {
-        this.LayoutParameters = new MarginLayoutParams(this.LayoutParameters ?? new(LayoutParams.WrapContent, LayoutParams.WrapContent));
         this.ButtonTintList = ColorStateList.ValueOf(Color.ParseColor("#808080"));
-        if (args is null)
-        {
-            return;
-        }
 
-        if (args["id"] is null)
-        {
-            this.CustomId = $"{ GetType().Name }-{ UiManager.CreateCount }";
-            UiManager.CreateCount++;
-        }
-
+        this.SetCustomId(ref args);
         foreach (var item in args)
         {
             SetAttr(item.Key.ToString(), item.Value);

@@ -18,9 +18,9 @@ namespace astator.Core.UI.Floaty
 
         private readonly Context context;
 
-        private readonly Dictionary<string, Dictionary<string, object>> staticListeners = new();
+        private readonly Dictionary<string, Dictionary<string, object>> globalListeners = new();
 
-        private readonly string directory = string.Empty;
+        private readonly string workDir = string.Empty;
 
         private readonly Dictionary<string, IView> childs = new();
 
@@ -51,7 +51,7 @@ namespace astator.Core.UI.Floaty
         public FloatyManager(Context context, string directory)
         {
             this.context = context;
-            this.directory = directory;
+            this.workDir = directory;
         }
 
         /// <summary>
@@ -93,9 +93,9 @@ namespace astator.Core.UI.Floaty
         public ScriptScrollView CreateScrollView(ViewArgs args = null)
         {
             var result = new ScriptScrollView(this.context, args);
-            if (this.staticListeners.ContainsKey("scroll"))
+            if (this.globalListeners.ContainsKey("scroll"))
             {
-                foreach (var listener in this.staticListeners["scroll"])
+                foreach (var listener in this.globalListeners["scroll"])
                 {
                     result.On(listener.Key, listener.Value);
                 }
@@ -106,9 +106,9 @@ namespace astator.Core.UI.Floaty
         public ScriptWebView CreateWebView(ViewArgs args = null)
         {
             var result = new ScriptWebView(this.context, args);
-            if (this.staticListeners.ContainsKey("web"))
+            if (this.globalListeners.ContainsKey("web"))
             {
-                foreach (var listener in this.staticListeners["web"])
+                foreach (var listener in this.globalListeners["web"])
                 {
                     result.On(listener.Key, listener.Value);
                 }
@@ -119,9 +119,9 @@ namespace astator.Core.UI.Floaty
         public ScriptSwitch CreateSwitch(ViewArgs args = null)
         {
             var result = new ScriptSwitch(this.context, args);
-            if (this.staticListeners.ContainsKey("switch"))
+            if (this.globalListeners.ContainsKey("switch"))
             {
-                foreach (var listener in this.staticListeners["switch"])
+                foreach (var listener in this.globalListeners["switch"])
                 {
                     result.On(listener.Key, listener.Value);
                 }
@@ -132,9 +132,9 @@ namespace astator.Core.UI.Floaty
         public ScriptCheckBox CreateCheckBox(ViewArgs args = null)
         {
             var result = new ScriptCheckBox(this.context, args);
-            if (this.staticListeners.ContainsKey("check"))
+            if (this.globalListeners.ContainsKey("check"))
             {
-                foreach (var listener in this.staticListeners["check"])
+                foreach (var listener in this.globalListeners["check"])
                 {
                     result.On(listener.Key, listener.Value);
                 }
@@ -144,10 +144,10 @@ namespace astator.Core.UI.Floaty
 
         public ScriptImageView CreateImageView(ViewArgs args = null)
         {
-            var result = new ScriptImageView(this.context, this.directory, args);
-            if (this.staticListeners.ContainsKey("img"))
+            var result = new ScriptImageView(this.context, this.workDir, args);
+            if (this.globalListeners.ContainsKey("img"))
             {
-                foreach (var listener in this.staticListeners["img"])
+                foreach (var listener in this.globalListeners["img"])
                 {
                     result.On(listener.Key, listener.Value);
                 }
@@ -158,9 +158,9 @@ namespace astator.Core.UI.Floaty
         public ScriptButton CreateButton(ViewArgs args = null)
         {
             var result = new ScriptButton(this.context, args);
-            if (this.staticListeners.ContainsKey("btn"))
+            if (this.globalListeners.ContainsKey("btn"))
             {
-                foreach (var listener in this.staticListeners["btn"])
+                foreach (var listener in this.globalListeners["btn"])
                 {
                     result.On(listener.Key, listener.Value);
                 }
@@ -171,9 +171,9 @@ namespace astator.Core.UI.Floaty
         public ScriptLinearLayout CreateLinearLayout(ViewArgs args = null)
         {
             var result = new ScriptLinearLayout(this.context, args);
-            if (this.staticListeners.ContainsKey("linear"))
+            if (this.globalListeners.ContainsKey("linear"))
             {
-                foreach (var listener in this.staticListeners["linear"])
+                foreach (var listener in this.globalListeners["linear"])
                 {
                     result.On(listener.Key, listener.Value);
                 }
@@ -184,9 +184,9 @@ namespace astator.Core.UI.Floaty
         public ScriptFrameLayout CreateFrameLayout(ViewArgs args = null)
         {
             var result = new ScriptFrameLayout(this.context, args);
-            if (this.staticListeners.ContainsKey("frame"))
+            if (this.globalListeners.ContainsKey("frame"))
             {
-                foreach (var listener in this.staticListeners["frame"])
+                foreach (var listener in this.globalListeners["frame"])
                 {
                     result.On(listener.Key, listener.Value);
                 }
@@ -197,9 +197,9 @@ namespace astator.Core.UI.Floaty
         public ScriptEditText CreateEditText(ViewArgs args = null)
         {
             var result = new ScriptEditText(this.context, args);
-            if (this.staticListeners.ContainsKey("edit"))
+            if (this.globalListeners.ContainsKey("edit"))
             {
-                foreach (var listener in this.staticListeners["edit"])
+                foreach (var listener in this.globalListeners["edit"])
                 {
                     result.On(listener.Key, listener.Value);
                 }
@@ -210,9 +210,9 @@ namespace astator.Core.UI.Floaty
         public ScriptTextView CreateTextView(ViewArgs args = null)
         {
             var result = new ScriptTextView(this.context, args);
-            if (this.staticListeners.ContainsKey("text"))
+            if (this.globalListeners.ContainsKey("text"))
             {
-                foreach (var listener in this.staticListeners["text"])
+                foreach (var listener in this.globalListeners["text"])
                 {
                     result.On(listener.Key, listener.Value);
                 }
@@ -223,9 +223,9 @@ namespace astator.Core.UI.Floaty
         public ScriptSpinner CreateSpinner(ViewArgs args = null)
         {
             var result = new ScriptSpinner(this.context, args);
-            if (this.staticListeners.ContainsKey("text"))
+            if (this.globalListeners.ContainsKey("text"))
             {
-                foreach (var listener in this.staticListeners["text"])
+                foreach (var listener in this.globalListeners["text"])
                 {
                     result.On(listener.Key, listener.Value);
                 }
@@ -253,6 +253,44 @@ namespace astator.Core.UI.Floaty
             throw new NotImplementedException();
         }
 
+        public ScriptImageButton CreateImageButton(ViewArgs args = null)
+        {
+            var result = new ScriptImageButton(this.context, this.workDir, args);
+            if (this.globalListeners.ContainsKey("img"))
+            {
+                foreach (var listener in this.globalListeners["img"])
+                {
+                    result.On(listener.Key, listener.Value);
+                }
+            }
+            return result;
+        }
+        public ScriptTabbedPage CreateTabbedPage(ViewArgs args = null)
+        {
+            var result = new ScriptTabbedPage(this.context, this.workDir, args);
+            if (this.globalListeners.ContainsKey("tabPage"))
+            {
+                foreach (var listener in this.globalListeners["tabPage"])
+                {
+                    result.On(listener.Key, listener.Value);
+                }
+            }
+            return result;
+        }
+
+        public ScriptTabbedView CreateTabbedView(ViewArgs args = null)
+        {
+            var result = new ScriptTabbedView(this.context, args);
+            if (this.globalListeners.ContainsKey("tabView"))
+            {
+                foreach (var listener in this.globalListeners["tabView"])
+                {
+                    result.On(listener.Key, listener.Value);
+                }
+            }
+            return result;
+        }
+
         /// <summary>
         /// 添加全局listener, 仅在创建view之前添加有效
         /// </summary>
@@ -261,13 +299,13 @@ namespace astator.Core.UI.Floaty
         /// <param name="listener"></param>
         public void On(string type, string key, object listener)
         {
-            if (!this.staticListeners.ContainsKey(type))
+            if (!this.globalListeners.ContainsKey(type))
             {
-                this.staticListeners.Add(type, new Dictionary<string, object>());
+                this.globalListeners.Add(type, new Dictionary<string, object>());
             }
-            if (!this.staticListeners[type].ContainsKey(key))
+            if (!this.globalListeners[type].ContainsKey(key))
             {
-                this.staticListeners[type].Add(key, listener);
+                this.globalListeners[type].Add(key, listener);
             }
         }
 

@@ -62,11 +62,14 @@ internal static class UiXml
             "switch" => manager.CreateSwitch(args),
             "web" => manager.CreateWebView(args),
             "img" => manager.CreateImageView(args),
+            "imgBtn" => manager.CreateImageButton(args),
             "pager" => manager.CreateViewPager(args),
             "spinner" => manager.CreateSpinner(args),
             "card" => manager.CreateCardView(args),
             "radioGroup" => manager.CreateRadioGroup(args),
             "radio" => manager.CreateRadioButton(args),
+            "tabPage" => manager.CreateTabbedPage(args),
+            "tabView" => manager.CreateTabbedView(args),
             _ => throw new AttributeNotExistException(type),
         };
         return view;

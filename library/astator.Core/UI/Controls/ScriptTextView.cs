@@ -6,7 +6,7 @@ namespace astator.Core.UI.Controls;
 
 public class ScriptTextView : AppCompatTextView, IControl
 {
-    public string CustomId { get; set; } = string.Empty;
+    public string CustomId { get; set; }
     public OnAttachedListener OnAttachedListener { get; set; }
 
     protected override void OnAttachedToWindow()
@@ -17,17 +17,7 @@ public class ScriptTextView : AppCompatTextView, IControl
 
     public ScriptTextView(Android.Content.Context context, ViewArgs args) : base(context)
     {
-        if (args is null)
-        {
-            return;
-        }
-
-        if (args["id"] is null)
-        {
-            this.CustomId = $"{ GetType().Name }-{ UiManager.CreateCount }";
-            UiManager.CreateCount++;
-        }
-
+        this.SetCustomId(ref args);
         if (args["autoLink"] is not null)
         {
             if (args["autoLink"] is string temp)
@@ -58,7 +48,7 @@ public class ScriptTextView : AppCompatTextView, IControl
 
         foreach (var item in args)
         {
-            this.SetAttr(item.Key.ToString(), item.Value);
+            SetAttr(item.Key.ToString(), item.Value);
         }
     }
 
@@ -79,5 +69,15 @@ public class ScriptTextView : AppCompatTextView, IControl
                 this.OnListener(key, listener);
                 break;
         }
+    }
+
+    public void SetAttr(string key, object value)
+    {
+        Util.SetAttr(this, key, value);
+    }
+
+    public object GetAttr(string key)
+    {
+        return Util.GetAttr(this, key);
     }
 }

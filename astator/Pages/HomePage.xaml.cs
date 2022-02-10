@@ -47,7 +47,8 @@ namespace astator.Pages
         private void ShowFiles(string directory)
         {
             this.FilesLayout.Clear();
-            var dirs = Directory.EnumerateDirectories(directory, "*", SearchOption.TopDirectoryOnly);
+            var dirs = Directory.EnumerateDirectories(directory, "*", SearchOption.TopDirectoryOnly).ToList();
+            dirs.Sort();
             foreach (var dir in dirs)
             {
                 var name = Path.GetFileName(dir);
@@ -66,7 +67,8 @@ namespace astator.Pages
                 this.FilesLayout.Add(card);
             }
 
-            var files = Directory.EnumerateFiles(directory, "", SearchOption.TopDirectoryOnly);
+            var files = Directory.EnumerateFiles(directory, "", SearchOption.TopDirectoryOnly).ToList();
+            files.Sort();
             foreach (var file in files)
             {
                 var name = Path.GetFileName(file);

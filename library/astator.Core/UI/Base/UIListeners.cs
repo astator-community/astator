@@ -7,6 +7,7 @@ using System;
 using static Android.Views.View;
 using static Android.Widget.AdapterView;
 using static Android.Widget.CompoundButton;
+using static AndroidX.ViewPager.Widget.ViewPager;
 
 namespace astator.Core.UI.Base;
 
@@ -195,4 +196,27 @@ public class OnMenuItemClickListener : Java.Lang.Object, AndroidX.AppCompat.Widg
     {
         return this.callBack.Invoke(item);
     }
+}
+
+public class OnPageChangeListener : Java.Lang.Object, IOnPageChangeListener
+{
+    private readonly Action<int> callBack;
+    public OnPageChangeListener(Action<int> callBack)
+    {
+        this.callBack = callBack;
+    }
+    public void OnPageSelected(int position)
+    {
+        this.callBack.Invoke(position);
+    }
+    public void OnPageScrolled(int position, float positionOffset, int positionOffsetPixels)
+    {
+
+    }
+
+    public void OnPageScrollStateChanged(int state)
+    {
+
+    }
+
 }

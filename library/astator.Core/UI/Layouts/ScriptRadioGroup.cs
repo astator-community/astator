@@ -6,7 +6,7 @@ namespace astator.Core.UI.Layouts;
 
 public class ScriptRadioGroup : RadioGroup, ILayout
 {
-    public string CustomId { get; set; } = string.Empty;
+    public string CustomId { get; set; }
     public OnAttachedListener OnAttachedListener { get; set; }
 
     private int position;
@@ -24,15 +24,8 @@ public class ScriptRadioGroup : RadioGroup, ILayout
     public ScriptRadioGroup(Android.Content.Context context, ViewArgs args) : base(context)
     {
         this.LayoutParameters = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WrapContent, ViewGroup.LayoutParams.WrapContent);
-        if (args is null)
-        {
-            return;
-        }
-        if (args["id"] is null)
-        {
-            this.CustomId = $"{ GetType().Name }-{ UiManager.CreateCount }";
-            UiManager.CreateCount++;
-        }
+
+        this.SetCustomId(ref args);
         foreach (var item in args)
         {
             SetAttr(item.Key.ToString(), item.Value);

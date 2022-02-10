@@ -31,35 +31,28 @@ public class ScriptViewPager : ViewPager, ILayout
         }
     }
 
-    public string CustomId { get; set; } = string.Empty;
+    public string CustomId { get; set; }
     public OnAttachedListener OnAttachedListener { get; set; }
 
-    private readonly List<View> _pages = new();
+    private readonly List<View> pages = new();
 
     protected override void OnAttachedToWindow()
     {
         base.OnAttachedToWindow();
-        this.Adapter = new ViewPagerAdapter(this._pages);
+        this.Adapter = new ViewPagerAdapter(this.pages);
+        SetCurrentItem(0, true);
         this.OnAttachedListener?.OnAttached(this);
     }
 
-    ILayout ILayout.AddView(View view)
+    public new ILayout AddView(View view)
     {
-        this._pages.Add(view);
+        this.pages.Add(view);
         return this;
     }
 
     public ScriptViewPager(Android.Content.Context context, ViewArgs args) : base(context)
     {
-        if (args is null)
-        {
-            return;
-        }
-        if (args["id"] is null)
-        {
-            this.CustomId = $"{ GetType().Name }-{ UiManager.CreateCount }";
-            UiManager.CreateCount++;
-        }
+        this.SetCustomId(ref args);
         foreach (var item in args)
         {
             SetAttr(item.Key.ToString(), item.Value);
@@ -91,6 +84,19 @@ public class ScriptViewPager : ViewPager, ILayout
     }
     public void On(string key, object listener)
     {
-        this.OnListener(key, listener);
+        switch (key)
+        {
+            case "pageChange":
+            {
+                AddOnPageChangeListener((OnPageChangeListener)listener);
+                break;
+            }
+            default:
+            {
+                this.OnListener(key, listener);
+                return;
+            }
+        }
+
     }
 }

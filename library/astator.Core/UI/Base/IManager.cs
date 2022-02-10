@@ -20,4 +20,7 @@ internal interface IManager
     public ScriptRadioGroup CreateRadioGroup(ViewArgs args);
     public ScriptRadioButton CreateRadioButton(ViewArgs args);
     public ScriptCardView CreateCardView(ViewArgs args);
+    public ScriptImageButton CreateImageButton(ViewArgs args);
+    public ScriptTabbedPage CreateTabbedPage(ViewArgs args);
+    public ScriptTabbedView CreateTabbedView(ViewArgs args);
 }

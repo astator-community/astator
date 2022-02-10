@@ -6,7 +6,7 @@ namespace astator.Core.UI.Controls;
 
 public class ScriptWebView : WebView, IControl
 {
-    public string CustomId { get; set; } = string.Empty;
+    public string CustomId { get; set; }
     public OnAttachedListener OnAttachedListener { get; set; }
     protected override void OnAttachedToWindow()
     {
@@ -16,16 +16,7 @@ public class ScriptWebView : WebView, IControl
 
     public ScriptWebView(Android.Content.Context context, ViewArgs args) : base(context)
     {
-        this.LayoutParameters = new MarginLayoutParams(this.LayoutParameters ?? new(ViewGroup.LayoutParams.WrapContent, ViewGroup.LayoutParams.WrapContent));
-        if (args is null)
-        {
-            return;
-        }
-        if (args["id"] is null)
-        {
-            this.CustomId = $"{ GetType().Name }-{ UiManager.CreateCount }";
-            UiManager.CreateCount++;
-        }
+        this.SetCustomId(ref args);
         foreach (var item in args)
         {
             SetAttr(item.Key.ToString(), item.Value);

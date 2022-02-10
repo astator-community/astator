@@ -5,7 +5,7 @@ namespace astator.Core.UI.Layouts;
 
 public class ScriptFrameLayout : ContentFrameLayout, ILayout
 {
-    public string CustomId { get; set; } = string.Empty;
+    public string CustomId { get; set; }
 
     public OnAttachedListener OnAttachedListener { get; set; }
     protected override void OnAttachedToWindow()
@@ -20,23 +20,25 @@ public class ScriptFrameLayout : ContentFrameLayout, ILayout
     }
     public ScriptFrameLayout(Android.Content.Context context, ViewArgs args) : base(context)
     {
-        if (args is null)
-        {
-            return;
-        }
-        if (args["id"] is null)
-        {
-            this.CustomId = $"{ GetType().Name }-{ UiManager.CreateCount }";
-            UiManager.CreateCount++;
-        }
+        this.SetCustomId(ref args);
         foreach (var item in args)
         {
-            this.SetAttr(item.Key.ToString(), item.Value);
+            SetAttr(item.Key.ToString(), item.Value);
         }
     }
 
     public void On(string key, object listener)
     {
         this.OnListener(key, listener);
+    }
+
+    public void SetAttr(string key, object value)
+    {
+        Util.SetAttr(this, key, value);
+    }
+
+    public object GetAttr(string key)
+    {
+        return Util.GetAttr(this, key);
     }
 }

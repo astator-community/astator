@@ -111,7 +111,7 @@ public static class Util
         }
     }
 
-    public static void SetAttr(this IView view, string key, object value)
+    public static void SetAttr(IView view, string key, object value)
     {
         if (view is TextView tv)
         {
@@ -145,6 +145,7 @@ public static class Util
                 case "textColor":
                 {
                     if (value is string temp) tv.SetTextColor(Color.ParseColor(temp));
+                    if (value is Color color) tv.SetTextColor(color);
                     return;
                 }
                 case "lines":
@@ -201,18 +202,12 @@ public static class Util
         }
 
         var v = view as View;
-
         FrameLayout.LayoutParams newLp = v is ViewGroup ? new(LayoutParams.MatchParent, LayoutParams.MatchParent) : new(LayoutParams.WrapContent, LayoutParams.WrapContent);
         var lp = v.LayoutParameters as FrameLayout.LayoutParams
             ?? new FrameLayout.LayoutParams(v.LayoutParameters as MarginLayoutParams ?? newLp);
 
         switch (key)
         {
-            case "id":
-            {
-                if (value is string temp) view.CustomId = temp.Trim();
-                break;
-            }
             case "w":
             {
                 lp.Width = DpParse(value);
@@ -326,12 +321,14 @@ public static class Util
             }
             case "bg":
             {
-                if (value is string temp) v.Background = new ColorDrawable(Color.ParseColor(temp.Trim()));
+                if (value is string temp) v.SetBackgroundColor(Color.ParseColor(temp));
+                if (value is Color color) v.SetBackgroundColor(color);
                 break;
             }
             case "fg":
             {
                 if (value is string temp) v.Foreground = new ColorDrawable(Color.ParseColor(temp.Trim()));
+                if (value is Color color) v.SetBackgroundColor(color);
                 break;
             }
             case "visibility":
@@ -354,12 +351,24 @@ public static class Util
                 if (value is string temp) v.TranslationY = float.Parse(temp.Trim());
                 break;
             }
+            case "radius":
+            {
+                v.ClipToOutline = true;
+                v.OutlineProvider = new RadiusOutlineProvider(DpParse(value));
+                break;
+            }
+            case "tag":
+            {
+                if (value is string temp) v.Tag = temp;
+                if (value is int i32) v.Tag = i32;
+                break;
+            }
             default:
                 throw new AttributeNotExistException(key);
         }
     }
 
-    public static object GetAttr(this IView view, string key)
+    public static object GetAttr(IView view, string key)
     {
         if (view is TextView tv)
         {
@@ -407,5 +416,11 @@ public static class Util
             "translationY" => v.TranslationY,
             _ => throw new AttributeNotExistException(key)
         };
+    }
+
+    public static void SetCustomId(this IView view, ref ViewArgs args)
+    {
+        args ??= new ViewArgs();
+        view.CustomId = args["id"]?.ToString() ?? $"scriptView-{UiManager.CreateCount++}";
     }
 }

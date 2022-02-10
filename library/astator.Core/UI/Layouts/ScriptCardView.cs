@@ -8,7 +8,7 @@ namespace astator.Core.UI.Layouts;
 
 public class ScriptCardView : CardView, ILayout
 {
-    public string CustomId { get; set; } = string.Empty;
+    public string CustomId { get; set; }
 
     public OnAttachedListener OnAttachedListener { get; set; }
     protected override void OnAttachedToWindow()
@@ -25,15 +25,8 @@ public class ScriptCardView : CardView, ILayout
     public ScriptCardView(Android.Content.Context context, ViewArgs args) : base(context)
     {
         this.LayoutParameters = new(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.WrapContent);
-        if (args is null)
-        {
-            return;
-        }
-        if (args["id"] is null)
-        {
-            this.CustomId = $"{ GetType().Name }-{ UiManager.CreateCount }";
-            UiManager.CreateCount++;
-        }
+
+        this.SetCustomId(ref args);
         foreach (var item in args)
         {
             SetAttr(item.Key.ToString(), item.Value);
@@ -61,6 +54,7 @@ public class ScriptCardView : CardView, ILayout
             case "bg":
             {
                 if (value is string temp) this.CardBackgroundColor = ColorStateList.ValueOf(Color.ParseColor(temp));
+                if (value is Color color) this.CardBackgroundColor = ColorStateList.ValueOf(color);
                 break;
             }
             default:

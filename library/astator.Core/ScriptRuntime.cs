@@ -84,7 +84,7 @@ namespace astator.Core
         /// <summary>
         /// 脚本所在文件夹路径
         /// </summary>
-        public string Directory { get; private set; } = string.Empty;
+        public string WorkDir { get; private set; } = string.Empty;
 
         /// <summary>
         /// 脚本自身的activity
@@ -113,7 +113,7 @@ namespace astator.Core
             this.State = ScriptState.Unstarted;
             this.ScriptId = id;
             this.engine = engine;
-            this.Directory = directory;
+            this.WorkDir = directory;
             this.Threads = new ScriptThreadManager();
             this.Tasks = new ScriptTaskManager();
 

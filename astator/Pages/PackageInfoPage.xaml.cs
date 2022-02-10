@@ -168,14 +168,13 @@ namespace astator
 
         }
 
-
-
         private void VersionItems_SelectionChanged(object sender, SelectedItemChangedEventArgs e)
         {
             this.Refresh.IsRefreshing = true;
             ShowPkgInfo(e.SelectedItemIndex);
             this.Refresh.IsRefreshing = false;
         }
+
         private void Uri_Clicked(object sender, EventArgs e)
         {
             var view = sender as CustomLabel;

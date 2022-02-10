@@ -8,7 +8,7 @@ namespace astator.Core.UI.Controls;
 
 public class ScriptSwitch : Switch, IControl
 {
-    public string CustomId { get; set; } = string.Empty;
+    public string CustomId { get; set; }
 
     private Color color = Color.ParseColor("#2B0B98");
 
@@ -24,14 +24,7 @@ public class ScriptSwitch : Switch, IControl
     {
         this.LayoutParameters = new MarginLayoutParams(this.LayoutParameters ?? new(LayoutParams.MatchParent, LayoutParams.WrapContent));
 
-        args ??= new ViewArgs();
-
-        if (args["id"] is null)
-        {
-            this.CustomId = $"{ GetType().Name }-{ UiManager.CreateCount }";
-            UiManager.CreateCount++;
-        }
-
+        this.SetCustomId(ref args);
         if (args["color"] is not null)
         {
             this.color = Color.ParseColor(args["color"].ToString());
