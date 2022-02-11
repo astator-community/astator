@@ -20,7 +20,7 @@ public class ScriptFrameLayout : ContentFrameLayout, ILayout
     }
     public ScriptFrameLayout(Android.Content.Context context, ViewArgs args) : base(context)
     {
-        this.SetCustomId(ref args);
+        this.SetDefaultValue(ref args);
         foreach (var item in args)
         {
             SetAttr(item.Key.ToString(), item.Value);

@@ -9,8 +9,8 @@ public struct DefaultValue
 {
     public static int TextSize { get; set; } = 12;
     public static Color TextColor { get; set; } = Color.ParseColor("#4a4a4d");
-    public static Color BackgroundColor { get; set; } = Color.ParseColor("#ffffff");
+    public static Color BackgroundColor { get; set; } = Color.Transparent;
     public static Color TitleColor { get; set; } = Color.ParseColor("#2a2a2d");
-    public static Color HintColor { get; set; } = Color.ParseColor("#bababa");
+    public static Color HintColor { get; set; } = Color.ParseColor("#80808080");
     public static Color AccentColor { get; set; } = Color.ParseColor("#2b0b98");
 }

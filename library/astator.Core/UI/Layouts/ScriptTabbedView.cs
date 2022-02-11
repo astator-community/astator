@@ -9,14 +9,24 @@ public class ScriptTabbedView : FrameLayout, ILayout
     public string CustomId { get; set; }
     public OnAttachedListener OnAttachedListener { get; set; }
     internal string Icon { get; private set; }
+    internal string EnableIcon { get; private set; }
     internal string Title { get; private set; }
 
     public ScriptTabbedView(Context context, ViewArgs args) : base(context)
     {
-        this.SetCustomId(ref args);
+        this.SetDefaultValue(ref args);
 
         if (args["icon"] is string icon) this.Icon = icon;
+        if (args["enableIcon"] is string enableIcon) this.EnableIcon = enableIcon;
+        if (this.EnableIcon is null) this.EnableIcon = this.Icon;
         if (args["title"] is string title) this.Title = title;
+
+
+        args.Remove("icon", "enableIcon", "title");
+        foreach (var item in args)
+        {
+            SetAttr(item.Key.ToString(), item.Value);
+        }
     }
 
     ILayout ILayout.AddView(View view)

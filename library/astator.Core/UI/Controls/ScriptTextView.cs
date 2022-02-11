@@ -17,7 +17,7 @@ public class ScriptTextView : AppCompatTextView, IControl
 
     public ScriptTextView(Android.Content.Context context, ViewArgs args) : base(context)
     {
-        this.SetCustomId(ref args);
+        this.SetDefaultValue(ref args);
         if (args["autoLink"] is not null)
         {
             if (args["autoLink"] is string temp)

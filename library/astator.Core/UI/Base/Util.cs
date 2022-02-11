@@ -4,6 +4,7 @@ using Android.Text.Util;
 using Android.Views;
 using Android.Widget;
 using astator.Core.Exceptions;
+using astator.Core.UI.Controls;
 using System;
 using System.Collections.Generic;
 using static Android.Text.TextUtils;
@@ -64,6 +65,10 @@ public static class Util
     public static int DpParse(object value)
     {
         return (int)(Devices.Dp * float.Parse(value.ToString().Trim()));
+    }
+    public static T DpParse<T>(object value)
+    {
+        return (T)(object)(Devices.Dp * float.Parse(value.ToString().Trim()));
     }
 
     public static void OnListener(this IView view, string key, object listener)
@@ -208,6 +213,11 @@ public static class Util
 
         switch (key)
         {
+            case "id":
+            {
+                if (value is string temp) view.CustomId = temp;
+                break;
+            }
             case "w":
             {
                 lp.Width = DpParse(value);
@@ -354,7 +364,7 @@ public static class Util
             case "radius":
             {
                 v.ClipToOutline = true;
-                v.OutlineProvider = new RadiusOutlineProvider(DpParse(value));
+                v.OutlineProvider = new RadiusOutlineProvider(DpParse<float>(value));
                 break;
             }
             case "tag":
@@ -418,9 +428,20 @@ public static class Util
         };
     }
 
-    public static void SetCustomId(this IView view, ref ViewArgs args)
+    public static void SetDefaultValue(this IView view, ref ViewArgs args)
     {
         args ??= new ViewArgs();
-        view.CustomId = args["id"]?.ToString() ?? $"scriptView-{UiManager.CreateCount++}";
+        args["id"] ??= $"scriptView-{UiManager.CreateCount++}";
+
+        if (view is not ScriptEditText)
+        {
+            args["bg"] ??= DefaultValue.BackgroundColor;
+        }
+
+        if (view is TextView)
+        {
+            args["textColor"] ??= DefaultValue.TextColor;
+            args["textSize"] ??= DefaultValue.TextSize;
+        }
     }
 }

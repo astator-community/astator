@@ -25,7 +25,7 @@ public class ScriptImageButton : AndroidX.AppCompat.Widget.AppCompatImageButton,
         this.workDir = workDir;
         this.LayoutParameters = new MarginLayoutParams(this.LayoutParameters ?? new(LayoutParams.WrapContent, LayoutParams.WrapContent));
 
-        this.SetCustomId(ref args);
+        this.SetDefaultValue(ref args);
         foreach (var item in args)
         {
             SetAttr(item.Key.ToString(), item.Value);
@@ -36,7 +36,7 @@ public class ScriptImageButton : AndroidX.AppCompat.Widget.AppCompatImageButton,
     {
         if (e.Action == MotionEventActions.Down)
         {
-            SetBackgroundColor(DefaultValue.TextColor);
+            SetBackgroundColor(DefaultValue.HintColor);
         }
         else
         {
@@ -68,11 +68,12 @@ public class ScriptImageButton : AndroidX.AppCompat.Widget.AppCompatImageButton,
             }
             case "bg":
             {
-                if (value is string temp)
-                {
-                    this.backgroundColor = Color.ParseColor(temp);
-                    SetBackgroundColor(this.backgroundColor);
-                }
+                var bg = DefaultValue.BackgroundColor;
+                if (value is Color color) bg = color;
+                if (value is string temp) bg = Color.ParseColor(temp);
+
+                this.backgroundColor = bg;
+                SetBackgroundColor(bg);
                 break;
             }
             case "scaleType":
@@ -95,6 +96,7 @@ public class ScriptImageButton : AndroidX.AppCompat.Widget.AppCompatImageButton,
             _ => Util.GetAttr(this, key)
         };
     }
+
     public void On(string key, object listener)
     {
         this.OnListener(key, listener);

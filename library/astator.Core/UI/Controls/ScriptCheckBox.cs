@@ -2,7 +2,6 @@
 using Android.Graphics;
 using Android.Widget;
 using astator.Core.UI.Base;
-using static Android.Views.ViewGroup;
 
 namespace astator.Core.UI.Controls;
 
@@ -21,7 +20,7 @@ public class ScriptCheckBox : CheckBox, IControl
     {
         this.ButtonTintList = ColorStateList.ValueOf(Color.ParseColor("#808080"));
 
-        this.SetCustomId(ref args);
+        this.SetDefaultValue(ref args);
         foreach (var item in args)
         {
             SetAttr(item.Key.ToString(), item.Value);

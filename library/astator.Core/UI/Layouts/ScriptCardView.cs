@@ -26,7 +26,7 @@ public class ScriptCardView : CardView, ILayout
     {
         this.LayoutParameters = new(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.WrapContent);
 
-        this.SetCustomId(ref args);
+        this.SetDefaultValue(ref args);
         foreach (var item in args)
         {
             SetAttr(item.Key.ToString(), item.Value);

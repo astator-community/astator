@@ -25,7 +25,7 @@ public class ScriptRadioGroup : RadioGroup, ILayout
     {
         this.LayoutParameters = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WrapContent, ViewGroup.LayoutParams.WrapContent);
 
-        this.SetCustomId(ref args);
+        this.SetDefaultValue(ref args);
         foreach (var item in args)
         {
             SetAttr(item.Key.ToString(), item.Value);

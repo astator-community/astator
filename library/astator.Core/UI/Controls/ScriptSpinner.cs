@@ -71,7 +71,7 @@ public class ScriptSpinner : AppCompatSpinner, IControl
     {
         this.LayoutParameters = new MarginLayoutParams(this.LayoutParameters ?? new(LayoutParams.MatchParent, LayoutParams.MatchParent));
 
-        this.SetCustomId(ref args);
+        this.SetDefaultValue(ref args);
         if (args["textColor"] is not null)
         {
             if (args["textColor"] is string temp)

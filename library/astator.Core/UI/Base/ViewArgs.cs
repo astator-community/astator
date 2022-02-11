@@ -30,6 +30,17 @@ public class ViewArgs
         }
     }
 
+    internal void Remove(params string[] key)
+    {
+        foreach (var k in key)
+        {
+            if (this.args.ContainsKey(k))
+            {
+                this.args.Remove(k);
+            }
+        }
+    }
+
     public IEnumerator<KeyValuePair<string, object>> GetEnumerator()
     {
         foreach (var arg in this.args)

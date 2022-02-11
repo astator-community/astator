@@ -24,7 +24,7 @@ public class ScriptSwitch : Switch, IControl
     {
         this.LayoutParameters = new MarginLayoutParams(this.LayoutParameters ?? new(LayoutParams.MatchParent, LayoutParams.WrapContent));
 
-        this.SetCustomId(ref args);
+        this.SetDefaultValue(ref args);
         if (args["color"] is not null)
         {
             this.color = Color.ParseColor(args["color"].ToString());

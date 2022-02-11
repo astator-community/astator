@@ -1,5 +1,4 @@
-﻿using Android.Views;
-using Android.Webkit;
+﻿using Android.Webkit;
 using astator.Core.UI.Base;
 
 namespace astator.Core.UI.Controls;
@@ -16,7 +15,7 @@ public class ScriptWebView : WebView, IControl
 
     public ScriptWebView(Android.Content.Context context, ViewArgs args) : base(context)
     {
-        this.SetCustomId(ref args);
+        this.SetDefaultValue(ref args);
         foreach (var item in args)
         {
             SetAttr(item.Key.ToString(), item.Value);

@@ -1,7 +1,6 @@
 ﻿using AndroidX.AppCompat.Widget;
 using astator.Core.UI.Base;
 using System.IO;
-using static Android.Views.ViewGroup;
 
 namespace astator.Core.UI.Controls;
 
@@ -22,7 +21,7 @@ public class ScriptImageView : AppCompatImageView, IControl
     {
         this.workDir = workDir;
 
-        this.SetCustomId(ref args);
+        this.SetDefaultValue(ref args);
         foreach (var item in args)
         {
             SetAttr(item.Key.ToString(), item.Value);
