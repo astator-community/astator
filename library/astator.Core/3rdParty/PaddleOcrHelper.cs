@@ -1,4 +1,5 @@
 ﻿using Android.Graphics;
+using astator.Core.Script;
 using Com.Baidu.Paddle.Lite.Ocr;
 using System.Collections.Generic;
 
@@ -42,51 +43,54 @@ namespace astator.Core.ThirdParty
         /// <summary>
         /// 模型所在目录
         /// </summary>
-        public string ModelDir = "paddleocr/models";
+        public string ModelDir;
 
         /// <summary>
         /// 字典路径
         /// </summary>
-        public string LabelPath = "paddleocr/labels/keys.txt";
+        public string LabelPath;
 
         /// <summary>
         /// cpu工作线程数
         /// </summary>
-        public int ThreadNum = 4;
+        public int ThreadNum;
 
         /// <summary>
         /// cpu能耗模式
         /// </summary>
-        public string PowerMode = CpuPowerMode.LITE_POWER_NO_BIND;
+        public string CpuPowerMode;
 
-        public PaddleOcrArgs()
+        /// <summary>
+        /// paddleOcr参数
+        /// </summary>
+        /// <param name="modelDir">模型所在目录</param>
+        /// <param name="labelPath">字典路径</param>
+        /// <param name="threadNum">cpu工作线程数</param>
+        /// <param name="cpuPowerMode">cpu能耗模式</param>
+        public PaddleOcrArgs(string modelDir, string labelPath, int threadNum = 4, string cpuPowerMode = ThirdParty.CpuPowerMode.LITE_POWER_NO_BIND)
         {
-
+            this.ModelDir = modelDir;
+            this.LabelPath = labelPath;
+            this.ThreadNum = threadNum;
+            this.CpuPowerMode = cpuPowerMode;
         }
     }
 
-    public class PaddleOcrHelper
+    public class PaddleOCRHelper
     {
 
-        private static PaddleOcrHelper instance;
-        public static PaddleOcrHelper Instance
+        private static PaddleOCRHelper instance;
+        public static PaddleOCRHelper Instance => instance;
+
+
+        public static PaddleOCRHelper Create(PaddleOcrArgs args)
         {
-            get
+            if (instance is not null)
             {
-                if (instance == null)
-                {
-                    instance = new PaddleOcrHelper();
-                }
-                return instance;
+                instance.Dispose();
+                instance = null;
             }
-        }
-
-
-        public static PaddleOcrHelper Create(PaddleOcrArgs args)
-        {
-            instance?.Dispose();
-            instance = null;
-            instance = new PaddleOcrHelper(args);
+            instance = new PaddleOCRHelper(args);
             return instance;
         }
 
@@ -98,31 +102,18 @@ namespace astator.Core.ThirdParty
 
         private readonly Predictor predictor;
 
-        private PaddleOcrHelper(PaddleOcrArgs args)
+        private PaddleOCRHelper(PaddleOcrArgs args)
         {
             this.ModelDir = args.ModelDir;
             this.LabelPath = args.LabelPath;
             this.ThreadNum = args.ThreadNum;
-            this.PowerMode = args.PowerMode;
+            this.PowerMode = args.CpuPowerMode;
 
             this.predictor = new Predictor();
-            this.predictor.Init(Globals.AppContext, this.ModelDir, this.LabelPath, this.ThreadNum, this.PowerMode);
+            this.predictor.Init(this.ModelDir, this.LabelPath, this.ThreadNum, this.PowerMode);
         }
 
-        private PaddleOcrHelper()
-        {
-            var args = new PaddleOcrArgs();
-
-            this.ModelDir = args.ModelDir;
-            this.LabelPath = args.LabelPath;
-            this.ThreadNum = args.ThreadNum;
-            this.PowerMode = args.PowerMode;
-
-            this.predictor = new Predictor();
-            this.predictor.Init(Globals.AppContext, this.ModelDir, this.LabelPath, this.ThreadNum, this.PowerMode);
-        }
-
-        public string Ocr(Bitmap bitmap)
+        public string OCR(Bitmap bitmap)
         {
             var results = this.predictor.RunModel(bitmap);
             if (results is not null)

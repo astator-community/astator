@@ -3,7 +3,7 @@ using Microsoft.Maui.Platform;
 
 namespace astator.TipsView;
 
-public partial class TipsViewImpl : GridLayout
+public partial class TipsViewImpl : Grid
 {
     public static readonly BindableProperty RadiusBindableProperty = BindableProperty.Create(nameof(Radius), typeof(int), typeof(TipsViewImpl), 30);
     public int Radius

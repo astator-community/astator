@@ -10,7 +10,7 @@ namespace astator.Core.Threading
     /// <summary>
     /// 脚本线程管理类
     /// </summary>
-    public class ScriptThreadManager
+    public class ThreadManager
     {
         internal Action<int> ScriptExitCallback { get; set; }
         internal bool ScriptExitSignal { get; set; } = false;
@@ -30,7 +30,10 @@ namespace astator.Core.Threading
                 {
                     action.Invoke();
                 }
-                catch (Exception)
+                catch (ThreadInterruptedException)
+                {
+                }
+                catch (Exception ex)
                 {
                     if (!this.ScriptExitSignal)
                     {

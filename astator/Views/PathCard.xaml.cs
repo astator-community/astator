@@ -1,7 +1,7 @@
 using Android.Content;
 using Android.Views;
-using astator.Controllers;
-using astator.Core;
+using astator.Modules;
+using astator.Core.Script;
 using astator.Core.UI.Base;
 using Microsoft.Maui.Platform;
 
@@ -57,33 +57,22 @@ namespace astator.Views
         {
             base.OnHandlerChanged();
 
-            var view = this.Handler.NativeView as LayoutViewGroup;
-
             if (this.IsAddMenu)
             {
+                var view = this.Handler.NativeView as LayoutViewGroup;
                 var menu = new AndroidX.AppCompat.Widget.PopupMenu(Globals.AppContext, view, (int)GravityFlags.Right);
-
-                //if (this.TypeImageSource == "dir.png")
-                //{
-                //    menu.Menu.Add("重命名");
-                //    menu.Menu.Add("删除");
-                //}
-                //else
+                if (this.PathName.EndsWith(".csproj"))
                 {
-                    if (this.PathName.EndsWith(".csproj"))
-                    {
-                        menu.Menu.Add("运行项目");
-                        menu.Menu.Add("打包apk");
-                        menu.Menu.Add("编译dll");
-                    }
-                    else if (this.PathName.EndsWith(".cs"))
-                    {
-                        menu.Menu.Add("运行脚本");
-                    }
-
-                    menu.Menu.Add("其他应用打开");
+                    menu.Menu.Add("运行项目");
+                    menu.Menu.Add("打包apk");
+                    menu.Menu.Add("编译dll");
+                }
+                else if (this.PathName.EndsWith(".cs"))
+                {
+                    menu.Menu.Add("运行脚本");
                 }
 
+                menu.Menu.Add("其他应用打开");
 
                 menu.SetOnMenuItemClickListener(new OnMenuItemClickListener((item) =>
                 {

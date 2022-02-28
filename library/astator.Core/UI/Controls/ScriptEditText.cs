@@ -1,25 +1,61 @@
-﻿using Android.Graphics;
+﻿using Android.Content.Res;
+using Android.Graphics;
+using Android.Graphics.Drawables;
 using Android.Text;
+using Android.Widget;
 using AndroidX.AppCompat.Widget;
+using AndroidX.Core.Content;
 using astator.Core.Exceptions;
 using astator.Core.UI.Base;
 using System;
+using Attribute = Android.Resource.Attribute;
 
 namespace astator.Core.UI.Controls;
-
 public class ScriptEditText : AppCompatEditText, IControl
 {
     public string CustomId { get; set; }
-    public OnAttachedListener OnAttachedListener { get; set; }
-
-    protected override void OnAttachedToWindow()
-    {
-        base.OnAttachedToWindow();
-        this.OnAttachedListener?.OnAttached(this);
-    }
+    public OnCreatedListener OnCreatedListener { get; set; }
 
     public ScriptEditText(Android.Content.Context context, ViewArgs args) : base(context)
     {
+        this.BackgroundTintList = new ColorStateList(
+            new int[][]
+            {
+                new int[] {-Attribute.StateFocused },
+                new int[] { Attribute.StateFocused }
+            },
+            new int[]
+            {
+                DefaultTheme.TextColorPrimary,
+                DefaultTheme.ColorAccent
+            });
+
+        if (OperatingSystem.IsAndroidVersionAtLeast(29))
+        {
+            var drawable = this.TextCursorDrawable;
+            drawable.SetColorFilter(new BlendModeColorFilter(DefaultTheme.ColorAccent, BlendMode.SrcIn));
+            this.TextCursorDrawable = drawable;
+        }
+        else
+        {
+            var cursorDrawableResField = Java.Lang.Class.FromType(typeof(TextView)).GetDeclaredField("mCursorDrawableRes");
+            cursorDrawableResField.Accessible = true;
+            var cursorDrawableRes = cursorDrawableResField.GetInt(this);
+
+            var editorField = Java.Lang.Class.FromType(typeof(TextView)).GetDeclaredField("mEditor");
+            editorField.Accessible = true;
+            var editor = editorField.Get(this);
+
+            var cursorDrawableField = Java.Lang.Class.ForName("android.widget.Editor").GetDeclaredField("mCursorDrawable");
+            cursorDrawableField.Accessible = true;
+            var drawables = new Drawable[2];
+            drawables[0] = ContextCompat.GetDrawable(this.Context, cursorDrawableRes);
+            drawables[0].SetColorFilter(DefaultTheme.ColorAccent, PorterDuff.Mode.SrcIn);
+            drawables[1] = ContextCompat.GetDrawable(this.Context, cursorDrawableRes);
+            drawables[1].SetColorFilter(DefaultTheme.ColorAccent, PorterDuff.Mode.SrcIn);
+            cursorDrawableField.Set(editor, drawables);
+        }
+
         this.SetDefaultValue(ref args);
         foreach (var item in args)
         {
@@ -33,19 +69,13 @@ public class ScriptEditText : AppCompatEditText, IControl
         {
             case "hint":
             {
-                if (value is string temp)
-                {
-                    this.Hint = temp;
-                }
-
+                if (value is string temp) this.Hint = temp;
                 break;
             }
             case "hintTextColor":
             {
-                if (value is string temp)
-                {
-                    SetHintTextColor(Color.ParseColor(temp.Trim()));
-                }
+                if (value is string temp) SetHintTextColor(Color.ParseColor(temp.Trim()));
+                else if (value is Color color) SetHintTextColor(color);
 
                 break;
             }
@@ -71,7 +101,7 @@ public class ScriptEditText : AppCompatEditText, IControl
         return key switch
         {
             "hint" => this.Hint,
-            "hintTextColor" => this.CurrentHintTextColor,
+            "hintTextColor" => this.HintTextColors,
             "inputType" => this.InputType,
             "singleLine" => new Func<object>(() =>
             {
@@ -91,11 +121,7 @@ public class ScriptEditText : AppCompatEditText, IControl
         {
             case "changed":
             {
-                if (listener is TextWatcher temp)
-                {
-                    AddTextChangedListener(temp);
-                }
-
+                if (listener is TextWatcher temp) AddTextChangedListener(new ClassOfTextWatcher(this, temp));
                 break;
             }
             default:

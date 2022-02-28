@@ -7,14 +7,9 @@ namespace astator.Core.UI.Layouts;
 public class ScriptScrollView : ScrollView, ILayout
 {
     public string CustomId { get; set; }
-    public OnAttachedListener OnAttachedListener { get; set; }
+    public OnCreatedListener OnCreatedListener { get; set; }
 
-    protected override void OnAttachedToWindow()
-    {
-        base.OnAttachedToWindow();
-        this.OnAttachedListener?.OnAttached(this);
-    }
-    ILayout ILayout.AddView(View view)
+    public new ILayout AddView(View view)
     {
         base.AddView(view);
         return this;

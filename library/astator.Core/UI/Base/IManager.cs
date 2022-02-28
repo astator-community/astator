@@ -1,10 +1,12 @@
-﻿using astator.Core.UI.Controls;
+﻿using Android.Views;
+using astator.Core.UI.Controls;
 using astator.Core.UI.Layouts;
 
 namespace astator.Core.UI.Base;
 internal interface IManager
 {
     public IView this[string key] { get; set; }
+    public View Create(string type, ViewArgs args);
     public ScriptScrollView CreateScrollView(ViewArgs args);
     public ScriptWebView CreateWebView(ViewArgs args);
     public ScriptSwitch CreateSwitch(ViewArgs args);

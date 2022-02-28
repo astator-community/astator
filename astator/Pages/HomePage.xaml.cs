@@ -34,14 +34,12 @@ namespace astator.Pages
         protected override void OnAppearing()
         {
             base.OnAppearing();
-            MainActivity.Instance.OnKeyDownCallback = OnKeyDown;
 
         }
 
         protected override void OnDisappearing()
         {
             base.OnDisappearing();
-            MainActivity.Instance.OnKeyDownCallback = null;
         }
 
         private void ShowFiles(string directory)
@@ -59,7 +57,7 @@ namespace astator.Pages
                     Tag = dir,
                     PathName = name,
                     PathInfo = info,
-                    TypeImageSource = "dir.png",
+                    TypeImageSource = "folder.png",
                 };
 
                 card.Clicked += Dir_Clicked;
@@ -67,13 +65,19 @@ namespace astator.Pages
                 this.FilesLayout.Add(card);
             }
 
-            var files = Directory.EnumerateFiles(directory, "", SearchOption.TopDirectoryOnly).ToList();
+            var files = Directory.EnumerateFiles(directory, "*", SearchOption.TopDirectoryOnly).ToList();
             files.Sort();
             foreach (var file in files)
             {
                 var name = Path.GetFileName(file);
                 var info = $"{new DirectoryInfo(file).LastWriteTime:yyyy/MM/dd HH:mm}";
-                var icon = file.EndsWith(".cs") ? "_script" : file.EndsWith(".csproj") ? "_csproj" : file.EndsWith("xml") ? "_xml" : string.Empty;
+                var icon = file.EndsWith(".cs") ? "_code"
+                    : file.EndsWith(".png") ? "_pic"
+                    : file.EndsWith(".csproj") ? "_config"
+                    : file.EndsWith(".json") ? "_config"
+                    : file.EndsWith(".xml") ? "_txt"
+                    : file.EndsWith(".txt") ? "_txt"
+                    : "_unknown";
 
                 var card = new PathCard
                 {
@@ -103,7 +107,7 @@ namespace astator.Pages
             }
             else if (path.EndsWith(".png"))
             {
-                var layout = new GridLayout
+                var layout = new Grid
                 {
                     WidthRequest = 200,
                     HeightRequest = 200,
@@ -177,7 +181,7 @@ namespace astator.Pages
             }
         }
 
-        private bool OnKeyDown(Keycode keyCode, KeyEvent e)
+        public bool OnKeyDown(Keycode keyCode, KeyEvent e)
         {
             if (keyCode == Keycode.Back)
             {

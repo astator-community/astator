@@ -1,5 +1,4 @@
-﻿using Android.Text.Util;
-using AndroidX.AppCompat.Widget;
+﻿using AndroidX.AppCompat.Widget;
 using astator.Core.UI.Base;
 
 namespace astator.Core.UI.Controls;
@@ -7,45 +6,11 @@ namespace astator.Core.UI.Controls;
 public class ScriptTextView : AppCompatTextView, IControl
 {
     public string CustomId { get; set; }
-    public OnAttachedListener OnAttachedListener { get; set; }
-
-    protected override void OnAttachedToWindow()
-    {
-        base.OnAttachedToWindow();
-        this.OnAttachedListener?.OnAttached(this);
-    }
+    public OnCreatedListener OnCreatedListener { get; set; }
 
     public ScriptTextView(Android.Content.Context context, ViewArgs args) : base(context)
     {
         this.SetDefaultValue(ref args);
-        if (args["autoLink"] is not null)
-        {
-            if (args["autoLink"] is string temp)
-            {
-                var mode = temp.Trim();
-                if (mode == "web")
-                {
-                    this.AutoLinkMask = MatchOptions.WebUrls;
-                }
-                else if (mode == "email")
-                {
-                    this.AutoLinkMask = MatchOptions.EmailAddresses;
-                }
-                else if (mode == "phone")
-                {
-                    this.AutoLinkMask = MatchOptions.PhoneNumbers;
-                }
-                else if (mode == "map")
-                {
-                    this.AutoLinkMask = MatchOptions.MapAddresses;
-                }
-                else if (mode == "all")
-                {
-                    this.AutoLinkMask = MatchOptions.All;
-                }
-            }
-        }
-
         foreach (var item in args)
         {
             SetAttr(item.Key.ToString(), item.Value);
@@ -58,11 +23,7 @@ public class ScriptTextView : AppCompatTextView, IControl
         {
             case "changed":
             {
-                if (listener is TextWatcher temp)
-                {
-                    AddTextChangedListener(temp);
-                }
-
+                if (listener is TextWatcher temp) AddTextChangedListener(new ClassOfTextWatcher(this, temp));
                 break;
             }
             default:

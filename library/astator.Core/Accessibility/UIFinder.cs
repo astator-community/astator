@@ -1,33 +1,9 @@
 ﻿using Android.Views.Accessibility;
+using astator.Core.Graphics;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace astator.Core.Accessibility;
-
-public struct Rect
-{
-    public int Left { get; set; }
-    public int Top { get; set; }
-    public int Right { get; set; }
-    public int Bottom { get; set; }
-    public int CenterX { get; set; }
-    public int CenterY { get; set; }
-
-    public Rect(int left, int top, int right, int bottom)
-    {
-        this.Left = left;
-        this.Top = top;
-        this.Right = right;
-        this.Bottom = bottom;
-        this.CenterX = (right - left) / 2 + left;
-        this.CenterY = (bottom - top) / 2 + top;
-    }
-
-    public override string ToString()
-    {
-        return $"Rect: [left: {this.Left}, top: {this.Top}, right: {this.Right}, bottom: {this.Bottom}, centerX: {this.CenterX}, centerY: {this.CenterY}]";
-    }
-}
 
 public struct SearcherArgs
 {

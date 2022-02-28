@@ -1,4 +1,4 @@
-﻿namespace astator.Controllers;
+﻿namespace astator.Modules.Base;
 
 public static class Stick
 {
@@ -40,7 +40,7 @@ public static class Stick
     }
 
 
-    public static async Task<PackData> ReadPackAsync(Stream stream)
+    public static async Task<PackData> ReadPackAsync(Stream stream, CancellationToken cancelToken)
     {
         try
         {
@@ -49,7 +49,7 @@ public static class Stick
             var offset = 0;
             while (offset < 4)
             {
-                offset += await stream.ReadAsync(header.AsMemory(offset, 4 - offset));
+                offset += await stream.ReadAsync(header.AsMemory(offset, 4 - offset), cancelToken);
             }
 
             var len = header.ToInt32();
@@ -58,7 +58,7 @@ public static class Stick
             offset = 0;
             while (offset < len)
             {
-                offset += await stream.ReadAsync(data.AsMemory(offset, len - offset));
+                offset += await stream.ReadAsync(data.AsMemory(offset, len - offset), cancelToken);
             }
 
             var result = PackData.Parse(data);

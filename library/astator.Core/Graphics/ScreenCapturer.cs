@@ -11,6 +11,7 @@ using Android.Runtime;
 using Android.Views;
 using AndroidX.Core.App;
 using AndroidX.Core.Graphics.Drawable;
+using astator.Core.Script;
 using System;
 using Orientation = Android.Content.Res.Orientation;
 
@@ -128,7 +129,6 @@ namespace astator.Core.Graphics
               .Build();
 
             StartForeground(1000, notification);
-
         }
 
         public override IBinder OnBind(Intent intent)

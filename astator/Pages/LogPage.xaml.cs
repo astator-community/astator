@@ -1,6 +1,7 @@
 using AndroidX.AppCompat.App;
-using astator.Controllers;
-using astator.Core;
+using astator.Modules;
+using astator.Core.Script;
+using astator.Views;
 using NLog;
 using System.IO.Compression;
 
@@ -20,6 +21,15 @@ namespace astator.Pages
             {
                 RunProject();
             }
+            else
+            {
+                var navBar = new NavBarView
+                {
+                    ActiveTab = "log"
+                };
+                navBar.SetValue(Grid.RowProperty, 2);
+                this.RootGrid.Add(navBar);
+            }
         }
 
         private void InitLogList()
@@ -28,14 +38,16 @@ namespace astator.Pages
             var logList = new List<string>();
             if (File.Exists(path))
             {
-                var lines = File.ReadLines(path);
-                var maxLen = lines.Count();
-                try
+                var lines = File.ReadAllText(path).Split("loger*/");
+                var maxLen = lines.Length;
+                for (var i = maxLen > 100 ? maxLen - 100 : 0; i < maxLen; i++)
                 {
-                    for (var i = maxLen > 100 ? maxLen - 100 : 0; i < maxLen; i++)
+                    try
                     {
-                        var line = lines.ElementAt(i);
-                        logList.Add(line);
+                        var line = lines[i].Trim();
+                        if (string.IsNullOrEmpty(line)) continue;
+
+                        logList.Add($"loger*/{line}");
                         var message = line.Split("*/");
                         var Level = LogLevel.FromString(message[0]) ?? LogLevel.Debug;
 
@@ -54,12 +66,12 @@ namespace astator.Pages
                         }
                         this.LogLayout.Add(label);
                     }
-                    File.WriteAllLines(path, logList);
+                    catch (Exception ex)
+                    {
+                        ScriptLogger.Error(ex.Message);
+                    }
                 }
-                catch (Exception ex)
-                {
-                    ScriptLogger.Error(ex.Message);
-                }
+                File.WriteAllLines(path, logList);
                 this.LogScrollView.ScrollToAsync(0, this.LogLayout.Height, false);
             }
         }

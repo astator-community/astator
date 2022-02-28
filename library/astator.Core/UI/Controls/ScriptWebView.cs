@@ -6,12 +6,7 @@ namespace astator.Core.UI.Controls;
 public class ScriptWebView : WebView, IControl
 {
     public string CustomId { get; set; }
-    public OnAttachedListener OnAttachedListener { get; set; }
-    protected override void OnAttachedToWindow()
-    {
-        base.OnAttachedToWindow();
-        this.OnAttachedListener?.OnAttached(this);
-    }
+    public OnCreatedListener OnCreatedListener { get; set; }
 
     public ScriptWebView(Android.Content.Context context, ViewArgs args) : base(context)
     {
@@ -28,11 +23,7 @@ public class ScriptWebView : WebView, IControl
         {
             case "url":
             {
-                if (value is string temp)
-                {
-                    LoadUrl(temp);
-                }
-
+                if (value is string temp) LoadUrl(temp);
                 break;
             }
             default:

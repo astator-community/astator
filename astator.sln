@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "astator", "astator\astator.
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3rdparty", "3rdparty", "{3FD99A41-10D9-4B16-B69A-05735B4F938B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PaddleOcrBinding", "library\3rdparty\PaddleOcrBinding\PaddleOcrBinding.csproj", "{B9C6A19C-8327-42C4-BB74-4CE001205FB3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PaddleOCRBinding", "library\3rdparty\PaddleOcrBinding\PaddleOCRBinding.csproj", "{B9C6A19C-8327-42C4-BB74-4CE001205FB3}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApkBuilderBinding", "library\3rdparty\ApkBuilderBinding\ApkBuilderBinding.csproj", "{66B471DD-D522-4D2C-BAB5-B67E01EEC847}"
 EndProject
@@ -31,7 +31,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "packages", "packages", "{CE
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "astator.Sdk", "packages\astator.Sdk\astator.Sdk.csproj", "{6B02661C-0F0C-468D-95D4-043391E63A79}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "astator.TipsView", "library\astator.TipsView\astator.TipsView.csproj", "{63BA66A0-04EE-48B5-8244-433773DC9477}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "astator.TipsView", "library\astator.TipsView\astator.TipsView.csproj", "{63BA66A0-04EE-48B5-8244-433773DC9477}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -11,7 +11,7 @@ namespace astator.Core.Threading
     /// <summary>
     /// 脚本task管理类
     /// </summary>
-    public class ScriptTaskManager
+    public class TaskManager
     {
         internal Action<int> ScriptExitCallback { get; set; }
         internal bool ScriptExitSignal { get; set; } = false;

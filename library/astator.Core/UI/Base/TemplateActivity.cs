@@ -1,7 +1,5 @@
 ﻿using Android.App;
-using Android.Content;
 using Android.OS;
-using Android.Runtime;
 using AndroidX.AppCompat.App;
 using System;
 using System.Collections.Generic;
@@ -13,6 +11,7 @@ public class TemplateActivity : AppCompatActivity
 {
     public static Dictionary<string, TemplateActivity> ScriptActivityList { get; set; } = new();
     public Action OnFinished { get; set; }
+    public Action OnResumed { get; set; }
 
     private string scriptId = string.Empty;
 
@@ -35,6 +34,7 @@ public class TemplateActivity : AppCompatActivity
     protected override void OnResume()
     {
         base.OnResume();
+        this.OnResumed?.Invoke();
     }
 
     protected override void OnDestroy()
@@ -47,14 +47,5 @@ public class TemplateActivity : AppCompatActivity
         base.Finish();
         ScriptActivityList.Remove(this.scriptId);
         this.OnFinished?.Invoke();
-    }
-
-    protected override void OnActivityResult(int requestCode, [GeneratedEnum] Result resultCode, Intent data)
-    {
-        base.OnActivityResult(requestCode, resultCode, data);
-    }
-    public override void StartActivityForResult(Intent intent, int requestCode)
-    {
-        base.StartActivityForResult(intent, requestCode);
     }
 }

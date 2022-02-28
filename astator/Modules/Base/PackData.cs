@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace astator.Controllers;
+namespace astator.Modules.Base;
 public struct PackData
 {
     public string Key { get; set; }

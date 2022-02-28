@@ -6,6 +6,6 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 	</PropertyGroup>
 	<ItemGroup>
-		<None Remove="paddleOcr.jar" />
+	  <None Remove="paddleOCR.jar" />
 	</ItemGroup>
 </Project>

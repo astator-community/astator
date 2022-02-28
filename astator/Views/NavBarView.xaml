@@ -4,32 +4,35 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:v="clr-namespace:astator.Views">
-    <GridLayout ColumnDefinitions="*,*,*,*">
-        <GridLayout.Resources>
-            <Style TargetType="v:CustomImageButton">
-                <Setter Property="Padding" Value="11" />
+    <Grid ColumnDefinitions="*,*,*,*">
+        <!--<Grid.Resources>
+            <Style TargetType="Image">
                 <Setter Property="BackgroundColor" Value="Transparent" />
             </Style>
-        </GridLayout.Resources>
-        <v:CustomImageButton
-            x:Name="HomeTab"
-            Clicked="HomeTab_Clicked"
-            GridLayout.Column="0"
-            Source="home.png" />
-        <v:CustomImageButton
-            x:Name="LogTab"
-            Clicked="LogTab_Clicked"
-            GridLayout.Column="1"
-            Source="log.png" />
-        <v:CustomImageButton
-            x:Name="DocTab"
-            Clicked="DocTab_Clicked"
-            GridLayout.Column="2"
-            Source="doc.png" />
-        <v:CustomImageButton
-            x:Name="SettingsTab"
-            Clicked="SettingsTab_Clicked"
-            GridLayout.Column="3"
-            Source="settings.png" />
-    </GridLayout>
+        </Grid.Resources>-->
+        <v:CustomCard
+            Grid.Column="0"
+            Padding="11"
+            Clicked="HomeTab_Clicked">
+            <Image x:Name="HomeTab" Source="home.png" />
+        </v:CustomCard>
+        <v:CustomCard
+            Grid.Column="1"
+            Padding="11"
+            Clicked="LogTab_Clicked">
+            <Image x:Name="LogTab" Source="log.png" />
+        </v:CustomCard>
+        <v:CustomCard
+            Grid.Column="2"
+            Padding="11"
+            Clicked="DocTab_Clicked">
+            <Image x:Name="DocTab" Source="doc.png" />
+        </v:CustomCard>
+        <v:CustomCard
+            Grid.Column="3"
+            Padding="11"
+            Clicked="SettingsTab_Clicked">
+            <Image x:Name="SettingsTab" Source="settings.png" />
+        </v:CustomCard>
+    </Grid>
 </ContentView>

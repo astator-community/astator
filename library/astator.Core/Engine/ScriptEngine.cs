@@ -215,17 +215,22 @@ namespace astator.Core.Engine
 
                 this.assembly = new WeakReference<Assembly>(this.alc.LoadFromAssemblyPath(dllPath));
 
-                var refs = Directory.GetFiles(Path.Combine(this.rootDir, "ref"));
-                if (refs.Any())
+                var refDir = Path.Combine(this.rootDir, "ref");
+                if (Directory.Exists(refDir))
                 {
-                    foreach (var r in refs)
+                    var refs = Directory.EnumerateFiles(refDir, "*.dll", SearchOption.AllDirectories);
+                    if (refs.Any())
                     {
-                        if (!LoadReference(r))
+                        foreach (var r in refs)
                         {
-                            return false;
+                            if (!LoadReference(r))
+                            {
+                                return false;
+                            }
                         }
                     }
                 }
+
                 return true;
             }
             catch (Exception ex)
@@ -412,7 +417,10 @@ namespace astator.Core.Engine
                 var pkgId = group.Where(x => x.Name == "Include").Select(x => x.Value).FirstOrDefault();
                 var version = await NugetCommands.ParseVersion(pkgId,
                     group.Where(x => x.Name == "Version").Select(x => x.Value).FirstOrDefault() ?? "*");
-
+                if (version is null)
+                {
+                    throw new Exception($"获取nuget包版本失败: \"{pkgId}\"");
+                }
                 packageReferences.Add(pkgId, version);
             }
 
@@ -460,6 +468,11 @@ namespace astator.Core.Engine
                     {
                         break;
                     }
+                }
+
+                if (packageReferences.Count != storeInfos.Count)
+                {
+                    isNeedRestore = true;
                 }
             }
 

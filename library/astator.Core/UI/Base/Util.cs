@@ -9,7 +9,7 @@ using System;
 using System.Collections.Generic;
 using static Android.Text.TextUtils;
 using static Android.Views.ViewGroup;
-using static astator.Core.Globals;
+using static astator.Core.Script.Globals;
 
 namespace astator.Core.UI.Base;
 
@@ -62,14 +62,23 @@ public static class Util
         throw new AttributeNotExistException(value.ToString() ?? string.Empty);
     }
 
-    public static int DpParse(object value)
+    public static int Dp2Px(object value)
     {
-        return (int)(Devices.Dp * float.Parse(value.ToString().Trim()));
+        return (int)(Devices.Dp * Convert.ToSingle(value));
     }
-    public static T DpParse<T>(object value)
+    public static int Px2Dp(object value)
     {
-        return (T)(object)(Devices.Dp * float.Parse(value.ToString().Trim()));
+        return (int)(Convert.ToSingle(value) / Devices.Dp);
     }
+    public static T Dp2Px<T>(object value)
+    {
+        return (T)(object)(Devices.Dp * Convert.ToSingle(value));
+    }
+    public static T Px2Dp<T>(object value)
+    {
+        return (T)(object)(Convert.ToSingle(value) / Devices.Dp);
+    }
+
 
     public static void OnListener(this IView view, string key, object listener)
     {
@@ -91,9 +100,9 @@ public static class Util
                 if (listener is OnTouchListener temp) v.SetOnTouchListener(temp);
                 break;
             }
-            case "attached":
+            case "created":
             {
-                if (listener is OnAttachedListener temp) view.OnAttachedListener = temp;
+                if (listener is OnCreatedListener temp) view.OnCreatedListener = temp;
                 break;
             }
             default: throw new AttributeNotExistException(key);
@@ -124,12 +133,12 @@ public static class Util
             {
                 case "w":
                 {
-                    tv.SetWidth(DpParse(value));
+                    tv.SetWidth(Dp2Px(value));
                     return;
                 }
                 case "h":
                 {
-                    tv.SetHeight(DpParse(value));
+                    tv.SetHeight(Dp2Px(value));
                     return;
                 }
                 case "text":
@@ -155,12 +164,12 @@ public static class Util
                 }
                 case "lines":
                 {
-                    tv.SetLines(DpParse(value));
+                    tv.SetLines(Convert.ToInt32(value));
                     return;
                 }
                 case "maxLines":
                 {
-                    tv.SetMaxLines(DpParse(value));
+                    tv.SetMaxLines(Convert.ToInt32(value));
                     return;
                 }
                 case "typeface":
@@ -177,25 +186,24 @@ public static class Util
                 }
                 case "ems":
                 {
-                    tv.SetEms(DpParse(value));
+                    tv.SetEms(Convert.ToInt32(value));
                     return;
                 }
                 case "autoLink":
                 {
                     if (value is string temp)
                     {
-                        var mode = temp.Trim();
-                        if (mode == "web") tv.AutoLinkMask = MatchOptions.WebUrls;
-                        else if (mode == "email") tv.AutoLinkMask = MatchOptions.EmailAddresses;
-                        else if (mode == "phone") tv.AutoLinkMask = MatchOptions.PhoneNumbers;
-                        else if (mode == "map") tv.AutoLinkMask = MatchOptions.MapAddresses;
-                        else if (mode == "all") tv.AutoLinkMask = MatchOptions.All;
+                        if (temp == "web") tv.AutoLinkMask = MatchOptions.WebUrls;
+                        else if (temp == "email") tv.AutoLinkMask = MatchOptions.EmailAddresses;
+                        else if (temp == "phone") tv.AutoLinkMask = MatchOptions.PhoneNumbers;
+                        else if (temp == "map") tv.AutoLinkMask = MatchOptions.MapAddresses;
+                        else if (temp == "all") tv.AutoLinkMask = MatchOptions.All;
                     }
                     return;
                 }
                 case "ellipsize":
                 {
-                    if (value is string temp) tv.Ellipsize = TruncateAt.ValueOf(temp.Trim());
+                    if (value is string temp) tv.Ellipsize = TruncateAt.ValueOf(temp);
                     return;
                 }
                 case "gravity":
@@ -220,24 +228,24 @@ public static class Util
             }
             case "w":
             {
-                lp.Width = DpParse(value);
+                lp.Width = Dp2Px(value);
                 v.LayoutParameters = lp;
                 break;
             }
             case "h":
             {
-                lp.Height = DpParse(value);
+                lp.Height = Dp2Px(value);
                 v.LayoutParameters = lp;
                 break;
             }
             case "minWidth":
             {
-                v.SetMinimumWidth(DpParse(value));
+                v.SetMinimumWidth(Dp2Px(value));
                 break;
             }
             case "minHeight":
             {
-                v.SetMinimumHeight(DpParse(value));
+                v.SetMinimumHeight(Dp2Px(value));
                 break;
             }
             case "weight":
@@ -253,30 +261,30 @@ public static class Util
                 if (value is int i32) margin[0] = margin[1] = margin[2] = margin[3] = i32;
                 else if (value is int[] arr)
                 {
-                    margin[0] = DpParse(arr[0]);
-                    margin[1] = DpParse(arr[1]);
-                    margin[2] = DpParse(arr[2]);
-                    margin[3] = DpParse(arr[3]);
+                    margin[0] = Dp2Px(arr[0]);
+                    margin[1] = Dp2Px(arr[1]);
+                    margin[2] = Dp2Px(arr[2]);
+                    margin[3] = Dp2Px(arr[3]);
                 }
                 else if (value is string str)
                 {
                     var strArr = str.Split(",");
                     if (strArr.Length == 1)
                     {
-                        var temp = DpParse(strArr[0]);
+                        var temp = Dp2Px(strArr[0]);
                         margin[0] = margin[1] = margin[2] = margin[3] = temp;
                     }
                     else if (strArr.Length == 2)
                     {
-                        margin[0] = margin[2] = DpParse(strArr[0]);
-                        margin[1] = margin[3] = DpParse(strArr[1]);
+                        margin[0] = margin[2] = Dp2Px(strArr[0]);
+                        margin[1] = margin[3] = Dp2Px(strArr[1]);
                     }
                     else if (strArr.Length == 4)
                     {
-                        margin[0] = DpParse(strArr[0]);
-                        margin[1] = DpParse(strArr[1]);
-                        margin[2] = DpParse(strArr[2]);
-                        margin[3] = DpParse(strArr[3]);
+                        margin[0] = Dp2Px(strArr[0]);
+                        margin[1] = Dp2Px(strArr[1]);
+                        margin[2] = Dp2Px(strArr[2]);
+                        margin[3] = Dp2Px(strArr[3]);
                     }
                 }
                 lp.SetMargins(margin[0], margin[1], margin[2], margin[3]);
@@ -295,30 +303,30 @@ public static class Util
                 if (value is int i32) padding[0] = padding[1] = padding[2] = padding[3] = i32;
                 else if (value is int[] arr)
                 {
-                    padding[0] = DpParse(arr[0]);
-                    padding[1] = DpParse(arr[1]);
-                    padding[2] = DpParse(arr[2]);
-                    padding[3] = DpParse(arr[3]);
+                    padding[0] = Dp2Px(arr[0]);
+                    padding[1] = Dp2Px(arr[1]);
+                    padding[2] = Dp2Px(arr[2]);
+                    padding[3] = Dp2Px(arr[3]);
                 }
                 else if (value is string str)
                 {
                     var strArr = str.Split(",");
                     if (strArr.Length == 1)
                     {
-                        var temp = DpParse(strArr[0]);
+                        var temp = Dp2Px(strArr[0]);
                         padding[0] = padding[1] = padding[2] = padding[3] = temp;
                     }
                     else if (strArr.Length == 2)
                     {
-                        padding[0] = padding[2] = DpParse(strArr[0]);
-                        padding[1] = padding[3] = DpParse(strArr[1]);
+                        padding[0] = padding[2] = Dp2Px(strArr[0]);
+                        padding[1] = padding[3] = Dp2Px(strArr[1]);
                     }
                     else if (strArr.Length == 4)
                     {
-                        padding[0] = DpParse(strArr[0]);
-                        padding[1] = DpParse(strArr[1]);
-                        padding[2] = DpParse(strArr[2]);
-                        padding[3] = DpParse(strArr[3]);
+                        padding[0] = Dp2Px(strArr[0]);
+                        padding[1] = Dp2Px(strArr[1]);
+                        padding[2] = Dp2Px(strArr[2]);
+                        padding[3] = Dp2Px(strArr[3]);
                     }
                 }
                 v.SetPadding(padding[0], padding[1], padding[2], padding[3]);
@@ -326,7 +334,7 @@ public static class Util
             }
             case "alpha":
             {
-                if (value is string temp) v.Alpha = float.Parse(temp.Trim());
+                v.Alpha = Convert.ToSingle(value);
                 break;
             }
             case "bg":
@@ -338,7 +346,7 @@ public static class Util
             case "fg":
             {
                 if (value is string temp) v.Foreground = new ColorDrawable(Color.ParseColor(temp.Trim()));
-                if (value is Color color) v.SetBackgroundColor(color);
+                if (value is Color color) v.Foreground = new ColorDrawable(color);
                 break;
             }
             case "visibility":
@@ -348,23 +356,23 @@ public static class Util
             }
             case "rotation":
             {
-                if (value is string temp) v.Rotation = float.Parse(temp.Trim());
+                v.Rotation = Dp2Px<float>(value);
                 break;
             }
             case "transformPivotX":
             {
-                if (value is string temp) v.TranslationX = float.Parse(temp.Trim());
+                v.TranslationX = Dp2Px<float>(value);
                 break;
             }
             case "transformPivotY":
             {
-                if (value is string temp) v.TranslationY = float.Parse(temp.Trim());
+                v.TranslationY = Dp2Px<float>(value);
                 break;
             }
             case "radius":
             {
                 v.ClipToOutline = true;
-                v.OutlineProvider = new RadiusOutlineProvider(DpParse<float>(value));
+                v.OutlineProvider = new RadiusOutlineProvider(Dp2Px<float>(value));
                 break;
             }
             case "tag":
@@ -404,26 +412,26 @@ public static class Util
         return key switch
         {
             "id" => view.CustomId,
-            "w" => v.Width,
-            "h" => v.Height,
-            "minWidth" => v.MinimumWidth,
-            "minHeight" => v.MinimumHeight,
+            "w" => Px2Dp(v.Width),
+            "h" => Px2Dp(v.Height),
+            "minWidth" => Px2Dp(v.MinimumWidth),
+            "minHeight" => Px2Dp(v.MinimumHeight),
             "weight" => () =>
             {
                 var _lp = v.LayoutParameters as LinearLayout.LayoutParams ?? new(v.LayoutParameters as MarginLayoutParams ?? new(LayoutParams.WrapContent, LayoutParams.WrapContent));
                 return _lp.Weight;
             }
             ,
-            "margin" => new int[] { lp.LeftMargin, lp.TopMargin, lp.RightMargin, lp.BottomMargin },
+            "margin" => new int[] { Px2Dp(lp.LeftMargin), Px2Dp(lp.TopMargin), Px2Dp(lp.RightMargin), Px2Dp(lp.BottomMargin) },
             "layoutGravity" => lp.Gravity,
-            "padding" => new int[] { v.PaddingLeft, v.PaddingTop, v.PaddingRight, v.PaddingBottom },
-            "alpha" => v.Alpha,
+            "padding" => new int[] { Px2Dp(v.PaddingLeft), Px2Dp(v.PaddingTop), Px2Dp(v.PaddingRight), Px2Dp(v.PaddingBottom) },
+            "alpha" => Px2Dp<float>(v.Alpha),
             "bg" => v.Background,
             "fg" => v.Foreground,
             "visibility" => v.Visibility,
-            "rotation" => v.Rotation,
-            "translationX" => v.TranslationX,
-            "translationY" => v.TranslationY,
+            "rotation" => Px2Dp<float>(v.Rotation),
+            "translationX" => Px2Dp<float>(v.TranslationX),
+            "translationY" => Px2Dp<float>(v.TranslationY),
             _ => throw new AttributeNotExistException(key)
         };
     }
@@ -433,15 +441,15 @@ public static class Util
         args ??= new ViewArgs();
         args["id"] ??= $"scriptView-{UiManager.CreateCount++}";
 
-        if (view is not ScriptEditText)
+        if (view is not ScriptEditText && view is not ScriptButton)
         {
-            args["bg"] ??= DefaultValue.BackgroundColor;
+            args["bg"] ??= DefaultTheme.LayoutBackground;
         }
 
         if (view is TextView)
         {
-            args["textColor"] ??= DefaultValue.TextColor;
-            args["textSize"] ??= DefaultValue.TextSize;
+            args["textColor"] ??= DefaultTheme.TextColorPrimary;
+            args["textSize"] ??= DefaultTheme.TextSize;
         }
     }
 }

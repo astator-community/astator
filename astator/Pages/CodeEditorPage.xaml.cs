@@ -1,4 +1,4 @@
-using astator.Core;
+using astator.Core.Script;
 
 namespace astator
 {

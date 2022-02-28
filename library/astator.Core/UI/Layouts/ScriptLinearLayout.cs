@@ -8,17 +8,13 @@ public class ScriptLinearLayout : LinearLayout, ILayout
 {
     public string CustomId { get; set; }
 
-    public OnAttachedListener OnAttachedListener { get; set; }
-    protected override void OnAttachedToWindow()
-    {
-        base.OnAttachedToWindow();
-        this.OnAttachedListener?.OnAttached(this);
-    }
+    public OnCreatedListener OnCreatedListener { get; set; }
     public new ILayout AddView(View view)
     {
         base.AddView(view);
         return this;
     }
+
     public ScriptLinearLayout(Android.Content.Context context, ViewArgs args) : base(context)
     {
         this.SetDefaultValue(ref args);
@@ -39,7 +35,7 @@ public class ScriptLinearLayout : LinearLayout, ILayout
                     {
                         this.Orientation = (Orientation)v;
                     }
-                    if (value is string temp)
+                    else if (value is string temp)
                     {
                         this.Orientation = (Orientation)int.Parse(temp);
                     }

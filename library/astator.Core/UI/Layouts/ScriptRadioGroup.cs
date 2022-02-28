@@ -1,22 +1,22 @@
 ﻿using Android.Views;
 using Android.Widget;
 using astator.Core.UI.Base;
+using System;
 
 namespace astator.Core.UI.Layouts;
 
 public class ScriptRadioGroup : RadioGroup, ILayout
 {
     public string CustomId { get; set; }
-    public OnAttachedListener OnAttachedListener { get; set; }
+    public OnCreatedListener OnCreatedListener { get; set; }
 
     private int position;
     protected override void OnAttachedToWindow()
     {
         base.OnAttachedToWindow();
         Check(GetChildAt(this.position).Id);
-        this.OnAttachedListener?.OnAttached(this);
     }
-    ILayout ILayout.AddView(View view)
+    public new ILayout AddView(View view)
     {
         base.AddView(view);
         return this;
@@ -37,11 +37,7 @@ public class ScriptRadioGroup : RadioGroup, ILayout
         {
             case "position":
             {
-                if (value is string temp)
-                {
-                    this.position = int.Parse(temp.Trim());
-                }
-
+                this.position = Convert.ToInt32(value);
                 break;
             }
             case "orientation":
@@ -51,6 +47,10 @@ public class ScriptRadioGroup : RadioGroup, ILayout
                     if (value is string temp)
                     {
                         this.Orientation = (Orientation)int.Parse(temp);
+                    }
+                    else if (value is int i32)
+                    {
+                        this.Orientation = (Orientation)i32;
                     }
                 }
                 catch

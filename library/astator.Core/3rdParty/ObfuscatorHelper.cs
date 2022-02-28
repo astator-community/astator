@@ -1,4 +1,5 @@
 ﻿using astator.Core.Engine;
+using astator.Core.Script;
 using Obfuscar;
 using System;
 using System.IO;
@@ -114,7 +115,7 @@ namespace astator.Core.ThirdParty
                         <Var name = ""HideStrings"" value = ""{rules.HideStrings.ToString().ToLower()}"" />
                         <Var name = ""OptimizeMethods"" value = ""{rules.OptimizeMethods.ToString().ToLower()}"" />
                         <AssemblySearchPath path=""{net6Dir}"" />
-                        <AssemblySearchPath path=""{mauiDir}"" />
+                        <AssemblySearchPath path=""{mauiDir}"" />  
                         <AssemblySearchPath path=""{rules.AssemblySearchPath}"" />
 
                         <Module file = ""{rules.DllPath}""/>

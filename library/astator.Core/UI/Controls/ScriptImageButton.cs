@@ -8,17 +8,11 @@ namespace astator.Core.UI.Controls;
 public class ScriptImageButton : AndroidX.AppCompat.Widget.AppCompatImageButton, IControl
 {
     public string CustomId { get; set; }
-    public OnAttachedListener OnAttachedListener { get; set; }
+    public OnCreatedListener OnCreatedListener { get; set; }
 
-    private Color backgroundColor;
+    private Color backgroundColor = DefaultTheme.LayoutBackground;
 
     private readonly string workDir;
-
-    protected override void OnAttachedToWindow()
-    {
-        base.OnAttachedToWindow();
-        this.OnAttachedListener?.OnAttached(this);
-    }
 
     public ScriptImageButton(Android.Content.Context context, string workDir, ViewArgs args) : base(context)
     {
@@ -36,7 +30,7 @@ public class ScriptImageButton : AndroidX.AppCompat.Widget.AppCompatImageButton,
     {
         if (e.Action == MotionEventActions.Down)
         {
-            SetBackgroundColor(DefaultValue.HintColor);
+            SetBackgroundColor(DefaultTheme.ColorHint);
         }
         else
         {
@@ -68,12 +62,18 @@ public class ScriptImageButton : AndroidX.AppCompat.Widget.AppCompatImageButton,
             }
             case "bg":
             {
-                var bg = DefaultValue.BackgroundColor;
-                if (value is Color color) bg = color;
-                if (value is string temp) bg = Color.ParseColor(temp);
-
-                this.backgroundColor = bg;
-                SetBackgroundColor(bg);
+                if (value is string temp)
+                {
+                    var bg = Color.ParseColor(temp);
+                    this.backgroundColor = bg;
+                    SetBackgroundColor(bg);
+                }
+                else if (value is Color color)
+                {
+                    var bg = color;
+                    this.backgroundColor = bg;
+                    SetBackgroundColor(bg);
+                }
                 break;
             }
             case "scaleType":

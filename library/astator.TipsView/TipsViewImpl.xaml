@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<GridLayout
+<Grid
     x:Class="astator.TipsView.TipsViewImpl"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
@@ -10,7 +10,7 @@
         BackgroundColor="#f0f3f6"
         IsRefreshing="True"
         RefreshColor="#2F88FF">
-        <GridLayout
+        <Grid
             BackgroundColor="#66666666"
             HeightRequest="150"
             WidthRequest="250">
@@ -24,6 +24,6 @@
                 TextColor="#f0f3f6"
                 VerticalOptions="End"
                 WidthRequest="250" />
-        </GridLayout>
+        </Grid>
     </RefreshView>
-</GridLayout>
+</Grid>

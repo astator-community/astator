@@ -1,7 +1,6 @@
 ﻿using Android.Content;
 using Android.OS;
 using Android.Views;
-using astator.Core;
 using astator.Core.Engine;
 using astator.Core.Script;
 using astator.Core.UI.Base;
@@ -10,7 +9,7 @@ using System.Collections.Concurrent;
 using System.Reflection;
 using Application = Android.App.Application;
 
-namespace astator.Controllers;
+namespace astator.Modules;
 
 public class ScriptManager
 {

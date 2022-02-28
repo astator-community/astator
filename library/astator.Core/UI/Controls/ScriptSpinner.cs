@@ -3,6 +3,7 @@ using Android.Views;
 using Android.Widget;
 using AndroidX.AppCompat.Widget;
 using astator.Core.UI.Base;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -53,20 +54,20 @@ public class ScriptSpinner : AppCompatSpinner, IControl
     }
 
     public string CustomId { get; set; }
-    public OnAttachedListener OnAttachedListener { get; set; }
+    public OnCreatedListener OnCreatedListener { get; set; }
 
     private string entries;
     private int position;
-    private Color textColor = DefaultValue.TextColor;
-    private Color backgroundColor = DefaultValue.BackgroundColor;
-    private float textSize = DefaultValue.TextSize;
+    private Color textColor = DefaultTheme.TextColorPrimary;
+    private Color backgroundColor = DefaultTheme.LayoutBackground;
+    private float textSize = DefaultTheme.TextSize;
+
     protected override void OnAttachedToWindow()
     {
         base.OnAttachedToWindow();
-
-        SetSelection(this.position);
-        this.OnAttachedListener?.OnAttached(this);
+        // SetSelection(this.position);
     }
+
     public ScriptSpinner(Android.Content.Context context, ViewArgs args) : base(context)
     {
         this.LayoutParameters = new MarginLayoutParams(this.LayoutParameters ?? new(LayoutParams.MatchParent, LayoutParams.MatchParent));
@@ -74,31 +75,20 @@ public class ScriptSpinner : AppCompatSpinner, IControl
         this.SetDefaultValue(ref args);
         if (args["textColor"] is not null)
         {
-            if (args["textColor"] is string temp)
-            {
-                this.textColor = Color.ParseColor(temp);
-            }
+            if (args["textColor"] is string temp) this.textColor = Color.ParseColor(temp);
+            if (args["textColor"] is Color color) this.textColor = color;
         }
 
         if (args["textSize"] is not null)
         {
-            if (args["textSize"] is string temp)
-            {
-                this.textSize = int.Parse(temp.Trim());
-            }
+            if (args["textSize"] is string temp) this.textSize = int.Parse(temp);
+            if (args["textSize"] is int i32) this.textSize = i32;
         }
 
         if (args["bg"] is not null)
         {
-            if (args["bg"] is string temp)
-            {
-                this.backgroundColor = Color.ParseColor(temp);
-            }
-        }
-
-        if (args["textSize"] is null)
-        {
-            args["textSize"] = DefaultValue.TextSize;
+            if (args["bg"] is string temp) this.backgroundColor = Color.ParseColor(temp);
+            if (args["bg"] is Color color) this.backgroundColor = color;
         }
 
         foreach (var item in args)
@@ -112,11 +102,8 @@ public class ScriptSpinner : AppCompatSpinner, IControl
         {
             case "position":
             {
-                if (value is string temp)
-                {
-                    this.position = int.Parse(temp.Trim());
-                }
-
+                this.position = Convert.ToInt32(value);
+                if (this.Adapter is not null) SetSelection(this.position);
                 break;
             }
             case "entries":
@@ -131,25 +118,20 @@ public class ScriptSpinner : AppCompatSpinner, IControl
                         BackgroundColor = backgroundColor,
                         TextSize = textSize,
                     };
+                    SetSelection(this.position);
                 }
                 break;
             }
             case "textColor":
             {
-                if (value is string temp)
-                {
-                    this.textColor = Color.ParseColor(temp);
-                }
-
+                if (value is string temp) this.textColor = Color.ParseColor(temp);
+                else if (value is Color color) this.textColor = color;
                 break;
             }
             case "textSize":
             {
-                if (value is string temp)
-                {
-                    this.textSize = int.Parse(temp.Trim());
-                }
-
+                if (value is string temp) this.textSize = int.Parse(temp);
+                else if (value is int i32) this.textSize = i32;
                 break;
             }
             case "gravity":
@@ -159,11 +141,8 @@ public class ScriptSpinner : AppCompatSpinner, IControl
             }
             case "bg":
             {
-                if (value is string temp)
-                {
-                    var color = Color.ParseColor(temp);
-                    this.backgroundColor = color;
-                }
+                if (value is string temp) this.backgroundColor = Color.ParseColor(temp);
+                else if (value is Color color) this.backgroundColor = color;
                 break;
             }
             default:

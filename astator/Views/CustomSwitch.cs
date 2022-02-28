@@ -1,27 +1,32 @@
-﻿using Android.Views;
-using astator.Core.UI.Base;
+﻿using Microsoft.Maui.Handlers;
 
 namespace astator.Views;
 
 internal class CustomSwitch : Switch
 {
 
-    public event EventHandler Clicked;
-
-    protected override void OnHandlerChanged()
+    public CustomSwitch() : base()
     {
-        base.OnHandlerChanged();
 
-        var view = this.Handler.NativeView as Android.Views.View;
+    }
+}
 
-        view.SetOnTouchListener(new OnTouchListener((v, e) =>
-        {
-            if (e.Action == MotionEventActions.Down)
-            {
-                Clicked?.Invoke(this, null);
-            }
+internal class CustomSwitchHandler : SwitchHandler
+{
 
-            return Clicked is not null;
-        }));
+    public CustomSwitchHandler() : base(SwitchMapper)
+    {
+        SwitchMapper.Add(nameof(Switch.IsToggled), MapIsToggled);
+    }
+
+    public CustomSwitchHandler(IPropertyMapper mapper = null) : base(mapper ?? SwitchMapper)
+    {
+        SwitchMapper.Add(nameof(Switch.IsToggled), MapIsToggled);
+    }
+
+
+    public static void MapIsToggled(SwitchHandler handler, ISwitch view)
+    {
+        handler.NativeView.Checked = (view as Switch).IsToggled;
     }
 }

@@ -2,7 +2,7 @@
 
 namespace astator.Core.Engine
 {
-    public class Domain : AssemblyLoadContext
+    internal class Domain : AssemblyLoadContext
     {
 
         public Domain() : base(true)

@@ -26,15 +26,15 @@ internal class CustomImageButton : ImageButton
     {
         base.OnHandlerChanged();
 
-        var view = this.Handler.NativeView as AndroidX.AppCompat.Widget.AppCompatImageButton;
+        var view = this.Handler.NativeView as AndroidX.AppCompat.Widget.AppCompatImageView;
 
 
-        view.SetPadding(Util.DpParse(this.Padding.Left), Util.DpParse(this.Padding.Top), Util.DpParse(this.Padding.Right), Util.DpParse(this.Padding.Bottom));
+        view.SetPadding(Util.Dp2Px(this.Padding.Left), Util.Dp2Px(this.Padding.Top), Util.Dp2Px(this.Padding.Right), Util.Dp2Px(this.Padding.Bottom));
 
 
         if (this.IsCircle)
         {
-            view.OutlineProvider = new CircleButtonOutlineProvider();
+            view.OutlineProvider = new CircleOutlineProvider();
             view.ClipToOutline = true;
         }
 
@@ -50,14 +50,6 @@ internal class CustomImageButton : ImageButton
             }
             return false;
         }));
-    }
-
-    private class CircleButtonOutlineProvider : ViewOutlineProvider
-    {
-        public override void GetOutline(Android.Views.View view, Android.Graphics.Outline outline)
-        {
-            outline.SetRoundRect(0, 0, view.Width, view.Height, view.Width < view.Height ? view.Width : view.Height);
-        }
     }
 }
 

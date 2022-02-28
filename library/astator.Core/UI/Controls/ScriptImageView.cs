@@ -7,15 +7,9 @@ namespace astator.Core.UI.Controls;
 public class ScriptImageView : AppCompatImageView, IControl
 {
     public string CustomId { get; set; }
-    public OnAttachedListener OnAttachedListener { get; set; }
+    public OnCreatedListener OnCreatedListener { get; set; }
 
     private readonly string workDir;
-
-    protected override void OnAttachedToWindow()
-    {
-        base.OnAttachedToWindow();
-        this.OnAttachedListener?.OnAttached(this);
-    }
 
     public ScriptImageView(Android.Content.Context context, string workDir, ViewArgs args) : base(context)
     {
@@ -39,7 +33,7 @@ public class ScriptImageView : AppCompatImageView, IControl
                     var path = temp;
                     if (!path.StartsWith("/"))
                     {
-                        path = System.IO.Path.Combine(this.workDir, "assets", path);
+                        path = Path.Combine(this.workDir, "assets", path);
                     }
                     if (!File.Exists(path))
                     {

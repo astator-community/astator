@@ -1,5 +1,5 @@
-﻿using astator.Core;
-using astator.Core.Engine;
+﻿using astator.Core.Engine;
+using astator.Core.Script;
 using astator.Core.ThirdParty;
 using astator.NugetManager;
 using astator.TipsView;
@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 using System.IO.Compression;
 using System.Xml.Linq;
 
-namespace astator.Controllers;
+namespace astator.Modules;
 public class ApkBuilderer
 {
     private readonly string rootDir;
@@ -64,6 +64,9 @@ public class ApkBuilderer
                     return false;
                 }
 
+                var projectConfig = xd.Descendants("ProjectExtensions");
+                var useOCR = Convert.ToBoolean(projectConfig.Select(x => x.Element("UseOCR")).First()?.Value);
+
                 if (!await CompileDll(false))
                 {
                     return false;
@@ -74,7 +77,9 @@ public class ApkBuilderer
                     return false;
                 }
 
-                if (!ApkBuilder.ApkBuilder.Build(this.outputDir, this.projectPath, versionName, packageName, labelName))
+                var iconPath = Path.Combine(this.assetsDir, "appicon.png");
+
+                if (!ApkBuilder.ApkBuilder.Build(this.outputDir, this.projectPath, versionName, packageName, labelName, iconPath, useOCR))
                 {
                     return false;
                 }
@@ -115,7 +120,10 @@ public class ApkBuilderer
                         zip.CreateEntryFromFile(file, entryName);
                     }
                 }
+            }
 
+            if (Directory.Exists(this.refDir))
+            {
                 var refs = Directory.GetFiles(this.refDir);
                 if (refs.Any())
                 {
@@ -181,14 +189,31 @@ public class ApkBuilderer
                 {
                     Directory.Delete(this.refDir, true);
                 }
+
                 Directory.CreateDirectory(this.refDir);
 
-                foreach (var info in storeInfos)
+                var rootRefDir = Path.Combine(this.rootDir, "ref");
+                if (Directory.Exists(rootRefDir))
                 {
-                    var paths = info.Paths;
-                    foreach (var path in paths)
+                    var refs = Directory.EnumerateFiles(rootRefDir, "*.dll", SearchOption.AllDirectories);
+                    if (refs.Any())
                     {
-                        File.Copy(path, Path.Combine(this.refDir, Path.GetFileName(path)));
+                        foreach (var r in refs)
+                        {
+                            File.Copy(r, Path.Combine(this.refDir, Path.GetFileName(r)));
+                        }
+                    }
+                }
+
+                if (storeInfos is not null && storeInfos.Any())
+                {
+                    foreach (var info in storeInfos)
+                    {
+                        var paths = info.Paths;
+                        foreach (var path in paths)
+                        {
+                            File.Copy(path, Path.Combine(this.refDir, Path.GetFileName(path)));
+                        }
                     }
                 }
 
@@ -203,10 +228,11 @@ public class ApkBuilderer
                     {
                         DllPath = dllPath,
                         OutputDir = outputDir,
+                        AssemblySearchPath = refDir
                     };
                     if (ObfuscatorHelper.Execute(rules))
                     {
-                        return false;
+                        return true;
                     }
                 }
 

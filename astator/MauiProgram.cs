@@ -18,6 +18,8 @@ public static class MauiProgram
                 handler.AddCompatibilityRenderer(typeof(CustomLabelButton), typeof(CustomLabelButtonRenderer));
                 handler.AddHandler(typeof(CustomSpinner), typeof(CustomSpinnerHandler));
                 handler.AddHandler(typeof(CodeEditorView), typeof(CodeEditorViewHandler));
+                handler.AddCompatibilityRenderer(typeof(TabbedPage), typeof(CustomTabbedPageRenderer));
+                handler.AddHandler(typeof(CustomSwitch), typeof(CustomSwitchHandler));
             });
         return builder.Build();
     }

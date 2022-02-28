@@ -1,7 +1,7 @@
 ﻿using Android.Content;
 using Android.Views;
-using astator.Core;
 using astator.Core.Broadcast;
+using astator.Core.Script;
 using astator.Core.UI.Base;
 using astator.Core.UI.Floaty;
 using astator.Pages;
@@ -9,7 +9,7 @@ using astator.Views;
 using Microsoft.Maui.Platform;
 using View = Android.Views.View;
 
-namespace astator.Controllers
+namespace astator.Modules
 {
     public class FloatyManager
     {
@@ -35,10 +35,10 @@ namespace astator.Controllers
 
         public void Show()
         {
-            var layout = new GridLayout
+            var layout = new Grid
             {
-                WidthRequest = 42,
-                HeightRequest = 42,
+                WidthRequest = 40,
+                HeightRequest = 40,
                 BackgroundColor = Colors.Transparent
             };
 
@@ -46,8 +46,8 @@ namespace astator.Controllers
             {
                 Source = "appicon.png",
                 IsCircle = true,
-                WidthRequest = 42,
-                HeightRequest = 42,
+                WidthRequest = 40,
+                HeightRequest = 40,
 
             });
 
@@ -57,23 +57,30 @@ namespace astator.Controllers
                 return IconFloaty_TouchListener(v, e);
             }));
 
-            ScriptBroadcastReceiver.AddListener(Intent.ActionConfigurationChanged, () =>
-             {
-                 var width = Globals.Devices.Width;
-                 var layoutParams = view.LayoutParameters as WindowManagerLayoutParams;
+            ScriptBroadcastReceiver.AddListener(Intent.ActionConfigurationChanged, "floatyManager", () =>
+            {
+                var width = Globals.Devices.Width;
+                var height = Globals.Devices.Height;
+                var layoutParams = view.LayoutParameters as WindowManagerLayoutParams;
 
-                 if (layoutParams.X < width / 2)
-                 {
-                     layoutParams.X = Core.UI.Base.Util.DpParse(-10);
-                 }
-                 else
-                 {
-                     layoutParams.X = width - view.Width + Core.UI.Base.Util.DpParse(10);
-                 }
-                 FloatyService.Instance.UpdateViewLayout(view, layoutParams);
-             });
+                if (layoutParams.X < width / 2)
+                {
+                    layoutParams.X = Util.Dp2Px(-6);
+                }
+                else
+                {
+                    layoutParams.X = width - view.Width + Util.Dp2Px(6);
+                }
 
-            var window = new FloatyWindow(view, Core.UI.Base.Util.DpParse(-10), Core.UI.Base.Util.DpParse(100));
+                if (layoutParams.Y > height * 0.8)
+                {
+                    layoutParams.Y = (int)(height * 0.5);
+                }
+
+                FloatyService.Instance.UpdateViewLayout(view, layoutParams);
+            });
+
+            var window = new FloatyWindow(view, -6, 100);
             this.floatys.Add("iconFloaty", window);
         }
 
@@ -121,27 +128,18 @@ namespace astator.Controllers
 
                     if (layoutParams.X < width / 2)
                     {
-                        layoutParams.X = Core.UI.Base.Util.DpParse(-10);
+                        layoutParams.X = Util.Dp2Px(-6);
                     }
                     else
                     {
-                        layoutParams.X = width - v.Width + Core.UI.Base.Util.DpParse(10);
+                        layoutParams.X = width - v.Width + Util.Dp2Px(6);
                     }
                     FloatyService.Instance.UpdateViewLayout(v, layoutParams);
                     this.isMoving = false;
                 }
                 else
                 {
-                    var exist = this.floatys.TryGetValue("fastRunner", out var fastRunner);
-                    if (exist)
-                    {
-                        fastRunner.Remove();
-                        this.floatys.Remove("fastRunner");
-                    }
-                    else
-                    {
-                        ShowFastRunner();
-                    }
+                    ShowFastRunner();
                 }
             }
             return true;
@@ -152,6 +150,25 @@ namespace astator.Controllers
             var width = Globals.Devices.Width / Globals.Devices.Dp;
             var height = Globals.Devices.Height / Globals.Devices.Dp;
             var fastRunner = new FloatyFastRunner();
+            if (Globals.Devices.Width > Globals.Devices.Height)
+            {
+                fastRunner.HeightRequest = 350;
+                fastRunner.RowDefinitions = new RowDefinitionCollection()
+                {
+                    new RowDefinition
+                    {
+                        Height = 55
+                    },
+                    new RowDefinition
+                    {
+                        Height = 45
+                    },
+                    new RowDefinition
+                    {
+                        Height = 250
+                    }
+                };
+            }
             var view = fastRunner.ToNative(Application.Current.MainPage.Handler.MauiContext);
 
             var window = new FloatyWindow(view, gravity: GravityFlags.Center, flags: WindowManagerFlags.NotFocusable | WindowManagerFlags.LayoutNoLimits | WindowManagerFlags.WatchOutsideTouch);
@@ -177,6 +194,7 @@ namespace astator.Controllers
             {
                 floaty.Remove();
             }
+            ScriptBroadcastReceiver.RemoveListener(Intent.ActionConfigurationChanged, "floatyManager");
             this.floatys.Clear();
         }
 

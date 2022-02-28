@@ -1,4 +1,4 @@
-﻿using astator.Core;
+﻿using astator.Core.Script;
 
 namespace astator
 {
@@ -11,7 +11,7 @@ namespace astator
 
             Console.SetOut(new ScriptConsole());
 
-            var mainPage = new CarouselPage();
+            var mainPage = new TabbedPage();
             var navPage = new NavigationPage(mainPage);
             NavigationPage.SetHasNavigationBar(mainPage, false);
             this.MainPage = navPage;

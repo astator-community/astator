@@ -7,17 +7,14 @@ public class ScriptFrameLayout : ContentFrameLayout, ILayout
 {
     public string CustomId { get; set; }
 
-    public OnAttachedListener OnAttachedListener { get; set; }
-    protected override void OnAttachedToWindow()
-    {
-        base.OnAttachedToWindow();
-        this.OnAttachedListener?.OnAttached(this);
-    }
-    ILayout ILayout.AddView(View view)
+    public OnCreatedListener OnCreatedListener { get; set; }
+
+    public new ILayout AddView(View view)
     {
         base.AddView(view);
         return this;
     }
+
     public ScriptFrameLayout(Android.Content.Context context, ViewArgs args) : base(context)
     {
         this.SetDefaultValue(ref args);

@@ -1,4 +1,4 @@
-using astator.Core;
+using astator.Core.Script;
 using astator.NugetManager;
 using astator.Views;
 using NuGet.Protocol.Core.Types;
@@ -88,7 +88,7 @@ namespace astator
                     Text = "≤ªºÊ»›"
                 };
                 this.DependencyList.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
-                dPkgLabel.SetValue(GridLayout.RowProperty, this.DependencyList.Children.Count);
+                dPkgLabel.SetValue(Grid.RowProperty, this.DependencyList.Children.Count);
                 this.DependencyList.Children.Add(dPkgLabel);
                 return;
             }
@@ -99,7 +99,7 @@ namespace astator
             };
 
             this.DependencyList.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
-            targetLabel.SetValue(GridLayout.RowProperty, this.DependencyList.Children.Count);
+            targetLabel.SetValue(Grid.RowProperty, this.DependencyList.Children.Count);
             this.DependencyList.Children.Add(targetLabel);
 
             if (group.Packages.Any())
@@ -113,7 +113,7 @@ namespace astator
                         Text = $"{dPkg.Id}>={dPkg.VersionRange.MinVersion}"
                     };
                     this.DependencyList.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
-                    dPkgLabel.SetValue(GridLayout.RowProperty, this.DependencyList.Children.Count);
+                    dPkgLabel.SetValue(Grid.RowProperty, this.DependencyList.Children.Count);
                     this.DependencyList.Children.Add(dPkgLabel);
                 }
             }
@@ -125,7 +125,7 @@ namespace astator
                     Text = "Œﬁ“¿¿µœÓ"
                 };
                 this.DependencyList.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
-                dPkgLabel.SetValue(GridLayout.RowProperty, this.DependencyList.Children.Count);
+                dPkgLabel.SetValue(Grid.RowProperty, this.DependencyList.Children.Count);
                 this.DependencyList.Children.Add(dPkgLabel);
             }
         }
@@ -188,7 +188,7 @@ namespace astator
         {
             if (e.PropertyName == "Width")
             {
-                this.Underline.X2 = (this.Underline.Parent as GridLayout).Width - 10;
+                this.Underline.X2 = (this.Underline.Parent as Grid).Width - 10;
             }
         }
     }

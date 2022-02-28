@@ -5,8 +5,8 @@ using Android.Content.PM;
 using Android.OS;
 using Android.Runtime;
 using Android.Views;
-using astator.Core;
 using astator.Core.Broadcast;
+using astator.Core.Script;
 using astator.Core.UI;
 using astator.Pages;
 using Microsoft.Maui.Platform;
@@ -17,8 +17,6 @@ namespace astator
     public class MainActivity : MauiAppCompatActivity
     {
         public static MainActivity Instance { get; private set; }
-
-        public Func<Keycode, KeyEvent, bool> OnKeyDownCallback { get; set; }
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -80,6 +78,12 @@ namespace astator
                     }
                 });
             });
+
+            var filter = new IntentFilter();
+            filter.AddAction(Intent.ActionConfigurationChanged);
+            filter.AddAction(Intent.CategoryHome);
+
+            RegisterReceiver(ScriptBroadcastReceiver.Instance, filter);
         }
 
         private static void NotPermissionExit()
@@ -99,17 +103,17 @@ namespace astator
         private void InitializePage()
         {
             var mainPage = Microsoft.Maui.Controls.Application.Current.MainPage as NavigationPage;
-            var carouselPage = mainPage.RootPage as CarouselPage;
+            var tabbedPage = mainPage.RootPage as TabbedPage;
             if (this.PackageName == "com.astator.astator")
             {
-                carouselPage.Children.Add(new HomePage());
-                carouselPage.Children.Add(new LogPage());
-                carouselPage.Children.Add(new DocPage());
-                carouselPage.Children.Add(new SettingsPage());
+                tabbedPage.Children.Add(new HomePage());
+                tabbedPage.Children.Add(new LogPage());
+                tabbedPage.Children.Add(new DocPage());
+                tabbedPage.Children.Add(new SettingsPage());
             }
             else
             {
-                carouselPage.Children.Add(new LogPage());
+                tabbedPage.Children.Add(new LogPage());
             }
         }
 
@@ -127,12 +131,29 @@ namespace astator
 
         }
 
+        protected override void OnResume()
+        {
+            base.OnResume();
+            var mainPage = Microsoft.Maui.Controls.Application.Current.MainPage as NavigationPage;
+            var tabbedPage = mainPage.RootPage as TabbedPage;
+            if (mainPage.Navigation.NavigationStack.Count == 1 && tabbedPage.CurrentPage is SettingsPage settingsPage)
+            {
+                settingsPage.OnResume();
+            }
+        }
 
         private DateTime latestTime;
 
         public override bool OnKeyDown([GeneratedEnum] Keycode keyCode, KeyEvent e)
         {
-            var result = this.OnKeyDownCallback?.Invoke(keyCode, e) ?? false;
+            var result = false;
+
+            var mainPage = Microsoft.Maui.Controls.Application.Current.MainPage as NavigationPage;
+            var tabbedPage = mainPage.RootPage as TabbedPage;
+            if (mainPage.Navigation.NavigationStack.Count == 1 && tabbedPage.CurrentPage is HomePage homePage)
+            {
+                result = homePage.OnKeyDown(keyCode, e);
+            }
 
             if (!result && keyCode == Keycode.Back)
             {
@@ -146,7 +167,7 @@ namespace astator
                     var time = DateTime.Now;
                     if (time.Subtract(this.latestTime).TotalMilliseconds < 1000)
                     {
-                        Process.KillProcess(Process.MyPid());
+                        Java.Lang.JavaSystem.Exit(0);
                     }
                     else
                     {

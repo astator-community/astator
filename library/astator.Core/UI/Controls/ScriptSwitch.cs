@@ -2,7 +2,9 @@
 using Android.Graphics;
 using Android.Widget;
 using astator.Core.UI.Base;
+using System;
 using static Android.Views.ViewGroup;
+using Attribute = Android.Resource.Attribute;
 
 namespace astator.Core.UI.Controls;
 
@@ -10,15 +12,9 @@ public class ScriptSwitch : Switch, IControl
 {
     public string CustomId { get; set; }
 
-    private Color color = Color.ParseColor("#2B0B98");
+    private Color color = DefaultTheme.ColorAccent;
 
-    public OnAttachedListener OnAttachedListener { get; set; }
-
-    protected override void OnAttachedToWindow()
-    {
-        base.OnAttachedToWindow();
-        this.OnAttachedListener?.OnAttached(this);
-    }
+    public OnCreatedListener OnCreatedListener { get; set; }
 
     public ScriptSwitch(Android.Content.Context context, ViewArgs args) : base(context)
     {
@@ -29,20 +25,21 @@ public class ScriptSwitch : Switch, IControl
         {
             this.color = Color.ParseColor(args["color"].ToString());
         }
-        this.ThumbDrawable?.SetColorFilter(new PorterDuffColorFilter(this.color, PorterDuff.Mode.Multiply));
-        this.TrackTintList = ColorStateList.ValueOf(Color.ParseColor("#bdbdbd"));
 
-        CheckedChange += (s, e) =>
-        {
-            if (e.IsChecked)
+        this.ThumbDrawable?.SetColorFilter(new PorterDuffColorFilter(this.color, PorterDuff.Mode.Multiply));
+        this.TrackTintList = new ColorStateList(
+            new int[][]
             {
-                this.TrackTintList = ColorStateList.ValueOf(this.color);
-            }
-            else
+                new int[] {-Attribute.StateChecked},
+                new int[] { Attribute.StateChecked }
+            },
+            new int[]
             {
-                this.TrackTintList = ColorStateList.ValueOf(Color.ParseColor("#bdbdbd"));
+                Color.ParseColor("#bdbdbd"),
+                this.color
             }
-        };
+        );
+
 
         foreach (var item in args)
         {
@@ -56,11 +53,7 @@ public class ScriptSwitch : Switch, IControl
         {
             case "checked":
             {
-                if (value is string temp)
-                {
-                    this.Checked = temp == bool.TrueString.ToLower();
-                }
-
+                this.Checked = Convert.ToBoolean(value);
                 break;
             }
             case "color":
@@ -68,8 +61,12 @@ public class ScriptSwitch : Switch, IControl
                 if (value is string temp)
                 {
                     this.color = Color.ParseColor(temp);
-                    this.ThumbDrawable?.SetColorFilter(new PorterDuffColorFilter(this.color, PorterDuff.Mode.Multiply));
                 }
+                else if (value is Color color)
+                {
+                    this.color = color;
+                }
+                this.ThumbDrawable?.SetColorFilter(new PorterDuffColorFilter(this.color, PorterDuff.Mode.Multiply));
                 break;
             }
             default:

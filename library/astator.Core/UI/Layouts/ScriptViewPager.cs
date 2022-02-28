@@ -1,6 +1,7 @@
 ﻿using Android.Views;
 using AndroidX.ViewPager.Widget;
 using astator.Core.UI.Base;
+using System;
 using System.Collections.Generic;
 
 namespace astator.Core.UI.Layouts;
@@ -32,21 +33,21 @@ public class ScriptViewPager : ViewPager, ILayout
     }
 
     public string CustomId { get; set; }
-    public OnAttachedListener OnAttachedListener { get; set; }
+    public OnCreatedListener OnCreatedListener { get; set; }
 
     private readonly List<View> pages = new();
 
     protected override void OnAttachedToWindow()
     {
         base.OnAttachedToWindow();
-        this.Adapter = new ViewPagerAdapter(this.pages);
         SetCurrentItem(0, true);
-        this.OnAttachedListener?.OnAttached(this);
     }
 
     public new ILayout AddView(View view)
     {
         this.pages.Add(view);
+        this.Adapter = new ViewPagerAdapter(this.pages);
+        this.Adapter.NotifyDataSetChanged();
         return this;
     }
 
@@ -65,7 +66,7 @@ public class ScriptViewPager : ViewPager, ILayout
         {
             case "currentItem":
             {
-                this.CurrentItem = Util.DpParse(value); break;
+                this.CurrentItem = Convert.ToInt32(value); break;
             }
             default:
             {

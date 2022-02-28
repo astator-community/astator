@@ -11,24 +11,26 @@ namespace astator.Core.UI.Layouts;
 public class ScriptTabbedPage : FrameLayout, ILayout
 {
     public string CustomId { get; set; }
-    public OnAttachedListener OnAttachedListener { get; set; }
+    public OnCreatedListener OnCreatedListener { get; set; }
 
     private readonly ScriptViewPager viewPager;
-    private readonly ScriptLinearLayout NavLayout;
+    private readonly ScriptLinearLayout tabLayout;
 
     private readonly bool isBottom = true;
     private readonly bool iconShow = true;
     private readonly bool titleShow = true;
     private readonly bool accentShow = true;
-    private readonly Color navBackgroundColor = DefaultValue.BackgroundColor;
-    private readonly Color titleColor = DefaultValue.TitleColor;
-    private readonly Color accentColor = DefaultValue.AccentColor;
+    private readonly Color tabBackgroundColor = DefaultTheme.LayoutBackground;
+    private readonly Color titleColor = Color.ParseColor("#2a2a2d");
+    private readonly Color selectedTitleColor = Color.ParseColor("#2a2a2d");
+    private readonly Color accentColor = DefaultTheme.ColorAccent;
     private readonly int accentWidth = 14;
     private readonly string workDir;
 
     private readonly int height = 60;
 
-    private readonly List<(ScriptImageView view, string icon, string enableIcon)> icons = new();
+    private readonly List<(ScriptImageView view, string icon, string selectedIcon)> icons = new();
+    private readonly List<ScriptTextView> titles = new();
     private readonly List<ScriptCardView> accents = new();
 
     public ScriptTabbedPage(Context context, string workDir, ViewArgs args) : base(context)
@@ -39,37 +41,59 @@ public class ScriptTabbedPage : FrameLayout, ILayout
         if (args["iconShow"] is not null) this.iconShow = Convert.ToBoolean(args["iconShow"]);
         if (args["titleShow"] is not null) this.titleShow = Convert.ToBoolean(args["titleShow"]);
         if (args["accentShow"] is not null) this.accentShow = Convert.ToBoolean(args["accentShow"]);
-        if (args["navBg"] is not null) this.navBackgroundColor = Color.ParseColor(args["navBg"].ToString());
-        if (args["titleColor"] is not null) this.titleColor = Color.ParseColor(args["titleColor"].ToString());
-        if (args["accentColor"] is not null) this.accentColor = Color.ParseColor(args["accentColor"].ToString());
         if (args["accentWidth"] is not null) this.accentWidth = Convert.ToInt32(args["accentWidth"]);
 
-        if (!this.iconShow) this.height -= 28;
+        if (args["tabBg"] is not null)
+        {
+            if (args["tabBg"] is string str) this.tabBackgroundColor = Color.ParseColor(str);
+            else if (args["tabBg"] is Color color) this.tabBackgroundColor = color;
+        }
+        if (args["titleColor"] is not null)
+        {
+            if (args["titleColor"] is string str) this.titleColor = Color.ParseColor(str);
+            else if (args["titleColor"] is Color color) this.titleColor = color;
+        }
+        if (args["selectedTitleColor"] is not null)
+        {
+            if (args["selectedTitleColor"] is string str) this.selectedTitleColor = Color.ParseColor(str);
+            else if (args["selectedTitleColor"] is Color color) this.selectedTitleColor = color;
+        }
+        else this.selectedTitleColor = this.titleColor;
+
+        if (args["accentColor"] is not null)
+        {
+            if (args["accentColor"] is string str) this.accentColor = Color.ParseColor(str);
+            else if (args["accentColor"] is Color color) this.accentColor = color;
+        }
+
+        if (!this.iconShow) this.height -= 22;
         if (!this.titleShow) this.height -= 10;
 
         this.viewPager = new ScriptViewPager(context, null);
 
         this.viewPager.On("pageChange", new OnPageChangeListener((position) =>
         {
-            for (var i = 0; i < this.NavLayout.ChildCount; i++)
+            for (var i = 0; i < this.tabLayout.ChildCount; i++)
             {
                 if (i == position)
                 {
-                    if (this.iconShow) this.icons[i].view.SetAttr("src", this.icons[i].enableIcon);
+                    if (this.iconShow) this.icons[i].view.SetAttr("src", this.icons[i].selectedIcon);
+                    if (this.titleShow) this.titles[i].SetTextColor(this.selectedTitleColor);
                     if (this.accentShow) this.accents[i].Visibility = ViewStates.Visible;
                 }
                 else
                 {
                     if (this.iconShow) this.icons[i].view.SetAttr("src", this.icons[i].icon);
+                    if (this.titleShow) this.titles[i].SetTextColor(this.titleColor);
                     if (this.accentShow) this.accents[i].Visibility = ViewStates.Invisible;
                 }
             }
         }));
 
-        this.NavLayout = new ScriptLinearLayout(context, new ViewArgs
+        this.tabLayout = new ScriptLinearLayout(context, new ViewArgs
         {
             ["h"] = height,
-            ["bg"] = this.navBackgroundColor,
+            ["bg"] = this.tabBackgroundColor,
             ["layoutGravity"] = this.isBottom ? "bottom" : "top",
         });
 
@@ -77,18 +101,18 @@ public class ScriptTabbedPage : FrameLayout, ILayout
         {
             this.viewPager.SetAttr("margin", new int[] { 0, 0, 0, this.height });
             base.AddView(this.viewPager);
-            base.AddView(this.NavLayout);
+            base.AddView(this.tabLayout);
         }
         else
         {
             this.viewPager.SetAttr("margin", new int[] { 0, this.height, 0, 0 });
-            base.AddView(this.NavLayout);
+            base.AddView(this.tabLayout);
             base.AddView(this.viewPager);
         }
 
         this.workDir = workDir;
 
-        args.Remove("isBottom", "iconShow", "titleShow", "accentShow", "navBg", "titleColor", "accentColor", "accentWidth");
+        args.Remove("isBottom", "iconShow", "titleShow", "accentShow", "tabBg", "titleColor", "selectedTitleColor", "accentColor", "accentWidth");
         foreach (var item in args)
         {
             SetAttr(item.Key.ToString(), item.Value);
@@ -101,9 +125,9 @@ public class ScriptTabbedPage : FrameLayout, ILayout
         {
             var context = tabView.Context;
 
-            var navView = new ScriptFrameLayout(context, new ViewArgs
+            var tab = new ScriptFrameLayout(context, new ViewArgs
             {
-                ["tag"] = this.NavLayout.ChildCount,
+                ["tag"] = this.tabLayout.ChildCount,
                 ["h"] = height,
                 ["weight"] = 1,
                 ["radius"] = 2,
@@ -117,60 +141,62 @@ public class ScriptTabbedPage : FrameLayout, ILayout
                     ["h"] = this.titleShow ? 28 : 32,
                     ["margin"] = new int[] { 0, this.titleShow ? 6 : 0, 0, 0 },
                     ["scaleType"] = "fitCenter",
-                    ["src"] = this.NavLayout.ChildCount == 0 ? tabView.EnableIcon : tabView.Icon,
+                    ["src"] = this.tabLayout.ChildCount == 0 ? tabView.SelectedIcon : tabView.Icon,
                     ["layoutGravity"] = this.titleShow ? "top|center" : "center",
                 });
-                navView.AddView(icon);
-                this.icons.Add((icon, tabView.Icon, tabView.EnableIcon));
+                tab.AddView(icon);
+                this.icons.Add((icon, tabView.Icon, tabView.SelectedIcon));
             }
 
             if (this.titleShow)
             {
-                navView.AddView(new ScriptTextView(context, new ViewArgs
+                var title = new ScriptTextView(context, new ViewArgs
                 {
-                    ["margin"] = "0,0,0,6",
+                    ["margin"] = new int[] { 0, 0, 0, this.iconShow ? 6 : 0 },
                     ["text"] = tabView.Title,
                     ["textSize"] = 14,
-                    ["textColor"] = this.titleColor,
+                    ["textColor"] = this.tabLayout.ChildCount == 0 ? this.selectedTitleColor : this.titleColor,
                     ["textStyle"] = "bold",
                     ["gravity"] = "center",
-                    ["layoutGravity"] = "center|bottom",
-                }));
+                    ["layoutGravity"] = this.iconShow ? "center|bottom" : "center",
+                });
+                tab.AddView(title);
+                this.titles.Add(title);
             }
 
             if (this.accentShow)
             {
                 var accent = new ScriptCardView(context, new ViewArgs
                 {
-                    ["margin"] = "0,0,0,1",
+                    ["margin"] = new int[] { 0, 0, 0, this.isBottom ? 2 : 0 },
                     ["w"] = this.accentWidth,
                     ["h"] = 3,
                     ["radius"] = 1.5,
                     ["bg"] = this.accentColor,
-                    ["visibility"] = this.NavLayout.ChildCount == 0 ? "visible" : "invisible",
+                    ["visibility"] = this.tabLayout.ChildCount == 0 ? "visible" : "invisible",
                     ["layoutGravity"] = "center|bottom",
                 });
-                navView.AddView(accent);
+                tab.AddView(accent);
                 this.accents.Add(accent);
             }
 
 
-            navView.On("touch", new OnTouchListener((v, e) =>
-            {
-                if (e.Action == MotionEventActions.Down)
-                {
-                    navView.SetBackgroundColor(DefaultValue.HintColor);
-                }
-                else
-                {
-                    navView.SetBackgroundColor(Color.Transparent);
-                    this.viewPager.SetCurrentItem(Convert.ToInt32(v.Tag), true);
-                }
-                return true;
-            }));
+            tab.On("touch", new OnTouchListener((v, e) =>
+                    {
+                        if (e.Action == MotionEventActions.Down)
+                        {
+                            v.SetBackgroundColor(DefaultTheme.ColorHint);
+                        }
+                        else
+                        {
+                            v.SetBackgroundColor(Color.Transparent);
+                            this.viewPager.SetCurrentItem(Convert.ToInt32(v.Tag), true);
+                        }
+                        return true;
+                    }));
 
             this.viewPager.AddView(tabView);
-            this.NavLayout.AddView(navView);
+            this.tabLayout.AddView(tab);
         }
         return this;
     }

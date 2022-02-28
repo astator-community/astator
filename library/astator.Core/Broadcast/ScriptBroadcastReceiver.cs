@@ -1,7 +1,7 @@
 ﻿using Android.Content;
+using astator.Core.Script;
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 
 namespace astator.Core.Broadcast;
 
@@ -20,9 +20,9 @@ public class ScriptBroadcastReceiver : BroadcastReceiver
         }
     }
 
-    private readonly ConcurrentDictionary<string, List<Action>> listener = new();
+    private readonly ConcurrentDictionary<string, ConcurrentDictionary<string, Action>> listener = new();
 
-    public static void AddListener(string action, Action callback)
+    public static void AddListener(string action, string key, Action callback)
     {
         var listener = Instance.listener;
 
@@ -30,15 +30,19 @@ public class ScriptBroadcastReceiver : BroadcastReceiver
         {
             listener.TryAdd(action, new());
         }
+
         listener.TryGetValue(action, out var callbacks);
-        callbacks?.Add(callback);
+        if (!callbacks.ContainsKey(key))
+        {
+            callbacks?.TryAdd(key, callback);
+        }
     }
 
-    public static void RemoveListener(string action, Action callback)
+    public static void RemoveListener(string action, string key)
     {
         var listener = Instance.listener;
         listener.TryGetValue(action, out var callbacks);
-        callbacks?.Add(callback);
+        callbacks?.TryRemove(key, out _);
     }
 
 
@@ -56,7 +60,7 @@ public class ScriptBroadcastReceiver : BroadcastReceiver
                 {
                     try
                     {
-                        callback.Invoke();
+                        callback.Value.Invoke();
                     }
                     catch (Exception ex)
                     {

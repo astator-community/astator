@@ -4,7 +4,7 @@ using Microsoft.Maui.Platform;
 
 namespace astator.Views;
 
-public class CustomCard : GridLayout
+public class CustomCard : Grid
 {
     public static readonly BindableProperty TagBindableProperty = BindableProperty.Create(nameof(Tag), typeof(object), typeof(CustomLabelButton));
     public object Tag

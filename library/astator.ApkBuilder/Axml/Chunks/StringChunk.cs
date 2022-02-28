@@ -37,8 +37,6 @@ internal class StringChunk : BaseChunk
             this.StyleOffsets[i] = stream.ReadInt32();
         }
 
-        //var packageName = Android.App.Application.Context.ApplicationContext.PackageName;
-
         var packageName = "com.astator.astator";
 
         for (var i = 0; i < this.StringCount; i++)

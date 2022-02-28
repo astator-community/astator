@@ -1,4 +1,5 @@
-﻿using astator.NugetManager;
+﻿using astator.Core.Script;
+using astator.NugetManager;
 using astator.TipsView;
 using Microsoft.CodeAnalysis;
 using System.Collections.Generic;
@@ -49,6 +50,8 @@ public static class SdkReferences
         var assemblyNames = new List<string>();
         await CheckSdk();
 
+        var ReferencesIsAdd = Android.App.Application.Context.ApplicationContext.PackageName.Equals("com.astator.astator");
+
         if (!string.IsNullOrEmpty(SdkDir))
         {
             foreach (var assembly in AssemblyLoadContext.Default.Assemblies)
@@ -61,7 +64,7 @@ public static class SdkReferences
 
             foreach (var path in Directory.GetFiles(net6Dir, "*.dll", SearchOption.AllDirectories))
             {
-                References.Add(MetadataReference.CreateFromFile(path));
+                if (ReferencesIsAdd) References.Add(MetadataReference.CreateFromFile(path));
                 try
                 {
                     var name = AssemblyName.GetAssemblyName(path).Name;
@@ -71,12 +74,11 @@ public static class SdkReferences
                     }
                 }
                 catch { }
-
             }
 
             foreach (var path in Directory.GetFiles(mauiDir, "*.dll", SearchOption.AllDirectories))
             {
-                References.Add(MetadataReference.CreateFromFile(path));
+                if (ReferencesIsAdd) References.Add(MetadataReference.CreateFromFile(path));
                 try
                 {
                     var name = AssemblyName.GetAssemblyName(path).Name;
@@ -88,6 +90,5 @@ public static class SdkReferences
                 catch { }
             }
         }
-
     }
 }

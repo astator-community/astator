@@ -9,29 +9,29 @@
     HeightRequest="60">
 
     <Image
-        GridLayout.Column="0"
+        Grid.Column="0"
+        HeightRequest="40"
         Source="{Binding Source={RelativeSource FindAncestor, AncestorType={x:Type v:CustomCard}}, Path=TypeImageSource}"
         VerticalOptions="Center"
-        WidthRequest="50" />
+        WidthRequest="40" />
 
-    <GridLayout
+    <Grid
+        Grid.Column="1"
         Padding="10,5,0,5"
         BackgroundColor="Transparent"
-        GridLayout.Column="1"
         RowDefinitions="auto,auto">
-
         <Label
+            Grid.Row="0"
             FontAttributes="Bold"
             FontSize="14"
-            GridLayout.Row="0"
             Text="{Binding Source={RelativeSource FindAncestor, AncestorType={x:Type v:CustomCard}}, Path=PathName}" />
         <Label
+            Grid.Row="1"
             Padding="0,3,0,0"
             FontSize="8"
-            GridLayout.Row="1"
             Text="{Binding Source={RelativeSource FindAncestor, AncestorType={x:Type v:CustomCard}}, Path=PathInfo}"
             TextColor="#666666"
             VerticalOptions="End" />
-    </GridLayout>
+    </Grid>
 
 </v:CustomCard>

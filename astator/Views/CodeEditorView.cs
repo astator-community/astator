@@ -294,7 +294,7 @@ internal class CodeEditorViewHandler : ViewHandler<CodeEditorView, CodeView>
     }
     private static void MapPadding(CodeEditorViewHandler handler, CodeEditorView view)
     {
-        handler.NativeView.SetPadding(Util.DpParse(view.Padding.Left), Util.DpParse(view.Padding.Top), Util.DpParse(view.Padding.Right), Util.DpParse(view.Padding.Bottom));
+        handler.NativeView.SetPadding(Util.Dp2Px(view.Padding.Left), Util.Dp2Px(view.Padding.Top), Util.Dp2Px(view.Padding.Right), Util.Dp2Px(view.Padding.Bottom));
     }
 
 

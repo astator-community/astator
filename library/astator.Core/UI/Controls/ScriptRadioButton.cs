@@ -2,22 +2,18 @@
 using Android.Graphics;
 using Android.Widget;
 using astator.Core.UI.Base;
+using System;
 
 namespace astator.Core.UI.Controls;
 
 public class ScriptRadioButton : RadioButton, IControl
 {
     public string CustomId { get; set; }
-    public OnAttachedListener OnAttachedListener { get; set; }
-
-    protected override void OnAttachedToWindow()
-    {
-        base.OnAttachedToWindow();
-        this.OnAttachedListener?.OnAttached(this);
-    }
+    public OnCreatedListener OnCreatedListener { get; set; }
 
     public ScriptRadioButton(Android.Content.Context context, ViewArgs args) : base(context)
     {
+        this.ButtonTintList = ColorStateList.ValueOf(DefaultTheme.ColorAccent);
         this.SetDefaultValue(ref args);
         foreach (var item in args)
         {
@@ -31,19 +27,13 @@ public class ScriptRadioButton : RadioButton, IControl
         {
             case "checked":
             {
-                if (value is string temp)
-                {
-                    this.Checked = temp.ToLower() == bool.TrueString.ToLower();
-                }
-
+                this.Checked = Convert.ToBoolean(value);
                 break;
             }
             case "color":
             {
-                if (value is string temp)
-                {
-                    this.ButtonTintList = ColorStateList.ValueOf(Color.ParseColor(temp.Trim()));
-                }
+                if (value is string temp) this.ButtonTintList = ColorStateList.ValueOf(Color.ParseColor(temp));
+                else if (value is Color color) this.ButtonTintList = ColorStateList.ValueOf(color);
 
                 break;
             }

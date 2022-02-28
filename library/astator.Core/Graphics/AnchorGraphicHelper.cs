@@ -8,10 +8,6 @@ namespace astator.Core.Graphics
     /// </summary>
     public class AnchorGraphicHelper
     {
-        private static readonly int NONE = -1;
-        private static readonly int LEFT = 0;
-        private static readonly int CENTER = 1;
-        private static readonly int RIGHT = 2;
         private readonly GraphicHelper baseGraphicHelper;
         private readonly double multiple;
         private readonly int left, top, right, bottom, center, devWidth, devHeight;
@@ -96,36 +92,14 @@ namespace astator.Core.Graphics
         /// <summary>
         /// 获取与运行分辨率相关的范围
         /// </summary>
-        /// <param name="sx">开发分辨率的startX</param>
-        /// <param name="sy">开发分辨率的startY</param>
-        /// <param name="smode">sx和sy的坐标对齐方式</param>
-        /// <param name="ex">开发分辨率的endX</param>
-        /// <param name="ey">开发分辨率的endY</param>
-        /// <param name="emode">ex和ey的坐标对齐方式</param>
-        public int[] GetRange(int sx, int sy, int smode, int ex, int ey, int emode)
-        {
-            var result = new int[4];
-            var startPoint = GetPoint(sx, sy, smode);
-            var endPoint = GetPoint(ex, ey, emode);
-            result[0] = startPoint.X;
-            result[1] = startPoint.Y;
-            result[2] = endPoint.X;
-            result[3] = endPoint.Y;
-            return result;
-        }
-
-        /// <summary>
-        /// 获取与运行分辨率相关的范围
-        /// </summary>
-        /// <param name="sx">开发分辨率的startX</param>
-        /// <param name="sy">开发分辨率的startY</param>
-        /// <param name="ex">开发分辨率的endX</param>
-        /// <param name="ey">开发分辨率的endY</param>
-        /// <param name="mode">坐标对齐方式</param>
         /// <returns></returns>
-        public int[] GetRange(int sx, int sy, int ex, int ey, int mode)
+        public Rect GetBounds(int left, int top, int right, int bottom, params AnchorMode[] mode)
         {
-            return GetRange(sx, sy, mode, ex, ey, mode);
+            var smode = mode[0];
+            var emode = mode.Length > 1 ? mode[1] : smode;
+            var sPoint = GetPoint(left, top, smode);
+            var ePoint = GetPoint(right, bottom, emode);
+            return new Rect(sPoint.X, sPoint.Y, ePoint.X, ePoint.Y);
         }
 
         /// <summary>
@@ -135,20 +109,26 @@ namespace astator.Core.Graphics
         /// <param name="y">开发分辨率的y</param>
         /// <param name="mode">坐标对齐方式</param>
         /// <returns></returns>
-        public Point GetPoint(int x, int y, int mode)
+        public Point GetPoint(int x, int y, AnchorMode mode)
         {
             var result = new Point();
-            if (mode == LEFT || mode == NONE)
+            if (mode == AnchorMode.Left || mode == AnchorMode.None)
             {
                 result.X = Round(x * this.multiple) + this.left;
             }
-            else if (mode == CENTER)
+            else if (mode == AnchorMode.Center)
             {
                 result.X = Round(this.center - (this.devWidth / 2.0 - x - 1) * this.multiple);
             }
-            else if (mode == RIGHT)
+            else if (mode == AnchorMode.Right)
             {
                 result.X = Round(this.right - (this.devWidth - x - 1) * this.multiple);
+            }
+            else if (mode == AnchorMode.RealPoint)
+            {
+                result.X = x;
+                result.Y = y;
+                return result;
             }
             result.Y = Round(y * this.multiple) + this.top;
             return result;
@@ -161,7 +141,7 @@ namespace astator.Core.Graphics
         /// <param name="y">开发分辨率的y</param>
         /// <param name="mode">坐标对齐方式</param>
         /// <returns>rgb数组, 例如:"int[]{255,255,255}"</returns>
-        public int[] GetPixel(int x, int y, int mode)
+        public int[] GetPixel(int x, int y, AnchorMode mode)
         {
             var point = GetPoint(x, y, mode);
             return this.baseGraphicHelper.GetPixel(point.X, point.Y);
@@ -174,7 +154,7 @@ namespace astator.Core.Graphics
         /// <param name="y">开发分辨率的y</param>
         /// <param name="mode">坐标对齐方式</param>
         /// <returns>颜色字符串, 例如:"0xffffff"</returns>
-        public string GetPixelStr(int x, int y, int mode)
+        public string GetPixelString(int x, int y, AnchorMode mode)
         {
             var point = GetPoint(x, y, mode);
             return this.baseGraphicHelper.GetPixelStr(point.X, point.Y);
@@ -187,20 +167,19 @@ namespace astator.Core.Graphics
         /// <param name="y">开发分辨率的y</param>
         /// <param name="mode">坐标对齐方式</param>
         /// <returns>颜色字符串, 例如:0xffffff</returns>
-        public int GetPixelHex(int x, int y, int mode)
+        public int GetPixelHex(int x, int y, AnchorMode mode)
         {
             var point = GetPoint(x, y, mode);
             return this.baseGraphicHelper.GetPixelHex(point.X, point.Y);
         }
 
         /// <summary>
-        /// 解析与运行分辨率相关的比色色组
+        /// 解析与运行分辨率相关的比色色组描述
         /// </summary>
         /// <param name="description">锚点色组字符串</param>
         /// <returns></returns>
         public int[][] ParseCmpColorString(string description)
         {
-            // var desccc = "1280,720,left|100|500|0xffffff,left|100|500|0xffffff";
             var desc = description.Split(",");
             var devWidth = int.Parse(desc[0].Trim());
             var devHeight = int.Parse(desc[1].Trim());
@@ -212,17 +191,18 @@ namespace astator.Core.Graphics
             {
                 result[i] = new int[9];
                 var currentDesc = descSpan[i].Trim().Split("|");
-                if (currentDesc[0] == "left" || currentDesc[0] == "none")
+                switch (currentDesc[0])
                 {
-                    result[i][0] = Round(int.Parse(currentDesc[1]) * multiple) + this.left;
-                }
-                else if (currentDesc[0] == "center")
-                {
-                    result[i][0] = Round(this.center - (devWidth / 2.0 - int.Parse(currentDesc[1]) - 1) * multiple);
-                }
-                else if (currentDesc[0] == "right")
-                {
-                    result[i][0] = Round(this.right - (devWidth - int.Parse(currentDesc[1]) - 1) * multiple);
+                    case "left":
+                    case "none":
+                        result[i][0] = Round(int.Parse(currentDesc[1]) * multiple) + this.left;
+                        break;
+                    case "center":
+                        result[i][0] = Round(this.center - (devWidth / 2.0 - int.Parse(currentDesc[1]) - 1) * multiple);
+                        break;
+                    case "right":
+                        result[i][0] = Round(this.right - (devWidth - int.Parse(currentDesc[1]) - 1) * multiple);
+                        break;
                 }
                 result[i][1] = Round(int.Parse(currentDesc[2]) * multiple) + this.top;
                 var color = Convert.ToInt32(currentDesc[3], 16);
@@ -254,7 +234,7 @@ namespace astator.Core.Graphics
         }
 
         /// <summary>
-        /// 解析与运行分辨率相关的找色色组
+        /// 解析与运行分辨率相关的找色色组描述
         /// </summary>
         /// <param name="description">锚点色组字符串</param>
         /// <returns></returns>
@@ -272,17 +252,18 @@ namespace astator.Core.Graphics
             {
                 result[0] = new int[9];
                 var currentDesc = descSpan[0].Trim().Split("|");
-                if (currentDesc[0] == "left" || currentDesc[0] == "none")
+                switch (currentDesc[0])
                 {
-                    result[0][0] = Round(int.Parse(currentDesc[1]) * multiple) + this.left;
-                }
-                else if (currentDesc[0] == "center")
-                {
-                    result[0][0] = Round(this.center - (devWidth / 2.0 - int.Parse(currentDesc[1]) - 1) * multiple);
-                }
-                else if (currentDesc[0] == "right")
-                {
-                    result[0][0] = Round(this.right - (devWidth - int.Parse(currentDesc[1]) - 1) * multiple);
+                    case "left":
+                    case "none":
+                        result[0][0] = Round(int.Parse(currentDesc[1]) * multiple) + this.left;
+                        break;
+                    case "center":
+                        result[0][0] = Round(this.center - (devWidth / 2.0 - int.Parse(currentDesc[1]) - 1) * multiple);
+                        break;
+                    case "right":
+                        result[0][0] = Round(this.right - (devWidth - int.Parse(currentDesc[1]) - 1) * multiple);
+                        break;
                 }
                 result[0][1] = Round(int.Parse(currentDesc[2]) * multiple) + this.top;
                 var color = Convert.ToInt32(currentDesc[3], 16);
@@ -303,17 +284,18 @@ namespace astator.Core.Graphics
             {
                 result[i] = new int[9];
                 var currentDesc = descSpan[i].Trim().Split("|");
-                if (currentDesc[0] == "left" || currentDesc[0] == "none")
+                switch (currentDesc[0])
                 {
-                    result[i][0] = Round(int.Parse(currentDesc[1]) * multiple) + this.left - result[0][0];
-                }
-                else if (currentDesc[0] == "center")
-                {
-                    result[i][0] = Round(this.center - (devWidth / 2.0 - int.Parse(currentDesc[1]) - 1) * multiple) - result[0][0];
-                }
-                else if (currentDesc[0] == "right")
-                {
-                    result[i][0] = Round(this.right - (devWidth - int.Parse(currentDesc[1]) - 1) * multiple) - result[0][0];
+                    case "left":
+                    case "none":
+                        result[i][0] = Round(int.Parse(currentDesc[1]) * multiple) + this.left - result[0][0];
+                        break;
+                    case "center":
+                        result[i][0] = Round(this.center - (devWidth / 2.0 - int.Parse(currentDesc[1]) - 1) * multiple) - result[0][0];
+                        break;
+                    case "right":
+                        result[i][0] = Round(this.right - (devWidth - int.Parse(currentDesc[1]) - 1) * multiple) - result[0][0];
+                        break;
                 }
                 result[i][1] = Round(int.Parse(currentDesc[2]) * multiple) + this.top - result[0][1];
                 var color = Convert.ToInt32(currentDesc[3], 16);
@@ -363,9 +345,9 @@ namespace astator.Core.Graphics
         /// <param name="sim">相似度, 0~100</param>
         /// <param name="isOffset">是否偏移查找</param>
         /// <returns></returns>
-        public bool CompareColorEx(int[][] description, int sim, bool isOffset)
+        public bool CompareMultiColor(int[][] description, int sim, bool isOffset)
         {
-            return this.baseGraphicHelper.CompareColorEx(description, sim, isOffset);
+            return this.baseGraphicHelper.CompareMultiColor(description, sim, isOffset);
         }
 
         /// <summary>
@@ -378,47 +360,39 @@ namespace astator.Core.Graphics
         /// <param name="timelag">间隔时间</param>
         /// <param name="sign">跳出条件,true为找色成功时返回,false为找色失败时返回</param>
         /// <returns></returns>
-        public bool CompareColorExLoop(int[][] description, int sim, bool isOffset, int timeout, int timelag, bool sign)
+        public bool CompareMultiColorLoop(int[][] description, int sim, bool isOffset, int timeout, int timelag, bool sign)
         {
-            return this.baseGraphicHelper.CompareColorExLoop(description, sim, isOffset, timeout, timelag, sign);
+            return this.baseGraphicHelper.CompareMultiColorLoop(description, sim, isOffset, timeout, timelag, sign);
         }
 
         /// <summary>
         /// 多点找色
         /// </summary>
-        /// <param name="sx">查找范围: startX</param>
-        /// <param name="sy">查找范围: startY</param>
-        /// <param name="ex">查找范围: endX</param>
-        /// <param name="ey">查找范围: endY</param>
         /// <param name="description">色组描述</param>
         /// <param name="sim">相似度, 0~100</param>
         /// <param name="isOffset">是否偏移查找</param>
         /// <returns></returns>
-        public Point FindMultiColor(int sx, int sy, int ex, int ey, int[][] description, int sim, bool isOffset)
+        public Point FindMultiColor(int left, int top, int right, int bottom, int[][] description, int sim, bool isOffset)
         {
-            return this.baseGraphicHelper.FindMultiColor(sx, sy, ex, ey, description, sim, isOffset);
+            return this.baseGraphicHelper.FindMultiColor(left, top, right, bottom, description, sim, isOffset);
         }
 
         /// <summary>
         /// 多点找色
         /// </summary>
-        /// <param name="range">查找范围数组, new int[]{sx, sy, ex, ey}</param>
+        /// <param name="bounds">查找范围</param>
         /// <param name="description">色组描述</param>
         /// <param name="sim">相似度, 0~100</param>
         /// <param name="isOffset">是否偏移查找</param>
         /// <returns></returns>
-        public Point FindMultiColor(int[] range, int[][] description, int sim, bool isOffset)
+        public Point FindMultiColor(Rect bounds, int[][] description, int sim, bool isOffset)
         {
-            return this.baseGraphicHelper.FindMultiColor(range[0], range[1], range[2], range[3], description, sim, isOffset);
+            return this.baseGraphicHelper.FindMultiColor(bounds, description, sim, isOffset);
         }
 
         /// <summary>
         /// 条件循环多点找色
         /// </summary>
-        /// <param name="sx">查找范围: startX</param>
-        /// <param name="sy">查找范围: startY</param>
-        /// <param name="ex">查找范围: endX</param>
-        /// <param name="ey">查找范围: endY</param>
         /// <param name="description">色组描述</param>
         /// <param name="sim">相似度, 0~100</param>
         /// <param name="isOffset">是否偏移查找</param>
@@ -426,15 +400,15 @@ namespace astator.Core.Graphics
         /// <param name="timelag">间隔时间</param>
         /// <param name="sign">跳出条件,true为找色成功时返回,false为找色失败时返回</param>
         /// <returns></returns>
-        public Point FindMultiColorLoop(int sx, int sy, int ex, int ey, int[][] description, int sim, bool isOffset, int timeout, int timelag, bool sign)
+        public Point FindMultiColorLoop(int left, int top, int right, int bottom, int[][] description, int sim, bool isOffset, int timeout, int timelag, bool sign)
         {
-            return this.baseGraphicHelper.FindMultiColorLoop(sx, sy, ex, ey, description, sim, isOffset, timeout, timelag, sign);
+            return this.baseGraphicHelper.FindMultiColorLoop(left, top, right, bottom, description, sim, isOffset, timeout, timelag, sign);
         }
 
         /// <summary>
         /// 条件循环多点找色
         /// </summary>
-        /// <param name="range">查找范围数组, new int[]{sx, sy, ex, ey}</param>
+        /// <param name="bounds">查找范围</param>
         /// <param name="description">色组描述</param>
         /// <param name="sim">相似度, 0~100</param>
         /// <param name="isOffset">是否偏移查找</param>
@@ -442,38 +416,34 @@ namespace astator.Core.Graphics
         /// <param name="timelag">间隔时间</param>
         /// <param name="sign">跳出条件,true为找色成功时返回,false为找色失败时返回</param>
         /// <returns></returns>
-        public Point FindMultiColorLoop(int[] range, int[][] description, int sim, bool isOffset, int timeout, int timelag, bool sign)
+        public Point FindMultiColorLoop(Rect bounds, int[][] description, int sim, bool isOffset, int timeout, int timelag, bool sign)
         {
-            return this.baseGraphicHelper.FindMultiColorLoop(range[0], range[1], range[2], range[3], description, sim, isOffset, timeout, timelag, sign);
+            return this.baseGraphicHelper.FindMultiColorLoop(bounds, description, sim, isOffset, timeout, timelag, sign);
         }
 
         /// <summary>
-        /// 多点找色
+        /// 多点找色ex
         /// </summary>
-        /// <param name="sx">查找范围: startX</param>
-        /// <param name="sy">查找范围: startY</param>
-        /// <param name="ex">查找范围: endX</param>
-        /// <param name="ey">查找范围: endY</param>
         /// <param name="description">色组描述</param>
         /// <param name="sim">相似度, 0~100</param>
         /// <param name="filterNum">过滤半径, 默认-1, 去除重叠区域</param>
         /// <returns>返回所有坐标</returns>
-        public List<Point> FindMultiColorEx(int sx, int sy, int ex, int ey, int[][] description, int sim, int filterNum = -1)
+        public List<Point> FindMultiColorEx(int left, int top, int right, int bottom, int[][] description, int sim, int filterNum = -1)
         {
-            return this.baseGraphicHelper.FindMultiColorEx(sx, sy, ex, ey, description, sim, filterNum);
+            return this.baseGraphicHelper.FindMultiColorEx(left, top, right, bottom, description, sim, filterNum);
         }
 
         /// <summary>
-        /// 多点找色
+        /// 多点找色ex
         /// </summary>
-        /// <param name="range">查找范围数组, new int[]{sx, sy, ex, ey}</param>
+        /// <param name="bounds">查找范围</param>
         /// <param name="description">色组描述</param>
         /// <param name="sim">相似度, 0~100</param>
         /// <param name="filterNum">过滤半径, 默认-1, 去除重叠区域</param>
         /// <returns>返回所有坐标</returns>
-        public List<Point> FindMultiColorEx(int[] range, int[][] description, int sim, int filterNum = -1)
+        public List<Point> FindMultiColorEx(Rect bounds, int[][] description, int sim, int filterNum = -1)
         {
-            return this.baseGraphicHelper.FindMultiColorEx(range[0], range[1], range[2], range[3], description, sim, filterNum);
+            return this.baseGraphicHelper.FindMultiColorEx(bounds, description, sim, filterNum);
         }
 
     }

@@ -1,9 +1,18 @@
 ﻿using Android.Graphics;
 using Android.Views;
+using astator.Core.UI.Base;
 using System;
 using static Android.Views.ViewGroup;
 namespace astator.Core.UI.Floaty
 {
+    public enum FloatyState
+    {
+        Initialize,
+        Show,
+        Hide,
+        Remove
+    }
+
     /// <summary>
     /// 全局悬浮窗, 需要悬浮窗权限
     /// </summary>
@@ -11,7 +20,7 @@ namespace astator.Core.UI.Floaty
     {
 
         private readonly View view;
-        private bool showed = false;
+        private FloatyState state = FloatyState.Initialize;
 
         /// <summary>
         /// 构造函数, 创建一个悬浮窗
@@ -45,12 +54,12 @@ namespace astator.Core.UI.Floaty
 
             layoutParams.Width = LayoutParams.WrapContent;
             layoutParams.Height = LayoutParams.WrapContent;
-            layoutParams.X = x;
-            layoutParams.Y = y;
+            layoutParams.X = Util.Dp2Px(x);
+            layoutParams.Y = Util.Dp2Px(y);
 
             FloatyService.Instance?.AddView(view, layoutParams);
             this.view = view;
-            this.showed = true;
+            this.state = FloatyState.Show;
         }
 
         /// <summary>
@@ -61,8 +70,8 @@ namespace astator.Core.UI.Floaty
         public void SetPosition(int x, int y)
         {
             var layoutParams = this.view.LayoutParameters as WindowManagerLayoutParams;
-            layoutParams.X = x;
-            layoutParams.Y = y;
+            layoutParams.X = Util.Dp2Px(x);
+            layoutParams.Y = Util.Dp2Px(y);
             FloatyService.Instance?.UpdateViewLayout(this.view, layoutParams);
         }
 
@@ -77,15 +86,40 @@ namespace astator.Core.UI.Floaty
         }
 
         /// <summary>
+        /// 显示悬浮窗
+        /// </summary>
+        public void Show()
+        {
+            if (this.state == FloatyState.Initialize || this.state == FloatyState.Hide)
+            {
+                this.view.Visibility = ViewStates.Visible;
+                this.state = FloatyState.Show;
+            }
+
+        }
+
+        /// <summary>
+        /// 隐藏悬浮窗
+        /// </summary>
+        public void Hide()
+        {
+            if (this.state == FloatyState.Show)
+            {
+                this.view.Visibility = ViewStates.Invisible;
+                this.state = FloatyState.Hide;
+            }
+        }
+
+        /// <summary>
         /// 移除悬浮窗
         /// </summary>
         /// <returns></returns>
         public bool Remove()
         {
-            if (this.showed)
+            if (this.state == FloatyState.Show || this.state == FloatyState.Hide)
             {
-                this.showed = false;
                 FloatyService.Instance?.RemoveView(this.view);
+                this.state = FloatyState.Remove;
                 return true;
             }
             else

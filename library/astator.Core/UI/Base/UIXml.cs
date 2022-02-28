@@ -1,5 +1,4 @@
 ﻿using Android.Views;
-using astator.Core.Exceptions;
 using System.Collections.Generic;
 using System.Xml.Linq;
 
@@ -36,43 +35,7 @@ internal static class UiXml
         {
             args[attr.Name.ToString()] = attr.Value;
         }
-
-        var view = Create(manager, element.Name.ToString(), args);
-
-        var id = args["id"];
-        if (id is string temp)
-        {
-            manager[temp] = (IView)view;
-        }
-
-        return view;
-    }
-
-    private static View Create(IManager manager, string type, ViewArgs args)
-    {
-        View view = type switch
-        {
-            "frame" => manager.CreateFrameLayout(args),
-            "linear" => manager.CreateLinearLayout(args),
-            "scroll" => manager.CreateScrollView(args),
-            "btn" => manager.CreateButton(args),
-            "check" => manager.CreateCheckBox(args),
-            "edit" => manager.CreateEditText(args),
-            "text" => manager.CreateTextView(args),
-            "switch" => manager.CreateSwitch(args),
-            "web" => manager.CreateWebView(args),
-            "img" => manager.CreateImageView(args),
-            "imgBtn" => manager.CreateImageButton(args),
-            "pager" => manager.CreateViewPager(args),
-            "spinner" => manager.CreateSpinner(args),
-            "card" => manager.CreateCardView(args),
-            "radioGroup" => manager.CreateRadioGroup(args),
-            "radio" => manager.CreateRadioButton(args),
-            "tabPage" => manager.CreateTabbedPage(args),
-            "tabView" => manager.CreateTabbedView(args),
-            _ => throw new AttributeNotExistException(type),
-        };
-        return view;
+        return manager.Create(element.Name.ToString(), args);
     }
 }
 

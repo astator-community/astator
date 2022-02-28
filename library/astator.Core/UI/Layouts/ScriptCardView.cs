@@ -3,25 +3,21 @@ using Android.Graphics;
 using Android.Views;
 using AndroidX.CardView.Widget;
 using astator.Core.UI.Base;
+using System;
 
 namespace astator.Core.UI.Layouts;
 
 public class ScriptCardView : CardView, ILayout
 {
     public string CustomId { get; set; }
+    public OnCreatedListener OnCreatedListener { get; set; }
 
-    public OnAttachedListener OnAttachedListener { get; set; }
-    protected override void OnAttachedToWindow()
+    public new ILayout AddView(View view)
     {
-        base.OnAttachedToWindow();
-        this.OnAttachedListener?.OnAttached(this);
-    }
-
-    ILayout ILayout.AddView(View child)
-    {
-        base.AddView(child);
+        base.AddView(view);
         return this;
     }
+
     public ScriptCardView(Android.Content.Context context, ViewArgs args) : base(context)
     {
         this.LayoutParameters = new(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.WrapContent);
@@ -38,23 +34,23 @@ public class ScriptCardView : CardView, ILayout
         {
             case "radius":
             {
-                this.Radius = Util.DpParse(value);
+                this.Radius = Util.Dp2Px(value);
                 break;
             }
             case "elevation":
             {
-                if (value is string temp) this.CardElevation = float.Parse(temp);
+                this.CardElevation = Convert.ToSingle(value);
                 break;
             }
             case "maxElevation":
             {
-                if (value is string temp) this.MaxCardElevation = float.Parse(temp.Trim());
+                this.MaxCardElevation = Convert.ToSingle(value);
                 break;
             }
             case "bg":
             {
                 if (value is string temp) this.CardBackgroundColor = ColorStateList.ValueOf(Color.ParseColor(temp));
-                if (value is Color color) this.CardBackgroundColor = ColorStateList.ValueOf(color);
+                else if (value is Color color) this.CardBackgroundColor = ColorStateList.ValueOf(color);
                 break;
             }
             default:

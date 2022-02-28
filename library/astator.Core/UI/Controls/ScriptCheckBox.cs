@@ -2,23 +2,18 @@
 using Android.Graphics;
 using Android.Widget;
 using astator.Core.UI.Base;
+using System;
 
 namespace astator.Core.UI.Controls;
 
 public class ScriptCheckBox : CheckBox, IControl
 {
     public string CustomId { get; set; }
-    public OnAttachedListener OnAttachedListener { get; set; }
-
-    protected override void OnAttachedToWindow()
-    {
-        base.OnAttachedToWindow();
-        this.OnAttachedListener?.OnAttached(this);
-    }
+    public OnCreatedListener OnCreatedListener { get; set; }
 
     public ScriptCheckBox(Android.Content.Context context, ViewArgs args) : base(context)
     {
-        this.ButtonTintList = ColorStateList.ValueOf(Color.ParseColor("#808080"));
+        this.ButtonTintList = ColorStateList.ValueOf(DefaultTheme.ColorAccent);
 
         this.SetDefaultValue(ref args);
         foreach (var item in args)
@@ -33,19 +28,13 @@ public class ScriptCheckBox : CheckBox, IControl
         {
             case "checked":
             {
-                if (value is string temp)
-                {
-                    this.Checked = temp.ToLower() == bool.TrueString.ToLower();
-                }
-
+                this.Checked = Convert.ToBoolean(value);
                 break;
             }
             case "color":
             {
-                if (value is string temp)
-                {
-                    this.ButtonTintList = ColorStateList.ValueOf(Color.ParseColor(temp));
-                }
+                if (value is string temp) this.ButtonTintList = ColorStateList.ValueOf(Color.ParseColor(temp));
+                else if (value is Color color) this.ButtonTintList = ColorStateList.ValueOf(color);
 
                 break;
             }
@@ -68,6 +57,11 @@ public class ScriptCheckBox : CheckBox, IControl
 
     public void On(string key, object listener)
     {
-        this.OnListener(key, listener);
+        if (key == "changed")
+        {
+            SetOnCheckedChangeListener((OnCheckedChangeListener)listener);
+        }
+        else
+            this.OnListener(key, listener);
     }
 }

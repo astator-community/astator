@@ -1,8 +1,10 @@
-﻿using astator.ApkBuilder.Arsc;
+﻿using Android.Graphics;
+using astator.ApkBuilder.Arsc;
 using astator.ApkBuilder.Axml;
 using astator.ApkBuilder.Signer;
 using astator.TipsView;
 using System.IO.Compression;
+using Path = System.IO.Path;
 
 namespace astator.ApkBuilder;
 
@@ -11,7 +13,7 @@ public class ApkBuilder
     private static readonly string templatePath = Path.Combine(Android.App.Application.Context.GetExternalFilesDir("template").ToString(), "template.apk");
 
     //注意: 在debug模式下打包的apk是无法打开的
-    public static bool Build(string outputDir, string projectPath, string versionName, string packageName, string labelName)
+    public static bool Build(string outputDir, string projectPath, string versionName, string packageName, string labelName, string iconPath, bool useOcr)
     {
         var apkPath = Path.Combine(outputDir, $"{labelName}_{versionName}.apk");
         var alignedPath = Path.Combine(outputDir, $"{labelName}_{versionName}-aligned.apk");
@@ -41,7 +43,7 @@ public class ApkBuilder
             {
                 var entry = entries[i];
 
-                if (entry.FullName == "AndroidManifest.xml")
+                if (entry.Name == "AndroidManifest.xml")
                 {
                     using var stream = entry.Open();
                     var bytes = new byte[stream.Length];
@@ -53,7 +55,7 @@ public class ApkBuilder
                     var axmlBytes = AndroidBinaryXml.Build(bytes, versionName, packageName, labelName);
                     stream.Write(axmlBytes);
                 }
-                else if (entry.FullName == "resources.arsc")
+                else if (entry.Name == "resources.arsc")
                 {
                     using var stream = entry.Open();
                     var bytes = new byte[stream.Length];
@@ -65,9 +67,70 @@ public class ApkBuilder
                     var arscBytes = AndroidResources.Build(bytes, packageName);
                     stream.Write(arscBytes);
                 }
-                else if (entry.FullName.EndsWith(".RSA") || entry.FullName.EndsWith(".SF") || entry.FullName.EndsWith(".MF"))
+                else if (entry.Name == "appicon.png")
+                {
+                    if (File.Exists(iconPath))
+                    {
+                        var size = 72;
+                        if (entry.FullName.StartsWith("res/mipmap-hdpi-v4")) size = 72;
+                        else if (entry.FullName.StartsWith("res/mipmap-mdpi-v4")) size = 48;
+                        else if (entry.FullName.StartsWith("res/mipmap-xhdpi-v4")) size = 96;
+                        else if (entry.FullName.StartsWith("res/mipmap-xxhdpi-v4")) size = 144;
+                        else if (entry.FullName.StartsWith("res/mipmap-xxxhdpi-v4")) size = 192;
+
+                        var bitmap = BitmapFactory.DecodeFile(iconPath);
+                        Bitmap newBitmap = Bitmap.CreateScaledBitmap(bitmap, size, size, true);
+                        var bytes = newBitmap.AsImageBytes(Bitmap.CompressFormat.Png, 100);
+                        bitmap.Recycle();
+                        newBitmap.Recycle();
+
+                        using var stream = entry.Open();
+                        stream.Position = 0;
+                        stream.Write(new byte[stream.Length]);
+                        stream.Position = 0;
+                        stream.Write(bytes);
+                    }
+                }
+                else if (entry.Name == "appicon_background.png" || entry.Name == "appicon_foreground.png")
+                {
+                    if (File.Exists(iconPath))
+                    {
+                        var size = 162;
+                        if (entry.FullName.StartsWith("res/mipmap-hdpi-v4")) size = 162;
+                        else if (entry.FullName.StartsWith("res/mipmap-mdpi-v4")) size = 108;
+                        else if (entry.FullName.StartsWith("res/mipmap-xhdpi-v4")) size = 216;
+                        else if (entry.FullName.StartsWith("res/mipmap-xxhdpi-v4")) size = 324;
+                        else if (entry.FullName.StartsWith("res/mipmap-xxxhdpi-v4")) size = 432;
+
+                        var bitmap = BitmapFactory.DecodeFile(iconPath);
+                        Bitmap newBitmap = Bitmap.CreateScaledBitmap(bitmap, size, size, true);
+                        var bytes = newBitmap.AsImageBytes(Bitmap.CompressFormat.Png, 100);
+                        bitmap.Recycle();
+                        newBitmap.Recycle();
+
+                        using var stream = entry.Open();
+                        stream.Position = 0;
+                        stream.Write(new byte[stream.Length]);
+                        stream.Position = 0;
+                        stream.Write(bytes);
+                    }
+                }
+                else if (entry.Name.EndsWith(".RSA") || entry.Name.EndsWith(".SF") || entry.Name.EndsWith(".MF") ||
+                         entry.Name == "libzipalign.so")
                 {
                     entry.Delete();
+                }
+                else if (!useOcr)
+                {
+                    if (entry.Name == "libc++_shared.so"
+                        || entry.Name == "libhiai.so"
+                        || entry.Name == "libhiai_ir.so"
+                        || entry.Name == "libhiai_ir_build.so"
+                        || entry.Name == "libNative.so"
+                        || entry.Name == "libpaddle_light_api_shared.so")
+                    {
+                        entry.Delete();
+                    }
                 }
             }
 

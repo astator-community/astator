@@ -5,8 +5,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:v="clr-namespace:astator.Views">
 
-    <GridLayout RowDefinitions="55,*,55">
-        <GridLayout GridLayout.Row="0">
+    <Grid RowDefinitions="55,*,55">
+        <Grid Grid.Row="0">
             <Label
                 x:Name="Header"
                 Margin="15,5"
@@ -15,156 +15,156 @@
                 HorizontalOptions="Start"
                 Text="设置"
                 VerticalOptions="Center" />
-        </GridLayout>
-        <GridLayout
+        </Grid>
+        <Grid
+            Grid.Row="1"
             Padding="0,5"
-            GridLayout.Row="1"
             RowDefinitions="40,40,40,40,40,40"
             VerticalOptions="End">
             <v:CustomCard
+                Grid.Row="0"
                 Padding="20,0"
                 Clicked="AccessibilityService_Clicked"
-                ColumnDefinitions="auto,*,auto"
-                GridLayout.Row="0">
+                ColumnDefinitions="auto,*,auto">
                 <Image
-                    GridLayout.Column="0"
+                    Grid.Column="0"
                     HeightRequest="24"
                     Source="press.png"
                     VerticalOptions="Center" />
                 <Label
+                    Grid.Column="1"
                     Margin="5,0"
                     FontAttributes="Bold"
                     FontSize="16"
-                    GridLayout.Column="1"
                     Text="无障碍服务"
                     VerticalOptions="Center" />
-                <Switch
+                <v:CustomSwitch
                     x:Name="AccessibilityService"
-                    GridLayout.Column="2"
+                    Grid.Column="2"
                     OnColor="#2f88ff"
                     ThumbColor="#535c64"
                     Toggled="AccessibilityService_Toggled"
                     VerticalOptions="Center" />
             </v:CustomCard>
             <v:CustomCard
+                Grid.Row="1"
                 Padding="20,0"
                 Clicked="CaptureService_Clicked"
-                ColumnDefinitions="auto,*,auto"
-                GridLayout.Row="1">
+                ColumnDefinitions="auto,*,auto">
                 <Image
-                    GridLayout.Column="0"
+                    Grid.Column="0"
                     HeightRequest="24"
                     Source="capture.png"
                     VerticalOptions="Center" />
                 <Label
+                    Grid.Column="1"
                     Margin="5,0"
                     FontAttributes="Bold"
                     FontSize="16"
-                    GridLayout.Column="1"
                     Text="截屏服务"
                     VerticalOptions="Center" />
-                <Switch
+                <v:CustomSwitch
                     x:Name="CaptureService"
-                    GridLayout.Column="2"
+                    Grid.Column="2"
                     OnColor="#2f88ff"
                     ThumbColor="#535c64"
                     Toggled="CaptureService_Toggled"
                     VerticalOptions="Center" />
             </v:CustomCard>
             <v:CustomCard
+                Grid.Row="2"
                 Padding="20,0"
                 Clicked="Floaty_Clicked"
-                ColumnDefinitions="auto,*,auto"
-                GridLayout.Row="2">
+                ColumnDefinitions="auto,*,auto">
                 <Image
-                    GridLayout.Column="0"
+                    Grid.Column="0"
                     HeightRequest="24"
                     Source="floaty.png"
                     VerticalOptions="Center" />
                 <Label
+                    Grid.Column="1"
                     Margin="5,0"
                     FontAttributes="Bold"
                     FontSize="16"
-                    GridLayout.Column="1"
                     Text="悬浮窗"
                     VerticalOptions="Center" />
-                <Switch
+                <v:CustomSwitch
                     x:Name="Floaty"
-                    GridLayout.Column="2"
+                    Grid.Column="2"
                     OnColor="#2f88ff"
                     ThumbColor="#535c64"
                     Toggled="Floaty_Toggled"
                     VerticalOptions="Center" />
             </v:CustomCard>
             <v:CustomCard
+                Grid.Row="3"
                 Padding="20,0"
-                Clicked="DebugService_Clicked"
-                ColumnDefinitions="auto,auto,*,auto,auto"
-                GridLayout.Row="3">
+                Clicked="Debug_Clicked"
+                ColumnDefinitions="auto,auto,*,auto">
                 <Image
-                    GridLayout.Column="0"
+                    Grid.Column="0"
                     HeightRequest="24"
                     Source="service.png"
                     VerticalOptions="Center" />
                 <Label
+                    Grid.Column="1"
                     Margin="5,0"
                     FontAttributes="Bold"
                     FontSize="16"
-                    GridLayout.Column="1"
                     Text="调试服务"
                     VerticalOptions="Center" />
                 <Label
                     x:Name="HostAddress"
+                    Grid.Column="2"
                     Margin="10,0"
                     FontSize="12"
-                    GridLayout.Column="2"
                     VerticalOptions="Center" />
                 <Switch
-                    x:Name="DebugService"
-                    GridLayout.Column="3"
+                    x:Name="Debug"
+                    Grid.Column="3"
                     OnColor="#2f88ff"
                     ThumbColor="#535c64"
-                    Toggled="DebugService_Toggled"
+                    Toggled="Debug_Toggled"
                     VerticalOptions="Center" />
             </v:CustomCard>
             <v:CustomCard
+                Grid.Row="4"
                 Padding="20,0"
                 Clicked="NugetManage_Clicked"
-                ColumnDefinitions="auto,*"
-                GridLayout.Row="4">
+                ColumnDefinitions="auto,*">
                 <Image
-                    GridLayout.Column="0"
+                    Grid.Column="0"
                     HeightRequest="24"
                     Source="manage.png"
                     VerticalOptions="Center" />
                 <Label
+                    Grid.Column="1"
                     Margin="5,0"
                     FontAttributes="Bold"
                     FontSize="16"
-                    GridLayout.Column="1"
                     Text="nuget包管理"
                     VerticalOptions="Center" />
             </v:CustomCard>
             <v:CustomCard
+                Grid.Row="5"
                 Padding="20,0"
                 Clicked="About_Clicked"
-                ColumnDefinitions="auto,*"
-                GridLayout.Row="5">
+                ColumnDefinitions="auto,*">
                 <Image
-                    GridLayout.Column="0"
+                    Grid.Column="0"
                     HeightRequest="24"
                     Source="about.png"
                     VerticalOptions="Center" />
                 <Label
+                    Grid.Column="1"
                     Margin="5,0"
                     FontAttributes="Bold"
                     FontSize="16"
-                    GridLayout.Column="1"
                     Text="关于"
                     VerticalOptions="Center" />
             </v:CustomCard>
 
-        </GridLayout>
-        <v:NavBarView ActiveTab="settings" GridLayout.Row="2" />
-    </GridLayout>
+        </Grid>
+        <v:NavBarView Grid.Row="2" ActiveTab="settings" />
+    </Grid>
 </ContentPage>

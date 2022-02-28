@@ -15,9 +15,9 @@
 		<!-- App Identifier -->
 		<ApplicationId>com.astator.astator</ApplicationId>
 
-		<Version>0.1.1</Version>
+		<Version>0.2.0</Version>
 		<!-- Versions -->
-		<ApplicationVersion>220130</ApplicationVersion>
+		<ApplicationVersion>220227</ApplicationVersion>
 
 		<!-- Required for C# Hot Reload -->
 		<UseInterpreter Condition="'$(Configuration)' == 'Debug'">True</UseInterpreter>
@@ -29,7 +29,7 @@
 
 	<ItemGroup>
 		<!-- App Icon -->
-		<MauiIcon Include="Resources\appicon.png" Color="#8000ff" />
+		<MauiIcon Include="Resources\appicon.png" ForegroundFile="Resources\appicon.png" />
 
 		<!-- Splash Screen -->
 		<MauiSplashScreen Include="Resources\appiconfg.svg" Color="#8000ff" />
@@ -74,8 +74,8 @@
 		<MauiXaml Update="Pages\PackageInfoPage.xaml">
 			<Generator>MSBuild:Compile</Generator>
 		</MauiXaml>
-		<MauiXaml Update="Pages\ScriptLogPage.xaml">
-			<Generator>MSBuild:Compile</Generator>
+		<MauiXaml Update="Pages\SetDebugMode.xaml">
+		  <Generator>MSBuild:Compile</Generator>
 		</MauiXaml>
 		<MauiXaml Update="Pages\SettingsPage.xaml">
 			<Generator>MSBuild:Compile</Generator>
@@ -96,16 +96,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<None Remove="Platforms\Android\Resources\values\styles.xml" />
-		<None Remove="Resources\Images\add.svg" />
-		<None Remove="Resources\Images\download.svg" />
-		<None Remove="Resources\Images\more.svg" />
-		<None Remove="Resources\Images\save.svg" />
-	</ItemGroup>
-
-
-
-	<ItemGroup>
 		<ProjectReference Include="..\library\astator.ApkBuilder\astator.ApkBuilder.csproj" />
 		<ProjectReference Include="..\library\astator.Core\astator.Core.csproj" />
 		<ProjectReference Include="..\library\astator.NugetManager\astator.NugetManager.csproj" />
@@ -120,26 +110,9 @@
 		<Reference Include="CodeViewBinding">
 			<HintPath>..\library\3rdparty\CodeViewBinding\bin\Release\net6.0-android\CodeViewBinding.dll</HintPath>
 		</Reference>
-		<Reference Include="PaddleOcrBinding">
-			<HintPath>..\library\3rdparty\PaddleOcrBinding\bin\Release\net6.0-android\PaddleOcrBinding.dll</HintPath>
+		<Reference Include="PaddleOCRBinding">
+		  <HintPath>..\library\3rdparty\PaddleOcrBinding\bin\Release\net6.0-android\PaddleOCRBinding.dll</HintPath>
 		</Reference>
-	</ItemGroup>
-
-
-	<ItemGroup>
-		<Compile Update="Views\PathCard.xaml.cs">
-			<DependentUpon>PathCard.xaml</DependentUpon>
-		</Compile>
-	</ItemGroup>
-
-
-	<ItemGroup>
-	  <None Include="Platforms\Android\ActivityResultCallback.cs" />
-	</ItemGroup>
-
-
-	<ItemGroup>
-	  <_MauiCompileToAdd Remove="Platforms\Android\ActivityResultCallback.cs" />
 	</ItemGroup>
 
 </Project>

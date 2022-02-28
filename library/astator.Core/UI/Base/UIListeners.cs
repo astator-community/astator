@@ -43,6 +43,7 @@ public class OnLongClickListener : Java.Lang.Object, IOnLongClickListener
         }
     }
 }
+
 public class OnTouchListener : Java.Lang.Object, IOnTouchListener
 {
     private readonly Func<View, MotionEvent, bool> callBack;
@@ -62,6 +63,7 @@ public class OnTouchListener : Java.Lang.Object, IOnTouchListener
         }
     }
 }
+
 public class OnCheckedChangeListener : Java.Lang.Object, IOnCheckedChangeListener
 {
     private readonly Action<CompoundButton, bool> callBack;
@@ -75,12 +77,10 @@ public class OnCheckedChangeListener : Java.Lang.Object, IOnCheckedChangeListene
         {
             this.callBack.Invoke(v, isChecked);
         }
-        catch
-        {
-        }
-
+        catch { }
     }
 }
+
 public class RadioGroupOnCheckedChangeListener : Java.Lang.Object, RadioGroup.IOnCheckedChangeListener
 {
     private readonly Action<RadioGroup, int> callBack;
@@ -99,28 +99,43 @@ public class RadioGroupOnCheckedChangeListener : Java.Lang.Object, RadioGroup.IO
 
     }
 }
-public class TextWatcher : Java.Lang.Object, ITextWatcher
+
+public class TextWatcher
 {
-    private readonly Action<IEditable> callBack;
-    public TextWatcher(Action<IEditable> callBack)
+    public readonly Action<View, IEditable> CallBack;
+    public TextWatcher(Action<View, IEditable> callBack)
     {
-        this.callBack = callBack;
+        this.CallBack = callBack;
     }
+}
+
+internal class ClassOfTextWatcher : Java.Lang.Object, ITextWatcher
+{
+    private readonly View view;
+    private readonly Action<View, IEditable> callBack;
+    public ClassOfTextWatcher(View view, TextWatcher textWatcher)
+    {
+        this.view = view;
+        this.callBack = textWatcher.CallBack;
+    }
+
     public void AfterTextChanged(IEditable s)
     {
-        this.callBack.Invoke(s);
+        this.callBack.Invoke(this.view, s);
     }
 
     public void BeforeTextChanged(ICharSequence s, int start, int count, int after)
     {
-        throw new NotImplementedException();
+        //throw new NotImplementedException();
     }
 
     public void OnTextChanged(ICharSequence s, int start, int before, int count)
     {
-        throw new NotImplementedException();
+        //throw new NotImplementedException();
     }
 }
+
+
 public class OnScrollChangeListener : Java.Lang.Object, IOnScrollChangeListener
 {
     private readonly Action<View, int, int, int, int> callBack;
@@ -134,18 +149,20 @@ public class OnScrollChangeListener : Java.Lang.Object, IOnScrollChangeListener
         this.callBack.Invoke(v, scrollX, scrollY, oldScrollX, oldScrollY);
     }
 }
-public class OnAttachedListener
+
+public class OnCreatedListener
 {
     private readonly Action<View> callBack;
-    public OnAttachedListener(Action<View> callBack)
+    public OnCreatedListener(Action<View> callBack)
     {
         this.callBack = callBack;
     }
-    public void OnAttached(View v)
+    public void OnCreated(View v)
     {
         this.callBack.Invoke(v);
     }
 }
+
 public class OnItemSelectedListener : Java.Lang.Object, IOnItemSelectedListener
 {
     private readonly Action<AdapterView, View, int, long> callBack;
@@ -161,7 +178,7 @@ public class OnItemSelectedListener : Java.Lang.Object, IOnItemSelectedListener
 
     public void OnNothingSelected(AdapterView parent)
     {
-        throw new NotImplementedException();
+        //throw new NotImplementedException();
     }
 }
 
@@ -218,5 +235,4 @@ public class OnPageChangeListener : Java.Lang.Object, IOnPageChangeListener
     {
 
     }
-
 }

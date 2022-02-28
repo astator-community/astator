@@ -23,8 +23,8 @@
 
 	<ItemGroup>
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-		<PackageReference Include="NLog" Version="4.7.13" />
-		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.0.1" />
+		<PackageReference Include="NLog" Version="4.7.14" />
+		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.1.0" />
 	</ItemGroup>
 
 
@@ -38,8 +38,8 @@
 
 
 	<ItemGroup>
-	  <Reference Include="PaddleOcrBinding">
-	    <HintPath>..\3rdparty\PaddleOcrBinding\bin\Release\net6.0-android\PaddleOcrBinding.dll</HintPath>
+	  <Reference Include="PaddleOCRBinding">
+	    <HintPath>..\3rdparty\PaddleOcrBinding\bin\Release\net6.0-android\PaddleOCRBinding.dll</HintPath>
 	  </Reference>
 	</ItemGroup>
 </Project>

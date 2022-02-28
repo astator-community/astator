@@ -14,9 +14,9 @@
         </Style>
     </ContentPage.Resources>
 
-    <GridLayout RowDefinitions="55,auto,*,55">
+    <Grid RowDefinitions="55,auto,*,55">
 
-        <GridLayout GridLayout.Row="0">
+        <Grid Grid.Row="0">
             <Label
                 x:Name="Header"
                 Margin="15,5"
@@ -25,19 +25,19 @@
                 HorizontalOptions="Start"
                 Text="工作台"
                 VerticalOptions="Center" />
-        </GridLayout>
+        </Grid>
 
         <HorizontalStackLayout
             x:Name="DirTbLayout"
-            Padding="20,5"
-            GridLayout.Row="1" />
+            Grid.Row="1"
+            Padding="20,5" />
 
         <RefreshView
-            GridLayout.Row="2"
+            Grid.Row="2"
             IsRefreshing="False"
             RefreshColor="#2F88FF"
             Refreshing="Refresh_Refreshing">
-            <GridLayout>
+            <Grid>
                 <ScrollView>
                     <VerticalStackLayout x:Name="FilesLayout" />
                 </ScrollView>
@@ -50,10 +50,10 @@
                     Source="add.png"
                     VerticalOptions="End"
                     WidthRequest="50" />-->
-            </GridLayout>
+            </Grid>
         </RefreshView>
 
-        <v:NavBarView ActiveTab="home" GridLayout.Row="3" />
-    </GridLayout>
+        <v:NavBarView Grid.Row="3" ActiveTab="home" />
+    </Grid>
 
 </ContentPage>

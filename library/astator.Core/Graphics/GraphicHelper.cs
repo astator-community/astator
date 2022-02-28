@@ -120,7 +120,7 @@ namespace astator.Core.Graphics
                     var location = this.rowStride * i;
                     for (var j = 0; j < this.width; j++, location += this.pxFormat)
                     {
-                        int k = ptr[location];
+                        var k = ptr[location];
                         lens[k]++;
                     }
                 }
@@ -139,9 +139,8 @@ namespace astator.Core.Graphics
                     for (short j = 0; j < this.width; j++, location += this.pxFormat)
                     {
                         var k = ptr[location];
-                        var step = this.marks[k * 2] + this.marks[k * 2 + 1];
-                        this.redList[step] = j;
-                        this.redList[step + 1] = i;
+                        this.redList[this.marks[k * 2 + 1]] = j;
+                        this.redList[this.marks[k * 2 + 1] + 1] = i;
                         this.marks[k * 2 + 1] += 2;
                     }
                 }
@@ -222,7 +221,7 @@ namespace astator.Core.Graphics
         }
 
         /// <summary>
-        /// 解析比色色组
+        /// 解析比色色组描述
         /// </summary>
         /// <param name="description">色组字符串</param>
         /// <returns></returns>
@@ -266,7 +265,7 @@ namespace astator.Core.Graphics
         }
 
         /// <summary>
-        /// 解析找色色组
+        /// 解析找色色组描述
         /// </summary>
         /// <param name="description">色组字符串</param>
         /// <returns></returns>
@@ -399,7 +398,7 @@ namespace astator.Core.Graphics
             return CompareColor(temp, 0, 0, offsetLength);
         }
 
-        private bool CompareColorEx(int[][] description, int x, int y, int offsetLength)
+        private bool CompareMultiColor(int[][] description, int x, int y, int offsetLength)
         {
             foreach (var temp in description)
             {
@@ -420,7 +419,7 @@ namespace astator.Core.Graphics
         /// <param name="sim">相似度, 0~100</param>
         /// <param name="isOffset">是否偏移查找</param>
         /// <returns></returns>
-        public bool CompareColorEx(int[][] description, int sim, bool isOffset)
+        public bool CompareMultiColor(int[][] description, int sim, bool isOffset)
         {
             foreach (var temp in description)
             {
@@ -444,7 +443,7 @@ namespace astator.Core.Graphics
         /// <param name="timelag">间隔时间</param>
         /// <param name="sign">跳出条件,true为找色成功时返回,false为找色失败时返回</param>
         /// <returns></returns>
-        public bool CompareColorExLoop(int[][] description, int sim, bool isOffset, int timeout, int timelag, bool sign)
+        public bool CompareMultiColorLoop(int[][] description, int sim, bool isOffset, int timeout, int timelag, bool sign)
         {
             var num = timeout / timelag;
             if (sign)
@@ -453,7 +452,7 @@ namespace astator.Core.Graphics
                 {
                     if (KeepScreen(false))
                     {
-                        if (CompareColorEx(description, sim, isOffset))
+                        if (CompareMultiColor(description, sim, isOffset))
                         {
                             return true;
                         }
@@ -467,7 +466,7 @@ namespace astator.Core.Graphics
                 {
                     if (KeepScreen(false))
                     {
-                        if (!CompareColorEx(description, sim, isOffset))
+                        if (!CompareMultiColor(description, sim, isOffset))
                         {
                             return true;
                         }
@@ -478,7 +477,7 @@ namespace astator.Core.Graphics
             return false;
         }
 
-        private unsafe Point FindMultiColor(int sx, int sy, int ex, int ey, int[] firstDescription, int[][] offsetDescription, int offsetLength)
+        private unsafe Point FindMultiColor(int left, int top, int right, int bottom, int[] firstDescription, int[][] offsetDescription, int offsetLength)
         {
             var red = firstDescription[2];
             fixed (short* ptr = &this.redList[this.marks[red * 2]])
@@ -487,21 +486,21 @@ namespace astator.Core.Graphics
                 {
                     var x = ptr[i];
                     var y = ptr[i + 1];
-                    if (x >= sx && x <= ex && y >= sy && y <= ey)
+                    if (x >= left && x <= right && y >= top && y <= bottom)
                     {
                         var location = y * this.rowStride + x * this.pxFormat;
                         if (Math.Abs((this.screenData[location + 1] & 0xff) - firstDescription[3]) <= firstDescription[6])
                         {
                             if (Math.Abs((this.screenData[location + 2] & 0xff) - firstDescription[4]) <= firstDescription[7])
                             {
-                                if (CompareColorEx(offsetDescription, x, y, offsetLength))
+                                if (CompareMultiColor(offsetDescription, x, y, offsetLength))
                                 {
                                     return new Point(x, y);
                                 }
                             }
                         }
                     }
-                    else if (x > ex && y > ey)
+                    else if (x > right && y > bottom)
                     {
                         break;
                     }
@@ -513,20 +512,16 @@ namespace astator.Core.Graphics
         /// <summary>
         /// 多点找色
         /// </summary>
-        /// <param name="sx">查找范围: startX</param>
-        /// <param name="sy">查找范围: startY</param>
-        /// <param name="ex">查找范围: endX</param>
-        /// <param name="ey">查找范围: endY</param>
         /// <param name="description">色组描述</param>
         /// <param name="sim">相似度, 0~100</param>
         /// <param name="isOffset">是否偏移查找</param>
         /// <returns></returns>
-        public Point FindMultiColor(int sx, int sy, int ex, int ey, int[][] description, int sim, bool isOffset)
+        public Point FindMultiColor(int left, int top, int right, int bottom, int[][] description, int sim, bool isOffset)
         {
-            sx = Math.Max(sx, 0);
-            sy = Math.Max(sy, 0);
-            ex = Math.Min(ex, this.width - 1);
-            ey = Math.Min(ey, this.height - 1);
+            left = Math.Max(left, 0);
+            top = Math.Max(top, 0);
+            right = Math.Min(right, this.width - 1);
+            bottom = Math.Min(bottom, this.height - 1);
             var firstDescription = new int[9];
             Array.Copy(description[0], firstDescription, 9);
             var offsetDescription = new int[description.Length - 1][];
@@ -564,7 +559,7 @@ namespace astator.Core.Graphics
                 if (num < 256 && num > -1)
                 {
                     firstDescription[2] = num;
-                    var point = FindMultiColor(sx, sy, ex, ey, firstDescription, offsetDescription, offsetLength);
+                    var point = FindMultiColor(left, top, right, bottom, firstDescription, offsetDescription, offsetLength);
                     if (point.X != -1)
                     {
                         return point;
@@ -577,23 +572,19 @@ namespace astator.Core.Graphics
         /// <summary>
         /// 多点找色
         /// </summary>
-        /// <param name="range">查找范围数组, new int[]{sx, sy, ex, ey}</param>
+        /// <param name="bounds">查找范围</param>
         /// <param name="description">色组描述</param>
         /// <param name="sim">相似度, 0~100</param>
         /// <param name="isOffset">是否偏移查找</param>
         /// <returns></returns>
-        public Point FindMultiColor(int[] range, int[][] description, int sim, bool isOffset)
+        public Point FindMultiColor(Rect bounds, int[][] description, int sim, bool isOffset)
         {
-            return FindMultiColor(range[0], range[1], range[2], range[3], description, sim, isOffset);
+            return FindMultiColor(bounds.Left, bounds.Top, bounds.Right, bounds.Bottom, description, sim, isOffset);
         }
 
         /// <summary>
         /// 条件循环多点找色
         /// </summary>
-        /// <param name="sx">查找范围: startX</param>
-        /// <param name="sy">查找范围: startY</param>
-        /// <param name="ex">查找范围: endX</param>
-        /// <param name="ey">查找范围: endY</param>
         /// <param name="description">色组描述</param>
         /// <param name="sim">相似度, 0~100</param>
         /// <param name="isOffset">是否偏移查找</param>
@@ -601,7 +592,7 @@ namespace astator.Core.Graphics
         /// <param name="timelag">间隔时间</param>
         /// <param name="sign">跳出条件,true为找色成功时返回,false为找色失败时返回</param>
         /// <returns></returns>
-        public Point FindMultiColorLoop(int sx, int sy, int ex, int ey, int[][] description, int sim, bool isOffset, int timeout, int timelag, bool sign)
+        public Point FindMultiColorLoop(int left, int top, int right, int bottom, int[][] description, int sim, bool isOffset, int timeout, int timelag, bool sign)
         {
             var num = timeout / timelag;
             if (sign)
@@ -610,7 +601,7 @@ namespace astator.Core.Graphics
                 {
                     if (KeepScreen(true))
                     {
-                        var result = FindMultiColor(sx, sy, ex, ey, description, sim, isOffset);
+                        var result = FindMultiColor(left, top, right, bottom, description, sim, isOffset);
                         if (result.X != -1)
                         {
                             return result;
@@ -625,7 +616,7 @@ namespace astator.Core.Graphics
                 {
                     if (KeepScreen(true))
                     {
-                        var result = FindMultiColor(sx, sy, ex, ey, description, sim, isOffset);
+                        var result = FindMultiColor(left, top, right, bottom, description, sim, isOffset);
                         if (result.X == -1)
                         {
                             return result;
@@ -634,13 +625,13 @@ namespace astator.Core.Graphics
                     Thread.Sleep(timelag);
                 }
             }
-            return FindMultiColor(sx, sy, ex, ey, description, sim, isOffset);
+            return FindMultiColor(left, top, right, bottom, description, sim, isOffset);
         }
 
         /// <summary>
         /// 条件循环多点找色
         /// </summary>
-        /// <param name="range">查找范围数组, new int[]{sx, sy, ex, ey}</param>
+        /// <param name="bounds">查找范围</param>
         /// <param name="description">色组描述</param>
         /// <param name="sim">相似度, 0~100</param>
         /// <param name="isOffset">是否偏移查找</param>
@@ -648,12 +639,12 @@ namespace astator.Core.Graphics
         /// <param name="timelag">间隔时间</param>
         /// <param name="sign">跳出条件,true为找色成功时返回,false为找色失败时返回</param>
         /// <returns></returns>
-        public Point FindMultiColorLoop(int[] range, int[][] description, int sim, bool isOffset, int timeout, int timelag, bool sign)
+        public Point FindMultiColorLoop(Rect bounds, int[][] description, int sim, bool isOffset, int timeout, int timelag, bool sign)
         {
-            return FindMultiColorLoop(range[0], range[1], range[2], range[3], description, sim, isOffset, timeout, timelag, sign);
+            return FindMultiColorLoop(bounds.Left, bounds.Top, bounds.Right, bounds.Bottom, description, sim, isOffset, timeout, timelag, sign);
         }
 
-        private unsafe List<Point> FindMultiColorEx(int sx, int sy, int ex, int ey, int[] firstDescription, int[][] offsetDescription)
+        private unsafe List<Point> FindMultiColorEx(int left, int top, int right, int bottom, int[] firstDescription, int[][] offsetDescription)
         {
             var result = new List<Point>();
             var red = firstDescription[2];
@@ -663,21 +654,21 @@ namespace astator.Core.Graphics
                 {
                     var x = ptr[i];
                     var y = ptr[i + 1];
-                    if (x >= sx && x <= ex && y >= sy && y <= ey)
+                    if (x >= left && x <= right && y >= top && y <= bottom)
                     {
                         var location = y * this.rowStride + x * this.pxFormat;
                         if (Math.Abs((this.screenData[location + 1] & 0xff) - firstDescription[3]) <= firstDescription[6])
                         {
                             if (Math.Abs((this.screenData[location + 2] & 0xff) - firstDescription[4]) <= firstDescription[7])
                             {
-                                if (CompareColorEx(offsetDescription, x, y, 1))
+                                if (CompareMultiColor(offsetDescription, x, y, 1))
                                 {
                                     result.Add(new Point(this.redList[i], this.redList[i + 1]));
                                 }
                             }
                         }
                     }
-                    else if (x > ex && y > ey)
+                    else if (x > right && y > bottom)
                     {
                         break;
                     }
@@ -689,20 +680,16 @@ namespace astator.Core.Graphics
         /// <summary>
         /// 多点找色ex
         /// </summary>
-        /// <param name="sx">查找范围: startX</param>
-        /// <param name="sy">查找范围: startY</param>
-        /// <param name="ex">查找范围: endX</param>
-        /// <param name="ey">查找范围: endY</param>
         /// <param name="description">色组描述</param>
         /// <param name="sim">相似度, 0~100</param>
         /// <param name="filterNum">过滤半径, 默认-1, 去除重叠区域</param>
         /// <returns>返回所有坐标</returns>
-        public List<Point> FindMultiColorEx(int sx, int sy, int ex, int ey, int[][] description, int sim, int filterNum = -1)
+        public List<Point> FindMultiColorEx(int left, int top, int right, int bottom, int[][] description, int sim, int filterNum = -1)
         {
-            sx = Math.Max(sx, 0);
-            sy = Math.Max(sy, 0);
-            ex = Math.Min(ex, this.width - 1);
-            ey = Math.Min(ey, this.height - 1);
+            left = Math.Max(left, 0);
+            top = Math.Max(top, 0);
+            right = Math.Min(right, this.width - 1);
+            bottom = Math.Min(bottom, this.height - 1);
             var firstDescription = new int[9];
             Array.Copy(description[0], firstDescription, 9);
             var offsetDescription = new int[description.Length - 1][];
@@ -740,7 +727,7 @@ namespace astator.Core.Graphics
                 if (num < 256 && num > -1)
                 {
                     firstDescription[2] = num & 0xff;
-                    var temp = FindMultiColorEx(sx, sy, ex, ey, firstDescription, offsetDescription);
+                    var temp = FindMultiColorEx(left, top, right, bottom, firstDescription, offsetDescription);
                     if (temp.Count > 0)
                     {
                         points.AddRange(temp);
@@ -754,16 +741,16 @@ namespace astator.Core.Graphics
             var filterY = filterNum;
             if (filterNum == -1)
             {
-                var left = 0;
-                var top = 0;
-                var right = filterNum;
-                var bottom = filterNum;
+                var _left = 0;
+                var _top = 0;
+                var _right = filterNum;
+                var _bottom = filterNum;
                 for (var i = 1; i < description.Length; i++)
                 {
-                    left = Math.Min(left, description[i][0]);
-                    top = Math.Min(top, description[i][1]);
-                    right = Math.Max(right, description[i][0]);
-                    bottom = Math.Max(bottom, description[i][1]);
+                    _left = Math.Min(_left, description[i][0]);
+                    _top = Math.Min(_top, description[i][1]);
+                    _right = Math.Max(_right, description[i][0]);
+                    _bottom = Math.Max(_bottom, description[i][1]);
                 }
                 filterX = right - left;
                 filterY = bottom - top;
@@ -791,16 +778,16 @@ namespace astator.Core.Graphics
         }
 
         /// <summary>
-        /// 多点找色
+        /// 多点找色ex
         /// </summary>
-        /// <param name="range">查找范围数组, new int[]{sx, sy, ex, ey}</param>
+        /// <param name="bounds">查找范围</param>
         /// <param name="description">色组描述</param>
         /// <param name="sim">相似度, 0~100</param>
         /// <param name="filterNum">过滤半径, 默认-1, 去除重叠区域</param>
         /// <returns>返回所有坐标</returns>
-        public List<Point> FindMultiColorEx(int[] range, int[][] description, int sim, int filterNum = -1)
+        public List<Point> FindMultiColorEx(Rect bounds, int[][] description, int sim, int filterNum = -1)
         {
-            return FindMultiColorEx(range[0], range[1], range[2], range[3], description, sim, filterNum);
+            return FindMultiColorEx(bounds.Left, bounds.Top, bounds.Right, bounds.Bottom, description, sim, filterNum);
         }
 
     }

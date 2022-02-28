@@ -6,22 +6,22 @@
     xmlns:v="clr-namespace:astator.Views"
     NavigationPage.HasNavigationBar="False">
 
-    <GridLayout RowDefinitions="55,*">
+    <Grid RowDefinitions="55,*">
         <Label
             x:Name="Header"
+            Grid.Column="0"
             Margin="15,5"
             FontAttributes="Bold"
             FontSize="28"
-            GridLayout.Column="0"
             HorizontalOptions="Start"
             Text="关于"
             VerticalOptions="Center" />
 
-        <GridLayout GridLayout.Row="1">
+        <Grid Grid.Row="1">
             <Label
                 HorizontalOptions="Center"
                 Text="待完善..."
                 VerticalOptions="Center" />
-        </GridLayout>
-    </GridLayout>
+        </Grid>
+    </Grid>
 </ContentPage>

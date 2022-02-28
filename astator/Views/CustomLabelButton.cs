@@ -25,7 +25,7 @@ namespace astator.Views
             base.OnElementChanged(e);
             if (this.Control is not null)
             {
-                this.Control.SetPadding(8, 15, 8, 15);
+                this.Control.SetPadding(10, 15, 10, 15);
                 this.Control.SetMinWidth(0);
                 this.Control.SetMinHeight(0);
                 this.Control.SetMinimumWidth(0);

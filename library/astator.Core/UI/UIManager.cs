@@ -1,7 +1,10 @@
-﻿using astator.Core.Exceptions;
+﻿using AndroidX.AppCompat.App;
+using astator.Core.Exceptions;
+using astator.Core.Script;
 using astator.Core.UI.Base;
 using astator.Core.UI.Controls;
 using astator.Core.UI.Layouts;
+using System;
 using System.Collections.Generic;
 using Activity = Android.App.Activity;
 using View = Android.Views.View;
@@ -26,8 +29,6 @@ public class UiManager : IManager
     /// <summary>
     /// 控件索引器
     /// </summary>
-    /// <param name="key"></param>
-    /// <returns></returns>
     public IView this[string key]
     {
         set
@@ -52,6 +53,19 @@ public class UiManager : IManager
         CreateCount = 0;
         this.context = activity;
         this.workDir = directory;
+    }
+
+    public void Alert(string text, string title = "")
+    {
+        Globals.RunOnUiThread(() =>
+        {
+            var alert = new AlertDialog
+              .Builder(this.context)
+              .SetTitle(title)
+              .SetMessage(text)
+              .SetPositiveButton("确认", (s, e) => { });
+            alert.Show();
+        });
     }
 
     /// <summary>
@@ -94,11 +108,14 @@ public class UiManager : IManager
             "switch" => CreateSwitch(args),
             "web" => CreateWebView(args),
             "img" => CreateImageView(args),
+            "imgBtn" => CreateImageButton(args),
             "pager" => CreateViewPager(args),
             "spinner" => CreateSpinner(args),
             "card" => CreateCardView(args),
             "radioGroup" => CreateRadioGroup(args),
             "radio" => CreateRadioButton(args),
+            "tabPage" => CreateTabbedPage(args),
+            "tabView" => CreateTabbedView(args),
             _ => throw new AttributeNotExistException(type),
         };
         return view;
@@ -107,6 +124,8 @@ public class UiManager : IManager
     public ScriptScrollView CreateScrollView(ViewArgs args = null)
     {
         var result = new ScriptScrollView(this.context, args);
+        if (args?["id"] is string id) this[id] = result;
+
         if (this.globalListeners.ContainsKey("scroll"))
         {
             foreach (var listener in this.globalListeners["scroll"])
@@ -114,12 +133,15 @@ public class UiManager : IManager
                 result.On(listener.Key, listener.Value);
             }
         }
+        result.OnCreatedListener?.OnCreated(result);
         return result;
     }
 
     public ScriptWebView CreateWebView(ViewArgs args = null)
     {
         var result = new ScriptWebView(this.context, args);
+        if (args?["id"] is string id) this[id] = result;
+
         if (this.globalListeners.ContainsKey("web"))
         {
             foreach (var listener in this.globalListeners["web"])
@@ -127,12 +149,15 @@ public class UiManager : IManager
                 result.On(listener.Key, listener.Value);
             }
         }
+        result.OnCreatedListener?.OnCreated(result);
         return result;
     }
 
     public ScriptSwitch CreateSwitch(ViewArgs args = null)
     {
         var result = new ScriptSwitch(this.context, args);
+        if (args?["id"] is string id) this[id] = result;
+
         if (this.globalListeners.ContainsKey("switch"))
         {
             foreach (var listener in this.globalListeners["switch"])
@@ -140,12 +165,15 @@ public class UiManager : IManager
                 result.On(listener.Key, listener.Value);
             }
         }
+        result.OnCreatedListener?.OnCreated(result);
         return result;
     }
 
     public ScriptCheckBox CreateCheckBox(ViewArgs args = null)
     {
         var result = new ScriptCheckBox(this.context, args);
+        if (args?["id"] is string id) this[id] = result;
+
         if (this.globalListeners.ContainsKey("check"))
         {
             foreach (var listener in this.globalListeners["check"])
@@ -153,12 +181,15 @@ public class UiManager : IManager
                 result.On(listener.Key, listener.Value);
             }
         }
+        result.OnCreatedListener?.OnCreated(result);
         return result;
     }
 
     public ScriptImageView CreateImageView(ViewArgs args = null)
     {
         var result = new ScriptImageView(this.context, this.workDir, args);
+        if (args?["id"] is string id) this[id] = result;
+
         if (this.globalListeners.ContainsKey("img"))
         {
             foreach (var listener in this.globalListeners["img"])
@@ -166,12 +197,15 @@ public class UiManager : IManager
                 result.On(listener.Key, listener.Value);
             }
         }
+        result.OnCreatedListener?.OnCreated(result);
         return result;
     }
 
     public ScriptButton CreateButton(ViewArgs args = null)
     {
         var result = new ScriptButton(this.context, args);
+        if (args?["id"] is string id) this[id] = result;
+
         if (this.globalListeners.ContainsKey("btn"))
         {
             foreach (var listener in this.globalListeners["btn"])
@@ -179,12 +213,15 @@ public class UiManager : IManager
                 result.On(listener.Key, listener.Value);
             }
         }
+        result.OnCreatedListener?.OnCreated(result);
         return result;
     }
 
     public ScriptLinearLayout CreateLinearLayout(ViewArgs args = null)
     {
         var result = new ScriptLinearLayout(this.context, args);
+        if (args?["id"] is string id) this[id] = result;
+
         if (this.globalListeners.ContainsKey("linear"))
         {
             foreach (var listener in this.globalListeners["linear"])
@@ -192,12 +229,15 @@ public class UiManager : IManager
                 result.On(listener.Key, listener.Value);
             }
         }
+        result.OnCreatedListener?.OnCreated(result);
         return result;
     }
 
     public ScriptFrameLayout CreateFrameLayout(ViewArgs args = null)
     {
         var result = new ScriptFrameLayout(this.context, args);
+        if (args?["id"] is string id) this[id] = result;
+
         if (this.globalListeners.ContainsKey("frame"))
         {
             foreach (var listener in this.globalListeners["frame"])
@@ -205,12 +245,15 @@ public class UiManager : IManager
                 result.On(listener.Key, listener.Value);
             }
         }
+        result.OnCreatedListener?.OnCreated(result);
         return result;
     }
 
     public ScriptEditText CreateEditText(ViewArgs args = null)
     {
         var result = new ScriptEditText(this.context, args);
+        if (args?["id"] is string id) this[id] = result;
+
         if (this.globalListeners.ContainsKey("edit"))
         {
             foreach (var listener in this.globalListeners["edit"])
@@ -218,12 +261,15 @@ public class UiManager : IManager
                 result.On(listener.Key, listener.Value);
             }
         }
+        result.OnCreatedListener?.OnCreated(result);
         return result;
     }
 
     public ScriptTextView CreateTextView(ViewArgs args = null)
     {
         var result = new ScriptTextView(this.context, args);
+        if (args?["id"] is string id) this[id] = result;
+
         if (this.globalListeners.ContainsKey("text"))
         {
             foreach (var listener in this.globalListeners["text"])
@@ -231,12 +277,15 @@ public class UiManager : IManager
                 result.On(listener.Key, listener.Value);
             }
         }
+        result.OnCreatedListener?.OnCreated(result);
         return result;
     }
 
     public ScriptSpinner CreateSpinner(ViewArgs args = null)
     {
         var result = new ScriptSpinner(this.context, args);
+        if (args?["id"] is string id) this[id] = result;
+
         if (this.globalListeners.ContainsKey("spinner"))
         {
             foreach (var listener in this.globalListeners["spinner"])
@@ -244,12 +293,15 @@ public class UiManager : IManager
                 result.On(listener.Key, listener.Value);
             }
         }
+        result.OnCreatedListener?.OnCreated(result);
         return result;
     }
 
     public ScriptViewPager CreateViewPager(ViewArgs args = null)
     {
         var result = new ScriptViewPager(this.context, args);
+        if (args?["id"] is string id) this[id] = result;
+
         if (this.globalListeners.ContainsKey("viewPager"))
         {
             foreach (var listener in this.globalListeners["viewPager"])
@@ -257,12 +309,15 @@ public class UiManager : IManager
                 result.On(listener.Key, listener.Value);
             }
         }
+        result.OnCreatedListener?.OnCreated(result);
         return result;
     }
 
     public ScriptRadioGroup CreateRadioGroup(ViewArgs args = null)
     {
         var result = new ScriptRadioGroup(this.context, args);
+        if (args?["id"] is string id) this[id] = result;
+
         if (this.globalListeners.ContainsKey("radioGroup"))
         {
             foreach (var listener in this.globalListeners["radioGroup"])
@@ -270,12 +325,15 @@ public class UiManager : IManager
                 result.On(listener.Key, listener.Value);
             }
         }
+        result.OnCreatedListener?.OnCreated(result);
         return result;
     }
 
     public ScriptRadioButton CreateRadioButton(ViewArgs args = null)
     {
         var result = new ScriptRadioButton(this.context, args);
+        if (args?["id"] is string id) this[id] = result;
+
         if (this.globalListeners.ContainsKey("radio"))
         {
             foreach (var listener in this.globalListeners["radio"])
@@ -283,12 +341,15 @@ public class UiManager : IManager
                 result.On(listener.Key, listener.Value);
             }
         }
+        result.OnCreatedListener?.OnCreated(result);
         return result;
     }
 
     public ScriptCardView CreateCardView(ViewArgs args = null)
     {
         var result = new ScriptCardView(this.context, args);
+        if (args?["id"] is string id) this[id] = result;
+
         if (this.globalListeners.ContainsKey("card"))
         {
             foreach (var listener in this.globalListeners["card"])
@@ -296,12 +357,15 @@ public class UiManager : IManager
                 result.On(listener.Key, listener.Value);
             }
         }
+        result.OnCreatedListener?.OnCreated(result);
         return result;
     }
 
     public ScriptImageButton CreateImageButton(ViewArgs args = null)
     {
         var result = new ScriptImageButton(this.context, this.workDir, args);
+        if (args?["id"] is string id) this[id] = result;
+
         if (this.globalListeners.ContainsKey("img"))
         {
             foreach (var listener in this.globalListeners["img"])
@@ -309,12 +373,15 @@ public class UiManager : IManager
                 result.On(listener.Key, listener.Value);
             }
         }
+        result.OnCreatedListener?.OnCreated(result);
         return result;
     }
 
     public ScriptTabbedPage CreateTabbedPage(ViewArgs args = null)
     {
         var result = new ScriptTabbedPage(this.context, this.workDir, args);
+        if (args?["id"] is string id) this[id] = result;
+
         if (this.globalListeners.ContainsKey("tabPage"))
         {
             foreach (var listener in this.globalListeners["tabPage"])
@@ -322,12 +389,15 @@ public class UiManager : IManager
                 result.On(listener.Key, listener.Value);
             }
         }
+        result.OnCreatedListener?.OnCreated(result);
         return result;
     }
 
     public ScriptTabbedView CreateTabbedView(ViewArgs args = null)
     {
         var result = new ScriptTabbedView(this.context, args);
+        if (args?["id"] is string id) this[id] = result;
+
         if (this.globalListeners.ContainsKey("tabView"))
         {
             foreach (var listener in this.globalListeners["tabView"])
@@ -335,6 +405,7 @@ public class UiManager : IManager
                 result.On(listener.Key, listener.Value);
             }
         }
+        result.OnCreatedListener?.OnCreated(result);
         return result;
     }
 
@@ -357,4 +428,8 @@ public class UiManager : IManager
         }
     }
 
+    public void OnResumed(Action callback)
+    {
+        (this.context as TemplateActivity).OnResumed = callback;
+    }
 }

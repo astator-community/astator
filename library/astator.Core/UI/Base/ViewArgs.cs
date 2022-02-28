@@ -17,7 +17,7 @@ public class ViewArgs
         {
             if (value is not null)
             {
-                this.args[key] = value;
+                this.args.Add(key, value);
             }
         }
         get

@@ -7,9 +7,9 @@ namespace astator.Core.UI.Layouts;
 public class ScriptTabbedView : FrameLayout, ILayout
 {
     public string CustomId { get; set; }
-    public OnAttachedListener OnAttachedListener { get; set; }
+    public OnCreatedListener OnCreatedListener { get; set; }
     internal string Icon { get; private set; }
-    internal string EnableIcon { get; private set; }
+    internal string SelectedIcon { get; private set; }
     internal string Title { get; private set; }
 
     public ScriptTabbedView(Context context, ViewArgs args) : base(context)
@@ -17,19 +17,19 @@ public class ScriptTabbedView : FrameLayout, ILayout
         this.SetDefaultValue(ref args);
 
         if (args["icon"] is string icon) this.Icon = icon;
-        if (args["enableIcon"] is string enableIcon) this.EnableIcon = enableIcon;
-        if (this.EnableIcon is null) this.EnableIcon = this.Icon;
+        if (args["selectedIcon"] is string selectedIcon) this.SelectedIcon = selectedIcon;
+        if (this.SelectedIcon is null) this.SelectedIcon = this.Icon;
         if (args["title"] is string title) this.Title = title;
 
 
-        args.Remove("icon", "enableIcon", "title");
+        args.Remove("icon", "selectedIcon", "title");
         foreach (var item in args)
         {
             SetAttr(item.Key.ToString(), item.Value);
         }
     }
 
-    ILayout ILayout.AddView(View view)
+    public new ILayout AddView(View view)
     {
         base.AddView(view);
         return this;

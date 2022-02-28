@@ -10,32 +10,34 @@
 
     <Image
         x:Name="Icon"
-        GridLayout.Column="0"
+        Grid.Column="0"
         HeightRequest="45"
         Source="nuget.png"
         VerticalOptions="Center"
         WidthRequest="45" />
-    <GridLayout
+    <Grid
+        Grid.Column="1"
         Padding="10,0"
         BackgroundColor="Transparent"
-        GridLayout.Column="1"
         RowDefinitions="auto,*">
         <Label
+            Grid.Row="0"
             FontSize="16"
-            GridLayout.Row="0"
             Text="{Binding Source={RelativeSource FindAncestor, AncestorType={x:Type v:CustomCard}}, Path=PkgId}"
             VerticalOptions="Start" />
         <Label
+            Grid.Row="1"
             FontSize="10"
-            GridLayout.Row="1"
             Text="{Binding Source={RelativeSource FindAncestor, AncestorType={x:Type v:CustomCard}}, Path=Description}"
             TextColor="#666666"
             VerticalOptions="Center"
             VerticalTextAlignment="Center" />
-    </GridLayout>
+    </Grid>
     <Label
+        Grid.Column="2"
         FontSize="12"
-        GridLayout.Column="2"
+        HorizontalOptions="End"
+        MaximumWidthRequest="80"
         Text="{Binding Source={RelativeSource FindAncestor, AncestorType={x:Type v:CustomCard}}, Path=Version}"
         VerticalOptions="Start" />
 

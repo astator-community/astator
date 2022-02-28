@@ -5,85 +5,85 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:v="clr-namespace:astator.Views"
     NavigationPage.HasNavigationBar="False">
-    <GridLayout RowDefinitions="70,55,*">
+    <Grid RowDefinitions="70,55,*">
         <Label
             x:Name="PkgId"
+            Grid.Row="0"
             Margin="15,5"
             FontAttributes="Bold"
             FontSize="22"
-            GridLayout.Row="0"
             HorizontalOptions="Start"
             Text="astator.Core"
             VerticalOptions="Center" />
-        <GridLayout
+        <Grid
+            Grid.Row="1"
             Padding="20,5"
-            ColumnDefinitions="*,auto"
-            GridLayout.Row="1">
-            <GridLayout
-                GridLayout.Column="0"
+            ColumnDefinitions="*,auto">
+            <Grid
+                Grid.Column="0"
                 PropertyChanged="VersionItems_SizeChanged"
                 RowDefinitions="40,auto">
                 <v:CustomSpinner
                     x:Name="VersionItems"
+                    Grid.Row="0"
                     BackgroundColor="{DynamicResource PrimaryColor}"
                     FontSize="16"
-                    GridLayout.Row="0"
                     SelectionChanged="VersionItems_SelectionChanged"
                     TextColor="{DynamicResource SecondaryColor}" />
                 <Line
                     x:Name="Underline"
-                    GridLayout.Row="1"
+                    Grid.Row="1"
                     Stroke="#2B0B98"
                     StrokeThickness="1.8" />
-            </GridLayout>
+            </Grid>
             <v:CustomImageButton
                 x:Name="AttribBtn"
+                Grid.Column="1"
                 Padding="18,16,6,8"
                 BackgroundColor="{DynamicResource PrimaryColor}"
                 Clicked="AttribBtn_Clicked"
-                GridLayout.Column="1"
                 HeightRequest="50"
                 VerticalOptions="Center"
                 WidthRequest="50" />
-        </GridLayout>
-        <ScrollView GridLayout.Row="2">
+        </Grid>
+        <ScrollView Grid.Row="2">
 
             <RefreshView
                 x:Name="Refresh"
                 IsRefreshing="True"
                 RefreshColor="#2F88FF">
-                <GridLayout Padding="20,10" RowDefinitions="auto,auto,auto,auto,auto,auto,auto,auto,auto">
+                <Grid Padding="20,10" RowDefinitions="auto,auto,auto,auto,auto,auto,auto,auto,auto">
                     <Label
                         FontAttributes="Bold"
                         FontSize="14"
                         Text="描述" />
                     <Label
                         x:Name="Description"
-                        Margin="0,5"
-                        GridLayout.Row="1" />
-                    <HorizontalStackLayout Margin="0,5" GridLayout.Row="2">
+                        Grid.Row="1"
+                        Margin="0,5" />
+                    <HorizontalStackLayout Grid.Row="2" Margin="0,5">
                         <Label
                             FontAttributes="Bold"
                             FontSize="14"
                             Text="版本:  " />
                         <Label x:Name="Version" VerticalTextAlignment="End" />
                     </HorizontalStackLayout>
-                    <HorizontalStackLayout Margin="0,5" GridLayout.Row="3">
+                    <HorizontalStackLayout Grid.Row="3" Margin="0,5">
                         <Label
                             FontAttributes="Bold"
                             FontSize="14"
                             Text="作者:  " />
                         <Label x:Name="Authors" VerticalTextAlignment="End" />
                     </HorizontalStackLayout>
-                    <HorizontalStackLayout Margin="0,5" GridLayout.Row="4">
+                    <HorizontalStackLayout Grid.Row="4" Margin="0,5">
                         <Label FontAttributes="Bold" Text="许可证:  " />
                         <v:CustomLabel x:Name="License" />
                     </HorizontalStackLayout>
-                    <HorizontalStackLayout Margin="0,5" GridLayout.Row="5">
+                    <HorizontalStackLayout Grid.Row="5" Margin="0,5">
                         <Label FontAttributes="Bold" Text="发布日期:  " />
                         <Label x:Name="PublishDate" VerticalTextAlignment="End" />
                     </HorizontalStackLayout>
-                    <HorizontalStackLayout Margin="0,5" GridLayout.Row="6">
+                    <HorizontalStackLayout Grid.Row="6" Margin="0,5">
                         <Label FontAttributes="Bold" Text="项目地址:  " />
                         <v:CustomLabel
                             x:Name="ProjectUrl"
@@ -93,15 +93,15 @@
                             TextDecorations="Underline" />
                     </HorizontalStackLayout>
                     <Label
+                        Grid.Row="7"
                         Margin="0,5"
                         FontAttributes="Bold"
                         FontSize="14"
-                        GridLayout.Row="7"
                         Text="依赖项 " />
-                    <GridLayout x:Name="DependencyList" GridLayout.Row="8" />
-                </GridLayout>
+                    <Grid x:Name="DependencyList" Grid.Row="8" />
+                </Grid>
             </RefreshView>
         </ScrollView>
 
-    </GridLayout>
+    </Grid>
 </ContentPage>
