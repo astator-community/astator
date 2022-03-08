@@ -25,7 +25,7 @@ public static class SdkReferences
             if (string.IsNullOrEmpty(SdkDir))
             {
                 var id = "astator.Sdk";
-                var version = await NugetCommands.ParseVersion(id, "0.1.1");
+                var version = await NugetCommands.ParseVersion(id, "0.2.1");
                 var dir = Path.Combine(NugetCommands.NugetDirectory, id, version.ToString());
                 if (!Directory.Exists(dir))
                 {
@@ -50,7 +50,7 @@ public static class SdkReferences
         var assemblyNames = new List<string>();
         await CheckSdk();
 
-        var ReferencesIsAdd = Android.App.Application.Context.ApplicationContext.PackageName.Equals("com.astator.astator");
+        var ReferencesIsAdd = Android.App.Application.Context.PackageName.Equals("com.astator.astator");
 
         if (!string.IsNullOrEmpty(SdkDir))
         {
@@ -64,9 +64,9 @@ public static class SdkReferences
 
             foreach (var path in Directory.GetFiles(net6Dir, "*.dll", SearchOption.AllDirectories))
             {
-                if (ReferencesIsAdd) References.Add(MetadataReference.CreateFromFile(path));
                 try
                 {
+                    if (ReferencesIsAdd) References.Add(MetadataReference.CreateFromFile(path));
                     var name = AssemblyName.GetAssemblyName(path).Name;
                     if (!assemblyNames.Contains(name))
                     {
@@ -78,9 +78,9 @@ public static class SdkReferences
 
             foreach (var path in Directory.GetFiles(mauiDir, "*.dll", SearchOption.AllDirectories))
             {
-                if (ReferencesIsAdd) References.Add(MetadataReference.CreateFromFile(path));
                 try
                 {
+                    if (ReferencesIsAdd) References.Add(MetadataReference.CreateFromFile(path));
                     var name = AssemblyName.GetAssemblyName(path).Name;
                     if (!assemblyNames.Contains(name))
                     {

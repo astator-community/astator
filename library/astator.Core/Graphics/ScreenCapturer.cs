@@ -78,11 +78,11 @@ namespace astator.Core.Graphics
             var manager = (MediaProjectionManager)GetSystemService("media_projection");
             this.mediaProjection = manager?.GetMediaProjection((int)Result.Ok, data);
 
-            var width = Globals.Devices.Width;
-            var height = Globals.Devices.Height;
+            var width = Devices.Width;
+            var height = Devices.Height;
 
             this.imageReader = ImageReader.NewInstance(width, height, (ImageFormatType)Format.Rgba8888, 2);
-            this.virtualDisplay = this.mediaProjection?.CreateVirtualDisplay("ScreenCapturer", width, height, Globals.Devices.Dpi,
+            this.virtualDisplay = this.mediaProjection?.CreateVirtualDisplay("ScreenCapturer", width, height, Devices.Dpi,
                   DisplayFlags.Round, this.imageReader.Surface, null, null);
 
             Instance = this;
@@ -92,26 +92,29 @@ namespace astator.Core.Graphics
 
         public override void OnConfigurationChanged(Configuration newConfig)
         {
-            base.OnConfigurationChanged(newConfig);
-
-            if (newConfig.Orientation == this.currentOrientation)
+            lock (locker)
             {
-                return;
+                base.OnConfigurationChanged(newConfig);
+
+                if (newConfig.Orientation == this.currentOrientation)
+                {
+                    return;
+                }
+                else
+                {
+                    this.currentOrientation = newConfig.Orientation;
+                }
+
+                this.imageReader?.Close();
+                this.virtualDisplay?.Release();
+
+                var width = Devices.Width;
+                var height = Devices.Height;
+
+                this.imageReader = ImageReader.NewInstance(width, height, (ImageFormatType)Format.Rgba8888, 2);
+                this.virtualDisplay = this.mediaProjection?.CreateVirtualDisplay("ScreenCapturer", width, height, Devices.Dpi,
+                      DisplayFlags.Round, this.imageReader.Surface, null, null);
             }
-            else
-            {
-                this.currentOrientation = newConfig.Orientation;
-            }
-
-            this.imageReader?.Close();
-            this.virtualDisplay?.Release();
-
-            var width = Globals.Devices.Width;
-            var height = Globals.Devices.Height;
-
-            this.imageReader = ImageReader.NewInstance(width, height, (ImageFormatType)Format.Rgba8888, 2);
-            this.virtualDisplay = this.mediaProjection?.CreateVirtualDisplay("ScreenCapturer", width, height, Globals.Devices.Dpi,
-                  DisplayFlags.Round, this.imageReader.Surface, null, null);
         }
 
         private void StartNotification()

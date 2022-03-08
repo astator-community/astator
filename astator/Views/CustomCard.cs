@@ -6,7 +6,7 @@ namespace astator.Views;
 
 public class CustomCard : Grid
 {
-    public static readonly BindableProperty TagBindableProperty = BindableProperty.Create(nameof(Tag), typeof(object), typeof(CustomLabelButton));
+    public static readonly BindableProperty TagBindableProperty = BindableProperty.Create(nameof(Tag), typeof(object), typeof(CustomCard));
     public object Tag
     {
         get => GetValue(TagBindableProperty);

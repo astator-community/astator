@@ -3,6 +3,15 @@ using astator.Core.UI.Base;
 
 namespace astator.Core.UI.Controls;
 
+public class ScriptWebViewClient : WebViewClient
+{
+    public override bool ShouldOverrideUrlLoading(WebView view, IWebResourceRequest request)
+    {
+        view.LoadUrl(request.Url.ToString());
+        return true;
+    }
+}
+
 public class ScriptWebView : WebView, IControl
 {
     public string CustomId { get; set; }
@@ -10,6 +19,10 @@ public class ScriptWebView : WebView, IControl
 
     public ScriptWebView(Android.Content.Context context, ViewArgs args) : base(context)
     {
+        this.LayoutParameters = new Android.Views.ViewGroup.LayoutParams(Android.Views.ViewGroup.LayoutParams.MatchParent, Android.Views.ViewGroup.LayoutParams.MatchParent);
+
+        this.Settings.JavaScriptEnabled = true;
+        SetWebViewClient(new ScriptWebViewClient());
         this.SetDefaultValue(ref args);
         foreach (var item in args)
         {
@@ -44,5 +57,10 @@ public class ScriptWebView : WebView, IControl
     public void On(string key, object listener)
     {
         this.OnListener(key, listener);
+    }
+
+    public override void LoadUrl(string url)
+    {
+        base.LoadUrl(url);
     }
 }

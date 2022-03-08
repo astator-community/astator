@@ -14,7 +14,7 @@ public class ProjectEntryMethod : EntryMethod
 /// </summary>
 public class ScriptEntryMethod : EntryMethod
 {
-    public string FileName { get; set; }
+    public string FileName { get; set; } = string.Empty;
 }
 
 /// <summary>
@@ -26,5 +26,5 @@ public class EntryMethod : Attribute
     /// <summary>
     /// 是否使用ui
     /// </summary>
-    public bool IsUIMode { get; set; }
+    public bool IsUIMode { get; set; } = false;
 }

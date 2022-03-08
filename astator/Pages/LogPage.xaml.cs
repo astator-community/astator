@@ -1,6 +1,6 @@
 using AndroidX.AppCompat.App;
-using astator.Modules;
 using astator.Core.Script;
+using astator.Modules;
 using astator.Views;
 using NLog;
 using System.IO.Compression;
@@ -68,16 +68,17 @@ namespace astator.Pages
                     }
                     catch (Exception ex)
                     {
-                        ScriptLogger.Error(ex.Message);
+                        ScriptLogger.Error(ex);
                     }
                 }
                 File.WriteAllLines(path, logList);
                 this.LogScrollView.ScrollToAsync(0, this.LogLayout.Height, false);
             }
         }
+
         public void AddLogText(LogArgs message)
         {
-            Globals.RunOnUiThread(() =>
+            Device.InvokeOnMainThreadAsync(() =>
             {
                 var label = new Label
                 {
@@ -158,7 +159,7 @@ namespace astator.Pages
             }
             catch (Exception ex)
             {
-                ScriptLogger.Error(ex.Message);
+                ScriptLogger.Error(ex);
             }
         }
 

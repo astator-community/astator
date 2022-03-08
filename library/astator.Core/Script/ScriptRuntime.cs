@@ -42,15 +42,21 @@ public enum ScriptState
 
 public class ScriptRuntime
 {
+
+    /// <summary>
+    /// 脚本id
+    /// </summary>
+    public string ScriptId { get; private set; }
+
     /// <summary>
     /// ui管理类
     /// </summary>
     public UiManager Ui { get; private set; }
 
     /// <summary>
-    /// 悬浮窗管理类
+    /// 悬浮窗相关
     /// </summary>
-    public FloatyManager Floatys { get; private set; }
+    public FloatyHelper FloatyHelper { get; private set; }
 
     /// <summary>
     /// 线程管理类
@@ -63,14 +69,14 @@ public class ScriptRuntime
     public TaskManager Tasks { get; private set; }
 
     /// <summary>
-    /// 是否为ui脚本
+    /// 权限相关
     /// </summary>
-    public bool IsUiMode { get; private set; } = false;
+    public PermissionHelper PermissionHelper { get; private set; }
 
     /// <summary>
-    /// 脚本id
+    /// 是否为ui模式
     /// </summary>
-    public string ScriptId { get; private set; }
+    public bool IsUiMode { get; private set; } = false;
 
     /// <summary>
     /// 脚本运行状态
@@ -78,19 +84,14 @@ public class ScriptRuntime
     public ScriptState State { get; private set; }
 
     /// <summary>
-    /// 脚本停止回调
-    /// </summary>
-    public List<Action> ExitCallbacks { get; set; } = new();
-
-    /// <summary>
-    /// 脚本所在文件夹路径
+    /// 脚本工作路径
     /// </summary>
     public string WorkDir { get; private set; } = string.Empty;
 
     /// <summary>
-    /// 脚本自身的activity
+    /// 脚本自身的activity, 非ui模式时为null
     /// </summary>
-    public TemplateActivity Context { get; private set; }
+    public TemplateActivity Activity { get; private set; }
 
     /// <summary>
     /// 在脚本停止时退出应用, 只在打包apk有效
@@ -102,14 +103,20 @@ public class ScriptRuntime
     /// </summary>
     private readonly ScriptEngine engine;
 
-    public ScriptRuntime(string id, ScriptEngine engine, TemplateActivity activity, string directory) : this(id, engine, directory)
+    /// <summary>
+    /// 脚本停止回调集合
+    /// </summary>
+    private readonly List<Action> exitCallbacks = new();
+
+    public ScriptRuntime(string id, ScriptEngine engine, TemplateActivity activity, string dir) : this(id, engine, dir, activity)
     {
         this.IsUiMode = true;
-        this.Context = activity;
-        this.Context.OnFinished = SetStop;
-        this.Ui = new UiManager(activity, directory);
+        this.Activity = activity;
+        this.Activity.OnFinishedCallback = SetStop;
+        this.Ui = new UiManager(activity, dir);
     }
-    public ScriptRuntime(string id, ScriptEngine engine, string directory)
+
+    public ScriptRuntime(string id, ScriptEngine engine, string directory, Activity activity = null)
     {
         this.State = ScriptState.Unstarted;
         this.ScriptId = id;
@@ -118,37 +125,71 @@ public class ScriptRuntime
         this.Threads = new ThreadManager();
         this.Tasks = new TaskManager();
 
-        if (!this.IsUiMode)
-        {
-            this.Tasks.ScriptExitCallback = Stop;
-            this.Tasks.ScriptExitSignal = true;
-        }
-
-        this.Floatys = new FloatyManager(this.Context ?? Globals.AppContext, directory);
-    }
-
-    /// <summary>
-    /// 设置停止标志
-    /// </summary>
-    public void SetStop()
-    {
-        this.State = ScriptState.WaitStop;
-
-        if (this.Threads.IsAlive() || this.Tasks.IsAlive())
+        if (activity is null)
         {
             this.Threads.ScriptExitCallback = Stop;
             this.Threads.ScriptExitSignal = true;
             this.Tasks.ScriptExitCallback = Stop;
             this.Tasks.ScriptExitSignal = true;
         }
-        else
-        {
-            Stop(0);
-        }
 
-        this.Threads.Interrupt();
-        this.Tasks.Cancel();
+        this.FloatyHelper = new FloatyHelper(activity ?? Globals.AppContext, directory);
+        this.PermissionHelper = new PermissionHelper(activity ?? Globals.AppContext as Activity);
     }
+
+    /// <summary>
+    /// 停止脚本
+    /// </summary>
+    public void SetStop()
+    {
+        if (this.State == ScriptState.Running || this.State == ScriptState.Unstarted)
+        {
+            this.State = ScriptState.WaitStop;
+
+            if (this.Threads.IsAlive() || this.Tasks.IsAlive())
+            {
+                this.Threads.ScriptExitCallback = Stop;
+                this.Threads.ScriptExitSignal = true;
+                this.Tasks.ScriptExitCallback = Stop;
+                this.Tasks.ScriptExitSignal = true;
+                this.Threads.Interrupt();
+                this.Tasks.Cancel();
+            }
+            else
+            {
+                Stop(0);
+            }
+        }
+    }
+
+    /// <summary>
+    /// 添加一个脚本停止时的回调
+    /// </summary>
+    /// <param name="callback"></param>
+    public void AddExitCallback(Action callback)
+    {
+        this.exitCallbacks.Add(callback);
+    }
+
+    /// <summary>
+    /// 添加一个logger的回调
+    /// </summary>
+    /// <param name="callback"></param>
+    /// <returns>回调的key</returns>
+    public string AddLoggerCallback(Action<LogArgs> callback)
+    {
+        return ScriptLogger.AddCallback(this.ScriptId, callback);
+    }
+
+    /// <summary>
+    /// 移除logger的回调
+    /// </summary>
+    /// <param name="key">回调的key, 当key为空时移除当前runtime添加的所有回调</param>
+    public void RemoveLoggerCallback(string key = null)
+    {
+        ScriptLogger.RemoveCallback(key ?? this.ScriptId);
+    }
+
 
     /// <summary>
     /// 停止脚本
@@ -156,38 +197,52 @@ public class ScriptRuntime
     /// <param name="type">调用方标志, 1为threads, 2为tasks</param>
     internal void Stop(int type)
     {
-        if (type == 1)
-        {
-            if (this.Tasks.IsAlive()) return;
-        }
-        else if (type == 2)
-        {
-            if (this.Threads.IsAlive()) return;
-        }
+        Globals.InvokeOnMainThreadAsync(() =>
+         {
+             if (type == 1)
+             {
+                 if (this.Tasks.IsAlive()) return;
+             }
+             else if (type == 2)
+             {
+                 if (this.Threads.IsAlive()) return;
+             }
 
-        this.State = ScriptState.Stopping;
+             this.State = ScriptState.Stopping;
 
-        try
-        {
-            foreach (var callback in this.ExitCallbacks) callback.Invoke();
-            this.Floatys?.RemoveAll();
-            this.engine.UnExecute();
-            ScriptLogger.Log("脚本停止运行: " + this.ScriptId);
+             try
+             {
+                 RemoveLoggerCallback();
 
-            if (this.IsExitAppOnStoped && Application.Context.PackageName != "com.astator.astator")
-            {
-                Globals.RunOnUiThread(() =>
-                {
-                    this.Context.FinishAffinity();
-                    (Globals.AppContext as Activity).FinishAffinity();
-                    Java.Lang.JavaSystem.Exit(0);
-                });
-            }
-        }
-        catch { }
-        finally
-        {
-            this.State = ScriptState.Exited;
-        }
+                 foreach (var callback in this.exitCallbacks)
+                 {
+                     callback.Invoke();
+                 }
+                 this.FloatyHelper?.RemoveAll();
+
+
+                 if (this.IsUiMode)
+                 {
+                     if (!this.Activity.IsFinishing && !this.Activity.IsDestroyed)
+                     {
+                         this.Activity.Finish();
+                     }
+                 }
+                 if (this.IsExitAppOnStoped && Application.Context.PackageName != "com.astator.astator")
+                 {
+                     (Globals.AppContext as Activity).Finish();
+                     Java.Lang.JavaSystem.Exit(0);
+                 }
+
+
+                 this.engine.UnExecute();
+                 ScriptLogger.Log("脚本停止运行: " + this.ScriptId);
+             }
+             catch { }
+             finally
+             {
+                 this.State = ScriptState.Exited;
+             }
+         });
     }
 }

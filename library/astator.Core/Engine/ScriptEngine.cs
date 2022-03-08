@@ -65,7 +65,7 @@ namespace astator.Core.Engine
 
             foreach (var assembly in AssemblyLoadContext.Default.Assemblies)
             {
-                this.DefaultAssemblyNames.Add(assembly.FullName);
+                this.DefaultAssemblyNames.Add(assembly.GetName().Name);
             }
         }
 
@@ -117,13 +117,13 @@ namespace astator.Core.Engine
                 ScriptLogger.Error($"加载dll失败, 文件不存在: {path}");
                 return false;
             }
+            var ReferencesIsAdd = Android.App.Application.Context.PackageName.Equals("com.astator.astator");
+            if (ReferencesIsAdd) this.scriptReferences.Add(MetadataReference.CreateFromFile(path));
 
-            this.scriptReferences.Add(MetadataReference.CreateFromFile(path));
-
-            var name = AssemblyName.GetAssemblyName(path).FullName;
+            var name = AssemblyName.GetAssemblyName(path).Name;
             if (!this.DefaultAssemblyNames.Contains(name))
             {
-                _ = new WeakReference<Assembly>(this.alc.LoadFromAssemblyPath(path));
+                this.alc.LoadFromAssemblyPath(path);
             }
 
             return true;
@@ -206,6 +206,7 @@ namespace astator.Core.Engine
         {
             try
             {
+                TipsViewImpl.ChangeTipsText("正在加载程序集...");
                 var dllPath = Path.Combine(this.rootDir, "compile.dll");
                 if (!File.Exists(dllPath))
                 {
@@ -215,6 +216,8 @@ namespace astator.Core.Engine
 
                 this.assembly = new WeakReference<Assembly>(this.alc.LoadFromAssemblyPath(dllPath));
 
+
+                TipsViewImpl.ChangeTipsText("正在加载引用程序集...");
                 var refDir = Path.Combine(this.rootDir, "ref");
                 if (Directory.Exists(refDir))
                 {
@@ -235,7 +238,7 @@ namespace astator.Core.Engine
             }
             catch (Exception ex)
             {
-                ScriptLogger.Error(ex.ToString());
+                ScriptLogger.Error(ex);
                 return false;
             }
 
@@ -248,14 +251,7 @@ namespace astator.Core.Engine
         /// <param name="runtime"></param>
         public static void Execute(MethodInfo method, dynamic runtime)
         {
-            try
-            {
-                method.Invoke(null, new object[] { runtime });
-            }
-            catch (Exception ex)
-            {
-                ScriptLogger.Error(ex.ToString());
-            }
+            method.Invoke(null, new object[] { runtime });
         }
 
         /// <summary>
@@ -286,7 +282,7 @@ namespace astator.Core.Engine
             }
             catch (Exception ex)
             {
-                ScriptLogger.Error(ex.ToString());
+                ScriptLogger.Error(ex);
             }
 
             return null;
@@ -323,7 +319,7 @@ namespace astator.Core.Engine
             }
             catch (Exception ex)
             {
-                ScriptLogger.Error(ex.ToString());
+                ScriptLogger.Error(ex);
             }
 
             return null;
@@ -365,7 +361,7 @@ namespace astator.Core.Engine
             }
             catch (Exception ex)
             {
-                ScriptLogger.Error(ex.ToString());
+                ScriptLogger.Error(ex);
                 return false;
             }
         }

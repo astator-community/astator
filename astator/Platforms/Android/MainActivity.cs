@@ -7,16 +7,19 @@ using Android.Runtime;
 using Android.Views;
 using astator.Core.Broadcast;
 using astator.Core.Script;
-using astator.Core.UI;
+using astator.Core.UI.Base;
+using astator.Modules;
 using astator.Pages;
 using Microsoft.Maui.Platform;
 
 namespace astator
 {
     [Activity(Theme = "@style/Maui.SplashTheme", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation | ConfigChanges.UiMode | ConfigChanges.ScreenLayout | ConfigChanges.SmallestScreenSize)]
-    public class MainActivity : MauiAppCompatActivity
+    public class MainActivity : MauiAppCompatActivity, IActivity
     {
         public static MainActivity Instance { get; private set; }
+
+        public LifecycleObserver LifecycleObserver { get; set; }
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -32,10 +35,11 @@ namespace astator
             base.OnCreate(savedInstanceState);
             Platform.Init(this, savedInstanceState);
 
+            this.LifecycleObserver = new LifecycleObserver(this);
+            this.Lifecycle.AddObserver(this.LifecycleObserver);
 
-            var permissionLifecycleObserver = new LifecycleObserver(this);
-            this.Lifecycle.AddObserver(permissionLifecycleObserver);
-            Globals.Permission.LifecycleObserver = permissionLifecycleObserver;
+            var permissionHelper = new PermissionHelper(this);
+            PermissionHelperer.Instance = permissionHelper;
 
             var permissions = new string[]
             {
@@ -44,14 +48,14 @@ namespace astator
             };
 
 
-            Globals.Permission.ReqPermission(permissions[0], result =>
+            permissionHelper.ReqPermission(permissions[0], result =>
             {
                 if (!result)
                 {
                     NotPermissionExit();
                 }
 
-                Globals.Permission.ReqPermission(permissions[1], result =>
+                permissionHelper.ReqPermission(permissions[1], result =>
                 {
                     if (!result)
                     {
@@ -60,7 +64,7 @@ namespace astator
 
                     if (OperatingSystem.IsAndroidVersionAtLeast(30) && !Android.OS.Environment.IsExternalStorageManager)
                     {
-                        Globals.Permission.StartActivityForResult(new Intent(Android.Provider.Settings.ActionManageAllFilesAccessPermission), result =>
+                        permissionHelper.StartActivityForResult(new Intent(Android.Provider.Settings.ActionManageAllFilesAccessPermission), result =>
                         {
                             if (OperatingSystem.IsAndroidVersionAtLeast(30) && Android.OS.Environment.IsExternalStorageManager)
                             {
@@ -99,7 +103,6 @@ namespace astator
                .Show();
         }
 
-
         private void InitializePage()
         {
             var mainPage = Microsoft.Maui.Controls.Application.Current.MainPage as NavigationPage;
@@ -121,6 +124,11 @@ namespace astator
         {
             UnregisterReceiver(ScriptBroadcastReceiver.Instance);
             base.OnDestroy();
+        }
+
+        public override void Finish()
+        {
+            base.Finish();
         }
 
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, Permission[] grantResults)
@@ -150,9 +158,17 @@ namespace astator
 
             var mainPage = Microsoft.Maui.Controls.Application.Current.MainPage as NavigationPage;
             var tabbedPage = mainPage.RootPage as TabbedPage;
-            if (mainPage.Navigation.NavigationStack.Count == 1 && tabbedPage.CurrentPage is HomePage homePage)
+            if (mainPage.Navigation.NavigationStack.Count == 1)
             {
-                result = homePage.OnKeyDown(keyCode, e);
+                if (tabbedPage.CurrentPage is HomePage homePage)
+                {
+                    result = homePage.OnKeyDown(keyCode, e);
+                }
+                else if (tabbedPage.CurrentPage is DocPage docPage)
+                {
+                    result = docPage.OnKeyDown(keyCode, e);
+                }
+
             }
 
             if (!result && keyCode == Keycode.Back)

@@ -4,12 +4,12 @@ using Android.Text.Util;
 using Android.Views;
 using Android.Widget;
 using astator.Core.Exceptions;
+using astator.Core.Script;
 using astator.Core.UI.Controls;
 using System;
 using System.Collections.Generic;
 using static Android.Text.TextUtils;
 using static Android.Views.ViewGroup;
-using static astator.Core.Script.Globals;
 
 namespace astator.Core.UI.Base;
 
@@ -443,12 +443,12 @@ public static class Util
 
         if (view is not ScriptEditText && view is not ScriptButton)
         {
-            args["bg"] ??= DefaultTheme.LayoutBackground;
+            args["bg"] ??= DefaultTheme.LayoutBackgroundColor;
         }
 
         if (view is TextView)
         {
-            args["textColor"] ??= DefaultTheme.TextColorPrimary;
+            args["textColor"] ??= DefaultTheme.TextColor;
             args["textSize"] ??= DefaultTheme.TextSize;
         }
     }

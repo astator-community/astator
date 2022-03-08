@@ -1,8 +1,8 @@
 using Android.Content;
 using Android.Views;
-using astator.Modules;
 using astator.Core.Script;
 using astator.Core.UI.Base;
+using astator.Modules;
 using Microsoft.Maui.Platform;
 
 namespace astator.Views
@@ -48,9 +48,6 @@ namespace astator.Views
         {
             InitializeComponent();
         }
-
-
-
 
 
         protected override void OnHandlerChanged()

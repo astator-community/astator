@@ -1,5 +1,4 @@
 ﻿using Android.Graphics;
-using astator.Core.Script;
 using Com.Baidu.Paddle.Lite.Ocr;
 using System.Collections.Generic;
 

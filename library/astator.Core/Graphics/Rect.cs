@@ -36,6 +36,6 @@ public struct Rect
 
     public override string ToString()
     {
-        return $"Rect: [left: {this.Left}, top: {this.Top}, right: {this.Right}, bottom: {this.Bottom}]";
+        return $"[left: {this.Left}, top: {this.Top}, right: {this.Right}, bottom: {this.Bottom}]";
     }
 }

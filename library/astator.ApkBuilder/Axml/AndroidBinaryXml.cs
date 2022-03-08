@@ -77,7 +77,7 @@ internal class AndroidBinaryXml
                         }
                         else if (attr.Name == versionCodeIndex)
                         {
-                            var ts = DateTime.Now - new DateTime(2021, 12, 1, 0, 0, 0, 0);
+                            var ts = DateTime.Now - new DateTime(2022, 1, 1, 0, 0, 0, 0);
                             attr.Data = Convert.ToInt32(ts.TotalMinutes);
                         }
                     }

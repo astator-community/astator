@@ -1,8 +1,8 @@
 using AndroidX.AppCompat.App;
-using astator.Modules;
 using astator.Core.Accessibility;
 using astator.Core.Graphics;
 using astator.Core.Script;
+using astator.Modules;
 using Microsoft.Maui.Platform;
 
 namespace astator.Pages
@@ -31,15 +31,15 @@ namespace astator.Pages
         {
             if (e.Value)
             {
-                if (ScriptAccessibilityService.Instance is null)
+                if (!PermissionHelperer.CheckAccessibility())
                 {
-                    Globals.Permission.ReqAccessibilityService();
+                    PermissionHelperer.ReqAccessibility();
                     this.AccessibilityService.IsToggled = false;
                 }
             }
             else
             {
-                ScriptAccessibilityService.Instance?.DisableSelf();
+                PermissionHelperer.CloseAccessibility();
             }
         }
 
@@ -48,9 +48,9 @@ namespace astator.Pages
         {
             if (e.Value)
             {
-                if (ScreenCapturer.Instance is null)
+                if (!PermissionHelperer.CheckScreenCap())
                 {
-                    Globals.Permission.ReqScreenCap(result =>
+                    PermissionHelperer.ReqScreenCap(result =>
                     {
                         if (!result)
                         {
@@ -69,17 +69,13 @@ namespace astator.Pages
         {
             if (e.Value)
             {
-                if (!Android.Provider.Settings.CanDrawOverlays(Globals.AppContext))
+                if (!await PermissionHelperer.CheckFloaty())
                 {
-                    Globals.Permission.ReqFloaty();
+                    PermissionHelperer.ReqFloaty();
                     this.Floaty.IsToggled = false;
                 }
                 else
                 {
-                    if (Core.UI.Floaty.FloatyService.Instance is null)
-                    {
-                        await Globals.Permission.StartFloatyService();
-                    }
                     FloatyManager.Instance.Show();
                 }
             }
@@ -93,23 +89,30 @@ namespace astator.Pages
         {
             if (e.Value)
             {
-                var setDebugMode = new SetDebugMode();
-                var view = setDebugMode.ToNative(this.Handler.MauiContext);
-                var builder = new AlertDialog.Builder(Globals.AppContext).SetView(view);
-                var dialog = builder.Show();
-                setDebugMode.DismissCallback += () =>
+                try
                 {
-                    dialog.Dismiss();
-                };
-
-                dialog.DismissEvent += async (s, e) =>
-                {
-                    await Task.Delay(200);
-                    if (DebugService.Instance is null)
+                    var setDebugMode = new SetDebugMode();
+                    var view = setDebugMode.ToNative(this.Handler.MauiContext);
+                    var builder = new AlertDialog.Builder(Globals.AppContext).SetView(view);
+                    var dialog = builder.Show();
+                    setDebugMode.DismissCallback += () =>
                     {
-                        this.Debug.IsToggled = false;
-                    }
-                };
+                        dialog.Dismiss();
+                    };
+
+                    dialog.DismissEvent += async (s, e) =>
+                    {
+                        await Task.Delay(200);
+                        if (DebugService.Instance is null)
+                        {
+                            this.Debug.IsToggled = false;
+                        }
+                    };
+                }
+                catch (Exception ex)
+                {
+                    ScriptLogger.Error(ex);
+                }
             }
             else
             {

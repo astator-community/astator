@@ -14,13 +14,13 @@ namespace astator.Core.UI.Floaty
     /// </summary>
     public class FloatyManager : IManager
     {
-        public List<FloatyWindow> Floatys { get; set; } = new();
-
         private readonly Context context;
 
         private readonly Dictionary<string, Dictionary<string, object>> globalListeners = new();
 
         private readonly string workDir = string.Empty;
+
+        private FloatyWindowBase floaty;
 
         private readonly Dictionary<string, IView> childs = new();
 
@@ -48,10 +48,10 @@ namespace astator.Core.UI.Floaty
             }
         }
 
-        public FloatyManager(Context context, string directory)
+        public FloatyManager(Context context, string dir)
         {
             this.context = context;
-            this.workDir = directory;
+            this.workDir = dir;
         }
 
         /// <summary>
@@ -61,37 +61,51 @@ namespace astator.Core.UI.Floaty
         /// <param name="x"></param>
         /// <param name="y"></param>
         /// <returns></returns>
-        public FloatyWindow Show(View view,
+        public SystemFloatyWindow CreateSystemFloaty(View view,
             int x = 0,
             int y = 0,
             GravityFlags gravityFlags = GravityFlags.Left | GravityFlags.Top,
             WindowManagerFlags windowManagerFlags = WindowManagerFlags.NotFocusable | WindowManagerFlags.LayoutNoLimits)
         {
-            FloatyWindow floaty = new(view, x, y, gravityFlags, windowManagerFlags);
-            this.Floatys.Add(floaty);
+            var floaty = new SystemFloatyWindow(view, x, y, gravityFlags, windowManagerFlags);
+            this.floaty = floaty;
             return floaty;
+        }
+
+        public AppFloatyWindow CreateAppFloaty(View view,
+            int x = 0,
+            int y = 0,
+            GravityFlags gravityFlags = GravityFlags.Left | GravityFlags.Top,
+            WindowManagerFlags windowManagerFlags = WindowManagerFlags.NotFocusable | WindowManagerFlags.LayoutNoLimits)
+        {
+            var floaty = new AppFloatyWindow(this.context, view, x, y, gravityFlags, windowManagerFlags);
+            this.floaty = floaty;
+            return floaty;
+        }
+
+        /// <summary>
+        /// 显示悬浮窗
+        /// </summary>
+        /// <returns></returns>
+        public bool Show()
+        {
+            return this.floaty?.Show() ?? false;
+        }
+
+        // <summary>
+        /// 移除悬浮窗
+        /// </summary>
+        public bool Hide()
+        {
+            return this.floaty?.Hide() ?? false;
         }
 
         /// <summary>
         /// 移除悬浮窗
         /// </summary>
-        /// <param name="floaty"></param>
-        public void Remove(FloatyWindow floaty)
+        public bool Remove()
         {
-            floaty.Remove();
-            this.Floatys.Remove(floaty);
-        }
-
-        /// <summary>
-        /// 移除所有悬浮窗
-        /// </summary>
-        public void RemoveAll()
-        {
-            foreach (var floaty in this.Floatys)
-            {
-                floaty.Remove();
-            }
-            this.Floatys.Clear();
+            return this.floaty?.Remove() ?? false;
         }
 
         /// <summary>

@@ -26,7 +26,7 @@ namespace astator.Modules
             }
         }
 
-        private readonly Dictionary<string, FloatyWindow> floatys = new();
+        private readonly Dictionary<string, SystemFloatyWindow> floatys = new();
 
         public bool IsShow()
         {
@@ -59,8 +59,8 @@ namespace astator.Modules
 
             ScriptBroadcastReceiver.AddListener(Intent.ActionConfigurationChanged, "floatyManager", () =>
             {
-                var width = Globals.Devices.Width;
-                var height = Globals.Devices.Height;
+                var width = Devices.Width;
+                var height = Devices.Height;
                 var layoutParams = view.LayoutParameters as WindowManagerLayoutParams;
 
                 if (layoutParams.X < width / 2)
@@ -80,7 +80,7 @@ namespace astator.Modules
                 FloatyService.Instance.UpdateViewLayout(view, layoutParams);
             });
 
-            var window = new FloatyWindow(view, -6, 100);
+            var window = new SystemFloatyWindow(view, -6, 100);
             this.floatys.Add("iconFloaty", window);
         }
 
@@ -120,7 +120,7 @@ namespace astator.Modules
             }
             else if (e.Action == MotionEventActions.Up)
             {
-                var width = Globals.Devices.Width;
+                var width = Devices.Width;
 
                 if (this.isMoving)
                 {
@@ -147,10 +147,10 @@ namespace astator.Modules
 
         private void ShowFastRunner()
         {
-            var width = Globals.Devices.Width / Globals.Devices.Dp;
-            var height = Globals.Devices.Height / Globals.Devices.Dp;
+            var width = Devices.Width / Devices.Dp;
+            var height = Devices.Height / Devices.Dp;
             var fastRunner = new FloatyFastRunner();
-            if (Globals.Devices.Width > Globals.Devices.Height)
+            if (Devices.Width > Devices.Height)
             {
                 fastRunner.HeightRequest = 350;
                 fastRunner.RowDefinitions = new RowDefinitionCollection()
@@ -171,7 +171,7 @@ namespace astator.Modules
             }
             var view = fastRunner.ToNative(Application.Current.MainPage.Handler.MauiContext);
 
-            var window = new FloatyWindow(view, gravity: GravityFlags.Center, flags: WindowManagerFlags.NotFocusable | WindowManagerFlags.LayoutNoLimits | WindowManagerFlags.WatchOutsideTouch);
+            var window = new SystemFloatyWindow(view, gravity: GravityFlags.Center, flags: WindowManagerFlags.NotFocusable | WindowManagerFlags.LayoutNoLimits | WindowManagerFlags.WatchOutsideTouch);
 
             view.SetOnTouchListener(new OnTouchListener((v, e) =>
             {

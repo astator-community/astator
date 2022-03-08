@@ -25,7 +25,6 @@ namespace astator.Pages
                 var result = new List<PackageInfoCard>();
                 if (pkgs is not null)
                 {
-                    var client = new HttpClient();
                     foreach (var pkg in pkgs)
                     {
                         var card = new PackageInfoCard

@@ -6,7 +6,7 @@ using Action = Android.Views.Accessibility.Action;
 
 namespace astator.Core.Accessibility;
 
-public static class NodeInfoExtension
+public static partial class NodeInfoExtension
 {
     /// <summary>
     /// 获取Id
@@ -38,7 +38,7 @@ public static class NodeInfoExtension
     }
 
     /// <summary>
-    /// 获取控件在根节点的深度
+    /// 获取控件相对于根节点的深度
     /// </summary>
     /// <param name="nodeInfo"></param>
     /// <returns></returns>
@@ -75,7 +75,7 @@ public static class NodeInfoExtension
     }
 
     /// <summary>
-    /// 设置控件文本
+    /// 设置编辑框文本
     /// </summary>
     /// <param name="nodeInfo"></param>
     /// <returns></returns>
@@ -93,7 +93,7 @@ public static class NodeInfoExtension
     /// <param name="start"></param>
     /// <param name="end"></param>
     /// <returns></returns>
-    public static bool SetSelectio1n(this AccessibilityNodeInfo nodeInfo, int start, int end)
+    public static bool SetSelectionText(this AccessibilityNodeInfo nodeInfo, int start, int end)
     {
         try
         {

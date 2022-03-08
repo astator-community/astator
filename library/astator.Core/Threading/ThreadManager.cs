@@ -1,4 +1,5 @@
 ﻿
+using astator.Core.Script;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -24,7 +25,7 @@ namespace astator.Core.Threading
         /// <returns></returns>
         public Thread Start(Action action)
         {
-            Thread thread = new(() =>
+            var thread = new Thread(() =>
             {
                 try
                 {
@@ -35,6 +36,7 @@ namespace astator.Core.Threading
                 }
                 catch (Exception ex)
                 {
+                    ScriptLogger.Error(ex);
                     if (!this.ScriptExitSignal)
                     {
                         throw;
@@ -60,7 +62,7 @@ namespace astator.Core.Threading
         /// 是否只有一个线程存活
         /// </summary>
         /// <returns></returns>
-        private bool IsLastAlive()
+        public bool IsLastAlive()
         {
             var num = 0;
             foreach (var thread in this.threads)

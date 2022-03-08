@@ -26,14 +26,14 @@ public class ScriptEditText : AppCompatEditText, IControl
             },
             new int[]
             {
-                DefaultTheme.TextColorPrimary,
-                DefaultTheme.ColorAccent
+                DefaultTheme.TextColor,
+                DefaultTheme.ColorPrimary
             });
 
         if (OperatingSystem.IsAndroidVersionAtLeast(29))
         {
             var drawable = this.TextCursorDrawable;
-            drawable.SetColorFilter(new BlendModeColorFilter(DefaultTheme.ColorAccent, BlendMode.SrcIn));
+            drawable.SetColorFilter(new BlendModeColorFilter(DefaultTheme.ColorPrimary, BlendMode.SrcIn));
             this.TextCursorDrawable = drawable;
         }
         else
@@ -50,9 +50,9 @@ public class ScriptEditText : AppCompatEditText, IControl
             cursorDrawableField.Accessible = true;
             var drawables = new Drawable[2];
             drawables[0] = ContextCompat.GetDrawable(this.Context, cursorDrawableRes);
-            drawables[0].SetColorFilter(DefaultTheme.ColorAccent, PorterDuff.Mode.SrcIn);
+            drawables[0].SetColorFilter(DefaultTheme.ColorPrimary, PorterDuff.Mode.SrcIn);
             drawables[1] = ContextCompat.GetDrawable(this.Context, cursorDrawableRes);
-            drawables[1].SetColorFilter(DefaultTheme.ColorAccent, PorterDuff.Mode.SrcIn);
+            drawables[1].SetColorFilter(DefaultTheme.ColorPrimary, PorterDuff.Mode.SrcIn);
             cursorDrawableField.Set(editor, drawables);
         }
 

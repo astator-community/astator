@@ -4,7 +4,7 @@ namespace astator.Views;
 
 internal class CustomImage : Image
 {
-    public static readonly BindableProperty IsCircleBindableProperty = BindableProperty.Create(nameof(IsCircle), typeof(bool), typeof(CustomLabelButton));
+    public static readonly BindableProperty IsCircleBindableProperty = BindableProperty.Create(nameof(IsCircle), typeof(bool), typeof(CustomImage));
     public bool IsCircle
     {
         get => (bool)GetValue(IsCircleBindableProperty);

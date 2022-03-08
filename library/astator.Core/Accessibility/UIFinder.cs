@@ -108,40 +108,18 @@ public struct SearcherArgs
 }
 
 
-public static class UIFinder
+public static partial class NodeInfoExtension
 {
-    /// <summary>
-    /// 在当前活动应用根节点查找符合条件的所有节点
-    /// </summary>
-    /// <param name="args"></param>
-    /// <returns></returns>
-    public static List<AccessibilityNodeInfo> Find(SearcherArgs args)
-    {
-        var nodeInfo = Automator.GetCurrentWindowInfo();
-        return Find(nodeInfo, args);
-    }
-
     /// <summary>
     /// 在给定的节点查找符合条件的所有节点
     /// </summary>
     /// <param name="nodeInfo"></param>
     /// <param name="args"></param>
     /// <returns></returns>
-    public static List<AccessibilityNodeInfo> Find(AccessibilityNodeInfo nodeInfo, SearcherArgs args)
+    public static List<AccessibilityNodeInfo> Find(this AccessibilityNodeInfo nodeInfo, SearcherArgs args)
     {
         var enabledArgs = args.GetEnabledArgs();
         return Find(new List<AccessibilityNodeInfo>() { nodeInfo }, enabledArgs);
-    }
-
-    /// <summary>
-    /// 在当前活动应用根节点查找符合条件的第一个节点
-    /// </summary>
-    /// <param name="args"></param>
-    /// <returns></returns>
-    public static AccessibilityNodeInfo FindOne(SearcherArgs args)
-    {
-        var nodeInfo = Automator.GetCurrentWindowInfo();
-        return FindOne(nodeInfo, args);
     }
 
     /// <summary>
@@ -150,7 +128,7 @@ public static class UIFinder
     /// <param name="nodeInfo"></param>
     /// <param name="args"></param>
     /// <returns></returns>
-    public static AccessibilityNodeInfo FindOne(AccessibilityNodeInfo nodeInfo, SearcherArgs args)
+    public static AccessibilityNodeInfo FindOne(this AccessibilityNodeInfo nodeInfo, SearcherArgs args)
     {
         var enabledArgs = args.GetEnabledArgs();
 

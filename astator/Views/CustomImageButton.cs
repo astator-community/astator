@@ -6,14 +6,14 @@ namespace astator.Views;
 
 internal class CustomImageButton : ImageButton
 {
-    public static readonly BindableProperty TagBindableProperty = BindableProperty.Create(nameof(Tag), typeof(object), typeof(CustomLabelButton));
+    public static readonly BindableProperty TagBindableProperty = BindableProperty.Create(nameof(Tag), typeof(object), typeof(CustomImageButton));
     public object Tag
     {
         get => GetValue(TagBindableProperty);
         set => SetValue(TagBindableProperty, value);
     }
 
-    public static readonly BindableProperty IsCircleBindableProperty = BindableProperty.Create(nameof(IsCircle), typeof(bool), typeof(CustomLabelButton));
+    public static readonly BindableProperty IsCircleBindableProperty = BindableProperty.Create(nameof(IsCircle), typeof(bool), typeof(CustomImageButton));
     public bool IsCircle
     {
         get => (bool)GetValue(IsCircleBindableProperty);

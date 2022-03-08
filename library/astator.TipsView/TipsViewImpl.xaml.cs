@@ -42,15 +42,12 @@ public partial class TipsViewImpl : Grid
     }
 
 
-    private readonly Android.Views.View nativeView;
-    private readonly AppFloatyWindow floaty;
-
     public TipsViewImpl()
     {
         InitializeComponent();
 
-        this.nativeView = this.ToNative(Application.Current.MainPage.Handler.MauiContext);
-        this.floaty = new AppFloatyWindow(AppContext, this.nativeView, gravity: Android.Views.GravityFlags.Center);
+        var nativeView = this.ToNative(Application.Current.MainPage.Handler.MauiContext);
+        _ = new FloatyWindow(AppContext, nativeView, gravity: Android.Views.GravityFlags.Center);
     }
 
 

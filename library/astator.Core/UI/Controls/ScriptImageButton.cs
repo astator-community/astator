@@ -10,7 +10,7 @@ public class ScriptImageButton : AndroidX.AppCompat.Widget.AppCompatImageButton,
     public string CustomId { get; set; }
     public OnCreatedListener OnCreatedListener { get; set; }
 
-    private Color backgroundColor = DefaultTheme.LayoutBackground;
+    private Color backgroundColor = DefaultTheme.LayoutBackgroundColor;
 
     private readonly string workDir;
 

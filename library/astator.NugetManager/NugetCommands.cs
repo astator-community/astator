@@ -22,7 +22,6 @@ public class NugetCommands
         "netstandard",
         "System.AppContext",
         "System.Buffers",
-        "System.Collections.Concurrent",
         "System.Collections",
         "System.Collections.Immutable",
         "System.Collections.NonGeneric",
@@ -161,7 +160,6 @@ public class NugetCommands
         "System.ValueTuple",
         "System.Web",
         "System.Web.HttpUtility",
-        "System.Windows",
         "System.Xml",
         "System.Xml.Linq",
         "System.Xml.ReaderWriter",
@@ -174,45 +172,46 @@ public class NugetCommands
         "WindowsBase",
 
         //maui
-        "Microsoft.Extensions.Configuration",
+        "GoogleGson",
+        "Java.Interop",
         "Microsoft.Extensions.Configuration.Abstractions",
-        "Microsoft.Extensions.Configuration.Binder",
-        "Microsoft.Extensions.Configuration.CommandLine",
-        "Microsoft.Extensions.Configuration.EnvironmentVariables",
-        "Microsoft.Extensions.Configuration.FileExtensions",
-        "Microsoft.Extensions.Configuration.Json",
-        "Microsoft.Extensions.Configuration.UserSecrets",
-        "Microsoft.Extensions.DependencyInjection",
+        "Microsoft.Extensions.Configuration",
         "Microsoft.Extensions.DependencyInjection.Abstractions",
-        "Microsoft.Extensions.FileProviders.Abstractions",
-        "Microsoft.Extensions.FileProviders.Physical",
-        "Microsoft.Extensions.FileSystemGlobbing",
-        "Microsoft.Extensions.Hosting",
-        "Microsoft.Extensions.Hosting.Abstractions",
-        "Microsoft.Extensions.Logging",
+        "Microsoft.Extensions.DependencyInjection",
         "Microsoft.Extensions.Logging.Abstractions",
-        "Microsoft.Extensions.Logging.Configuration",
-        "Microsoft.Extensions.Logging.Console",
-        "Microsoft.Extensions.Logging.Debug",
-        "Microsoft.Extensions.Logging.EventLog",
-        "Microsoft.Extensions.Logging.EventSource",
+        "Microsoft.Extensions.Logging",
         "Microsoft.Extensions.Options",
-        "Microsoft.Extensions.Options.ConfigurationExtensions",
         "Microsoft.Extensions.Primitives",
+        "Microsoft.Maui.Controls.Compatibility.Android.FormsViewGroup",
+        "Microsoft.Maui.Controls.Compatibility",
+        "Microsoft.Maui.Controls",
+        "Microsoft.Maui.Controls.Xaml",
+        "Microsoft.Maui",
+        "Microsoft.Maui.Essentials",
         "Microsoft.Maui.Graphics",
+        "Mono.Android",
+        "Mono.Android.Export",
+        "Rollbar",
+        "System.Collections.Immutable",
+        "System.Configuration.ConfigurationManager",
         "System.Diagnostics.DiagnosticSource",
-        "System.Diagnostics.EventLog",
+        "System.Drawing.Common",
+        "System.Reflection.Metadata",
+        "System.Runtime.Caching",
         "System.Runtime.CompilerServices.Unsafe",
-        "System.Text.Encodings.Web",
-        "System.Text.Json",
-        "Xamarin.Android.Glide",
+        "System.Security.AccessControl",
+        "System.Security.Cryptography.Pkcs",
+        "System.Security.Cryptography.ProtectedData",
+        "System.Security.Permissions",
+        "System.Windows.Extensions",
         "Xamarin.Android.Glide.DiskLruCache",
+        "Xamarin.Android.Glide",
         "Xamarin.Android.Glide.GifDecoder",
         "Xamarin.AndroidX.Activity",
         "Xamarin.AndroidX.Annotation",
         "Xamarin.AndroidX.Annotation.Experimental",
-        "Xamarin.AndroidX.AppCompat",
         "Xamarin.AndroidX.AppCompat.AppCompatResources",
+        "Xamarin.AndroidX.AppCompat",
         "Xamarin.AndroidX.Arch.Core.Common",
         "Xamarin.AndroidX.Arch.Core.Runtime",
         "Xamarin.AndroidX.AsyncLayoutInflater",
@@ -220,8 +219,8 @@ public class NugetCommands
         "Xamarin.AndroidX.CardView",
         "Xamarin.AndroidX.Collection",
         "Xamarin.AndroidX.Concurrent.Futures",
-        "Xamarin.AndroidX.ConstraintLayout",
         "Xamarin.AndroidX.ConstraintLayout.Core",
+        "Xamarin.AndroidX.ConstraintLayout",
         "Xamarin.AndroidX.CoordinatorLayout",
         "Xamarin.AndroidX.Core",
         "Xamarin.AndroidX.CursorAdapter",
@@ -236,8 +235,8 @@ public class NugetCommands
         "Xamarin.AndroidX.Legacy.Support.Core.Utils",
         "Xamarin.AndroidX.Legacy.Support.V4",
         "Xamarin.AndroidX.Lifecycle.Common",
-        "Xamarin.AndroidX.Lifecycle.LiveData",
         "Xamarin.AndroidX.Lifecycle.LiveData.Core",
+        "Xamarin.AndroidX.Lifecycle.LiveData",
         "Xamarin.AndroidX.Lifecycle.Runtime",
         "Xamarin.AndroidX.Lifecycle.ViewModel",
         "Xamarin.AndroidX.Lifecycle.ViewModelSavedState",
@@ -251,18 +250,19 @@ public class NugetCommands
         "Xamarin.AndroidX.Print",
         "Xamarin.AndroidX.RecyclerView",
         "Xamarin.AndroidX.SavedState",
+        "Xamarin.AndroidX.Security.SecurityCrypto",
         "Xamarin.AndroidX.SlidingPaneLayout",
         "Xamarin.AndroidX.SwipeRefreshLayout",
         "Xamarin.AndroidX.Tracing.Tracing",
         "Xamarin.AndroidX.Transition",
-        "Xamarin.AndroidX.VectorDrawable",
         "Xamarin.AndroidX.VectorDrawable.Animated",
+        "Xamarin.AndroidX.VectorDrawable",
         "Xamarin.AndroidX.VersionedParcelable",
         "Xamarin.AndroidX.ViewPager",
         "Xamarin.AndroidX.ViewPager2",
         "Xamarin.Google.Android.Material",
+        "Xamarin.Google.Crypto.Tink.Android",
         "Xamarin.Google.Guava.ListenableFuture",
-        "Mono.Android"
     };
 
     private static readonly string[] frameworkNames = new[]
@@ -285,6 +285,10 @@ public class NugetCommands
 
     public static readonly string NugetDirectory = Path.Combine(Android.OS.Environment.GetExternalStoragePublicDirectory("astator").ToString(), "nuget");
 
+    public const string NugetSource = "https://nuget.cdn.azure.cn/v3/index.json";
+
+    //public const string NugetSource = "https://api.nuget.org/v3/index.json";
+
     static NugetCommands()
     {
         if (!Directory.Exists(NugetDirectory))
@@ -295,21 +299,22 @@ public class NugetCommands
 
     private static readonly ILogger logger = NullLogger.Instance;
 
-
-
-
-    public static async Task<List<IPackageSearchMetadata>> SearchPkgAsync(string text)
+    /// <summary>
+    /// 搜索包
+    /// </summary>
+    /// <returns></returns>
+    public static async Task<List<IPackageSearchMetadata>> SearchPkgAsync(string pkgId)
     {
         return await Task.Run(async () =>
         {
             var tokensource = new CancellationTokenSource(10000);
             var cache = new SourceCacheContext();
-            var repository = Repository.Factory.GetCoreV3("https://nuget.cdn.azure.cn/v3/index.json");
+            var repository = Repository.Factory.GetCoreV3(NugetSource);
             var resource = await repository.GetResourceAsync<PackageSearchResource>();
             var searchFilter = new SearchFilter(includePrerelease: true);
 
             var results = await resource.SearchAsync(
-            text,
+            pkgId,
             searchFilter,
             skip: 0,
             take: 30,
@@ -320,13 +325,17 @@ public class NugetCommands
         });
     }
 
+    /// <summary>
+    /// 获取包的元数据
+    /// </summary>
+    /// <returns></returns>
     public static async Task<List<IPackageSearchMetadata>> GetPackagesMetadataAsync(string pkgId)
     {
         return await Task.Run(async () =>
         {
             var tokensource = new CancellationTokenSource(10000);
             var cache = new SourceCacheContext();
-            var repository = Repository.Factory.GetCoreV3("https://api.nuget.org/v3/index.json");
+            var repository = Repository.Factory.GetCoreV3(NugetSource);
             var resource = await repository.GetResourceAsync<PackageMetadataResource>();
 
             var packages = await resource.GetMetadataAsync(
@@ -343,13 +352,17 @@ public class NugetCommands
         });
     }
 
+    /// <summary>
+    /// 下载包
+    /// </summary>
+    /// <returns></returns>
     public static async Task<bool> DownLoadPackageAsync(string pkgId, NuGetVersion version)
     {
         return await Task.Run(async () =>
         {
             var tokensource = new CancellationTokenSource(10000);
             var cache = new SourceCacheContext();
-            var repository = Repository.Factory.GetCoreV3("https://nuget.cdn.azure.cn/v3/index.json");
+            var repository = Repository.Factory.GetCoreV3(NugetSource);
             var resource = await repository.GetResourceAsync<FindPackageByIdResource>();
 
             using var packageStream = new MemoryStream();
@@ -398,6 +411,13 @@ public class NugetCommands
         });
     }
 
+    /// <summary>
+    /// 获取包的所有dll(包含传递引用)
+    /// </summary>
+    /// <param name="dependences"></param>
+    /// <returns></returns>
+    /// <exception cref="DownloadPackageException"></exception>
+    /// <exception cref="FrameworkNotFoundException"></exception>
     public static async Task<List<PackageInfo>> GetPackageInfosAsync(Dictionary<string, NuGetVersion> dependences)
     {
         return await Task.Run(async () =>
@@ -428,25 +448,38 @@ public class NugetCommands
                     throw new FrameworkNotFoundException(dependence.Key);
                 }
 
-
-                var frameworkDir = Path.Combine(dir, "lib", group.TargetFramework.GetShortFolderName());
-
-
-                var libFiles = Directory.GetFiles(frameworkDir);
-
                 var packageInfo = new PackageInfo
                 {
                     Name = dependence.Key,
                     Version = dependence.Value.ToString(),
                 };
 
-                foreach (var f in libFiles)
+                var libkDir = Path.Combine(dir, "lib", group.TargetFramework.GetShortFolderName());
+                if (Directory.Exists(libkDir))
                 {
-                    if (f.EndsWith(".dll"))
+                    var libFiles = Directory.GetFiles(libkDir);
+                    foreach (var f in libFiles)
                     {
-                        packageInfo.Paths.Add(f);
+                        if (f.EndsWith(".dll"))
+                        {
+                            packageInfo.Paths.Add(f);
+                        }
                     }
                 }
+
+                var refDir = Path.Combine(dir, "ref", group.TargetFramework.GetShortFolderName());
+                if (Directory.Exists(refDir))
+                {
+                    var refFiles = Directory.GetFiles(refDir);
+                    foreach (var f in refFiles)
+                    {
+                        if (f.EndsWith(".dll"))
+                        {
+                            packageInfo.Paths.Add(f);
+                        }
+                    }
+                }
+
                 result.Add(packageInfo);
             }
             return result;
@@ -454,7 +487,10 @@ public class NugetCommands
 
     }
 
-
+    /// <summary>
+    /// 列出包的传递引用
+    /// </summary>
+    /// <returns></returns>
     public static async Task<Dictionary<string, NuGetVersion>> ListPackageTransitiveDependenceAsync(string pkgId, NuGetVersion version)
     {
         var pkgs = new Dictionary<string, NuGetVersion>
@@ -464,6 +500,12 @@ public class NugetCommands
         return await ListPackageTransitiveDependenceAsync(pkgs);
     }
 
+    /// <summary>
+    /// 列出包的传递引用
+    /// </summary>
+    /// <param name="pkgs"></param>
+    /// <param name="parents"></param>
+    /// <returns></returns>
     public static async Task<Dictionary<string, NuGetVersion>> ListPackageTransitiveDependenceAsync(Dictionary<string, NuGetVersion> pkgs, Dictionary<string, NuGetVersion> parents = null)
     {
         return await Task.Run(async () =>
@@ -525,6 +567,12 @@ public class NugetCommands
         });
     }
 
+    /// <summary>
+    /// 获取包最接近的框架依赖
+    /// </summary>
+    /// <param name="pkgId"></param>
+    /// <param name="version"></param>
+    /// <returns></returns>
     public static async Task<PackageDependencyGroup> GetPackageDependencyGroupAsync(string pkgId, NuGetVersion version)
     {
         return await Task.Run(async () =>
@@ -539,7 +587,7 @@ public class NugetCommands
             {
                 var tokensource = new CancellationTokenSource(10000);
                 var cache = new SourceCacheContext();
-                var repository = Repository.Factory.GetCoreV3("https://nuget.cdn.azure.cn/v3/index.json");
+                var repository = Repository.Factory.GetCoreV3(NugetSource);
                 var resource = await repository.GetResourceAsync<FindPackageByIdResource>();
                 var info = await resource.GetDependencyInfoAsync(
                      pkgId,
@@ -554,6 +602,12 @@ public class NugetCommands
         });
     }
 
+    /// <summary>
+    /// 解析包版本
+    /// </summary>
+    /// <param name="pkgId"></param>
+    /// <param name="version"></param>
+    /// <returns></returns>
     public static async Task<NuGetVersion> ParseVersion(string pkgId, string version)
     {
         if (!version.EndsWith("*"))
@@ -563,7 +617,7 @@ public class NugetCommands
 
         var tokensource = new CancellationTokenSource(10000);
         var cache = new SourceCacheContext();
-        var repository = Repository.Factory.GetCoreV3("https://nuget.cdn.azure.cn/v3/index.json");
+        var repository = Repository.Factory.GetCoreV3(NugetSource);
         var resource = await repository.GetResourceAsync<FindPackageByIdResource>();
 
         var versions = await resource.GetAllVersionsAsync(pkgId, cache, logger, tokensource.Token);
@@ -571,6 +625,11 @@ public class NugetCommands
         return versions.FindBestMatch(VersionRange.Parse(version), version => version);
     }
 
+    /// <summary>
+    /// 在依赖集合中获取最接近的框架依赖
+    /// </summary>
+    /// <param name="DependencyGroups"></param>
+    /// <returns></returns>
     public static PackageDependencyGroup GetNearestFrameworkDependencyGroup(IEnumerable<PackageDependencyGroup> DependencyGroups)
     {
         var groups = new Dictionary<string, PackageDependencyGroup>();

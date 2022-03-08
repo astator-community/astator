@@ -1,22 +1,30 @@
 ﻿using Android.App;
 using Android.OS;
+using Android.Runtime;
+using Android.Views;
 using AndroidX.AppCompat.App;
 using System;
 using System.Collections.Generic;
 
 namespace astator.Core.UI.Base;
 
-[Activity(Theme = "@style/AppTheme.NoActionBar", ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait)]
-public class TemplateActivity : AppCompatActivity
+[Activity(Theme = "@style/AppTheme.NoActionBar")]
+public class TemplateActivity : AppCompatActivity, IActivity
 {
     public static Dictionary<string, TemplateActivity> ScriptActivityList { get; set; } = new();
-    public Action OnFinished { get; set; }
-    public Action OnResumed { get; set; }
+
+    public LifecycleObserver LifecycleObserver { get; set; }
+    public Action OnFinishedCallback { get; set; }
+    public Action OnResumeCallback { get; set; }
+    public Func<Keycode, KeyEvent, bool> OnKeyDownCallback { get; set; }
 
     private string scriptId = string.Empty;
 
     protected override void OnCreate(Bundle savedInstanceState)
     {
+        this.LifecycleObserver = new LifecycleObserver(this);
+        this.Lifecycle.AddObserver(this.LifecycleObserver);
+
         base.OnCreate(savedInstanceState);
         this.scriptId = this.Intent.GetStringExtra("id");
         if (ScriptActivityList.ContainsKey(this.scriptId))
@@ -34,7 +42,13 @@ public class TemplateActivity : AppCompatActivity
     protected override void OnResume()
     {
         base.OnResume();
-        this.OnResumed?.Invoke();
+        this.OnResumeCallback?.Invoke();
+    }
+
+    public override bool OnKeyDown([GeneratedEnum] Keycode keyCode, KeyEvent e)
+    {
+        if (this.OnKeyDownCallback?.Invoke(keyCode, e) == true) return true;
+        return base.OnKeyDown(keyCode, e);
     }
 
     protected override void OnDestroy()
@@ -46,6 +60,6 @@ public class TemplateActivity : AppCompatActivity
     {
         base.Finish();
         ScriptActivityList.Remove(this.scriptId);
-        this.OnFinished?.Invoke();
+        this.OnFinishedCallback?.Invoke();
     }
 }

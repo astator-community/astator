@@ -4,7 +4,7 @@ namespace astator.Views;
 
 internal class CustomLabel : Label
 {
-    public static readonly BindableProperty TagBindableProperty = BindableProperty.Create(nameof(Tag), typeof(object), typeof(CustomLabelButton));
+    public static readonly BindableProperty TagBindableProperty = BindableProperty.Create(nameof(Tag), typeof(object), typeof(CustomLabel));
     public object Tag
     {
         get => GetValue(TagBindableProperty);

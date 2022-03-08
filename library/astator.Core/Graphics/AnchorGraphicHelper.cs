@@ -56,11 +56,11 @@ namespace astator.Core.Graphics
         }
 
         /// <summary>
-        /// 获取所有r值对应的坐标
+        /// 更新r值映射集合, 用于多点找色
         /// </summary>
-        public void GetRedList()
+        public void UpdateRedList()
         {
-            this.baseGraphicHelper.GetRedList();
+            this.baseGraphicHelper.UpdateRedList();
         }
 
         /// <summary>
@@ -135,7 +135,7 @@ namespace astator.Core.Graphics
         }
 
         /// <summary>
-        /// 获取指定像素数据
+        /// 获取与运行分辨率相关的指定像素数据
         /// </summary>
         /// <param name="x">开发分辨率的x</param>
         /// <param name="y">开发分辨率的y</param>

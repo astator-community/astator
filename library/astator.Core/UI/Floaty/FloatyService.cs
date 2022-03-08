@@ -8,6 +8,7 @@ using AndroidX.Core.App;
 using AndroidX.Core.Graphics.Drawable;
 using System;
 using static Android.Views.ViewGroup;
+
 namespace astator.Core.UI.Floaty
 {
     [Service(Label = ".floaty", ForegroundServiceType = ForegroundService.TypeNone, Enabled = true)]

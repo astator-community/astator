@@ -3,7 +3,7 @@
     x:Class="astator.TipsView.TipsViewImpl"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    BackgroundColor="#66666666"
+    BackgroundColor="Transparent"
     HeightRequest="150"
     WidthRequest="250">
     <RefreshView
@@ -11,7 +11,7 @@
         IsRefreshing="True"
         RefreshColor="#2F88FF">
         <Grid
-            BackgroundColor="#66666666"
+            BackgroundColor="#80000000"
             HeightRequest="150"
             WidthRequest="250">
             <Label

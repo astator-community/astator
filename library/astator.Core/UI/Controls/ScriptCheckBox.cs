@@ -13,7 +13,7 @@ public class ScriptCheckBox : CheckBox, IControl
 
     public ScriptCheckBox(Android.Content.Context context, ViewArgs args) : base(context)
     {
-        this.ButtonTintList = ColorStateList.ValueOf(DefaultTheme.ColorAccent);
+        this.ButtonTintList = ColorStateList.ValueOf(DefaultTheme.ColorPrimary);
 
         this.SetDefaultValue(ref args);
         foreach (var item in args)
@@ -57,7 +57,7 @@ public class ScriptCheckBox : CheckBox, IControl
 
     public void On(string key, object listener)
     {
-        if (key == "changed")
+        if (key == "checkedChange")
         {
             SetOnCheckedChangeListener((OnCheckedChangeListener)listener);
         }

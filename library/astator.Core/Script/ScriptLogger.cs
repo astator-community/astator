@@ -48,7 +48,7 @@ public class ScriptLogger
         {
             if (Instance.callbacks.ContainsKey(key))
             {
-                key += DateTime.Now.ToString("HH-mm-ss-fff");
+                key += DateTime.Now.ToString("_HH-mm-ss-fff");
             }
             Instance.callbacks.TryAdd(key, action);
             return key;

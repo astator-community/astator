@@ -96,7 +96,11 @@ namespace astator.Core.Threading
             throw new KeyNotFoundException(id.ToString());
         }
 
-
+        /// <summary>
+        /// 以任务方式执行一个action
+        /// </summary>
+        /// <param name="action"></param>
+        /// <returns></returns>
         public Task Run(Action<CancellationToken> action)
         {
             var source = new CancellationTokenSource();
@@ -104,7 +108,7 @@ namespace astator.Core.Threading
             {
                 try
                 {
-                    action(source.Token);
+                    action.Invoke(source.Token);
                 }
                 catch (Exception)
                 {
@@ -132,7 +136,7 @@ namespace astator.Core.Threading
             {
                 try
                 {
-                    action(source.Token);
+                    action.Invoke(source.Token);
                 }
                 catch (Exception)
                 {
@@ -160,7 +164,7 @@ namespace astator.Core.Threading
             {
                 try
                 {
-                    await action(source.Token);
+                    await action.Invoke(source.Token);
                 }
                 catch (Exception)
                 {
@@ -188,7 +192,7 @@ namespace astator.Core.Threading
             {
                 try
                 {
-                    await action(source.Token);
+                    await action.Invoke(source.Token);
                 }
                 catch (Exception)
                 {

@@ -89,12 +89,15 @@ public class ApkBuilderer
             }
             catch (Exception ex)
             {
-                ScriptLogger.Error(ex.ToString());
+                ScriptLogger.Error(ex);
                 return false;
             }
             finally
             {
                 TipsViewImpl.Hide();
+                if (Directory.Exists(this.refDir)) Directory.Delete(this.refDir, true);
+                if (File.Exists(this.dllPath)) File.Delete(this.dllPath);
+                if (File.Exists(this.projectPath)) File.Delete(this.projectPath);
             }
         });
     }
@@ -138,7 +141,7 @@ public class ApkBuilderer
         }
         catch (Exception ex)
         {
-            ScriptLogger.Error(ex.ToString());
+            ScriptLogger.Error(ex);
             return false;
         }
 
@@ -244,7 +247,7 @@ public class ApkBuilderer
             }
             catch (Exception ex)
             {
-                ScriptLogger.Error(ex.ToString());
+                ScriptLogger.Error(ex);
                 return false;
             }
             finally

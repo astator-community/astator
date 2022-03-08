@@ -10,21 +10,21 @@ namespace astator.Core.UI.Base;
 /// </summary>
 public class ViewArgs
 {
-    private readonly Dictionary<string, object> args = new();
+    private readonly Dictionary<string, object> attrs = new();
     public object this[string key]
     {
         set
         {
             if (value is not null)
             {
-                this.args.Add(key, value);
+                this.attrs.Add(key, value);
             }
         }
         get
         {
-            if (this.args.ContainsKey(key))
+            if (this.attrs.ContainsKey(key))
             {
-                return this.args[key];
+                return this.attrs[key];
             }
             return null;
         }
@@ -34,16 +34,16 @@ public class ViewArgs
     {
         foreach (var k in key)
         {
-            if (this.args.ContainsKey(k))
+            if (this.attrs.ContainsKey(k))
             {
-                this.args.Remove(k);
+                this.attrs.Remove(k);
             }
         }
     }
 
     public IEnumerator<KeyValuePair<string, object>> GetEnumerator()
     {
-        foreach (var arg in this.args)
+        foreach (var arg in this.attrs)
         {
             yield return arg;
         }

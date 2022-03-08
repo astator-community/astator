@@ -20,10 +20,10 @@ public class ScriptTabbedPage : FrameLayout, ILayout
     private readonly bool iconShow = true;
     private readonly bool titleShow = true;
     private readonly bool accentShow = true;
-    private readonly Color tabBackgroundColor = DefaultTheme.LayoutBackground;
+    private readonly Color tabBackgroundColor = DefaultTheme.LayoutBackgroundColor;
     private readonly Color titleColor = Color.ParseColor("#2a2a2d");
     private readonly Color selectedTitleColor = Color.ParseColor("#2a2a2d");
-    private readonly Color accentColor = DefaultTheme.ColorAccent;
+    private readonly Color accentColor = DefaultTheme.ColorPrimary;
     private readonly int accentWidth = 14;
     private readonly string workDir;
 
@@ -182,18 +182,18 @@ public class ScriptTabbedPage : FrameLayout, ILayout
 
 
             tab.On("touch", new OnTouchListener((v, e) =>
-                    {
-                        if (e.Action == MotionEventActions.Down)
-                        {
-                            v.SetBackgroundColor(DefaultTheme.ColorHint);
-                        }
-                        else
-                        {
-                            v.SetBackgroundColor(Color.Transparent);
-                            this.viewPager.SetCurrentItem(Convert.ToInt32(v.Tag), true);
-                        }
-                        return true;
-                    }));
+            {
+                if (e.Action == MotionEventActions.Down)
+                {
+                    v.SetBackgroundColor(DefaultTheme.ColorHint);
+                }
+                else
+                {
+                    v.SetBackgroundColor(Color.Transparent);
+                    this.viewPager.SetCurrentItem(Convert.ToInt32(v.Tag), true);
+                }
+                return true;
+            }));
 
             this.viewPager.AddView(tabView);
             this.tabLayout.AddView(tab);
@@ -213,7 +213,11 @@ public class ScriptTabbedPage : FrameLayout, ILayout
 
     public void On(string key, object listener)
     {
-        Util.OnListener(this, key, listener);
+        switch (key)
+        {
+            case "pageChange": this.viewPager.AddOnPageChangeListener((OnPageChangeListener)listener); break;
+            default: Util.OnListener(this, key, listener); break;
+        };
     }
 
 }

@@ -12,7 +12,7 @@ public class ScriptSwitch : Switch, IControl
 {
     public string CustomId { get; set; }
 
-    private Color color = DefaultTheme.ColorAccent;
+    private Color color = DefaultTheme.ColorPrimary;
 
     public OnCreatedListener OnCreatedListener { get; set; }
 
@@ -90,7 +90,7 @@ public class ScriptSwitch : Switch, IControl
     {
         switch (key)
         {
-            case "changed":
+            case "checkedChange":
             {
                 if (listener is OnCheckedChangeListener temp)
                 {

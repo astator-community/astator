@@ -6,7 +6,7 @@ using AndroidX.AppCompat.App;
 using AndroidX.Lifecycle;
 using System;
 
-namespace astator.Core.UI;
+namespace astator.Core.UI.Base;
 
 internal class ActivityResultCallback : Java.Lang.Object, IActivityResultCallback
 {

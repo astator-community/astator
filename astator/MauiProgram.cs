@@ -1,4 +1,5 @@
 ﻿
+using astator.Pages;
 using astator.Views;
 using Microsoft.Maui.Controls.Compatibility;
 
@@ -20,6 +21,7 @@ public static class MauiProgram
                 handler.AddHandler(typeof(CodeEditorView), typeof(CodeEditorViewHandler));
                 handler.AddCompatibilityRenderer(typeof(TabbedPage), typeof(CustomTabbedPageRenderer));
                 handler.AddHandler(typeof(CustomSwitch), typeof(CustomSwitchHandler));
+                handler.AddHandler(typeof(WebView), typeof(CustomWebViewHandler));
             });
         return builder.Build();
     }

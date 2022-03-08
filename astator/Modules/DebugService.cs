@@ -5,9 +5,9 @@ using Android.OS;
 using Android.Runtime;
 using AndroidX.Core.App;
 using AndroidX.Core.Graphics.Drawable;
-using astator.Modules.Base;
 using astator.Core.Graphics;
 using astator.Core.Script;
+using astator.Modules.Base;
 using System.IO.Compression;
 using System.Net;
 using System.Net.Sockets;
@@ -49,7 +49,7 @@ internal class DebugService : Service, IDisposable
     }
 
     private TcpListener tcpListener;
-    private readonly CancellationTokenSource cancelTokenSource = new CancellationTokenSource();
+    private readonly CancellationTokenSource cancelTokenSource = new();
 
     public async void StartServer(string ip)
     {
@@ -70,7 +70,7 @@ internal class DebugService : Service, IDisposable
         }
         catch (Exception ex)
         {
-            ScriptLogger.Error(ex.Message);
+            ScriptLogger.Error(ex);
             Dispose();
         }
     }
@@ -89,7 +89,7 @@ internal class DebugService : Service, IDisposable
         }
         catch (Exception ex)
         {
-            ScriptLogger.Error(ex.Message);
+            ScriptLogger.Error(ex);
             Dispose();
         }
     }
@@ -99,7 +99,7 @@ internal class DebugService : Service, IDisposable
         _ = Task.Run(async () =>
         {
             var stream = client.GetStream();
-            var info = $"{Globals.Devices.Brand} {Globals.Devices.Model}";
+            var info = $"{Devices.Brand} {Devices.Model}";
             await stream.WriteAsync(Stick.MakePackData("init", info));
 
             var key = ScriptLogger.AddCallback("info", async (args) =>

@@ -1,7 +1,7 @@
-﻿using Android.Graphics;
+﻿using Android.Content;
+using Android.Graphics;
 using Android.Runtime;
 using Android.Views;
-using astator.Core.Script;
 using System;
 using static Android.Views.ViewGroup;
 
@@ -10,24 +10,17 @@ namespace astator.Core.UI.Floaty;
 /// <summary>
 /// 应用悬浮窗, 无需悬浮窗权限
 /// </summary>
-public class AppFloatyWindow
+public class AppFloatyWindow : FloatyWindowBase
 {
-    private static readonly IWindowManager windowManager;
+    private readonly IWindowManager windowManager;
 
-    private readonly View view;
-    private bool showed = false;
-
-    static AppFloatyWindow()
-    {
-        windowManager = Globals.AppContext.GetSystemService("window").JavaCast<IWindowManager>();
-    }
-
-    public AppFloatyWindow(View view,
+    public AppFloatyWindow(Context context, View view,
            int x = 0,
            int y = 0,
            GravityFlags gravity = GravityFlags.Left | GravityFlags.Top,
-           WindowManagerFlags flags = WindowManagerFlags.NotFocusable | WindowManagerFlags.LayoutNoLimits)
+           WindowManagerFlags flags = WindowManagerFlags.NotFocusable | WindowManagerFlags.LayoutNoLimits) : base(view)
     {
+        this.windowManager = context.GetSystemService("window").JavaCast<IWindowManager>();
         var layoutParams = new WindowManagerLayoutParams
         {
             Type = WindowManagerTypes.ApplicationPanel,
@@ -46,50 +39,6 @@ public class AppFloatyWindow
         layoutParams.X = x;
         layoutParams.Y = y;
 
-        windowManager?.AddView(view, layoutParams);
-
-        this.view = view;
-        this.showed = true;
-    }
-
-    /// <summary>
-    /// 设置悬浮窗位置
-    /// </summary>
-    /// <param name="x"></param>
-    /// <param name="y"></param>
-    public void SetPosition(int x, int y)
-    {
-        var layoutParams = this.view.LayoutParameters as WindowManagerLayoutParams;
-        layoutParams.X = x;
-        layoutParams.Y = y;
-        windowManager?.UpdateViewLayout(this.view, layoutParams);
-    }
-
-    /// <summary>
-    /// 获取悬浮窗位置
-    /// </summary>
-    /// <returns></returns>
-    public Point GetPosition()
-    {
-        var layoutParams = this.view.LayoutParameters as WindowManagerLayoutParams;
-        return new Point(layoutParams.X, layoutParams.Y);
-    }
-
-    /// <summary>
-    /// 移除悬浮窗
-    /// </summary>
-    /// <returns></returns>
-    public bool Remove()
-    {
-        if (this.showed)
-        {
-            this.showed = false;
-            windowManager?.RemoveView(this.view);
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        this.windowManager?.AddView(view, layoutParams);
     }
 }

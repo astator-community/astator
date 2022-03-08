@@ -15,12 +15,10 @@
                 Text="文档"
                 VerticalOptions="Center" />
         </Grid>
-        <Grid Grid.Row="1">
-            <Label
-                HorizontalOptions="Center"
-                Text="待完善..."
-                VerticalOptions="Center" />
-        </Grid>
-        <v:NavBarView ActiveTab="doc" Grid.Row="2" />
+        <WebView
+            x:Name="Web"
+            Grid.Row="1"
+            Source="https://astator.gitee.io/docs" />
+        <v:NavBarView Grid.Row="2" ActiveTab="doc" />
     </Grid>
 </ContentPage>

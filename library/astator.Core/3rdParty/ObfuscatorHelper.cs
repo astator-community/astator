@@ -131,7 +131,7 @@ namespace astator.Core.ThirdParty
             }
             catch (Exception ex)
             {
-                ScriptLogger.Error(ex.Message);
+                ScriptLogger.Error(ex);
                 return false;
             }
         }

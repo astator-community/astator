@@ -8,17 +8,14 @@ using View = Android.Views.View;
 
 namespace astator.TipsView;
 
-/// <summary>
-/// 应用悬浮窗, 无需悬浮窗权限
-/// </summary>
-internal class AppFloatyWindow
+internal class FloatyWindow
 {
     private readonly IWindowManager windowManager;
     private readonly View view;
     private bool showed = false;
 
 
-    public AppFloatyWindow(Context context, View view,
+    public FloatyWindow(Context context, View view,
            int x = 0,
            int y = 0,
            GravityFlags gravity = GravityFlags.Left | GravityFlags.Top,
@@ -26,7 +23,7 @@ internal class AppFloatyWindow
     {
         var layoutParams = new WindowManagerLayoutParams
         {
-            Type = WindowManagerTypes.ApplicationPanel,
+            Type = Android.Provider.Settings.CanDrawOverlays(context) ? WindowManagerTypes.ApplicationOverlay : WindowManagerTypes.ApplicationPanel,
             Format = Format.Transparent,
             Gravity = gravity,
             Flags = flags

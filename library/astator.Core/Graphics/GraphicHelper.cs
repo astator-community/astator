@@ -79,7 +79,7 @@ namespace astator.Core.Graphics
             {
                 if (sign)
                 {
-                    GetRedList();
+                    UpdateRedList();
                 }
                 return true;
             }
@@ -108,9 +108,9 @@ namespace astator.Core.Graphics
         }
 
         /// <summary>
-        /// 获取所有r值对应的坐标
+        /// 更新r值映射集合, 用于多点找色
         /// </summary>
-        public unsafe void GetRedList()
+        public unsafe void UpdateRedList()
         {
             fixed (byte* ptr = &this.screenData[0])
             {

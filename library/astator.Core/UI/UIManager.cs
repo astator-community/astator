@@ -1,4 +1,6 @@
-﻿using AndroidX.AppCompat.App;
+﻿using Android.App;
+using Android.Graphics;
+using Android.Views;
 using astator.Core.Exceptions;
 using astator.Core.Script;
 using astator.Core.UI.Base;
@@ -48,28 +50,61 @@ public class UiManager : IManager
         }
     }
 
-    public UiManager(Activity activity, string directory)
+
+    public UiManager(Activity activity, string dir)
     {
         CreateCount = 0;
         this.context = activity;
-        this.workDir = directory;
+        this.workDir = dir;
     }
 
     public void Alert(string text, string title = "")
     {
-        Globals.RunOnUiThread(() =>
+        Globals.InvokeOnMainThreadAsync(() =>
         {
             var alert = new AlertDialog
               .Builder(this.context)
               .SetTitle(title)
               .SetMessage(text)
-              .SetPositiveButton("确认", (s, e) => { });
+              .SetPositiveButton("确认", (s, e) => { })
+              .Create();
+
+            if (Android.Provider.Settings.CanDrawOverlays(this.context))
+            {
+                if (OperatingSystem.IsAndroidVersionAtLeast(26))
+                {
+                    alert.Window.SetType(WindowManagerTypes.ApplicationOverlay);
+                }
+                else
+                {
+                    alert.Window.SetType(WindowManagerTypes.Phone);
+                }
+            }
             alert.Show();
         });
     }
 
     /// <summary>
-    /// 解析xml字符串
+    /// 设置状态栏颜色
+    /// </summary>
+    /// <param name="color"></param>
+    public void SetStatusBarColor(string color)
+    {
+        this.context.Window.ClearFlags(WindowManagerFlags.TranslucentStatus);
+        this.context.Window.AddFlags(WindowManagerFlags.DrawsSystemBarBackgrounds);
+        this.context.Window.SetStatusBarColor(Color.ParseColor(color));
+    }
+
+    /// <summary>
+    /// 设置状态栏字体颜色为白色
+    /// </summary>
+    public void SetLightStatusBar()
+    {
+        this.context.Window.DecorView.SystemUiVisibility = (StatusBarVisibility)SystemUiFlags.LightStatusBar;
+    }
+
+    /// <summary>
+    /// 解析xml
     /// </summary>
     /// <param name="xml"></param>
     /// <returns></returns>
@@ -91,7 +126,7 @@ public class UiManager : IManager
     /// 创建控件
     /// </summary>
     /// <param name="type">控件类型</param>
-    /// <param name="args">属性参数</param>
+    /// <param name="args">控件属性</param>
     /// <returns></returns>
     /// <exception cref="AttributeNotExistException"></exception>
     public View Create(string type, ViewArgs args)
@@ -428,8 +463,13 @@ public class UiManager : IManager
         }
     }
 
-    public void OnResumed(Action callback)
+    public void OnResumeListener(Action callback)
     {
-        (this.context as TemplateActivity).OnResumed = callback;
+        (this.context as TemplateActivity).OnResumeCallback = callback;
+    }
+
+    public void OnKeyDownListener(Func<Keycode, KeyEvent, bool> callback)
+    {
+        (this.context as TemplateActivity).OnKeyDownCallback = callback;
     }
 }

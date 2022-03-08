@@ -13,7 +13,7 @@ public class ScriptRadioButton : RadioButton, IControl
 
     public ScriptRadioButton(Android.Content.Context context, ViewArgs args) : base(context)
     {
-        this.ButtonTintList = ColorStateList.ValueOf(DefaultTheme.ColorAccent);
+        this.ButtonTintList = ColorStateList.ValueOf(DefaultTheme.ColorPrimary);
         this.SetDefaultValue(ref args);
         foreach (var item in args)
         {

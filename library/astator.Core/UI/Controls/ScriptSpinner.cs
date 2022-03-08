@@ -58,8 +58,8 @@ public class ScriptSpinner : AppCompatSpinner, IControl
 
     private string entries;
     private int position;
-    private Color textColor = DefaultTheme.TextColorPrimary;
-    private Color backgroundColor = DefaultTheme.LayoutBackground;
+    private Color textColor = DefaultTheme.TextColor;
+    private Color backgroundColor = DefaultTheme.LayoutBackgroundColor;
     private float textSize = DefaultTheme.TextSize;
 
     protected override void OnAttachedToWindow()

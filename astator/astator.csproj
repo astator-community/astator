@@ -17,7 +17,7 @@
 
 		<Version>0.2.0</Version>
 		<!-- Versions -->
-		<ApplicationVersion>220227</ApplicationVersion>
+		<ApplicationVersion>220304</ApplicationVersion>
 
 		<!-- Required for C# Hot Reload -->
 		<UseInterpreter Condition="'$(Configuration)' == 'Debug'">True</UseInterpreter>
@@ -25,6 +25,10 @@
 		<SupportedOSPlatformVersion Condition="'$(TargetFramework)' == 'net6.0-android'">24.0</SupportedOSPlatformVersion>
 		<AndroidPackageFormat>apk</AndroidPackageFormat>
 
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net6.0-android|AnyCPU'">
+		<PublishTrimmed>False</PublishTrimmed>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -75,7 +79,7 @@
 			<Generator>MSBuild:Compile</Generator>
 		</MauiXaml>
 		<MauiXaml Update="Pages\SetDebugMode.xaml">
-		  <Generator>MSBuild:Compile</Generator>
+			<Generator>MSBuild:Compile</Generator>
 		</MauiXaml>
 		<MauiXaml Update="Pages\SettingsPage.xaml">
 			<Generator>MSBuild:Compile</Generator>
@@ -111,7 +115,7 @@
 			<HintPath>..\library\3rdparty\CodeViewBinding\bin\Release\net6.0-android\CodeViewBinding.dll</HintPath>
 		</Reference>
 		<Reference Include="PaddleOCRBinding">
-		  <HintPath>..\library\3rdparty\PaddleOcrBinding\bin\Release\net6.0-android\PaddleOCRBinding.dll</HintPath>
+			<HintPath>..\library\3rdparty\PaddleOcrBinding\bin\Release\net6.0-android\PaddleOCRBinding.dll</HintPath>
 		</Reference>
 	</ItemGroup>
 

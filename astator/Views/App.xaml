@@ -32,6 +32,7 @@
             <Style TargetType="v:CustomLabelButton">
                 <Setter Property="TextColor" Value="{DynamicResource SecondaryColor}" />
                 <Setter Property="FontFamily" Value="CascadiaCode" />
+                <Setter Property="Padding" Value="5" />
             </Style>
 
             <Style TargetType="v:CustomLabel">
