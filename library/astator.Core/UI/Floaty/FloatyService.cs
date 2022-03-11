@@ -15,7 +15,7 @@ namespace astator.Core.UI.Floaty
     public class FloatyService : Service
     {
         public static FloatyService Instance { get; set; }
-        private IWindowManager windowManager;
+        internal IWindowManager windowManager;
         public void AddView(View view, LayoutParams layoutParams)
         {
             this.windowManager?.AddView(view, layoutParams);

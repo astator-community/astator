@@ -92,7 +92,7 @@ public class PermissionHelper
     /// </summary>
     public void CloseScreenCap()
     {
-        ScreenCapturer.Instance.Dispose();
+        ScreenCapturer.Instance?.Dispose();
     }
 
     /// <summary>

@@ -85,7 +85,7 @@ public class UiManager : IManager
     }
 
     /// <summary>
-    /// 设置状态栏颜色
+    /// 设置状态栏背景颜色
     /// </summary>
     /// <param name="color"></param>
     public void SetStatusBarColor(string color)
@@ -96,7 +96,7 @@ public class UiManager : IManager
     }
 
     /// <summary>
-    /// 设置状态栏字体颜色为白色
+    /// 设置状态栏深色字体图标
     /// </summary>
     public void SetLightStatusBar()
     {

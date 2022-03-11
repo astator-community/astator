@@ -12,7 +12,7 @@ namespace astator.Core.UI.Floaty;
 /// </summary>
 public class AppFloatyWindow : FloatyWindowBase
 {
-    private readonly IWindowManager windowManager;
+    internal readonly IWindowManager windowManager;
 
     public AppFloatyWindow(Context context, View view,
            int x = 0,
@@ -40,5 +40,6 @@ public class AppFloatyWindow : FloatyWindowBase
         layoutParams.Y = y;
 
         this.windowManager?.AddView(view, layoutParams);
+        this.state = FloatyState.Show;
     }
 }

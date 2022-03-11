@@ -32,7 +32,9 @@ public class FloatyWindowBase
         var layoutParams = this.view.LayoutParameters as WindowManagerLayoutParams;
         layoutParams.X = Util.Dp2Px(x);
         layoutParams.Y = Util.Dp2Px(y);
-        FloatyService.Instance?.UpdateViewLayout(this.view, layoutParams);
+
+        if (this is AppFloatyWindow appFloaty) appFloaty.windowManager.UpdateViewLayout(view, layoutParams);
+        else FloatyService.Instance?.UpdateViewLayout(this.view, layoutParams);
     }
 
     /// <summary>
@@ -82,7 +84,9 @@ public class FloatyWindowBase
     {
         if (this.state == FloatyState.Show || this.state == FloatyState.Hide)
         {
-            FloatyService.Instance?.RemoveView(this.view);
+            if (this is AppFloatyWindow appFloaty) appFloaty.windowManager.RemoveView(view);
+            else FloatyService.Instance?.RemoveView(this.view);
+
             this.state = FloatyState.Remove;
             return true;
         }
