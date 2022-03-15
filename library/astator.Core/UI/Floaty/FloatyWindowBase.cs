@@ -1,4 +1,5 @@
-﻿using Android.Graphics;
+﻿using Android.Content;
+using Android.Graphics;
 using Android.Views;
 using astator.Core.UI.Base;
 
@@ -14,8 +15,12 @@ public enum FloatyState
 
 public class FloatyWindowBase
 {
+    public IWindowManager WindowManager;
+
     internal readonly View view;
+
     internal FloatyState state = FloatyState.Initialize;
+
 
     public FloatyWindowBase(View view)
     {
@@ -33,8 +38,7 @@ public class FloatyWindowBase
         layoutParams.X = Util.Dp2Px(x);
         layoutParams.Y = Util.Dp2Px(y);
 
-        if (this is AppFloatyWindow appFloaty) appFloaty.windowManager.UpdateViewLayout(view, layoutParams);
-        else FloatyService.Instance?.UpdateViewLayout(this.view, layoutParams);
+        this.WindowManager.UpdateViewLayout(view, layoutParams);
     }
 
     /// <summary>
@@ -84,9 +88,7 @@ public class FloatyWindowBase
     {
         if (this.state == FloatyState.Show || this.state == FloatyState.Hide)
         {
-            if (this is AppFloatyWindow appFloaty) appFloaty.windowManager.RemoveView(view);
-            else FloatyService.Instance?.RemoveView(this.view);
-
+            this.WindowManager.RemoveView(view);
             this.state = FloatyState.Remove;
             return true;
         }

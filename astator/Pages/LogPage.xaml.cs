@@ -17,7 +17,7 @@ namespace astator.Pages
 
             InitLogList();
 
-            if (Android.App.Application.Context.PackageName != "com.astator.astator")
+            if (Android.App.Application.Context.PackageName != Globals.AstatorPackageName)
             {
                 RunProject();
             }

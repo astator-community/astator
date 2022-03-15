@@ -52,9 +52,12 @@ namespace astator.Modules
             });
 
             var view = layout.ToNative(Application.Current.MainPage.Handler.MauiContext);
+
+            var floaty = new SystemFloatyWindow(Globals.AppContext, view, -8, 100);
+
             view.SetOnTouchListener(new OnTouchListener((v, e) =>
             {
-                return IconFloaty_TouchListener(v, e);
+                return IconFloaty_TouchListener(floaty, v, e);
             }));
 
             ScriptBroadcastReceiver.AddListener(Intent.ActionConfigurationChanged, "floatyManager", () =>
@@ -65,11 +68,11 @@ namespace astator.Modules
 
                 if (layoutParams.X < width / 2)
                 {
-                    layoutParams.X = Util.Dp2Px(-6);
+                    layoutParams.X = Util.Dp2Px(-8);
                 }
                 else
                 {
-                    layoutParams.X = width - view.Width + Util.Dp2Px(6);
+                    layoutParams.X = width - view.Width + Util.Dp2Px(8);
                 }
 
                 if (layoutParams.Y > height * 0.8)
@@ -77,11 +80,10 @@ namespace astator.Modules
                     layoutParams.Y = (int)(height * 0.5);
                 }
 
-                FloatyService.Instance.UpdateViewLayout(view, layoutParams);
+                floaty.WindowManager.UpdateViewLayout(view, layoutParams);
             });
 
-            var window = new SystemFloatyWindow(view, -6, 100);
-            this.floatys.Add("iconFloaty", window);
+            this.floatys.Add("iconFloaty", floaty);
         }
 
         private float x;
@@ -90,7 +92,7 @@ namespace astator.Modules
 
         private bool isMoving;
 
-        private bool IconFloaty_TouchListener(View v, MotionEvent e)
+        private bool IconFloaty_TouchListener(SystemFloatyWindow floaty, View v, MotionEvent e)
         {
             if (e.Action == MotionEventActions.Down)
             {
@@ -116,7 +118,7 @@ namespace astator.Modules
 
                 layoutParams.X += offsetX;
                 layoutParams.Y += offsetY;
-                FloatyService.Instance.UpdateViewLayout(v, layoutParams);
+                floaty.WindowManager.UpdateViewLayout(v, layoutParams);
             }
             else if (e.Action == MotionEventActions.Up)
             {
@@ -128,13 +130,13 @@ namespace astator.Modules
 
                     if (layoutParams.X < width / 2)
                     {
-                        layoutParams.X = Util.Dp2Px(-6);
+                        layoutParams.X = Util.Dp2Px(-8);
                     }
                     else
                     {
-                        layoutParams.X = width - v.Width + Util.Dp2Px(6);
+                        layoutParams.X = width - v.Width + Util.Dp2Px(8);
                     }
-                    FloatyService.Instance.UpdateViewLayout(v, layoutParams);
+                    floaty.WindowManager.UpdateViewLayout(v, layoutParams);
                     this.isMoving = false;
                 }
                 else
@@ -171,20 +173,20 @@ namespace astator.Modules
             }
             var view = fastRunner.ToNative(Application.Current.MainPage.Handler.MauiContext);
 
-            var window = new SystemFloatyWindow(view, gravity: GravityFlags.Center, flags: WindowManagerFlags.NotFocusable | WindowManagerFlags.LayoutNoLimits | WindowManagerFlags.WatchOutsideTouch);
+            var floaty = new SystemFloatyWindow(Globals.AppContext, view, gravity: GravityFlags.Center, flags: WindowManagerFlags.NotFocusable | WindowManagerFlags.LayoutNoLimits | WindowManagerFlags.WatchOutsideTouch);
 
             view.SetOnTouchListener(new OnTouchListener((v, e) =>
             {
                 if (e.Action == MotionEventActions.Outside)
                 {
-                    window.Remove();
+                    floaty.Remove();
                     this.floatys.Remove("fastRunner");
                     return true;
                 }
                 return false;
             }));
 
-            this.floatys.Add("fastRunner", window);
+            this.floatys.Add("fastRunner", floaty);
         }
 
 
@@ -198,5 +200,10 @@ namespace astator.Modules
             this.floatys.Clear();
         }
 
+        public void RemoveFastRunner()
+        {
+            this.floatys.Remove("fastRunner", out var fastRunner);
+            fastRunner.Hide();
+        }
     }
 }

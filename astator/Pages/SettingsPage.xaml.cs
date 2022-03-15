@@ -65,23 +65,23 @@ namespace astator.Pages
             }
         }
 
-        private async void Floaty_Toggled(object sender, ToggledEventArgs e)
+        private void Floaty_Toggled(object sender, ToggledEventArgs e)
         {
             if (e.Value)
             {
-                if (!await PermissionHelperer.CheckFloaty())
+                if (!PermissionHelperer.CheckFloaty())
                 {
                     PermissionHelperer.ReqFloaty();
                     this.Floaty.IsToggled = false;
                 }
                 else
                 {
-                    FloatyManager.Instance.Show();
+                    FloatyManager.Instance?.Show();
                 }
             }
             else
             {
-                FloatyManager.Instance.Remove();
+                FloatyManager.Instance?.Remove();
             }
         }
 

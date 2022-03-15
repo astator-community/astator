@@ -9,6 +9,12 @@ namespace astator.Core.Script;
 
 public class Globals
 {
+
+#if DEBUG
+    public const string AstatorPackageName = "com.debug.astator";
+#elif RELEASE
+    public const string AstatorPackageName = "com.astator.astator";
+#endif
     public static Context AppContext { get; set; }
 
     /// <summary>

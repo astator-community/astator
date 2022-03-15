@@ -228,7 +228,7 @@ public class ScriptRuntime
                          this.Activity.Finish();
                      }
                  }
-                 if (this.IsExitAppOnStoped && Application.Context.PackageName != "com.astator.astator")
+                 if (this.IsExitAppOnStoped && Application.Context.PackageName != Globals.AstatorPackageName)
                  {
                      (Globals.AppContext as Activity).Finish();
                      Java.Lang.JavaSystem.Exit(0);

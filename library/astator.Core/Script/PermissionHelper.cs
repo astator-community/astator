@@ -99,11 +99,10 @@ public class PermissionHelper
     /// 检查悬浮窗权限
     /// </summary>
     /// <returns></returns>
-    public async Task<bool> CheckFloatyAsync()
+    public  bool CheckFloatyAsync()
     {
         if (Android.Provider.Settings.CanDrawOverlays(this.activity))
         {
-            await StartFloatyService();
             return true;
         }
         return false;
@@ -117,49 +116,7 @@ public class PermissionHelper
         if (!Android.Provider.Settings.CanDrawOverlays(this.activity))
         {
             var intent = new Intent(Android.Provider.Settings.ActionManageOverlayPermission, Android.Net.Uri.Parse("package:" + this.activity.PackageName));
-            StartActivityForResult(intent,
-                result =>
-                {
-                    if (Android.Provider.Settings.CanDrawOverlays(this.activity))
-                    {
-                        var intent = new Intent(this.activity, typeof(FloatyService));
-                        if (OperatingSystem.IsAndroidVersionAtLeast(26))
-                        {
-                            this.activity.StartForegroundService(intent);
-                        }
-                        else
-                        {
-                            this.activity.StartService(intent);
-                        }
-                    }
-                });
-        }
-    }
-
-    /// <summary>
-    /// 启动悬浮窗服务
-    /// </summary>
-    public async Task StartFloatyService()
-    {
-        if (FloatyService.Instance is null)
-        {
-            var intent = new Intent(this.activity, typeof(FloatyService));
-            if (OperatingSystem.IsAndroidVersionAtLeast(26))
-            {
-                this.activity.StartForegroundService(intent);
-            }
-            else
-            {
-                this.activity.StartService(intent);
-            }
-
-            await Task.Run(() =>
-            {
-                while (FloatyService.Instance is null)
-                {
-                    System.Threading.Thread.Sleep(50);
-                }
-            });
+            StartActivity(intent);
         }
     }
 
@@ -212,15 +169,6 @@ public class PermissionHelper
             intent.SetData(Android.Net.Uri.Parse($"package:{this.activity.PackageName}"));
             this.activity.StartActivity(intent);
         }
-        //else
-        //{
-        //    var intent = new Intent("android.settings.IGNORE_BATTERY_OPTIMIZATION_SETTINGS");
-        //    var resolveInfo = Activity.PackageManager.ResolveActivity(intent, 0);
-        //    if (resolveInfo != null)
-        //    {
-        //        Activity.StartActivity(intent);
-        //    }
-        //}
     }
 
     /// <summary>

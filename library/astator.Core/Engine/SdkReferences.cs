@@ -50,7 +50,7 @@ public static class SdkReferences
         var assemblyNames = new List<string>();
         await CheckSdk();
 
-        var ReferencesIsAdd = Android.App.Application.Context.PackageName.Equals("com.astator.astator");
+        var ReferencesIsAdd = Android.App.Application.Context.PackageName.Equals(Globals.AstatorPackageName);
 
         if (!string.IsNullOrEmpty(SdkDir))
         {

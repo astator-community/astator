@@ -29,6 +29,15 @@ internal class FloatyWindow
             Flags = flags
         };
 
+        if (OperatingSystem.IsAndroidVersionAtLeast(26))
+        {
+            layoutParams.Type = Android.Provider.Settings.CanDrawOverlays(context) ? WindowManagerTypes.ApplicationOverlay : WindowManagerTypes.ApplicationPanel;
+        }
+        else
+        {
+            layoutParams.Type = Android.Provider.Settings.CanDrawOverlays(context) ? WindowManagerTypes.Phone : WindowManagerTypes.ApplicationPanel;
+        }
+
         if (OperatingSystem.IsAndroidVersionAtLeast(28))
         {
             layoutParams.LayoutInDisplayCutoutMode = LayoutInDisplayCutoutMode.ShortEdges;

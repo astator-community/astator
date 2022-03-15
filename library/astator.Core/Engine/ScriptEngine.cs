@@ -117,7 +117,7 @@ namespace astator.Core.Engine
                 ScriptLogger.Error($"加载dll失败, 文件不存在: {path}");
                 return false;
             }
-            var ReferencesIsAdd = Android.App.Application.Context.PackageName.Equals("com.astator.astator");
+            var ReferencesIsAdd = Android.App.Application.Context.PackageName.Equals(Globals.AstatorPackageName);
             if (ReferencesIsAdd) this.scriptReferences.Add(MetadataReference.CreateFromFile(path));
 
             var name = AssemblyName.GetAssemblyName(path).Name;

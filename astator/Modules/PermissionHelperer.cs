@@ -38,14 +38,9 @@ internal static class PermissionHelperer
         Instance.ReqFloaty();
     }
 
-    public static async Task<bool> CheckFloaty()
+    public static  bool CheckFloaty()
     {
-        return await Instance.CheckFloatyAsync();
-    }
-
-    public static async Task StartFloatyService()
-    {
-        await Instance.StartFloatyService();
+        return Instance.CheckFloatyAsync();
     }
 
     public static bool CheckAccessibility()

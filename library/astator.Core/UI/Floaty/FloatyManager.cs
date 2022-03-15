@@ -55,7 +55,7 @@ namespace astator.Core.UI.Floaty
         }
 
         /// <summary>
-        /// 添加悬浮窗
+        /// 创建系统悬浮窗
         /// </summary>
         /// <param name="view"></param>
         /// <param name="x"></param>
@@ -67,11 +67,20 @@ namespace astator.Core.UI.Floaty
             GravityFlags gravityFlags = GravityFlags.Left | GravityFlags.Top,
             WindowManagerFlags windowManagerFlags = WindowManagerFlags.NotFocusable | WindowManagerFlags.LayoutNoLimits)
         {
-            var floaty = new SystemFloatyWindow(view, x, y, gravityFlags, windowManagerFlags);
+            var floaty = new SystemFloatyWindow(this.context, view, x, y, gravityFlags, windowManagerFlags);
             this.floaty = floaty;
             return floaty;
         }
 
+        /// <summary>
+        /// 创建应用悬浮窗
+        /// </summary>
+        /// <param name="view"></param>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="gravityFlags"></param>
+        /// <param name="windowManagerFlags"></param>
+        /// <returns></returns>
         public AppFloatyWindow CreateAppFloaty(View view,
             int x = 0,
             int y = 0,
@@ -92,9 +101,9 @@ namespace astator.Core.UI.Floaty
             return this.floaty?.Show() ?? false;
         }
 
-        // <summary>
+        /// <summary>
         /// 移除悬浮窗
-        /// </summary>
+        ///</summary>
         public bool Hide()
         {
             return this.floaty?.Hide() ?? false;

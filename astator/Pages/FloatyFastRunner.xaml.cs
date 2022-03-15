@@ -98,6 +98,7 @@ namespace astator.Pages
                 {
                     _ = ScriptManager.Instance.RunScript(filePath);
                 }
+                FloatyManager.Instance.RemoveFastRunner();
             }
             else if (filePath.EndsWith(".csproj"))
             {

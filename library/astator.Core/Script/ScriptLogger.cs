@@ -92,6 +92,7 @@ public class ScriptLogger
             }
         });
         config.LoggingRules.Add(new LoggingRule("*", LogLevel.Trace, methodCallTarget));
+
         var fileTarget = new FileTarget
         {
             FileName = path,
@@ -99,10 +100,10 @@ public class ScriptLogger
         };
         config.LoggingRules.Add(new LoggingRule("*", LogLevel.Trace, fileTarget));
 
-        this.logger = LogManager.Setup().
-            SetupExtensions(s => s.AutoLoadAssemblies(true)).
-            LoadConfiguration(config).
-            GetCurrentClassLogger();
+        this.logger = LogManager.Setup()
+            .SetupExtensions(s => s.AutoLoadAssemblies(true))
+            .LoadConfiguration(config)
+            .GetCurrentClassLogger();
     }
 
     public static void Log(params object[] items)

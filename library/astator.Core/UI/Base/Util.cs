@@ -159,7 +159,7 @@ public static class Util
                 case "textColor":
                 {
                     if (value is string temp) tv.SetTextColor(Color.ParseColor(temp));
-                    if (value is Color color) tv.SetTextColor(color);
+                    else if (value is Color color) tv.SetTextColor(color);
                     return;
                 }
                 case "lines":
@@ -174,9 +174,17 @@ public static class Util
                 }
                 case "typeface":
                 {
-                    var tf = TypeParse<Typeface>(value);
-                    var style = tv.Typeface?.Style ?? tf.Style;
-                    tv.SetTypeface(tf, style);
+                    if (value is string path)
+                    {
+                        var tf = Typeface.CreateFromFile(new Java.IO.File(path));
+                        var style = tv.Typeface?.Style ?? tf.Style;
+                        tv.SetTypeface(tf, style);
+                    }
+                    else if (value is Typeface tf)
+                    {
+                        var style = tv.Typeface?.Style ?? tf.Style;
+                        tv.SetTypeface(tf, style);
+                    }
                     return;
                 }
                 case "textStyle":

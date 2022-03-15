@@ -13,7 +13,8 @@
 		<ApplicationTitle>astator</ApplicationTitle>
 
 		<!-- App Identifier -->
-		<ApplicationId>com.astator.astator</ApplicationId>
+		<ApplicationId Condition="'$(Configuration)' == 'Debug'">com.debug.astator</ApplicationId>
+		<ApplicationId Condition="'$(Configuration)' == 'Release'">com.astator.astator</ApplicationId>
 
 		<Version>0.2.0</Version>
 		<!-- Versions -->

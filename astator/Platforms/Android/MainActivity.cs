@@ -5,9 +5,12 @@ using Android.Content.PM;
 using Android.OS;
 using Android.Runtime;
 using Android.Views;
+using astator.Core.Accessibility;
 using astator.Core.Broadcast;
+using astator.Core.Graphics;
 using astator.Core.Script;
 using astator.Core.UI.Base;
+using astator.Core.UI.Floaty;
 using astator.Modules;
 using astator.Pages;
 using Microsoft.Maui.Platform;
@@ -107,7 +110,7 @@ namespace astator
         {
             var mainPage = Microsoft.Maui.Controls.Application.Current.MainPage as NavigationPage;
             var tabbedPage = mainPage.RootPage as TabbedPage;
-            if (this.PackageName == "com.astator.astator")
+            if (this.PackageName == Globals.AstatorPackageName)
             {
                 tabbedPage.Children.Add(new HomePage());
                 tabbedPage.Children.Add(new LogPage());
@@ -120,11 +123,17 @@ namespace astator
             }
         }
 
-        protected override void OnDestroy()
+        protected override void OnSaveInstanceState(Bundle outState)
         {
-            UnregisterReceiver(ScriptBroadcastReceiver.Instance);
-            base.OnDestroy();
+            //UnregisterReceiver(ScriptBroadcastReceiver.Instance);
+            //ScriptAccessibilityService.Instance?.DisableSelf();
+            //ScreenCapturer.Instance?.Dispose();
+            //FloatyService.Instance?.Dispose();
+            //DebugService.Instance?.Dispose();
+            //base.OnSaveInstanceState(outState);
         }
+
+
 
         public override void Finish()
         {

@@ -12,15 +12,12 @@ namespace astator.Core.UI.Floaty;
 /// </summary>
 public class AppFloatyWindow : FloatyWindowBase
 {
-    internal readonly IWindowManager windowManager;
-
     public AppFloatyWindow(Context context, View view,
            int x = 0,
            int y = 0,
            GravityFlags gravity = GravityFlags.Left | GravityFlags.Top,
            WindowManagerFlags flags = WindowManagerFlags.NotFocusable | WindowManagerFlags.LayoutNoLimits) : base(view)
     {
-        this.windowManager = context.GetSystemService("window").JavaCast<IWindowManager>();
         var layoutParams = new WindowManagerLayoutParams
         {
             Type = WindowManagerTypes.ApplicationPanel,
@@ -39,7 +36,8 @@ public class AppFloatyWindow : FloatyWindowBase
         layoutParams.X = x;
         layoutParams.Y = y;
 
-        this.windowManager?.AddView(view, layoutParams);
+        this.WindowManager = context.GetSystemService("window").JavaCast<IWindowManager>();
+        this.WindowManager?.AddView(view, layoutParams);
         this.state = FloatyState.Show;
     }
 }

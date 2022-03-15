@@ -1,4 +1,6 @@
-﻿using Android.Graphics;
+﻿using Android.Content;
+using Android.Graphics;
+using Android.Runtime;
 using Android.Views;
 using astator.Core.UI.Base;
 using System;
@@ -18,13 +20,19 @@ public class SystemFloatyWindow : FloatyWindowBase
     /// <param name="view"></param>
     /// <param name="x"></param>
     /// <param name="y"></param>
-    public SystemFloatyWindow(View view,
+    public SystemFloatyWindow(Context context, View view,
         int x = 0,
         int y = 0,
         GravityFlags gravity = GravityFlags.Left | GravityFlags.Top,
-        WindowManagerFlags flags = WindowManagerFlags.NotFocusable | WindowManagerFlags.LayoutNoLimits) : base(view)
+        WindowManagerFlags flags = WindowManagerFlags.NotFocusable | WindowManagerFlags.LayoutNoLimits) : base( view)
     {
-        var layoutParams = new WindowManagerLayoutParams();
+        var layoutParams = new WindowManagerLayoutParams
+        {
+            Format = Format.Transparent,
+            Gravity = gravity,
+            Flags = flags
+        };
+
         if (OperatingSystem.IsAndroidVersionAtLeast(26))
         {
             layoutParams.Type = WindowManagerTypes.ApplicationOverlay;
@@ -33,9 +41,6 @@ public class SystemFloatyWindow : FloatyWindowBase
         {
             layoutParams.Type = WindowManagerTypes.Phone;
         }
-        layoutParams.Format = Format.Transparent;
-        layoutParams.Gravity = gravity;
-        layoutParams.Flags = flags;
 
         if (OperatingSystem.IsAndroidVersionAtLeast(28))
         {
@@ -47,7 +52,8 @@ public class SystemFloatyWindow : FloatyWindowBase
         layoutParams.X = Util.Dp2Px(x);
         layoutParams.Y = Util.Dp2Px(y);
 
-        FloatyService.Instance?.AddView(view, layoutParams);
+        this.WindowManager = context.GetSystemService("window").JavaCast<IWindowManager>();
+        this.WindowManager.AddView(view, layoutParams);
         this.state = FloatyState.Show;
     }
 

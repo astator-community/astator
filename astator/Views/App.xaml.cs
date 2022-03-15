@@ -1,10 +1,11 @@
 ﻿using astator.Core.Script;
 
+
 namespace astator
 {
+
     public partial class App : Application
     {
-
         public App()
         {
             InitializeComponent();
