@@ -17,7 +17,7 @@ internal class CustomLabel : Label
     {
         base.OnHandlerChanged();
 
-        var view = this.Handler.NativeView as AndroidX.AppCompat.Widget.AppCompatTextView;
+        var view = this.Handler.PlatformView as AndroidX.AppCompat.Widget.AppCompatTextView;
 
         view.SetOnClickListener(new OnClickListener((v) =>
         {

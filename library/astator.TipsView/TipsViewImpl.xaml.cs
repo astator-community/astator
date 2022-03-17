@@ -46,7 +46,7 @@ public partial class TipsViewImpl : Grid
     {
         InitializeComponent();
 
-        var nativeView = this.ToNative(Application.Current.MainPage.Handler.MauiContext);
+        var nativeView = this.ToPlatform(Application.Current.MainPage.Handler.MauiContext);
         _ = new FloatyWindow(AppContext, nativeView, gravity: Android.Views.GravityFlags.Center);
     }
 
@@ -55,7 +55,7 @@ public partial class TipsViewImpl : Grid
     {
         base.OnHandlerChanged();
 
-        var view = this.Handler.NativeView as LayoutViewGroup;
+        var view = this.Handler.PlatformView as LayoutViewGroup;
         view.ClipToOutline = true;
         view.OutlineProvider = new RadiusOutlineProvider(this.Radius);
     }

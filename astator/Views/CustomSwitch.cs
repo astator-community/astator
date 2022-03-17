@@ -14,19 +14,19 @@ internal class CustomSwitch : Switch
 internal class CustomSwitchHandler : SwitchHandler
 {
 
-    public CustomSwitchHandler() : base(SwitchMapper)
+    public CustomSwitchHandler() : base(Mapper)
     {
-        SwitchMapper.Add(nameof(Switch.IsToggled), MapIsToggled);
+        Mapper.Add(nameof(Switch.IsToggled), MapIsToggled);
     }
 
-    public CustomSwitchHandler(IPropertyMapper mapper = null) : base(mapper ?? SwitchMapper)
+    public CustomSwitchHandler(IPropertyMapper mapper = null) : base(mapper ?? Mapper)
     {
-        SwitchMapper.Add(nameof(Switch.IsToggled), MapIsToggled);
+        Mapper.Add(nameof(Switch.IsToggled), MapIsToggled);
     }
 
 
-    public static void MapIsToggled(SwitchHandler handler, ISwitch view)
+    public static void MapIsToggled(ISwitchHandler handler, ISwitch view)
     {
-        handler.NativeView.Checked = (view as Switch).IsToggled;
+        handler.PlatformView.Checked = (view as Switch).IsToggled;
     }
 }

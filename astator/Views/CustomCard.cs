@@ -17,7 +17,7 @@ public class CustomCard : Grid
 
     protected override void OnHandlerChanged()
     {
-        var view = this.Handler.NativeView as LayoutViewGroup;
+        var view = this.Handler.PlatformView as LayoutViewGroup;
 
         view.SetOnTouchListener(new OnTouchListener((v, e) =>
         {

@@ -167,7 +167,7 @@ namespace astator.Pages
         {
             base.OnHandlerChanged();
 
-            var view = this.Handler.NativeView as LayoutViewGroup;
+            var view = this.Handler.PlatformView as LayoutViewGroup;
             view.ClipToOutline = true;
             view.OutlineProvider = new RadiusOutlineProvider(35);
         }

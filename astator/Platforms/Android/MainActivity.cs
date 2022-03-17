@@ -32,7 +32,7 @@ namespace astator
 
             this.Window.ClearFlags(WindowManagerFlags.TranslucentStatus);
             this.Window.AddFlags(WindowManagerFlags.DrawsSystemBarBackgrounds);
-            this.Window.SetStatusBarColor(((Color)Microsoft.Maui.Controls.Application.Current.Resources["PrimaryColor"]).ToNative());
+            this.Window.SetStatusBarColor(((Color)Microsoft.Maui.Controls.Application.Current.Resources["PrimaryColor"]).ToPlatform());
             this.Window.DecorView.SystemUiVisibility = (StatusBarVisibility)SystemUiFlags.LightStatusBar;
 
             base.OnCreate(savedInstanceState);

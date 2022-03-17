@@ -15,7 +15,7 @@ internal class CustomImage : Image
     {
         base.OnHandlerChanged();
 
-        var view = this.Handler.NativeView as AndroidX.AppCompat.Widget.AppCompatImageView;
+        var view = this.Handler.PlatformView as AndroidX.AppCompat.Widget.AppCompatImageView;
         if (this.IsCircle)
         {
             view.ClipToOutline = true;

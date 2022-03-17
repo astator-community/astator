@@ -92,7 +92,7 @@ namespace astator.Pages
                 try
                 {
                     var setDebugMode = new SetDebugMode();
-                    var view = setDebugMode.ToNative(this.Handler.MauiContext);
+                    var view = setDebugMode.ToPlatform(this.Handler.MauiContext);
                     var builder = new AlertDialog.Builder(Globals.AppContext).SetView(view);
                     var dialog = builder.Show();
                     setDebugMode.DismissCallback += () =>

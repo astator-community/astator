@@ -51,7 +51,7 @@ namespace astator.Modules
 
             });
 
-            var view = layout.ToNative(Application.Current.MainPage.Handler.MauiContext);
+            var view = layout.ToPlatform(Application.Current.MainPage.Handler.MauiContext);
 
             var floaty = new SystemFloatyWindow(Globals.AppContext, view, -8, 100);
 
@@ -171,7 +171,7 @@ namespace astator.Modules
                     }
                 };
             }
-            var view = fastRunner.ToNative(Application.Current.MainPage.Handler.MauiContext);
+            var view = fastRunner.ToPlatform(Application.Current.MainPage.Handler.MauiContext);
 
             var floaty = new SystemFloatyWindow(Globals.AppContext, view, gravity: GravityFlags.Center, flags: WindowManagerFlags.NotFocusable | WindowManagerFlags.LayoutNoLimits | WindowManagerFlags.WatchOutsideTouch);
 

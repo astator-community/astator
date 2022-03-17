@@ -15,9 +15,9 @@ public partial class DocPage : ContentPage
     {
         if (keyCode == Keycode.Back)
         {
-            if ((this.Web.Handler.NativeView as ScriptWebView).CanGoBack())
+            if ((this.Web.Handler.PlatformView as ScriptWebView).CanGoBack())
             {
-                (this.Web.Handler.NativeView as ScriptWebView).GoBack();
+                (this.Web.Handler.PlatformView as ScriptWebView).GoBack();
                 return true;
             }
         }
@@ -41,7 +41,7 @@ public class CustomWebViewHandler : ViewHandler<IWebView, ScriptWebView>
     {
     }
 
-    protected override ScriptWebView CreateNativeView()
+    protected override ScriptWebView CreatePlatformView()
     {
         return new ScriptWebView(this.Context, new Core.UI.Base.ViewArgs
         {

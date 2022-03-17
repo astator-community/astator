@@ -127,7 +127,7 @@ namespace astator.Pages
                     HeightRequest = 200
                 });
 
-                var view = layout.ToNative(Application.Current.MainPage.Handler.MauiContext);
+                var view = layout.ToPlatform(Application.Current.MainPage.Handler.MauiContext);
                 var floaty = new AppFloatyWindow(Globals.AppContext, view, gravity: GravityFlags.Center);
                 await Task.Delay(2000);
                 floaty.Remove();

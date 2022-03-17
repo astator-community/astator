@@ -68,7 +68,7 @@ internal class CodeEditorView : View
 
     public string GetText()
     {
-        if (this.Handler.NativeView is CodeView view)
+        if (this.Handler.PlatformView is CodeView view)
         {
             return view.Text;
         }
@@ -231,7 +231,7 @@ internal class CodeEditorViewHandler : ViewHandler<CodeEditorView, CodeView>
 
     }
 
-    protected override CodeView CreateNativeView()
+    protected override CodeView CreatePlatformView()
     {
         var view = new CodeView(this.Context);
         view.SetIndentationStarts(new List<Java.Lang.Character> { new Java.Lang.Character('{') });
@@ -259,42 +259,42 @@ internal class CodeEditorViewHandler : ViewHandler<CodeEditorView, CodeView>
 
     private static void MapText(CodeEditorViewHandler handler, CodeEditorView view)
     {
-        handler.NativeView.Text = view.Text;
+        handler.PlatformView.Text = view.Text;
     }
 
     private static void MaptextColor(CodeEditorViewHandler handler, CodeEditorView view)
     {
-        handler.NativeView.SetTextColor(view.TextColor.ToNative());
+        handler.PlatformView.SetTextColor(view.TextColor.ToPlatform());
     }
 
     private static void MapTextSize(CodeEditorViewHandler handler, CodeEditorView view)
     {
-        handler.NativeView.TextSize = view.TextSize;
-        handler.NativeView.SetLineNumberTextSize((float)(handler.NativeView.TextSize * 0.75));
+        handler.PlatformView.TextSize = view.TextSize;
+        handler.PlatformView.SetLineNumberTextSize((float)(handler.PlatformView.TextSize * 0.75));
     }
 
     private static void MapBackgroundColor(CodeEditorViewHandler handler, CodeEditorView view)
     {
-        handler.NativeView.SetBackgroundColor(view.BackgroundColor.ToNative());
+        handler.PlatformView.SetBackgroundColor(view.BackgroundColor.ToPlatform());
     }
 
     private static void MapLineNumberEnabled(CodeEditorViewHandler handler, CodeEditorView view)
     {
-        handler.NativeView.SetEnableLineNumber(view.LineNumberEnabled);
+        handler.PlatformView.SetEnableLineNumber(view.LineNumberEnabled);
     }
 
     private static void MapLineNumberTextColor(CodeEditorViewHandler handler, CodeEditorView view)
     {
-        handler.NativeView.SetLineNumberTextColor(view.LineNumberTextColor.ToNative());
+        handler.PlatformView.SetLineNumberTextColor(view.LineNumberTextColor.ToPlatform());
     }
 
     private static void MapTabLength(CodeEditorViewHandler handler, CodeEditorView view)
     {
-        handler.NativeView.SetTabLength(view.TabLength);
+        handler.PlatformView.SetTabLength(view.TabLength);
     }
     private static void MapPadding(CodeEditorViewHandler handler, CodeEditorView view)
     {
-        handler.NativeView.SetPadding(Util.Dp2Px(view.Padding.Left), Util.Dp2Px(view.Padding.Top), Util.Dp2Px(view.Padding.Right), Util.Dp2Px(view.Padding.Bottom));
+        handler.PlatformView.SetPadding(Util.Dp2Px(view.Padding.Left), Util.Dp2Px(view.Padding.Top), Util.Dp2Px(view.Padding.Right), Util.Dp2Px(view.Padding.Bottom));
     }
 
 

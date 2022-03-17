@@ -26,7 +26,7 @@ internal class CustomImageButton : ImageButton
     {
         base.OnHandlerChanged();
 
-        var view = this.Handler.NativeView as AndroidX.AppCompat.Widget.AppCompatImageView;
+        var view = this.Handler.PlatformView as AndroidX.AppCompat.Widget.AppCompatImageView;
 
 
         view.SetPadding(Util.Dp2Px(this.Padding.Left), Util.Dp2Px(this.Padding.Top), Util.Dp2Px(this.Padding.Right), Util.Dp2Px(this.Padding.Bottom));

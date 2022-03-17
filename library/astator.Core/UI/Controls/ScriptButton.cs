@@ -9,7 +9,7 @@ public class ScriptButton : AppCompatButton, IControl
     public string CustomId { get; set; }
     public OnCreatedListener OnCreatedListener { get; set; }
 
-    private Color backgroundColor = Color.ParseColor("#808080");
+    private Color backgroundColor = DefaultTheme.ColorPrimary;
 
     public ScriptButton(Android.Content.Context context, ViewArgs args) : base(context)
     {

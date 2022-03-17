@@ -79,7 +79,7 @@ internal class CustomSpinnerHandler : ViewHandler<CustomSpinner, ScriptSpinner>
     {
     }
 
-    protected override ScriptSpinner CreateNativeView()
+    protected override ScriptSpinner CreatePlatformView()
     {
         var nativeView = new ScriptSpinner(this.Context, null)
         {
@@ -100,20 +100,20 @@ internal class CustomSpinnerHandler : ViewHandler<CustomSpinner, ScriptSpinner>
             return;
         }
 
-        var nativeView = handler?.NativeView;
+        var nativeView = handler?.PlatformView;
         var items = view.Items.Replace(" ", "").Split(",").ToList();
 
         nativeView.Adapter = new SpinnerAdapter<string>(handler.Context, Android.Resource.Layout.SelectDialogItem, items)
         {
-            TextColor = view.TextColor.ToNative(),
-            BackgroundColor = view.BackgroundColor.ToNative(),
+            TextColor = view.TextColor.ToPlatform(),
+            BackgroundColor = view.BackgroundColor.ToPlatform(),
             TextSize = view.FontSize,
         };
     }
 
     static void MapSelectedItem(CustomSpinnerHandler handler, CustomSpinner view)
     {
-        var nativeView = handler?.NativeView;
+        var nativeView = handler?.PlatformView;
         nativeView.SetSelection(view.SelectedItem);
     }
 
@@ -124,7 +124,7 @@ internal class CustomSpinnerHandler : ViewHandler<CustomSpinner, ScriptSpinner>
             return;
         }
 
-        var nativeView = handler?.NativeView;
+        var nativeView = handler?.PlatformView;
         nativeView.SetAttr("bg", view.BackgroundColor.ToHex());
     }
 
@@ -135,13 +135,13 @@ internal class CustomSpinnerHandler : ViewHandler<CustomSpinner, ScriptSpinner>
             return;
         }
 
-        var nativeView = handler?.NativeView;
+        var nativeView = handler?.PlatformView;
         nativeView.SetAttr("textColor", view.TextColor.ToHex());
     }
 
     static void MapTextSize(CustomSpinnerHandler handler, CustomSpinner view)
     {
-        var nativeView = handler?.NativeView;
+        var nativeView = handler?.PlatformView;
         nativeView.SetAttr("textSize", view.FontSize.ToString());
     }
 }

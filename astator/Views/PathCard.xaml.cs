@@ -56,7 +56,7 @@ namespace astator.Views
 
             if (this.IsAddMenu)
             {
-                var view = this.Handler.NativeView as LayoutViewGroup;
+                var view = this.Handler.PlatformView as LayoutViewGroup;
                 var menu = new AndroidX.AppCompat.Widget.PopupMenu(Globals.AppContext, view, (int)GravityFlags.Right);
                 if (this.PathName.EndsWith(".csproj"))
                 {
