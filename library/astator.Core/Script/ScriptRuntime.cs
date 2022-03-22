@@ -198,51 +198,51 @@ public class ScriptRuntime
     internal void Stop(int type)
     {
         Globals.InvokeOnMainThreadAsync(() =>
-         {
-             if (type == 1)
-             {
-                 if (this.Tasks.IsAlive()) return;
-             }
-             else if (type == 2)
-             {
-                 if (this.Threads.IsAlive()) return;
-             }
+        {
+            if (type == 1)
+            {
+                if (this.Tasks.IsAlive()) return;
+            }
+            else if (type == 2)
+            {
+                if (this.Threads.IsAlive()) return;
+            }
 
-             this.State = ScriptState.Stopping;
+            this.State = ScriptState.Stopping;
 
-             try
-             {
-                 RemoveLoggerCallback();
+            try
+            {
+                RemoveLoggerCallback();
 
-                 foreach (var callback in this.exitCallbacks)
-                 {
-                     callback.Invoke();
-                 }
-                 this.FloatyHelper?.RemoveAll();
-
-
-                 if (this.IsUiMode)
-                 {
-                     if (!this.Activity.IsFinishing && !this.Activity.IsDestroyed)
-                     {
-                         this.Activity.Finish();
-                     }
-                 }
-                 if (this.IsExitAppOnStoped && Application.Context.PackageName != Globals.AstatorPackageName)
-                 {
-                     (Globals.AppContext as Activity).Finish();
-                     Java.Lang.JavaSystem.Exit(0);
-                 }
+                foreach (var callback in this.exitCallbacks)
+                {
+                    callback.Invoke();
+                }
+                this.FloatyHelper?.RemoveAll();
 
 
-                 this.engine.UnExecute();
-                 ScriptLogger.Log("脚本停止运行: " + this.ScriptId);
-             }
-             catch { }
-             finally
-             {
-                 this.State = ScriptState.Exited;
-             }
-         });
+                if (this.IsUiMode)
+                {
+                    if (!this.Activity.IsFinishing && !this.Activity.IsDestroyed)
+                    {
+                        this.Activity.Finish();
+                    }
+                }
+                if (this.IsExitAppOnStoped && Application.Context.PackageName != Globals.AstatorPackageName)
+                {
+                    (Globals.AppContext as Activity).Finish();
+                    Java.Lang.JavaSystem.Exit(0);
+                }
+
+
+                this.engine.UnExecute();
+                ScriptLogger.Log("脚本停止运行: " + this.ScriptId);
+            }
+            catch { }
+            finally
+            {
+                this.State = ScriptState.Exited;
+            }
+        });
     }
 }

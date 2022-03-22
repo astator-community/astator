@@ -16,7 +16,7 @@ using OperationCanceledException = System.OperationCanceledException;
 
 namespace astator.Modules;
 
-[Service(Label = ".debug", ForegroundServiceType = ForegroundService.TypeNone, Enabled = true)]
+[Service(Label = ".debug", ForegroundServiceType = ForegroundService.TypeConnectedDevice, Enabled = true)]
 internal class DebugService : Service, IDisposable
 {
     private static DebugService instance;
@@ -170,11 +170,11 @@ internal class DebugService : Service, IDisposable
                         {
                             byte[] pack;
 
-                            if (ScreenCapturer.Instance is not null)
+                            if (PermissionHelperer.CheckScreenCap())
                             {
                                 try
                                 {
-                                    var img = ScreenCapturer.Instance.AcquireLatestBitmap();
+                                    var img = await ScreenCapturer.Instance.AcquireLatestBitmapOnCurrentOrientation();
 
                                     var ms = new MemoryStream();
                                     img.Compress(Android.Graphics.Bitmap.CompressFormat.Png, 100, ms);
@@ -182,7 +182,7 @@ internal class DebugService : Service, IDisposable
 
                                     pack = Stick.MakePackData("screenShot_success", bytes);
                                 }
-                                catch (Exception)
+                                catch (Exception ex)
                                 {
                                     pack = Stick.MakePackData("screenShot_fail", "获取截图失败!");
                                 }

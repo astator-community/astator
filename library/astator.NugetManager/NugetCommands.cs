@@ -307,7 +307,7 @@ public class NugetCommands
     {
         return await Task.Run(async () =>
         {
-            var tokensource = new CancellationTokenSource(10000);
+            var tokensource = new CancellationTokenSource(30000);
             var cache = new SourceCacheContext();
             var repository = Repository.Factory.GetCoreV3(NugetSource);
             var resource = await repository.GetResourceAsync<PackageSearchResource>();
@@ -333,7 +333,7 @@ public class NugetCommands
     {
         return await Task.Run(async () =>
         {
-            var tokensource = new CancellationTokenSource(10000);
+            var tokensource = new CancellationTokenSource(30000);
             var cache = new SourceCacheContext();
             var repository = Repository.Factory.GetCoreV3(NugetSource);
             var resource = await repository.GetResourceAsync<PackageMetadataResource>();
@@ -360,7 +360,7 @@ public class NugetCommands
     {
         return await Task.Run(async () =>
         {
-            var tokensource = new CancellationTokenSource(10000);
+            var tokensource = new CancellationTokenSource(30000);
             var cache = new SourceCacheContext();
             var repository = Repository.Factory.GetCoreV3(NugetSource);
             var resource = await repository.GetResourceAsync<FindPackageByIdResource>();
@@ -585,7 +585,7 @@ public class NugetCommands
             }
             else
             {
-                var tokensource = new CancellationTokenSource(10000);
+                var tokensource = new CancellationTokenSource(30000);
                 var cache = new SourceCacheContext();
                 var repository = Repository.Factory.GetCoreV3(NugetSource);
                 var resource = await repository.GetResourceAsync<FindPackageByIdResource>();
@@ -615,7 +615,7 @@ public class NugetCommands
             return NuGetVersion.Parse(version);
         }
 
-        var tokensource = new CancellationTokenSource(10000);
+        var tokensource = new CancellationTokenSource(30000);
         var cache = new SourceCacheContext();
         var repository = Repository.Factory.GetCoreV3(NugetSource);
         var resource = await repository.GetResourceAsync<FindPackageByIdResource>();

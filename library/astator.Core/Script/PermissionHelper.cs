@@ -1,4 +1,5 @@
 ﻿using Android.App;
+using Android.App.Usage;
 using Android.Content;
 using Android.Media.Projection;
 using Android.OS;
@@ -6,9 +7,7 @@ using AndroidX.Activity.Result;
 using astator.Core.Accessibility;
 using astator.Core.Graphics;
 using astator.Core.UI.Base;
-using astator.Core.UI.Floaty;
 using System;
-using System.Threading.Tasks;
 
 namespace astator.Core.Script;
 
@@ -57,14 +56,16 @@ public class PermissionHelper
     /// <summary>
     /// 申请截图权限
     /// </summary>
-    public void ReqScreenCap(Action<bool> callback)
+    public void ReqScreenCap(bool isLandscape, Action<bool> callback)
     {
         if (CheckScreenCap())
         {
+            ScreenCapturer.Instance.ResetOrientation(isLandscape);
+            callback?.Invoke(true);
             return;
         }
 
-        var manager = (MediaProjectionManager)this.activity.GetSystemService("media_projection");
+        var manager = (MediaProjectionManager)this.activity.GetSystemService(Context.MediaProjectionService);
         var intent = manager.CreateScreenCaptureIntent();
         StartActivityForResult(intent,
         result =>
@@ -74,6 +75,7 @@ public class PermissionHelper
             {
                 var intent = new Intent(this.activity, typeof(ScreenCapturer));
                 intent.PutExtra("data", result.Data);
+                intent.PutExtra("orientation", isLandscape);
                 if (OperatingSystem.IsAndroidVersionAtLeast(26))
                 {
                     this.activity.StartForegroundService(intent);
@@ -99,13 +101,9 @@ public class PermissionHelper
     /// 检查悬浮窗权限
     /// </summary>
     /// <returns></returns>
-    public  bool CheckFloatyAsync()
+    public bool CheckFloaty()
     {
-        if (Android.Provider.Settings.CanDrawOverlays(this.activity))
-        {
-            return true;
-        }
-        return false;
+        return CheckPermission(AppOpsManager.OpstrSystemAlertWindow);
     }
 
     /// <summary>
@@ -113,7 +111,7 @@ public class PermissionHelper
     /// </summary>
     public void ReqFloaty()
     {
-        if (!Android.Provider.Settings.CanDrawOverlays(this.activity))
+        if (!CheckFloaty())
         {
             var intent = new Intent(Android.Provider.Settings.ActionManageOverlayPermission, Android.Net.Uri.Parse("package:" + this.activity.PackageName));
             StartActivity(intent);
@@ -153,7 +151,7 @@ public class PermissionHelper
     /// <returns></returns>
     public bool IsIgnoringBatteryOptimizations()
     {
-        var powerManager = (PowerManager)this.activity.GetSystemService("power");
+        var powerManager = (PowerManager)this.activity.GetSystemService(Context.PowerService);
         return powerManager.IsIgnoringBatteryOptimizations(this.activity.PackageName);
     }
 
@@ -168,6 +166,45 @@ public class PermissionHelper
             var intent = new Intent("android.settings.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS");
             intent.SetData(Android.Net.Uri.Parse($"package:{this.activity.PackageName}"));
             this.activity.StartActivity(intent);
+        }
+    }
+
+    /// <summary>
+    /// 检查使用情况统计权限是否开启
+    /// </summary>
+    /// <returns></returns>
+    public bool CheckUsageStats()
+    {
+        return CheckPermission(AppOpsManager.OpstrGetUsageStats);
+    }
+
+    /// <summary>
+    /// 申请使用情况统计权限
+    /// </summary>
+    public void ReqUsageStats()
+    {
+        if (!CheckUsageStats())
+        {
+            var intent = new Intent(Android.Provider.Settings.ActionUsageAccessSettings);
+            StartActivity(intent);
+        }
+    }
+
+    /// <summary>
+    /// 检查权限是否允许
+    /// </summary>
+    /// <param name="permission">查阅https://developer.android.google.cn/reference/android/app/AppOpsManager?hl=en#constants_1</param>
+    /// <returns></returns>
+    public bool CheckPermission(string permission)
+    {
+        var appOpsManager = (AppOpsManager)this.activity.GetSystemService(Context.AppOpsService);
+        if (OperatingSystem.IsAndroidVersionAtLeast(29))
+        {
+            return appOpsManager.UnsafeCheckOpNoThrow(permission, Process.MyUid(), this.activity.PackageName) == AppOpsManagerMode.Allowed;
+        }
+        else
+        {
+            return appOpsManager.CheckOpNoThrow(permission, Process.MyUid(), this.activity.PackageName) == AppOpsManagerMode.Allowed;
         }
     }
 

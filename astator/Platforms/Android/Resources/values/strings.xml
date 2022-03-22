@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <resources>
-	<string name="accessibility-service-description">astator</string>
+	<string name="accessibility-service-description">自动化操作所需(触摸及控件节点获取等)</string>
 </resources>

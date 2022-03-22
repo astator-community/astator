@@ -50,7 +50,7 @@ namespace astator.Pages
             {
                 if (!PermissionHelperer.CheckScreenCap())
                 {
-                    PermissionHelperer.ReqScreenCap(result =>
+                    PermissionHelperer.ReqScreenCap(false,result =>
                     {
                         if (!result)
                         {
@@ -61,7 +61,7 @@ namespace astator.Pages
             }
             else
             {
-                ScreenCapturer.Instance?.Dispose();
+                PermissionHelperer.CloseScreenCap();
             }
         }
 

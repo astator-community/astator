@@ -1,5 +1,4 @@
-﻿using Android.Content;
-using Android.Graphics;
+﻿using Android.Graphics;
 using Android.Views;
 using astator.Core.UI.Base;
 
@@ -38,7 +37,7 @@ public class FloatyWindowBase
         layoutParams.X = Util.Dp2Px(x);
         layoutParams.Y = Util.Dp2Px(y);
 
-        this.WindowManager.UpdateViewLayout(view, layoutParams);
+        this.WindowManager.UpdateViewLayout(this.view, layoutParams);
     }
 
     /// <summary>
@@ -88,7 +87,7 @@ public class FloatyWindowBase
     {
         if (this.state == FloatyState.Show || this.state == FloatyState.Hide)
         {
-            this.WindowManager.RemoveView(view);
+            this.WindowManager.RemoveView(this.view);
             this.state = FloatyState.Remove;
             return true;
         }

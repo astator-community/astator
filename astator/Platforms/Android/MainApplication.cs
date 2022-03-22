@@ -1,5 +1,7 @@
 ﻿using Android.App;
+using Android.Content.Res;
 using Android.Runtime;
+using astator.Core.Graphics;
 
 namespace astator
 {

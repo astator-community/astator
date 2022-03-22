@@ -17,6 +17,7 @@
     <RadioButton
         x:Name="ServiceMode"
         Grid.Row="1"
+        BackgroundColor="{DynamicResource PrimaryColor}"
         Content="服务器模式"
         FontSize="16"
         GroupName="Modes"
@@ -24,6 +25,7 @@
     <RadioButton
         x:Name="ClientMode"
         Grid.Row="2"
+        BackgroundColor="{DynamicResource PrimaryColor}"
         CheckedChanged="ClientMode_CheckedChanged"
         Content="客户端模式"
         FontSize="16"

@@ -18,11 +18,10 @@ internal static class PermissionHelperer
         Instance.StartActivityForResult(intent, callback);
     }
 
-    public static void ReqScreenCap(Action<bool> callback)
+    public static void ReqScreenCap(bool isLandscape, Action<bool> callback)
     {
-        Instance.ReqScreenCap(callback);
+        Instance.ReqScreenCap(isLandscape, callback);
     }
-
     public static void CloseScreenCap()
     {
         Instance.CloseScreenCap();
@@ -38,9 +37,9 @@ internal static class PermissionHelperer
         Instance.ReqFloaty();
     }
 
-    public static  bool CheckFloaty()
+    public static bool CheckFloaty()
     {
-        return Instance.CheckFloatyAsync();
+        return Instance.CheckFloaty();
     }
 
     public static bool CheckAccessibility()

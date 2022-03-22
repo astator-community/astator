@@ -24,7 +24,7 @@ public class SystemFloatyWindow : FloatyWindowBase
         int x = 0,
         int y = 0,
         GravityFlags gravity = GravityFlags.Left | GravityFlags.Top,
-        WindowManagerFlags flags = WindowManagerFlags.NotFocusable | WindowManagerFlags.LayoutNoLimits) : base( view)
+        WindowManagerFlags flags = WindowManagerFlags.NotFocusable | WindowManagerFlags.LayoutNoLimits) : base(view)
     {
         var layoutParams = new WindowManagerLayoutParams
         {

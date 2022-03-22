@@ -72,31 +72,6 @@
                     VerticalOptions="Center" />
             </v:CustomCard>
             <v:CustomCard
-                Grid.Row="2"
-                Padding="20,0"
-                Clicked="Floaty_Clicked"
-                ColumnDefinitions="auto,*,auto">
-                <Image
-                    Grid.Column="0"
-                    HeightRequest="24"
-                    Source="floaty.png"
-                    VerticalOptions="Center" />
-                <Label
-                    Grid.Column="1"
-                    Margin="5,0"
-                    FontAttributes="Bold"
-                    FontSize="16"
-                    Text="悬浮窗"
-                    VerticalOptions="Center" />
-                <v:CustomSwitch
-                    x:Name="Floaty"
-                    Grid.Column="2"
-                    OnColor="#2f88ff"
-                    ThumbColor="#535c64"
-                    Toggled="Floaty_Toggled"
-                    VerticalOptions="Center" />
-            </v:CustomCard>
-            <v:CustomCard
                 Grid.Row="3"
                 Padding="20,0"
                 Clicked="Debug_Clicked"
@@ -125,6 +100,31 @@
                     OnColor="#2f88ff"
                     ThumbColor="#535c64"
                     Toggled="Debug_Toggled"
+                    VerticalOptions="Center" />
+            </v:CustomCard>
+            <v:CustomCard
+                Grid.Row="2"
+                Padding="20,0"
+                Clicked="Floaty_Clicked"
+                ColumnDefinitions="auto,*,auto">
+                <Image
+                    Grid.Column="0"
+                    HeightRequest="24"
+                    Source="floaty.png"
+                    VerticalOptions="Center" />
+                <Label
+                    Grid.Column="1"
+                    Margin="5,0"
+                    FontAttributes="Bold"
+                    FontSize="16"
+                    Text="悬浮窗"
+                    VerticalOptions="Center" />
+                <v:CustomSwitch
+                    x:Name="Floaty"
+                    Grid.Column="2"
+                    OnColor="#2f88ff"
+                    ThumbColor="#535c64"
+                    Toggled="Floaty_Toggled"
                     VerticalOptions="Center" />
             </v:CustomCard>
             <v:CustomCard

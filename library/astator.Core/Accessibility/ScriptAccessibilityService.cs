@@ -7,7 +7,7 @@ using System;
 
 namespace astator.Core.Accessibility
 {
-    [Service(Label = "astator", ForegroundServiceType = Android.Content.PM.ForegroundService.TypeLocation, Enabled = true, Exported = true, Permission = "android.permission.BIND_ACCESSIBILITY_SERVICE")]
+    [Service(Label = "astator", ForegroundServiceType = Android.Content.PM.ForegroundService.TypeManifest, Enabled = true, Exported = true, Permission = "android.permission.BIND_ACCESSIBILITY_SERVICE")]
     [IntentFilter(new string[] { "android.accessibilityservice.AccessibilityService" })]
     [MetaData("android.accessibilityservice", Resource = "@xml/accessibilityservice")]
     public class ScriptAccessibilityService : AccessibilityService

@@ -1,7 +1,9 @@
-﻿using Android.Content;
+﻿using Android.App.Usage;
+using Android.Content;
 using Android.Widget;
 using Microsoft.Maui.Controls;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Application = Android.App.Application;
 
@@ -58,5 +60,52 @@ public class Globals
     public static Task<T> InvokeOnMainThreadAsync<T>(Func<Task<T>> funcTask)
     {
         return Device.InvokeOnMainThreadAsync(funcTask);
+    }
+
+    /// <summary>
+    /// 通过使用情况访问权限获取前台应用包名
+    /// </summary>
+    /// <returns></returns>
+    public static string GetCurrentPackageName()
+    {
+        var usageStatsManager = (UsageStatsManager)AppContext.GetSystemService("usagestats");
+        var endTime = Java.Lang.JavaSystem.CurrentTimeMillis();
+        var beginTime = endTime - 10 * 60000;
+        var usageEvents = usageStatsManager.QueryEvents(beginTime, endTime);
+
+        UsageEvents.Event latestEvent = null;
+        while (usageEvents.HasNextEvent)
+        {
+            var _event = new UsageEvents.Event();
+            usageEvents.GetNextEvent(_event);
+            if (_event.EventType == UsageEventType.MoveToForeground)
+            {
+                latestEvent = _event;
+            }
+        }
+        return latestEvent?.PackageName ?? null;
+    }
+
+    /// <summary>
+    /// 启动其他app
+    /// </summary>
+    /// <param name="pkgName">包名</param>
+    /// <returns></returns>
+    public static bool LaunchApp(string pkgName)
+    {
+        var intent = AppContext.PackageManager.GetLaunchIntentForPackage(pkgName);
+        if (intent is null) return false;
+        intent.SetFlags(ActivityFlags.NewTask | ActivityFlags.ResetTaskIfNeeded);
+        AppContext.StartActivity(intent);
+        return true;
+    }
+
+    /// <summary>
+    /// 获取已安装应用的信息
+    /// </summary>
+    /// <returns></returns>
+    public static IList<Android.Content.PM.PackageInfo> GetInstalledPackages()
+    {
+        return AppContext.PackageManager.GetInstalledPackages(Android.Content.PM.PackageInfoFlags.MatchAll);
     }
 }
