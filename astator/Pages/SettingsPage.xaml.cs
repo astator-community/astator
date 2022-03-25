@@ -12,18 +12,13 @@ namespace astator.Pages
         public SettingsPage()
         {
             InitializeComponent();
-        }
-
-        protected override void OnAppearing()
-        {
-            this.AccessibilityService.IsToggled = ScriptAccessibilityService.Instance is not null;
-            this.CaptureService.IsToggled = ScreenCapturer.Instance is not null;
+            this.AccessibilityService.IsToggled = PermissionHelperer.CheckAccessibility();
+            this.CaptureService.IsToggled = PermissionHelperer.CheckScreenCap();
             this.Floaty.IsToggled = FloatyManager.Instance.IsShow();
         }
-
         public void OnResume()
         {
-            this.AccessibilityService.IsToggled = ScriptAccessibilityService.Instance is not null;
+            this.AccessibilityService.IsToggled = PermissionHelperer.CheckAccessibility();
             this.Floaty.IsToggled = FloatyManager.Instance.IsShow();
         }
 
@@ -50,7 +45,7 @@ namespace astator.Pages
             {
                 if (!PermissionHelperer.CheckScreenCap())
                 {
-                    PermissionHelperer.ReqScreenCap(false,result =>
+                    PermissionHelperer.ReqScreenCap(false, result =>
                     {
                         if (!result)
                         {
@@ -142,12 +137,12 @@ namespace astator.Pages
 
         private async void NugetManage_Clicked(object sender, EventArgs e)
         {
-            await this.Navigation.PushAsync(new NugetPage());
+            await this.Navigation.PushModalAsync(new NugetPage());
         }
 
         private async void About_Clicked(object sender, EventArgs e)
         {
-            await this.Navigation.PushAsync(new AboutPage());
+            await this.Navigation.PushModalAsync(new AboutPage());
         }
     }
 }

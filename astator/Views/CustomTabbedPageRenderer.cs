@@ -14,9 +14,9 @@ internal class CustomTabbedPageRenderer : TabbedPageRenderer
 
     private bool tabLayoutIsHide = false;
 
-    protected override void OnLayout(bool changed, int l, int t, int r, int b)
+    protected override void OnAttachedToWindow()
     {
-        base.OnLayout(changed, l, t, r, b);
+        base.OnAttachedToWindow();
 
         if (!this.tabLayoutIsHide)
         {
@@ -32,28 +32,4 @@ internal class CustomTabbedPageRenderer : TabbedPageRenderer
             this.tabLayoutIsHide = true;
         }
     }
-
-    protected override ColorStateList GetItemIconTintColorState()
-    {
-        return base.GetItemIconTintColorState();
-    }
-
-    //protected override void OnElementChanged(ElementChangedEventArgs<TabbedPage> e)
-    //{
-    //    Element?.OnThisPlatform().SetToolbarPlacement(ToolbarPlacement.Bottom);
-    //    var type = typeof(TabbedPageRenderer);
-    //    var isBottomTab = type.GetField("_bottomNavigationView", BindingFlags.NonPublic | BindingFlags.Instance);
-
-
-    //    base.OnElementChanged(e);
-
-    //    if (isBottomTab.GetValue(this) is BottomNavigationView bottomNavigationView)
-    //    {
-    //        bottomNavigationView.LabelVisibilityMode = LabelVisibilityMode.LabelVisibilityUnlabeled;
-    //        var menuView = bottomNavigationView.MenuView as Google.Android.Material.BottomNavigation.BottomNavigationMenuView;
-    //        var menuView = bottomNavigationView.MenuView as Google.Android.Material.BottomNavigation.BottomNavigationMenuView;
-    //        menuView.LabelVisibilityMode = LabelVisibilityMode.LabelVisibilityUnlabeled;
-    //        //bottomNavigationView.ItemIconSize = 200;
-    //    }
-    //}
 }

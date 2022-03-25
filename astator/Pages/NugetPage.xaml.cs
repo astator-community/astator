@@ -65,7 +65,7 @@ namespace astator.Pages
             var card = sender as PackageInfoCard;
 
             var page = new PackageInfoPage(card.PkgId);
-            this.Navigation.PushAsync(page);
+            this.Navigation.PushModalAsync(page);
 
         }
 

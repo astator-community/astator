@@ -1,6 +1,9 @@
-﻿using Android.Views;
+﻿using Android;
+using Android.Content;
+using Android.Views;
 using astator.Core.Script;
 using astator.Core.UI.Floaty;
+using astator.Modules;
 using astator.NugetManager;
 using astator.TipsView;
 using astator.Views;
@@ -12,13 +15,44 @@ namespace astator.Pages
 {
     public partial class HomePage : ContentPage
     {
-        private readonly string rootDir = string.Empty;
+        private string rootDir = string.Empty;
         private string currentDir;
 
         public HomePage()
         {
             InitializeComponent();
 
+
+            var permissions = new string[]
+            {
+                Manifest.Permission.ReadExternalStorage,
+                Manifest.Permission.WriteExternalStorage
+            };
+
+            PermissionHelperer.ReqPermission(permissions[0], result =>
+            {
+                if (!result) NotPermissionExit();
+
+                PermissionHelperer.ReqPermission(permissions[1], result =>
+                {
+                    if (!result) NotPermissionExit();
+
+                    if (OperatingSystem.IsAndroidVersionAtLeast(30) && !Android.OS.Environment.IsExternalStorageManager)
+                    {
+                        PermissionHelperer.StartActivityForResult(new Intent(Android.Provider.Settings.ActionManageAllFilesAccessPermission), result =>
+                        {
+                            if (OperatingSystem.IsAndroidVersionAtLeast(30) && Android.OS.Environment.IsExternalStorageManager) Initialze();
+                            else NotPermissionExit();
+                        });
+                    }
+                    else Initialze();
+                });
+            });
+        }
+
+
+        private void Initialze()
+        {
             this.rootDir = Android.OS.Environment.GetExternalStoragePublicDirectory("astator").ToString();
 
             if (!Directory.Exists(this.rootDir))
@@ -35,18 +69,22 @@ namespace astator.Pages
 
             UpdateDirTbs(scriptDir);
 
-            CopyExamples();
+            DownloadExamples();
         }
 
-        protected override void OnAppearing()
+        private static void NotPermissionExit()
         {
-            base.OnAppearing();
+            new AndroidX.AppCompat.App.AlertDialog
+               .Builder(Globals.AppContext)
+               .SetTitle("错误")
+               .SetMessage("请求权限失败, 应用退出!")
+               .SetPositiveButton("确认", (s, e) =>
+               {
+                   Java.Lang.JavaSystem.Exit(0);
+               })
+               .Show();
         }
 
-        protected override void OnDisappearing()
-        {
-            base.OnDisappearing();
-        }
 
         private void ShowFiles(string directory)
         {
@@ -109,7 +147,7 @@ namespace astator.Pages
                 || path.EndsWith(".txt")
                 || path.EndsWith(".xml"))
             {
-                await this.Navigation.PushAsync(new CodeEditorPage(path));
+                await this.Navigation.PushModalAsync(new CodeEditorPage(path));
             }
             else if (path.EndsWith(".png"))
             {
@@ -184,16 +222,13 @@ namespace astator.Pages
             }
         }
 
-        public bool OnKeyDown(Keycode keyCode, KeyEvent _)
+        public bool OnBackPressed()
         {
-            if (keyCode == Keycode.Back)
+            var count = this.DirTbLayout.Children.Count / 2;
+            if (count > 1)
             {
-                var count = this.DirTbLayout.Children.Count / 2;
-                if (count > 1)
-                {
-                    UpdateDirTbs((this.DirTbLayout.Children[(count - 2) * 2] as CustomLabelButton).Tag as string);
-                    return true;
-                }
+                UpdateDirTbs((this.DirTbLayout.Children[(count - 2) * 2] as CustomLabelButton).Tag as string);
+                return true;
             }
             return false;
         }
@@ -205,7 +240,7 @@ namespace astator.Pages
             refresh.IsRefreshing = false;
         }
 
-        private async void CopyExamples()
+        private async void DownloadExamples()
         {
             try
             {

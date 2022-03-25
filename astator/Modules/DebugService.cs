@@ -16,7 +16,7 @@ using OperationCanceledException = System.OperationCanceledException;
 
 namespace astator.Modules;
 
-[Service(Label = ".debug", ForegroundServiceType = ForegroundService.TypeConnectedDevice, Enabled = true)]
+[Service(Label = ".debug", Enabled = true)]
 internal class DebugService : Service, IDisposable
 {
     private static DebugService instance;
@@ -182,7 +182,7 @@ internal class DebugService : Service, IDisposable
 
                                     pack = Stick.MakePackData("screenShot_success", bytes);
                                 }
-                                catch (Exception ex)
+                                catch (Exception)
                                 {
                                     pack = Stick.MakePackData("screenShot_fail", "获取截图失败!");
                                 }
@@ -254,6 +254,12 @@ internal class DebugService : Service, IDisposable
           .Build();
 
         StartForeground(1002, notification);
+    }
+
+    public override void OnTaskRemoved(Intent rootIntent)
+    {
+        Dispose();
+        base.OnTaskRemoved(rootIntent);
     }
 
 

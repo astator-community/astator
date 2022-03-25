@@ -4,8 +4,6 @@ using astator.TipsView;
 using Microsoft.CodeAnalysis;
 using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
-using System.Runtime.Loader;
 using System.Threading.Tasks;
 
 namespace astator.Core.Engine;
@@ -45,20 +43,14 @@ public static class SdkReferences
 
     public static async Task Initialize()
     {
+        if (!Android.App.Application.Context.PackageName.Equals(Globals.AstatorPackageName)) return;
+
         TipsViewImpl.ChangeTipsText("正在初始化sdk引用...");
 
-        var assemblyNames = new List<string>();
         await CheckSdk();
-
-        var ReferencesIsAdd = Android.App.Application.Context.PackageName.Equals(Globals.AstatorPackageName);
 
         if (!string.IsNullOrEmpty(SdkDir))
         {
-            foreach (var assembly in AssemblyLoadContext.Default.Assemblies)
-            {
-                assemblyNames.Add(assembly.GetName().Name);
-            }
-
             var net6Dir = Path.Combine(SdkDir, "net6.0");
             var mauiDir = Path.Combine(SdkDir, "maui");
 
@@ -66,12 +58,7 @@ public static class SdkReferences
             {
                 try
                 {
-                    if (ReferencesIsAdd) References.Add(MetadataReference.CreateFromFile(path));
-                    var name = AssemblyName.GetAssemblyName(path).Name;
-                    if (!assemblyNames.Contains(name))
-                    {
-                        AssemblyLoadContext.Default.LoadFromAssemblyPath(path);
-                    }
+                    References.Add(MetadataReference.CreateFromFile(path));
                 }
                 catch { }
             }
@@ -80,12 +67,7 @@ public static class SdkReferences
             {
                 try
                 {
-                    if (ReferencesIsAdd) References.Add(MetadataReference.CreateFromFile(path));
-                    var name = AssemblyName.GetAssemblyName(path).Name;
-                    if (!assemblyNames.Contains(name))
-                    {
-                        AssemblyLoadContext.Default.LoadFromAssemblyPath(path);
-                    }
+                    References.Add(MetadataReference.CreateFromFile(path));
                 }
                 catch { }
             }

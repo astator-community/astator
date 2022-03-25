@@ -241,17 +241,6 @@ public class ScriptManager
             var id = "project";
             GetId(ref id);
 
-            if (string.IsNullOrEmpty(SdkReferences.SdkDir))
-            {
-                await SdkReferences.Initialize();
-                if (string.IsNullOrEmpty(SdkReferences.SdkDir))
-                {
-                    ScriptLogger.Error("获取sdk失败!");
-                    TipsViewImpl.Hide();
-                    return null;
-                }
-            }
-
             var engine = new ScriptEngine(rootDir);
 
             if (!engine.LoadAssemblyFromPath())

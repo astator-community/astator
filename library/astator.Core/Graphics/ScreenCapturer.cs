@@ -1,7 +1,6 @@
 ﻿using Android.App;
 using Android.Content;
 using Android.Content.PM;
-using Android.Content.Res;
 using Android.Graphics;
 using Android.Hardware.Display;
 using Android.Media;
@@ -15,7 +14,6 @@ using astator.Core.Script;
 using Java.Nio;
 using System;
 using System.Threading.Tasks;
-using Orientation = Android.Content.Res.Orientation;
 
 namespace astator.Core.Graphics;
 
@@ -155,7 +153,7 @@ public class ScreenCapturer : Service, IDisposable
                 byteBuf.Position(0);
                 byteBuf.Get(data, 0, data.Length);
 
-                for (int i = 0; i < h; i++)
+                for (var i = 0; i < h; i++)
                 {
                     System.Buffer.BlockCopy(data, rowStride * i, bmpData, bmpRowStride * i, bmpRowStride);
                 }
@@ -184,11 +182,18 @@ public class ScreenCapturer : Service, IDisposable
         }
 
         var notification = new NotificationCompat.Builder(this, "1000")
-          .SetContentTitle("截屏服务正在运行中")
-          .SetSmallIcon(IconCompat.CreateWithResource(this, Android.Resource.Drawable.SymDefAppIcon))
-          .Build();
+              .SetContentTitle("截屏服务正在运行中")
+              .SetSmallIcon(IconCompat.CreateWithResource(this, Android.Resource.Drawable.SymDefAppIcon))
+              .Build();
 
-        StartForeground(1000, notification);
+            StartForeground(1000, notification);
+    }
+
+
+    public override void OnTaskRemoved(Intent rootIntent)
+    {
+        Dispose();
+        base.OnTaskRemoved(rootIntent);
     }
 
     public override IBinder OnBind(Intent intent)
@@ -226,19 +231,5 @@ public class ScreenCapturer : Service, IDisposable
     {
         Dispose(disposing: true);
         GC.SuppressFinalize(this);
-    }
-}
-
-
-internal class OrientationEventListener : Android.Views.OrientationEventListener
-{
-    private readonly Action<int> callback;
-    public OrientationEventListener(Context context, Action<int> callback) : base(context)
-    {
-        this.callback = callback;
-    }
-    public override void OnOrientationChanged(int orientation)
-    {
-        callback?.Invoke(orientation);
     }
 }

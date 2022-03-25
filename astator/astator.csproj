@@ -10,15 +10,16 @@
 		<EnablePreviewMsixTooling>true</EnablePreviewMsixTooling>
 
 		<!-- Display name -->
-		<ApplicationTitle>astator</ApplicationTitle>
+		<ApplicationTitle Condition="'$(Configuration)' == 'Debug'">debug.astator</ApplicationTitle>
+		<ApplicationTitle Condition="'$(Configuration)' == 'Release'">astator</ApplicationTitle>
 
 		<!-- App Identifier -->
 		<ApplicationId Condition="'$(Configuration)' == 'Debug'">com.debug.astator</ApplicationId>
 		<ApplicationId Condition="'$(Configuration)' == 'Release'">com.astator.astator</ApplicationId>
 
-		<Version>0.2.1</Version>
 		<!-- Versions -->
-		<ApplicationVersion>220320</ApplicationVersion>
+		<Version>0.2.3</Version>
+		<ApplicationVersion>220324</ApplicationVersion>
 
 		<!-- Required for C# Hot Reload -->
 		<UseInterpreter Condition="'$(Configuration)' == 'Debug'">True</UseInterpreter>

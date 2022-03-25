@@ -145,7 +145,6 @@ namespace astator.Core.Engine
         public EmitResult Compile()
         {
             TipsViewImpl.ChangeTipsText("正在编译...");
-
             var assemblyName = Path.GetRandomFileName();
             var compilation = CSharpCompilation.Create(
                 assemblyName,

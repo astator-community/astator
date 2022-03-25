@@ -39,8 +39,8 @@ namespace astator.Views
 
         private void SetCurrentPage(int index)
         {
-            var mainPage = Application.Current.MainPage as NavigationPage;
-            var tabbedPage = mainPage.RootPage as TabbedPage;
+            //var mainPage = Application.Current.MainPage as NavigationPage;
+            var tabbedPage = Application.Current.MainPage as TabbedPage;
             tabbedPage.CurrentPage = tabbedPage.Children[index];
         }
 

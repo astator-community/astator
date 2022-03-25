@@ -103,7 +103,6 @@ namespace astator.Core.Graphics
             var byteBuf = image.GetPlanes()[0].Buffer;
             byteBuf.Position(0);
             byteBuf.Get(this.screenData, 0, this.rowStride * this.height);
-            image.Close();
             return true;
         }
 

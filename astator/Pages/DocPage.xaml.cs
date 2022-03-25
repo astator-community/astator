@@ -11,15 +11,12 @@ public partial class DocPage : ContentPage
         InitializeComponent();
     }
 
-    public bool OnKeyDown(Keycode keyCode, KeyEvent _)
+    public bool OnBackPressed()
     {
-        if (keyCode == Keycode.Back)
+        if ((this.Web.Handler.PlatformView as ScriptWebView).CanGoBack())
         {
-            if ((this.Web.Handler.PlatformView as ScriptWebView).CanGoBack())
-            {
-                (this.Web.Handler.PlatformView as ScriptWebView).GoBack();
-                return true;
-            }
+            (this.Web.Handler.PlatformView as ScriptWebView).GoBack();
+            return true;
         }
         return false;
     }
