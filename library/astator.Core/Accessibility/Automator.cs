@@ -15,7 +15,7 @@ public static class Automator
     private static ScriptAccessibilityService Service => ScriptAccessibilityService.Instance;
 
     /// <summary>
-    /// 坐标点击
+    /// 点击坐标
     /// </summary>
     /// <param name="x"></param>
     /// <param name="y"></param>
@@ -23,6 +23,24 @@ public static class Automator
     public static void Click(int x, int y, int duration = 1)
     {
         var path = new Path();
+        path.MoveTo(x, y);
+        var gesture = new GestureDescription.Builder().AddStroke(new GestureDescription.StrokeDescription(path, 0L, duration)).Build();
+        if (gesture != null)
+        {
+            Service?.DispatchGesture(gesture, null, null);
+        }
+    }
+
+    /// <summary>
+    /// 点击坐标(给定范围的中心点)
+    /// </summary>
+    /// <param name="bounds">范围</param>
+    /// <param name="duration">持续时间, 默认1ms</param>
+    public static void Click(Graphics.Rect bounds, int duration = 1)
+    {
+        var path = new Path();
+        var x = bounds.GetCenterX();
+        var y = bounds.GetCenterY();
         path.MoveTo(x, y);
         var gesture = new GestureDescription.Builder().AddStroke(new GestureDescription.StrokeDescription(path, 0L, duration)).Build();
         if (gesture != null)
@@ -75,6 +93,7 @@ public static class Automator
         var nodes = GetWindowRoots();
 
         var filterNodes = from node in nodes
+                          where node is not null
                           where node.PackageName == pkgName
                           select node;
 

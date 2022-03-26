@@ -221,7 +221,7 @@ public static partial class NodeInfoExtension
             }
             else
             {
-                if (attr != arg.Value)
+                if (attr is null || attr != arg.Value)
                 {
                     return false;
                 }

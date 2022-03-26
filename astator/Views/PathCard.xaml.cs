@@ -44,18 +44,20 @@ namespace astator.Views
             set => SetValue(IsAddMenuBindableProperty, value);
         }
 
+        private bool AlreadyAddMenu = false;
+
         public PathCard()
         {
             InitializeComponent();
         }
 
-
         protected override void OnHandlerChanged()
         {
             base.OnHandlerChanged();
 
-            if (this.IsAddMenu)
+            if (this.IsAddMenu && !AlreadyAddMenu)
             {
+                AlreadyAddMenu = true;
                 var view = this.Handler.PlatformView as LayoutViewGroup;
                 var menu = new AndroidX.AppCompat.Widget.PopupMenu(Globals.AppContext, view, (int)GravityFlags.Right);
                 if (this.PathName.EndsWith(".csproj"))
@@ -106,7 +108,7 @@ namespace astator.Views
                     }
                     else if (item.TitleFormatted.ToString() == "±‡“Îdll")
                     {
-
+                                                           
                         var path = this.Tag.ToString();
                         var apkbuilderer = new ApkBuilderer(Path.GetDirectoryName(path));
                         _ = apkbuilderer.CompileDll();

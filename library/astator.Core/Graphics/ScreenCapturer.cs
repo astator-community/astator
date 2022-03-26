@@ -29,40 +29,14 @@ public class ScreenCapturer : Service, IDisposable
 
     private VirtualDisplay virtualDisplay;
 
-    private Image lastImage;
-
     private static readonly object locker = new();
 
     public Image AcquireLatestImage()
     {
         lock (locker)
         {
-            var image = this.imageReader.AcquireLatestImage();
-            if (image is not null)
-            {
-                this.lastImage?.Close();
-                this.lastImage = image;
-            }
-            return this.lastImage;
+            return this.imageReader.AcquireLatestImage();
         }
-    }
-
-    public Bitmap AcquireLatestBitmap()
-    {
-        var image = AcquireLatestImage();
-        if (image is not null)
-        {
-            var plane = image.GetPlanes()[0];
-            if (plane is not null && plane.Buffer is not null)
-            {
-                plane.Buffer.Position(0);
-                var bitmap = Bitmap.CreateBitmap(plane.RowStride / plane.PixelStride, image.Height, Bitmap.Config.Argb8888);
-                bitmap.CopyPixelsFromBuffer(plane.Buffer);
-                image.Close();
-                return bitmap;
-            }
-        }
-        return null;
     }
 
     [return: GeneratedEnum]
@@ -186,7 +160,7 @@ public class ScreenCapturer : Service, IDisposable
               .SetSmallIcon(IconCompat.CreateWithResource(this, Android.Resource.Drawable.SymDefAppIcon))
               .Build();
 
-            StartForeground(1000, notification);
+        StartForeground(1000, notification);
     }
 
 

@@ -51,6 +51,8 @@ namespace astator.Core.Graphics
             try
             {
                 var image = this.capturer.AcquireLatestImage();
+                if (image == null) return false;
+
                 var byteBuf = image.GetPlanes()[0].Buffer;
                 this.width = image.Width;
                 this.height = image.Height;
@@ -96,13 +98,12 @@ namespace astator.Core.Graphics
         private bool AcquireLatestImage()
         {
             var image = this.capturer.AcquireLatestImage();
-            if (image is null)
-            {
-                return false;
-            }
+            if (image is null) return false;
+
             var byteBuf = image.GetPlanes()[0].Buffer;
             byteBuf.Position(0);
             byteBuf.Get(this.screenData, 0, this.rowStride * this.height);
+            image.Close();
             return true;
         }
 

@@ -11,7 +11,7 @@ namespace astator.Core.Accessibility;
 [Service(Label = "astator", Enabled = true, Exported = true, Permission = "android.permission.BIND_ACCESSIBILITY_SERVICE")]
 [IntentFilter(new string[] { "android.accessibilityservice.AccessibilityService" })]
 [MetaData("android.accessibilityservice", Resource = "@xml/accessibilityservice")]
-public class ScriptAccessibilityService : AccessibilityService,IDisposable
+public class ScriptAccessibilityService : AccessibilityService, IDisposable
 {
     public static ScriptAccessibilityService Instance { get; set; }
 
@@ -63,7 +63,8 @@ public class ScriptAccessibilityService : AccessibilityService,IDisposable
             if (disposing)
             {
                 DisableSelf();
-                Instance = null;
+                Instance = null; 
+                disposedValue = true;
             }
         }
     }

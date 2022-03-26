@@ -13,9 +13,9 @@ namespace astator.Pages
         {
             InitializeComponent();
 
-            ScriptLogger.AddCallback("logPage", AddLogText);
+            //ScriptLogger.AddCallback("logPage", AddLogText);
 
-            InitLogList();
+            //InitLogList();
 
             if (Android.App.Application.Context.PackageName != Globals.AstatorPackageName)
             {

@@ -87,7 +87,7 @@ public class Globals
     }
 
     /// <summary>
-    /// 启动其他app
+    /// 启动其他应用
     /// </summary>
     /// <param name="pkgName">包名</param>
     /// <returns></returns>
@@ -107,5 +107,27 @@ public class Globals
     public static IList<Android.Content.PM.PackageInfo> GetInstalledPackages()
     {
         return AppContext.PackageManager.GetInstalledPackages(Android.Content.PM.PackageInfoFlags.MatchAll);
+    }
+
+    /// <summary>
+    /// 安装应用
+    /// </summary>
+    public static void InstallApp(string path)
+    {
+        if (OperatingSystem.IsAndroidVersionAtLeast(26))
+        {
+            if (!AppContext.PackageManager.CanRequestPackageInstalls())
+            {
+                AppContext.StartActivity(new Intent(Android.Provider.Settings.ActionManageUnknownAppSources));
+                return;
+            }
+        }
+
+        var intent = new Intent(Intent.ActionView);
+        intent.AddFlags(ActivityFlags.NewTask);
+        var uri = AndroidX.Core.Content.FileProvider.GetUriForFile(AppContext, AppContext.PackageName + ".fileProvider", new Java.IO.File(path));
+        intent.AddFlags(ActivityFlags.GrantReadUriPermission);
+        intent.SetDataAndType(uri, "application/vnd.android.package-archive");
+        AppContext.StartActivity(intent);
     }
 }
