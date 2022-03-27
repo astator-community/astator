@@ -1,11 +1,7 @@
-﻿using Android;
-using Android.App;
-using Android.Content;
+﻿using Android.App;
 using Android.Content.PM;
 using Android.OS;
-using Android.Runtime;
 using Android.Views;
-using astator.Core.Broadcast;
 using astator.Core.Script;
 using astator.Core.UI.Base;
 using astator.Modules;

@@ -1,6 +1,8 @@
 # astator
 astator的目标是使用c#作为脚本的安卓自动化软件, 支持andorid 7.0 ~ android 12
 
+演示视频: https://www.bilibili.com/video/BV1KR4y1V7hH
+
 <br/>
 
 ## 功能
@@ -9,7 +11,7 @@ astator的目标是使用c#作为脚本的安卓自动化软件, 支持andorid 7
 - [x] 图色操作
 - [x] OCR (未实现部分: x86)
 - [x] 代码混淆
-- [x] apk打包
+- [x] 独立apk打包
 - [x] 代码编辑器 (简陋实现)
 - [x] nuget包引用
 - [x] vscode插件
@@ -35,8 +37,6 @@ https://astator.gitee.io/docs
 ## 已知问题
 
 未进行兼容性测试
-
-在国产模拟器中使用会触发崩溃, 猜测是.net6 android SDK本身的问题, 等maui发布正式版(2022 P2)再测试
 
 <br/>
 

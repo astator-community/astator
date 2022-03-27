@@ -79,7 +79,7 @@ public class ApkBuilder
                         else if (entry.FullName.StartsWith("res/mipmap-xxxhdpi-v4")) size = 192;
 
                         var bitmap = BitmapFactory.DecodeFile(iconPath);
-                        Bitmap newBitmap = Bitmap.CreateScaledBitmap(bitmap, size, size, true);
+                        var newBitmap = Bitmap.CreateScaledBitmap(bitmap, size, size, true);
                         var bytes = newBitmap.AsImageBytes(Bitmap.CompressFormat.Png, 100);
                         bitmap.Recycle();
                         newBitmap.Recycle();
@@ -103,7 +103,7 @@ public class ApkBuilder
                         else if (entry.FullName.StartsWith("res/mipmap-xxxhdpi-v4")) size = 432;
 
                         var bitmap = BitmapFactory.DecodeFile(iconPath);
-                        Bitmap newBitmap = Bitmap.CreateScaledBitmap(bitmap, size, size, true);
+                        var newBitmap = Bitmap.CreateScaledBitmap(bitmap, size, size, true);
                         var bytes = newBitmap.AsImageBytes(Bitmap.CompressFormat.Png, 100);
                         bitmap.Recycle();
                         newBitmap.Recycle();
@@ -127,7 +127,7 @@ public class ApkBuilder
                 {
                     entry.Delete();
                 }
-                else if (isX86 && (entry.FullName.StartsWith("lib/armeabi-v7a") 
+                else if (isX86 && (entry.FullName.StartsWith("lib/armeabi-v7a")
                     || entry.FullName.StartsWith("lib/arm64-v8a")
                     || entry.Name == "assemblies.armeabi_v7a.blob"
                     || entry.Name == "assemblies.arm64_v8a.blob"))

@@ -1,9 +1,6 @@
-﻿using Android.Runtime;
-using Java.Math;
-using Java.Nio;
+﻿using Java.Nio;
 using Java.Security;
 using Java.Security.Cert;
-using System.Text;
 using ApkSignerV2Binding = Com.Android.Signapk.ApkSignerV2;
 
 namespace astator.ApkBuilder.Signer;

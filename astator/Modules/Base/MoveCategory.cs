@@ -31,10 +31,7 @@ public class MoveCategory
     public string? Id
     {
         get => this.id;
-        set
-        {
-            this.id = value?[(value.LastIndexOf("/") + 1)..];
-        }
+        set => this.id = value?[(value.LastIndexOf("/") + 1)..];
     }
     public bool? LongClickable { get; set; }
     public string? PackageName { get; set; }

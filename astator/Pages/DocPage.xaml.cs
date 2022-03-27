@@ -1,4 +1,3 @@
-using Android.Views;
 using astator.Core.UI.Controls;
 using Microsoft.Maui.Handlers;
 

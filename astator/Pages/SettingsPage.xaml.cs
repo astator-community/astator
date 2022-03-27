@@ -1,6 +1,4 @@
 using AndroidX.AppCompat.App;
-using astator.Core.Accessibility;
-using astator.Core.Graphics;
 using astator.Core.Script;
 using astator.Modules;
 using Microsoft.Maui.Platform;
@@ -19,6 +17,7 @@ namespace astator.Pages
         public void OnResume()
         {
             this.AccessibilityService.IsToggled = PermissionHelperer.CheckAccessibility();
+            this.CaptureService.IsToggled = PermissionHelperer.CheckScreenCap();
             this.Floaty.IsToggled = FloatyManager.Instance.IsShow();
         }
 

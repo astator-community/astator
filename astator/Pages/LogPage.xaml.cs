@@ -2,7 +2,6 @@ using AndroidX.AppCompat.App;
 using astator.Core.Script;
 using astator.Modules;
 using astator.Views;
-using Microsoft.Maui.Dispatching;
 using NLog;
 using System.IO.Compression;
 

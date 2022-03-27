@@ -63,8 +63,8 @@ public class ScriptAccessibilityService : AccessibilityService, IDisposable
             if (disposing)
             {
                 DisableSelf();
-                Instance = null; 
-                disposedValue = true;
+                Instance = null;
+                this.disposedValue = true;
             }
         }
     }

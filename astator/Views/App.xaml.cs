@@ -1,7 +1,4 @@
-﻿using Android;
-using Android.Content;
-using astator.Core.Script;
-using astator.Modules;
+﻿using astator.Core.Script;
 using astator.Pages;
 
 namespace astator;
@@ -20,7 +17,7 @@ public partial class App : Application
         if (this.MainPage == null)
         {
             InitializeMainPage();
-           
+
         }
         return base.CreateWindow(activationState);
     }

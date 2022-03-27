@@ -1,5 +1,4 @@
 ﻿using Android.Content;
-using Android.Content.Res;
 using Google.Android.Material.Tabs;
 using Microsoft.Maui.Controls.Compatibility.Platform.Android.AppCompat;
 using System.Reflection;

@@ -1,6 +1,5 @@
 ﻿using Android.App;
 using Android.Content;
-using Android.Content.PM;
 using Android.OS;
 using Android.Runtime;
 using Android.Views.Accessibility;
@@ -212,7 +211,7 @@ internal class DebugService : Service, IDisposable
                                     var imgBytes = imgStream.ToArray();
 
                                     var layoutInfo = LayoutDump();
-                                    string js = JsonConvert.SerializeObject(layoutInfo);
+                                    var js = JsonConvert.SerializeObject(layoutInfo);
                                     var jsBytes = Encoding.UTF8.GetBytes(js);
 
                                     var size = 4 + imgBytes.Length + 4 + jsBytes.Length;

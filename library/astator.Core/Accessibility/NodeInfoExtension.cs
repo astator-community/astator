@@ -15,7 +15,7 @@ public static partial class NodeInfoExtension
     /// <returns></returns>
     public static string GetId(this AccessibilityNodeInfo nodeInfo)
     {
-        if(nodeInfo.ViewIdResourceName is null) return null;
+        if (nodeInfo.ViewIdResourceName is null) return null;
 
         var ids = nodeInfo.ViewIdResourceName.Split('/');
         if (ids is not null && ids.Length >= 2)
