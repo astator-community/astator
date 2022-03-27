@@ -246,72 +246,66 @@ public partial class HomePage : ContentPage
 
     private async void DownloadExamples(string scriptDir)
     {
-        var path = Path.Combine(rootDir,"test.txt");
-        if (!File.Exists(path))
+        try
         {
-            File.Create(path);
+            var version = "0.2.3";
+            var outputDir = Path.Combine(scriptDir, "Examples");
+
+            if (Directory.Exists(outputDir))
+            {
+                var csprojPath = Directory.GetFiles(outputDir, "*.csproj", SearchOption.AllDirectories).First();
+                if (!string.IsNullOrEmpty(csprojPath))
+                {
+                    var xd = XDocument.Load(csprojPath);
+                    var config = xd.Descendants("ApkBuilderConfigs");
+                    var currentVersion = config.Select(x => x.Element("Version")).First()?.Value;
+                    if (!string.IsNullOrEmpty(currentVersion))
+                    {
+                        if (version.Equals(currentVersion))
+                        {
+                            return;
+                        }
+                    }
+                }
+                Directory.Delete(outputDir, true);
+            }
+
+            TipsViewImpl.Show();
+            TipsViewImpl.ChangeTipsText("正在下载示例文件...");
+
+            var path = Path.Combine(NugetCommands.NugetDirectory, "astator.Examples", version, "lib", "net6.0-android31.0", "examples.zip");
+            if (!File.Exists(path))
+            {
+                var nugetVersion = await NugetCommands.ParseVersion("astator.Examples", version);
+                var succeed = await NugetCommands.DownLoadPackageAsync("astator.Examples", nugetVersion);
+
+                if (!succeed)
+                {
+                    ScriptLogger.Error("下载示例文件失败!");
+                    return;
+                }
+            }
+
+            if (File.Exists(path))
+            {
+                using var fs = new FileStream(path, FileMode.Open);
+                using var zip = new ZipArchive(fs);
+                if (!Directory.Exists(outputDir))
+                {
+                    Directory.CreateDirectory(outputDir);
+                }
+
+                zip.ExtractToDirectory(outputDir, true);
+                UpdateDirTbs(this.currentDir);
+            }
         }
-        File.WriteAllText(path,"是否萨法萨芬撒发送飞洒发发发sadsafsafafekf[pegkpok");
-        //try
-        //{
-        //    var version = "0.2.3";
-        //    var outputDir = Path.Combine(scriptDir, "Examples");
-
-        //    if (Directory.Exists(outputDir))
-        //    {
-        //        var csprojPath = Directory.GetFiles(outputDir, "*.csproj", SearchOption.AllDirectories).First();
-        //        if (!string.IsNullOrEmpty(csprojPath))
-        //        {
-        //            var xd = XDocument.Load(csprojPath);
-        //            var config = xd.Descendants("ApkBuilderConfigs");
-        //            var currentVersion = config.Select(x => x.Element("Version")).First()?.Value;
-        //            if (!string.IsNullOrEmpty(currentVersion))
-        //            {
-        //                if (version.Equals(currentVersion))
-        //                {
-        //                    return;
-        //                }
-        //            }
-        //        }
-        //        Directory.Delete(outputDir, true);
-        //    }
-
-        //    TipsViewImpl.Show();
-        //    TipsViewImpl.ChangeTipsText("正在下载示例文件...");
-
-        //    var path = Path.Combine(NugetCommands.NugetDirectory, "astator.Examples", version, "lib", "net6.0-android31.0", "examples.zip");
-        //    if (!File.Exists(path))
-        //    {
-        //        var nugetVersion = await NugetCommands.ParseVersion("astator.Examples", version);
-        //        var succeed = await NugetCommands.DownLoadPackageAsync("astator.Examples", nugetVersion);
-
-        //        if (!succeed)
-        //        {
-        //            ScriptLogger.Error("下载示例文件失败!");
-        //            return;
-        //        }
-        //    }
-
-        //    if (File.Exists(path))
-        //    {
-        //        using var fs = new FileStream(path, FileMode.Open);
-        //        using var zip = new ZipArchive(fs);
-        //        if (!Directory.Exists(outputDir))
-        //        {
-        //            Directory.CreateDirectory(outputDir);
-        //        }
-
-        //        zip.ExtractToDirectory(outputDir, true);
-        //        UpdateDirTbs(this.currentDir);
-        //    }
-        //}
-        //catch (Exception ex)
-        //{
-        //    ScriptLogger.Error(ex);
-        //}
-        //finally
-        //{
-        //    TipsViewImpl.Hide();
-        //}
+        catch (Exception ex)
+        {
+            ScriptLogger.Error(ex);
+        }
+        finally
+        {
+            TipsViewImpl.Hide();
+        }
     }
 }

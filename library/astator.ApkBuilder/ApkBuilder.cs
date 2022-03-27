@@ -13,10 +13,10 @@ public class ApkBuilder
     private static readonly string templatePath = Path.Combine(Android.App.Application.Context.GetExternalFilesDir("template").ToString(), "template.apk");
 
     //注意: 在debug模式下打包的apk是无法打开的
-    public static bool Build(string outputDir, string projectPath, string versionName, string packageName, string labelName, string iconPath, bool useOcr)
+    public static bool Build(string outputDir, string projectPath, string versionName, string packageName, string labelName, string iconPath, bool useOcr, bool isX86)
     {
-        var apkPath = Path.Combine(outputDir, $"{labelName}_{versionName}.apk");
-        var alignedPath = Path.Combine(outputDir, $"{labelName}_{versionName}-aligned.apk");
+        var apkPath = Path.Combine(outputDir, $"{labelName}_{versionName}{(isX86 ? "_x86" : string.Empty)}.apk");
+        var alignedPath = Path.Combine(outputDir, $"{labelName}_{versionName}{(isX86 ? "_x86" : string.Empty)}-aligned.apk");
 
         try
         {
@@ -117,6 +117,20 @@ public class ApkBuilder
                 }
                 else if (entry.Name.EndsWith(".RSA") || entry.Name.EndsWith(".SF") || entry.Name.EndsWith(".MF") ||
                          entry.Name == "libzipalign.so")
+                {
+                    entry.Delete();
+                }
+                else if (!isX86 && (entry.FullName.StartsWith("lib/x86")
+                    || entry.FullName.StartsWith("lib/x86_64")
+                    || entry.Name == "assemblies.x86.blob"
+                    || entry.Name == "assemblies.x86_64.blob"))
+                {
+                    entry.Delete();
+                }
+                else if (isX86 && (entry.FullName.StartsWith("lib/armeabi-v7a") 
+                    || entry.FullName.StartsWith("lib/arm64-v8a")
+                    || entry.Name == "assemblies.armeabi_v7a.blob"
+                    || entry.Name == "assemblies.arm64_v8a.blob"))
                 {
                     entry.Delete();
                 }

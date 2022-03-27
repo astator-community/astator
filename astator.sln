@@ -33,7 +33,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "astator.Sdk", "packages\ast
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "astator.TipsView", "library\astator.TipsView\astator.TipsView.csproj", "{63BA66A0-04EE-48B5-8244-433773DC9477}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "astator.Examples", "packages\astator.Examples\astator.Examples.csproj", "{89CE48BC-2CFC-48A8-8AF9-AD00F41E094A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "astator.Examples", "packages\astator.Examples\astator.Examples.csproj", "{89CE48BC-2CFC-48A8-8AF9-AD00F41E094A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

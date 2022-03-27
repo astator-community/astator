@@ -19,7 +19,7 @@
 
 		<!-- Versions -->
 		<Version>0.3.0</Version>
-		<ApplicationVersion>220324</ApplicationVersion>
+		<ApplicationVersion>220327</ApplicationVersion>
 
 		<!-- Required for C# Hot Reload -->
 		<UseInterpreter Condition="'$(Configuration)' == 'Debug'">True</UseInterpreter>
@@ -28,7 +28,7 @@
 		<!--<AndroidPackageFormat>apk</AndroidPackageFormat>-->
 
 	</PropertyGroup>
-
+	
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net6.0-android|AnyCPU'">
 		<PublishTrimmed>False</PublishTrimmed>
 	</PropertyGroup>

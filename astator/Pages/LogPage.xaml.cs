@@ -2,6 +2,7 @@ using AndroidX.AppCompat.App;
 using astator.Core.Script;
 using astator.Modules;
 using astator.Views;
+using Microsoft.Maui.Dispatching;
 using NLog;
 using System.IO.Compression;
 
@@ -13,9 +14,9 @@ namespace astator.Pages
         {
             InitializeComponent();
 
-            //ScriptLogger.AddCallback("logPage", AddLogText);
+            ScriptLogger.AddCallback("logPage", AddLogText);
 
-            //InitLogList();
+            InitLogList();
 
             if (Android.App.Application.Context.PackageName != Globals.AstatorPackageName)
             {
@@ -78,7 +79,7 @@ namespace astator.Pages
 
         public void AddLogText(LogArgs message)
         {
-            Device.InvokeOnMainThreadAsync(() =>
+            Globals.InvokeOnMainThreadAsync(() =>
             {
                 var label = new Label
                 {

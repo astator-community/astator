@@ -66,6 +66,7 @@ public class ApkBuilderer
 
                 var projectConfig = xd.Descendants("ProjectExtensions");
                 var useOCR = Convert.ToBoolean(projectConfig.Select(x => x.Element("UseOCR")).First()?.Value);
+                var buildX86 = Convert.ToBoolean(projectConfig.Select(x => x.Element("buildX86")).First()?.Value);
 
                 if (!await CompileDll(false))
                 {
@@ -79,12 +80,22 @@ public class ApkBuilderer
 
                 var iconPath = Path.Combine(this.assetsDir, "appicon.png");
 
-                if (!ApkBuilder.ApkBuilder.Build(this.outputDir, this.projectPath, versionName, packageName, labelName, iconPath, useOCR))
+                if (!ApkBuilder.ApkBuilder.Build(this.outputDir, this.projectPath, versionName, packageName, labelName, iconPath, useOCR, false))
                 {
+                    ScriptLogger.Error($"打包apk失败!");
                     return false;
                 }
 
-                ScriptLogger.Log($"打包apk成功, 保存路径: {Path.Combine(this.outputDir, $"{labelName}_{versionName}.apk")}");
+                if (buildX86)
+                {
+                    if (!ApkBuilder.ApkBuilder.Build(this.outputDir, this.projectPath, versionName, packageName, labelName, iconPath, useOCR, true))
+                    {
+                        ScriptLogger.Error($"打包apk失败!");
+                        return false;
+                    }
+                }
+
+                ScriptLogger.Log($"打包apk成功, 输出文件夹: {this.outputDir}");
                 return true;
             }
             catch (Exception ex)
