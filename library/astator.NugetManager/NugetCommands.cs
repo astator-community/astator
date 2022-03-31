@@ -614,14 +614,11 @@ public class NugetCommands
         {
             return NuGetVersion.Parse(version);
         }
-
         var tokensource = new CancellationTokenSource(30000);
         var cache = new SourceCacheContext();
         var repository = Repository.Factory.GetCoreV3(NugetSource);
         var resource = await repository.GetResourceAsync<FindPackageByIdResource>();
-
         var versions = await resource.GetAllVersionsAsync(pkgId, cache, logger, tokensource.Token);
-
         return versions.FindBestMatch(VersionRange.Parse(version), version => version);
     }
 

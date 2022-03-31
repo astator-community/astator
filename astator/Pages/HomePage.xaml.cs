@@ -248,7 +248,10 @@ public partial class HomePage : ContentPage
     {
         try
         {
-            var version = "0.2.3";
+            var version = await NugetCommands.ParseVersion("astator.Examples", "0.3.*");
+            if (version is null) return;
+
+            var versionStr = version.ToString();
             var outputDir = Path.Combine(scriptDir, "Examples");
 
             if (Directory.Exists(outputDir))
@@ -261,7 +264,7 @@ public partial class HomePage : ContentPage
                     var currentVersion = config.Select(x => x.Element("Version")).First()?.Value;
                     if (!string.IsNullOrEmpty(currentVersion))
                     {
-                        if (version.Equals(currentVersion))
+                        if (versionStr.Equals(currentVersion))
                         {
                             return;
                         }
@@ -273,13 +276,10 @@ public partial class HomePage : ContentPage
             TipsViewImpl.Show();
             TipsViewImpl.ChangeTipsText("正在下载示例文件...");
 
-            var path = Path.Combine(NugetCommands.NugetDirectory, "astator.Examples", version, "lib", "net6.0-android31.0", "examples.zip");
+            var path = Path.Combine(NugetCommands.NugetDirectory, "astator.Examples", versionStr, "lib", "net6.0-android31.0", "examples.zip");
             if (!File.Exists(path))
             {
-                var nugetVersion = await NugetCommands.ParseVersion("astator.Examples", version);
-                var succeed = await NugetCommands.DownLoadPackageAsync("astator.Examples", nugetVersion);
-
-                if (!succeed)
+                if (!await NugetCommands.DownLoadPackageAsync("astator.Examples", version))
                 {
                     ScriptLogger.Error("下载示例文件失败!");
                     return;

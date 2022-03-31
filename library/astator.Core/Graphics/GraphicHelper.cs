@@ -62,6 +62,7 @@ namespace astator.Core.Graphics
                 byteBuf.Position(0);
                 byteBuf.Get(this.screenData, 0, this.rowStride * this.height);
                 this.redList = new short[this.width * this.height * 2];
+                image.Close();
                 return true;
             }
             catch

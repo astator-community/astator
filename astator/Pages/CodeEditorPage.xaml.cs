@@ -4,7 +4,7 @@ namespace astator
 {
     public partial class CodeEditorPage : ContentPage
     {
-        private string path = string.Empty;
+        private readonly string path = string.Empty;
         public CodeEditorPage(string path)
         {
             this.path = path;

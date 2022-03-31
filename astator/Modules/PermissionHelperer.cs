@@ -32,9 +32,9 @@ internal static class PermissionHelperer
         return Instance.CheckScreenCap();
     }
 
-    public static void ReqFloaty()
+    public static void ReqFloaty(Action<bool> callback)
     {
-        Instance.ReqFloaty();
+        Instance.ReqFloaty(callback);
     }
 
     public static bool CheckFloaty()
@@ -47,9 +47,9 @@ internal static class PermissionHelperer
         return Instance.CheckAccessibility();
     }
 
-    public static void ReqAccessibility()
+    public static void ReqAccessibility(Action<bool> callback)
     {
-        Instance.ReqAccessibility();
+        Instance.ReqAccessibility(callback);
     }
 
     public static void CloseAccessibility()
@@ -67,8 +67,8 @@ internal static class PermissionHelperer
         return Instance.IsIgnoringBatteryOptimizations();
     }
 
-    public static void IgnoringBatteryOptimizations()
+    public static void IgnoringBatteryOptimizations(Action<bool> callback)
     {
-        Instance.IgnoringBatteryOptimizations();
+        Instance.IgnoringBatteryOptimizations(callback);
     }
 }

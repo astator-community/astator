@@ -45,11 +45,6 @@ public class MainActivity : MauiAppCompatActivity, IActivity
     protected override void OnResume()
     {
         base.OnResume();
-        var mainPage = Microsoft.Maui.Controls.Application.Current.MainPage as TabbedPage;
-        if (mainPage.Navigation.ModalStack.Count == 0 && mainPage.CurrentPage is SettingsPage settingsPage)
-        {
-            settingsPage.OnResume();
-        }
     }
 
     private DateTime latestTime;

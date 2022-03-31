@@ -10,15 +10,6 @@ namespace astator.Pages
         public SettingsPage()
         {
             InitializeComponent();
-            this.AccessibilityService.IsToggled = PermissionHelperer.CheckAccessibility();
-            this.CaptureService.IsToggled = PermissionHelperer.CheckScreenCap();
-            this.Floaty.IsToggled = FloatyManager.Instance.IsShow();
-        }
-        public void OnResume()
-        {
-            this.AccessibilityService.IsToggled = PermissionHelperer.CheckAccessibility();
-            this.CaptureService.IsToggled = PermissionHelperer.CheckScreenCap();
-            this.Floaty.IsToggled = FloatyManager.Instance.IsShow();
         }
 
         private void AccessibilityService_Toggled(object sender, ToggledEventArgs e)
@@ -27,8 +18,13 @@ namespace astator.Pages
             {
                 if (!PermissionHelperer.CheckAccessibility())
                 {
-                    PermissionHelperer.ReqAccessibility();
-                    this.AccessibilityService.IsToggled = false;
+                    PermissionHelperer.ReqAccessibility((enabled) =>
+                    {
+                        if (!enabled)
+                        {
+                            this.AccessibilityService.IsToggled = false;
+                        }
+                    });
                 }
             }
             else
@@ -65,8 +61,13 @@ namespace astator.Pages
             {
                 if (!PermissionHelperer.CheckFloaty())
                 {
-                    PermissionHelperer.ReqFloaty();
-                    this.Floaty.IsToggled = false;
+                    PermissionHelperer.ReqFloaty((enabled) =>
+                    {
+                        if (!enabled)
+                        {
+                            this.Floaty.IsToggled = false;
+                        }
+                    });
                 }
                 else
                 {

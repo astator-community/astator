@@ -2,6 +2,7 @@
 using Android.Content;
 using Android.Media.Projection;
 using Android.OS;
+using Android.Provider;
 using AndroidX.Activity.Result;
 using astator.Core.Accessibility;
 using astator.Core.Graphics;
@@ -108,12 +109,15 @@ public class PermissionHelper
     /// <summary>
     /// 申请悬浮窗权限
     /// </summary>
-    public void ReqFloaty()
+    public void ReqFloaty(Action<bool> callback)
     {
         if (!CheckFloaty())
         {
-            var intent = new Intent(Android.Provider.Settings.ActionManageOverlayPermission, Android.Net.Uri.Parse("package:" + this.activity.PackageName));
-            StartActivity(intent);
+            var intent = new Intent(Settings.ActionManageOverlayPermission, Android.Net.Uri.Parse("package:" + this.activity.PackageName));
+            StartActivityForResult(intent, (_) =>
+            {
+                callback.Invoke(CheckFloaty());
+            });
         }
     }
 
@@ -127,13 +131,30 @@ public class PermissionHelper
     }
 
     /// <summary>
-    /// 跳转到系统无障碍服务界面
+    /// 申请无障碍服务
     /// </summary>
-    public void ReqAccessibility()
+    public void ReqAccessibility(Action<bool> callback)
     {
-        var intent = new Intent(Android.Provider.Settings.ActionAccessibilitySettings);
-        intent.SetFlags(ActivityFlags.NewTask);
-        this.activity.StartActivity(intent);
+        try
+        {
+            var enableds = $"{Settings.Secure.GetString(Application.Context.ContentResolver, Settings.Secure.EnabledAccessibilityServices)}:" ?? string.Empty;
+            var req = $"{enableds}{Globals.AppContext.PackageName}/{Java.Lang.Class.FromType(typeof(ScriptAccessibilityService)).CanonicalName}";
+            if (!enableds.Contains(req))
+            {
+                Settings.Secure.PutString(Globals.AppContext.ContentResolver, Settings.Secure.EnabledAccessibilityServices, req);
+                Settings.Secure.PutInt(Globals.AppContext.ContentResolver, Settings.Secure.AccessibilityEnabled, 1);
+            }
+            callback.Invoke(true);
+        }
+        catch
+        {
+            var intent = new Intent(Settings.ActionAccessibilitySettings);
+            StartActivityForResult(intent, (_) =>
+            {
+                callback.Invoke(CheckAccessibility());
+            });
+        }
+
     }
 
     /// <summary>
@@ -157,14 +178,17 @@ public class PermissionHelper
     /// <summary>
     /// 忽略电池优化
     /// </summary>
-    public void IgnoringBatteryOptimizations()
+    public void IgnoringBatteryOptimizations(Action<bool> callback)
     {
         var isIgnored = IsIgnoringBatteryOptimizations();
         if (!isIgnored)
         {
             var intent = new Intent("android.settings.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS");
             intent.SetData(Android.Net.Uri.Parse($"package:{this.activity.PackageName}"));
-            this.activity.StartActivity(intent);
+            StartActivityForResult(intent, (_) =>
+            {
+                callback.Invoke(IsIgnoringBatteryOptimizations());
+            });
         }
     }
 
@@ -180,12 +204,15 @@ public class PermissionHelper
     /// <summary>
     /// 申请使用情况统计权限
     /// </summary>
-    public void ReqUsageStats()
+    public void ReqUsageStats(Action<bool> callback)
     {
         if (!CheckUsageStats())
         {
             var intent = new Intent(Android.Provider.Settings.ActionUsageAccessSettings);
-            StartActivity(intent);
+            StartActivityForResult(intent, (_) =>
+            {
+                callback.Invoke(CheckUsageStats());
+            });
         }
     }
 
