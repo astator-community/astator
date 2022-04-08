@@ -93,7 +93,7 @@ internal class CustomSpinnerHandler : ViewHandler<CustomSpinner, ScriptSpinner>
 
     }
 
-    static void MapItems(CustomSpinnerHandler handler, CustomSpinner view)
+    private static void MapItems(CustomSpinnerHandler handler, CustomSpinner view)
     {
         if (view.Items is null)
         {
@@ -111,13 +111,13 @@ internal class CustomSpinnerHandler : ViewHandler<CustomSpinner, ScriptSpinner>
         };
     }
 
-    static void MapSelectedItem(CustomSpinnerHandler handler, CustomSpinner view)
+    private static void MapSelectedItem(CustomSpinnerHandler handler, CustomSpinner view)
     {
         var nativeView = handler?.PlatformView;
         nativeView.SetSelection(view.SelectedItem);
     }
 
-    static void MapBackgroundColor(CustomSpinnerHandler handler, CustomSpinner view)
+    private static void MapBackgroundColor(CustomSpinnerHandler handler, CustomSpinner view)
     {
         if (view.BackgroundColor is null)
         {
@@ -128,7 +128,7 @@ internal class CustomSpinnerHandler : ViewHandler<CustomSpinner, ScriptSpinner>
         nativeView.SetAttr("bg", view.BackgroundColor.ToHex());
     }
 
-    static void MapTextColor(CustomSpinnerHandler handler, CustomSpinner view)
+    private static void MapTextColor(CustomSpinnerHandler handler, CustomSpinner view)
     {
         if (view.TextColor is null)
         {
@@ -139,7 +139,7 @@ internal class CustomSpinnerHandler : ViewHandler<CustomSpinner, ScriptSpinner>
         nativeView.SetAttr("textColor", view.TextColor.ToHex());
     }
 
-    static void MapTextSize(CustomSpinnerHandler handler, CustomSpinner view)
+    private static void MapTextSize(CustomSpinnerHandler handler, CustomSpinner view)
     {
         var nativeView = handler?.PlatformView;
         nativeView.SetAttr("textSize", view.FontSize.ToString());

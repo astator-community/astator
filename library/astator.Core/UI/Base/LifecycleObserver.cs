@@ -1,10 +1,10 @@
-﻿using Android.Content;
+﻿using System;
+using Android.Content;
 using Android.Runtime;
 using AndroidX.Activity.Result;
 using AndroidX.Activity.Result.Contract;
 using AndroidX.AppCompat.App;
 using AndroidX.Lifecycle;
-using System;
 
 namespace astator.Core.UI.Base;
 

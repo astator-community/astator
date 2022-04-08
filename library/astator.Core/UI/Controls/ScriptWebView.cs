@@ -35,15 +35,15 @@ public class ScriptWebView : WebView, IControl
         switch (key)
         {
             case "url":
-            {
-                if (value is string temp) LoadUrl(temp);
-                break;
-            }
+                {
+                    if (value is string temp) LoadUrl(temp);
+                    break;
+                }
             default:
-            {
-                Util.SetAttr(this, key, value);
-                break;
-            }
+                {
+                    Util.SetAttr(this, key, value);
+                    break;
+                }
         }
     }
     public object GetAttr(string key)

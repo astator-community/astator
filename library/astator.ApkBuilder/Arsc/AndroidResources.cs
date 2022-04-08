@@ -1,5 +1,5 @@
-﻿using astator.ApkBuilder.Axml.Chunks.Base;
-using System.Text;
+﻿using System.Text;
+using astator.ApkBuilder.Axml.Chunks.Base;
 
 namespace astator.ApkBuilder.Arsc;
 

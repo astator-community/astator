@@ -1,23 +1,15 @@
 ﻿
-using NLog;
-using NLog.Config;
-using NLog.Targets;
 using System;
 using System.Collections.Concurrent;
 using System.IO;
 using System.Linq;
 using System.Text;
+using NLog;
+using NLog.Config;
+using NLog.Targets;
 using NLogger = NLog.Logger;
 
 namespace astator.Core.Script;
-
-public class LogArgs
-{
-    public LogLevel Level { get; set; } = LogLevel.Info;
-    public DateTime Time { get; set; }
-    public string Message { get; set; } = string.Empty;
-}
-
 
 public class ScriptLogger
 {
@@ -37,12 +29,12 @@ public class ScriptLogger
 
     private readonly NLogger logger;
 
-    private readonly ConcurrentDictionary<string, Action<LogArgs>> callbacks = new();
+    private readonly ConcurrentDictionary<string, Action<LogLevel, DateTime, string>> callbacks = new();
 
 
     private static readonly object locker = new();
 
-    public static string AddCallback(string key, Action<LogArgs> action)
+    public static string AddCallback(string key, Action<LogLevel, DateTime, string> action)
     {
         lock (locker)
         {
@@ -71,34 +63,27 @@ public class ScriptLogger
 
     public ScriptLogger()
     {
-        var path = Path.Combine(Android.App.Application.Context.GetExternalFilesDir("log").ToString(), "log.txt");
         var config = new LoggingConfiguration();
         var methodCallTarget = new MethodCallTarget("AddMessage", (logEvent, parameters) =>
         {
-            var message = new LogArgs
-            {
-                Level = logEvent.Level,
-                Time = DateTime.Now,
-                Message = logEvent.FormattedMessage
-            };
-
             foreach (var action in this.callbacks.Values)
             {
                 try
                 {
-                    action.Invoke(message);
+                    action.Invoke(logEvent.Level, DateTime.Now, logEvent.FormattedMessage);
                 }
                 catch { }
             }
         });
         config.LoggingRules.Add(new LoggingRule("*", LogLevel.Trace, methodCallTarget));
 
+        var path = Path.Combine(Android.App.Application.Context.GetExternalFilesDir("log").ToString(), "log.txt");
         var fileTarget = new FileTarget
         {
             FileName = path,
             Layout = @"loger*/${level}*/${date::universalTime=false:format=MM-dd HH\:mm\:ss\.fff}*/: ${message}",
         };
-        config.LoggingRules.Add(new LoggingRule("*", LogLevel.Trace, fileTarget));
+        config.LoggingRules.Add(new LoggingRule("*", LogLevel.Warn, fileTarget));
 
         this.logger = LogManager.Setup()
             .SetupExtensions(s => s.AutoLoadAssemblies(true))
@@ -106,9 +91,43 @@ public class ScriptLogger
             .GetCurrentClassLogger();
     }
 
+    public static void Log(string msg)
+    {
+        Instance.logger.Trace(msg);
+    }
+    public static void Debug(string msg)
+    {
+        Instance.logger.Debug(msg);
+    }
+
+    public static void Info(string msg)
+    {
+        Instance.logger.Info(msg);
+    }
+
+    public static void Error(string msg)
+    {
+        Instance.logger.Error(msg);
+    }
+
+    public static void Warn(string msg)
+    {
+        Instance.logger.Warn(msg);
+    }
+
+    public static void Trace(string msg)
+    {
+        Instance.logger.Trace(msg);
+    }
+
+    public static void Fatal(string msg)
+    {
+        Instance.logger.Fatal(msg);
+    }
+
     public static void Log(params object[] items)
     {
-        Instance.logger.Debug(GetMessage(items));
+        Instance.logger.Trace(GetMessage(items));
     }
 
     public static void Debug(params object[] items)

@@ -23,7 +23,6 @@ internal class FloatyWindow
     {
         var layoutParams = new WindowManagerLayoutParams
         {
-            Type = Android.Provider.Settings.CanDrawOverlays(context) ? WindowManagerTypes.ApplicationOverlay : WindowManagerTypes.ApplicationPanel,
             Format = Format.Transparent,
             Gravity = gravity,
             Flags = flags
@@ -48,8 +47,12 @@ internal class FloatyWindow
         layoutParams.X = x;
         layoutParams.Y = y;
 
-        this.windowManager = context.GetSystemService("window").JavaCast<IWindowManager>();
-        this.windowManager?.AddView(view, layoutParams);
+        try
+        {
+            this.windowManager = context.GetSystemService("window").JavaCast<IWindowManager>();
+            this.windowManager?.AddView(view, layoutParams);
+        }
+        catch { }
 
         this.view = view;
         this.showed = true;

@@ -1,12 +1,4 @@
-﻿using astator.Core.Script;
-using astator.NugetManager;
-using astator.TipsView;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.Emit;
-using Newtonsoft.Json;
-using NuGet.Versioning;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -16,6 +8,14 @@ using System.Runtime.Loader;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using astator.Core.Script;
+using astator.NugetManager;
+using astator.TipsView;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Emit;
+using Newtonsoft.Json;
+using NuGet.Versioning;
 
 namespace astator.Core.Engine
 {

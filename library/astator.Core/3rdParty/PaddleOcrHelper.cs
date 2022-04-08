@@ -1,6 +1,6 @@
-﻿using Android.Graphics;
+﻿using System.Collections.Generic;
+using Android.Graphics;
 using Com.Baidu.Paddle.Lite.Ocr;
-using System.Collections.Generic;
 
 namespace astator.Core.ThirdParty
 {

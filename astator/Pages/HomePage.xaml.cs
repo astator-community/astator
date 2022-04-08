@@ -1,4 +1,6 @@
-﻿using Android;
+﻿using System.IO.Compression;
+using System.Xml.Linq;
+using Android;
 using Android.Content;
 using Android.Views;
 using astator.Core.Script;
@@ -8,8 +10,6 @@ using astator.NugetManager;
 using astator.TipsView;
 using astator.Views;
 using Microsoft.Maui.Platform;
-using System.IO.Compression;
-using System.Xml.Linq;
 
 namespace astator.Pages;
 
@@ -21,7 +21,6 @@ public partial class HomePage : ContentPage
     public HomePage()
     {
         InitializeComponent();
-
 
         var permissions = new string[]
         {
@@ -50,6 +49,18 @@ public partial class HomePage : ContentPage
         });
     }
 
+    private static void NotPermissionExit()
+    {
+        new AndroidX.AppCompat.App.AlertDialog
+           .Builder(Globals.AppContext)
+           .SetTitle("错误")
+           .SetMessage("请求权限失败, 应用退出!")
+           .SetPositiveButton("确认", (s, e) =>
+           {
+               Java.Lang.JavaSystem.Exit(0);
+           })
+           .Show();
+    }
 
     private void Initialze()
     {
@@ -71,20 +82,6 @@ public partial class HomePage : ContentPage
 
         DownloadExamples(scriptDir);
     }
-
-    private static void NotPermissionExit()
-    {
-        new AndroidX.AppCompat.App.AlertDialog
-           .Builder(Globals.AppContext)
-           .SetTitle("错误")
-           .SetMessage("请求权限失败, 应用退出!")
-           .SetPositiveButton("确认", (s, e) =>
-           {
-               Java.Lang.JavaSystem.Exit(0);
-           })
-           .Show();
-    }
-
 
     private void ShowFiles(string directory)
     {

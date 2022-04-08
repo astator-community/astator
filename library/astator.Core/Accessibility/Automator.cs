@@ -1,9 +1,9 @@
-﻿using Android.AccessibilityServices;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Android.AccessibilityServices;
 using Android.Graphics;
 using Android.Views.Accessibility;
 using astator.Core.Script;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace astator.Core.Accessibility;
 

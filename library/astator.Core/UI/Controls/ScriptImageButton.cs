@@ -1,7 +1,7 @@
-﻿using Android.Graphics;
+﻿using System.IO;
+using Android.Graphics;
 using Android.Views;
 using astator.Core.UI.Base;
-using System.IO;
 using static Android.Views.ViewGroup;
 
 namespace astator.Core.UI.Controls;
@@ -44,48 +44,48 @@ public class ScriptImageButton : AndroidX.AppCompat.Widget.AppCompatImageButton,
         switch (key)
         {
             case "src":
-            {
-                if (value is string temp)
                 {
-                    var path = temp;
-                    if (!path.StartsWith("/"))
+                    if (value is string temp)
                     {
-                        path = System.IO.Path.Combine(this.workDir, "assets", path);
+                        var path = temp;
+                        if (!path.StartsWith("/"))
+                        {
+                            path = System.IO.Path.Combine(this.workDir, "assets", path);
+                        }
+                        if (!File.Exists(path))
+                        {
+                            throw new FileNotFoundException(path + ": open failed! (No such file or directory)");
+                        }
+                        SetImageURI(Android.Net.Uri.FromFile(new Java.IO.File(path)));
                     }
-                    if (!File.Exists(path))
-                    {
-                        throw new FileNotFoundException(path + ": open failed! (No such file or directory)");
-                    }
-                    SetImageURI(Android.Net.Uri.FromFile(new Java.IO.File(path)));
+                    break;
                 }
-                break;
-            }
             case "bg":
-            {
-                if (value is string temp)
                 {
-                    var bg = Color.ParseColor(temp);
-                    this.backgroundColor = bg;
-                    SetBackgroundColor(bg);
+                    if (value is string temp)
+                    {
+                        var bg = Color.ParseColor(temp);
+                        this.backgroundColor = bg;
+                        SetBackgroundColor(bg);
+                    }
+                    else if (value is Color color)
+                    {
+                        var bg = color;
+                        this.backgroundColor = bg;
+                        SetBackgroundColor(bg);
+                    }
+                    break;
                 }
-                else if (value is Color color)
-                {
-                    var bg = color;
-                    this.backgroundColor = bg;
-                    SetBackgroundColor(bg);
-                }
-                break;
-            }
             case "scaleType":
-            {
-                SetScaleType(Util.TypeParse<ScaleType>(value));
-                break;
-            }
+                {
+                    SetScaleType(Util.TypeParse<ScaleType>(value));
+                    break;
+                }
             default:
-            {
-                Util.SetAttr(this, key, value);
-                break;
-            }
+                {
+                    Util.SetAttr(this, key, value);
+                    break;
+                }
         }
     }
     public object GetAttr(string key)

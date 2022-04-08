@@ -1,4 +1,9 @@
-﻿using Android.App;
+﻿using System.Collections.ObjectModel;
+using System.IO.Compression;
+using System.Net;
+using System.Net.Sockets;
+using System.Text;
+using Android.App;
 using Android.Content;
 using Android.OS;
 using Android.Runtime;
@@ -10,11 +15,6 @@ using astator.Core.Graphics;
 using astator.Core.Script;
 using astator.Modules.Base;
 using Newtonsoft.Json;
-using System.Collections.ObjectModel;
-using System.IO.Compression;
-using System.Net;
-using System.Net.Sockets;
-using System.Text;
 using OperationCanceledException = System.OperationCanceledException;
 
 namespace astator.Modules;
@@ -105,9 +105,9 @@ internal class DebugService : Service, IDisposable
             var info = $"{Devices.Brand} {Devices.Model}";
             await stream.WriteAsync(Stick.MakePackData("init", info));
 
-            var key = ScriptLogger.AddCallback("info", async (args) =>
+            var key = ScriptLogger.AddCallback("debugServer", async (logLevel, time, msg) =>
             {
-                var pack = Stick.MakePackData("showMessage", Encoding.UTF8.GetBytes($"{args.Time:HH:mm:ss.fff}: {args.Message}"));
+                var pack = Stick.MakePackData("showMessage", Encoding.UTF8.GetBytes($"{time:HH:mm:ss.fff}: {msg}"));
                 await stream.WriteAsync(pack);
             });
 
@@ -121,129 +121,129 @@ internal class DebugService : Service, IDisposable
                     switch (data.Key)
                     {
                         case "runProject":
-                        {
-                            using var zipStream = new MemoryStream(data.Buffer);
-                            var directory = Path.Combine(MauiApplication.Current.ExternalCacheDir.ToString(), data.Description);
-                            ClearProject(directory);
-
-                            using (var archive = new ZipArchive(zipStream))
                             {
-                                archive.ExtractToDirectory(directory, true);
+                                using var zipStream = new MemoryStream(data.Buffer);
+                                var directory = Path.Combine(MauiApplication.Current.ExternalCacheDir.ToString(), data.Description);
+                                ClearProject(directory);
+
+                                using (var archive = new ZipArchive(zipStream))
+                                {
+                                    archive.ExtractToDirectory(directory, true);
+                                }
+
+                                _ = ScriptManager.Instance.RunProject(directory);
+
+                                break;
                             }
-
-                            _ = ScriptManager.Instance.RunProject(directory);
-
-                            break;
-                        }
                         case "runScript":
-                        {
-                            using var zipStream = new MemoryStream(data.Buffer);
-                            var description = data.Description.Split("|");
-                            var directory = Path.Combine(MauiApplication.Current.ExternalCacheDir.ToString(), description[0]);
-                            ClearProject(directory);
-
-                            using (var archive = new ZipArchive(zipStream))
                             {
-                                archive.ExtractToDirectory(directory, true);
+                                using var zipStream = new MemoryStream(data.Buffer);
+                                var description = data.Description.Split("|");
+                                var directory = Path.Combine(MauiApplication.Current.ExternalCacheDir.ToString(), description[0]);
+                                ClearProject(directory);
+
+                                using (var archive = new ZipArchive(zipStream))
+                                {
+                                    archive.ExtractToDirectory(directory, true);
+                                }
+
+                                _ = ScriptManager.Instance.RunScript(Path.Combine(directory, description[1]));
+
+                                break;
                             }
-
-                            _ = ScriptManager.Instance.RunScript(Path.Combine(directory, description[1]));
-
-                            break;
-                        }
                         case "saveProject":
-                        {
-                            var astatorDir = Android.OS.Environment.GetExternalStoragePublicDirectory("astator").ToString();
-                            var directory = Path.Combine(astatorDir, "脚本");
-                            if (Directory.Exists(directory))
                             {
-                                Directory.CreateDirectory(directory);
+                                var astatorDir = Android.OS.Environment.GetExternalStoragePublicDirectory("astator").ToString();
+                                var directory = Path.Combine(astatorDir, "脚本");
+                                if (Directory.Exists(directory))
+                                {
+                                    Directory.CreateDirectory(directory);
+                                }
+
+                                using var zipStream = new MemoryStream(data.Buffer);
+                                var saveDirectory = Path.Combine(directory, data.Description);
+                                ClearProject(saveDirectory);
+
+                                using var archive = new ZipArchive(zipStream);
+                                archive.ExtractToDirectory(saveDirectory, true);
+                                Globals.Toast($"项目已保存至{saveDirectory}");
+                                break;
                             }
-
-                            using var zipStream = new MemoryStream(data.Buffer);
-                            var saveDirectory = Path.Combine(directory, data.Description);
-                            ClearProject(saveDirectory);
-
-                            using var archive = new ZipArchive(zipStream);
-                            archive.ExtractToDirectory(saveDirectory, true);
-                            Globals.Toast($"项目已保存至{saveDirectory}");
-                            break;
-                        }
                         case "screenShot":
-                        {
-                            byte[] pack;
-
-                            if (PermissionHelperer.CheckScreenCap())
                             {
-                                try
-                                {
-                                    var img = await ScreenCapturer.Instance.AcquireLatestBitmapOnCurrentOrientation();
+                                byte[] pack;
 
-                                    var ms = new MemoryStream();
-                                    img.Compress(Android.Graphics.Bitmap.CompressFormat.Png, 100, ms);
-                                    var bytes = ms.ToArray();
-
-                                    pack = Stick.MakePackData("screenShot_success", bytes);
-                                }
-                                catch (Exception)
+                                if (PermissionHelperer.CheckScreenCap())
                                 {
-                                    pack = Stick.MakePackData("screenShot_fail", "获取截图失败!");
+                                    try
+                                    {
+                                        var img = await ScreenCapturer.Instance.AcquireLatestBitmapOnCurrentOrientation();
+
+                                        var ms = new MemoryStream();
+                                        img.Compress(Android.Graphics.Bitmap.CompressFormat.Png, 100, ms);
+                                        var bytes = ms.ToArray();
+
+                                        pack = Stick.MakePackData("screenShot_success", bytes);
+                                    }
+                                    catch (Exception)
+                                    {
+                                        pack = Stick.MakePackData("screenShot_fail", "获取截图失败!");
+                                    }
                                 }
+                                else
+                                {
+                                    pack = Stick.MakePackData("screenShot_fail", "截图服务未开启!");
+                                }
+                                await stream.WriteAsync(pack);
+                                break;
                             }
-                            else
-                            {
-                                pack = Stick.MakePackData("screenShot_fail", "截图服务未开启!");
-                            }
-                            await stream.WriteAsync(pack);
-                            break;
-                        }
                         case "layoutDump":
-                        {
-                            byte[] pack;
-
-                            if (PermissionHelperer.CheckScreenCap() && PermissionHelperer.CheckAccessibility())
                             {
-                                try
+                                byte[] pack;
+
+                                if (PermissionHelperer.CheckScreenCap() && PermissionHelperer.CheckAccessibility())
                                 {
-                                    var img = await ScreenCapturer.Instance.AcquireLatestBitmapOnCurrentOrientation();
-                                    var imgStream = new MemoryStream();
-                                    img.Compress(Android.Graphics.Bitmap.CompressFormat.Png, 100, imgStream);
-                                    var imgBytes = imgStream.ToArray();
+                                    try
+                                    {
+                                        var img = await ScreenCapturer.Instance.AcquireLatestBitmapOnCurrentOrientation();
+                                        var imgStream = new MemoryStream();
+                                        img.Compress(Android.Graphics.Bitmap.CompressFormat.Png, 100, imgStream);
+                                        var imgBytes = imgStream.ToArray();
 
-                                    var layoutInfo = LayoutDump();
-                                    var js = JsonConvert.SerializeObject(layoutInfo);
-                                    var jsBytes = Encoding.UTF8.GetBytes(js);
+                                        var layoutInfo = LayoutDump();
+                                        var js = JsonConvert.SerializeObject(layoutInfo);
+                                        var jsBytes = Encoding.UTF8.GetBytes(js);
 
-                                    var size = 4 + imgBytes.Length + 4 + jsBytes.Length;
-                                    using var ms = new MemoryStream(size);
-                                    ms.WriteInt32(imgBytes.Length);
-                                    ms.Write(imgBytes);
-                                    ms.WriteInt32(jsBytes.Length);
-                                    ms.Write(jsBytes);
-                                    var bytes = ms.GetBuffer();
+                                        var size = 4 + imgBytes.Length + 4 + jsBytes.Length;
+                                        using var ms = new MemoryStream(size);
+                                        ms.WriteInt32(imgBytes.Length);
+                                        ms.Write(imgBytes);
+                                        ms.WriteInt32(jsBytes.Length);
+                                        ms.Write(jsBytes);
+                                        var bytes = ms.GetBuffer();
 
-                                    pack = Stick.MakePackData("LayoutDump_success", bytes);
+                                        pack = Stick.MakePackData("LayoutDump_success", bytes);
+                                    }
+                                    catch (Exception)
+                                    {
+                                        pack = Stick.MakePackData("LayoutDump_fail", "布局获取失败!");
+                                    }
                                 }
-                                catch (Exception)
+                                else
                                 {
-                                    pack = Stick.MakePackData("LayoutDump_fail", "布局获取失败!");
+                                    pack = Stick.MakePackData("LayoutDump_fail", "截图服务或无障碍服务未开启!");
                                 }
-                            }
-                            else
-                            {
-                                pack = Stick.MakePackData("LayoutDump_fail", "截图服务或无障碍服务未开启!");
-                            }
 
 
-                            await stream.WriteAsync(pack);
-                            break;
-                        }
+                                await stream.WriteAsync(pack);
+                                break;
+                            }
                         case "heartBeat":
-                        {
-                            var pack = Stick.MakePackData("heartBeat");
-                            await stream.WriteAsync(pack);
-                            break;
-                        }
+                            {
+                                var pack = Stick.MakePackData("heartBeat");
+                                await stream.WriteAsync(pack);
+                                break;
+                            }
                         default:
                             break;
                     }

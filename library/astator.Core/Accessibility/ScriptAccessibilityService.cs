@@ -1,10 +1,10 @@
-﻿using Android.AccessibilityServices;
+﻿using System;
+using Android.AccessibilityServices;
 using Android.App;
 using Android.Content;
 using Android.Views.Accessibility;
 using AndroidX.Core.App;
 using AndroidX.Core.Graphics.Drawable;
-using System;
 
 namespace astator.Core.Accessibility;
 

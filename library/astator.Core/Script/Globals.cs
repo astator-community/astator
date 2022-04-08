@@ -1,10 +1,10 @@
-﻿using Android.App.Usage;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Android.App.Usage;
 using Android.Content;
 using Android.Widget;
 using Microsoft.Maui.Controls;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Application = Android.App.Application;
 
 namespace astator.Core.Script;
@@ -17,6 +17,7 @@ public class Globals
 #elif RELEASE
     public const string AstatorPackageName = "com.astator.astator";
 #endif
+
     public static Context AppContext { get; set; }
 
     /// <summary>

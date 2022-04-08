@@ -8,7 +8,6 @@ public partial class App : Application
     public App()
     {
         InitializeComponent();
-
         Console.SetOut(new ScriptConsole());
     }
 
@@ -37,21 +36,6 @@ public partial class App : Application
             mainPage.Children.Add(new LogPage());
         }
         this.MainPage = mainPage;
-    }
-
-
-
-    private static void NotPermissionExit()
-    {
-        new AndroidX.AppCompat.App.AlertDialog
-           .Builder(Globals.AppContext)
-           .SetTitle("错误")
-           .SetMessage("请求权限失败, 应用退出!")
-           .SetPositiveButton("确认", (s, e) =>
-           {
-               Java.Lang.JavaSystem.Exit(0);
-           })
-           .Show();
     }
 }
 

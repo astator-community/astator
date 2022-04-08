@@ -1,8 +1,8 @@
-﻿using Android.Content.Res;
+﻿using System;
+using Android.Content.Res;
 using Android.Graphics;
 using Android.Widget;
 using astator.Core.UI.Base;
-using System;
 
 namespace astator.Core.UI.Controls;
 
@@ -27,22 +27,22 @@ public class ScriptCheckBox : CheckBox, IControl
         switch (key)
         {
             case "checked":
-            {
-                this.Checked = Convert.ToBoolean(value);
-                break;
-            }
+                {
+                    this.Checked = Convert.ToBoolean(value);
+                    break;
+                }
             case "color":
-            {
-                if (value is string temp) this.ButtonTintList = ColorStateList.ValueOf(Color.ParseColor(temp));
-                else if (value is Color color) this.ButtonTintList = ColorStateList.ValueOf(color);
+                {
+                    if (value is string temp) this.ButtonTintList = ColorStateList.ValueOf(Color.ParseColor(temp));
+                    else if (value is Color color) this.ButtonTintList = ColorStateList.ValueOf(color);
 
-                break;
-            }
+                    break;
+                }
             default:
-            {
-                Util.SetAttr(this, key, value);
-                break;
-            }
+                {
+                    Util.SetAttr(this, key, value);
+                    break;
+                }
         }
     }
     public object GetAttr(string key)

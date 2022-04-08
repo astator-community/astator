@@ -1,11 +1,11 @@
-﻿using astator.Core.Engine;
+﻿using System.IO.Compression;
+using System.Xml.Linq;
+using astator.Core.Engine;
 using astator.Core.Script;
 using astator.Core.ThirdParty;
 using astator.NugetManager;
 using astator.TipsView;
 using Newtonsoft.Json;
-using System.IO.Compression;
-using System.Xml.Linq;
 
 namespace astator.Modules;
 public class ApkBuilderer
@@ -66,7 +66,7 @@ public class ApkBuilderer
 
                 var projectConfig = xd.Descendants("ProjectExtensions");
                 var useOCR = Convert.ToBoolean(projectConfig.Select(x => x.Element("UseOCR")).First()?.Value);
-                var buildX86 = Convert.ToBoolean(projectConfig.Select(x => x.Element("buildX86")).First()?.Value);
+                var buildX86 = Convert.ToBoolean(projectConfig.Select(x => x.Element("BuildX86")).First()?.Value);
 
                 if (!await CompileDll(false))
                 {

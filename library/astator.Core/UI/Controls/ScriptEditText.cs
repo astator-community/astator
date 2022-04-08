@@ -1,4 +1,5 @@
-﻿using Android.Content.Res;
+﻿using System;
+using Android.Content.Res;
 using Android.Graphics;
 using Android.Graphics.Drawables;
 using Android.Text;
@@ -7,7 +8,6 @@ using AndroidX.AppCompat.Widget;
 using AndroidX.Core.Content;
 using astator.Core.Exceptions;
 using astator.Core.UI.Base;
-using System;
 using Attribute = Android.Resource.Attribute;
 
 namespace astator.Core.UI.Controls;
@@ -68,32 +68,32 @@ public class ScriptEditText : AppCompatEditText, IControl
         switch (key)
         {
             case "hint":
-            {
-                if (value is string temp) this.Hint = temp;
-                break;
-            }
+                {
+                    if (value is string temp) this.Hint = temp;
+                    break;
+                }
             case "hintTextColor":
-            {
-                if (value is string temp) SetHintTextColor(Color.ParseColor(temp.Trim()));
-                else if (value is Color color) SetHintTextColor(color);
+                {
+                    if (value is string temp) SetHintTextColor(Color.ParseColor(temp.Trim()));
+                    else if (value is Color color) SetHintTextColor(color);
 
-                break;
-            }
+                    break;
+                }
             case "inputType":
-            {
-                this.InputType = Util.EnumParse<InputTypes>(value);
-                break;
-            }
+                {
+                    this.InputType = Util.EnumParse<InputTypes>(value);
+                    break;
+                }
             case "singleLine":
-            {
-                SetSingleLine(Convert.ToBoolean(value));
-                break;
-            }
+                {
+                    SetSingleLine(Convert.ToBoolean(value));
+                    break;
+                }
             default:
-            {
-                Util.SetAttr(this, key, value);
-                break;
-            }
+                {
+                    Util.SetAttr(this, key, value);
+                    break;
+                }
         }
     }
     public object GetAttr(string key)
@@ -120,10 +120,10 @@ public class ScriptEditText : AppCompatEditText, IControl
         switch (key)
         {
             case "changed":
-            {
-                if (listener is TextWatcher temp) AddTextChangedListener(new ClassOfTextWatcher(this, temp));
-                break;
-            }
+                {
+                    if (listener is TextWatcher temp) AddTextChangedListener(new ClassOfTextWatcher(this, temp));
+                    break;
+                }
             default:
                 this.OnListener(key, listener);
                 break;

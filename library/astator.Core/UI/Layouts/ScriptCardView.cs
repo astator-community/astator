@@ -1,9 +1,9 @@
-﻿using Android.Content.Res;
+﻿using System;
+using Android.Content.Res;
 using Android.Graphics;
 using Android.Views;
 using AndroidX.CardView.Widget;
 using astator.Core.UI.Base;
-using System;
 
 namespace astator.Core.UI.Layouts;
 
@@ -33,31 +33,31 @@ public class ScriptCardView : CardView, ILayout
         switch (key)
         {
             case "radius":
-            {
-                this.Radius = Util.Dp2Px(value);
-                break;
-            }
+                {
+                    this.Radius = Util.Dp2Px(value);
+                    break;
+                }
             case "elevation":
-            {
-                this.CardElevation = Convert.ToSingle(value);
-                break;
-            }
+                {
+                    this.CardElevation = Convert.ToSingle(value);
+                    break;
+                }
             case "maxElevation":
-            {
-                this.MaxCardElevation = Convert.ToSingle(value);
-                break;
-            }
+                {
+                    this.MaxCardElevation = Convert.ToSingle(value);
+                    break;
+                }
             case "bg":
-            {
-                if (value is string temp) this.CardBackgroundColor = ColorStateList.ValueOf(Color.ParseColor(temp));
-                else if (value is Color color) this.CardBackgroundColor = ColorStateList.ValueOf(color);
-                break;
-            }
+                {
+                    if (value is string temp) this.CardBackgroundColor = ColorStateList.ValueOf(Color.ParseColor(temp));
+                    else if (value is Color color) this.CardBackgroundColor = ColorStateList.ValueOf(color);
+                    break;
+                }
             default:
-            {
-                Util.SetAttr(this, key, value);
-                break;
-            }
+                {
+                    Util.SetAttr(this, key, value);
+                    break;
+                }
         }
     }
     public object GetAttr(string key)

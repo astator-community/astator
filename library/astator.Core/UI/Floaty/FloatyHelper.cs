@@ -1,5 +1,5 @@
-﻿using Android.Content;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Android.Content;
 
 namespace astator.Core.UI.Floaty;
 

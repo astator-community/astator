@@ -1,9 +1,9 @@
-﻿using Android.Runtime;
+﻿using System;
+using Android.Runtime;
 using Android.Text;
 using Android.Views;
 using Android.Widget;
 using Java.Lang;
-using System;
 using static Android.Views.View;
 using static Android.Widget.AdapterView;
 using static Android.Widget.CompoundButton;

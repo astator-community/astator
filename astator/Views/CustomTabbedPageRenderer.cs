@@ -1,7 +1,7 @@
-﻿using Android.Content;
+﻿using System.Reflection;
+using Android.Content;
 using Google.Android.Material.Tabs;
 using Microsoft.Maui.Controls.Compatibility.Platform.Android.AppCompat;
-using System.Reflection;
 
 namespace astator.Views;
 internal class CustomTabbedPageRenderer : TabbedPageRenderer

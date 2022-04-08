@@ -1,9 +1,9 @@
+using System.ComponentModel;
 using astator.Core.Script;
 using astator.NugetManager;
 using astator.Views;
 using NuGet.Protocol.Core.Types;
 using NuGet.Versioning;
-using System.ComponentModel;
 
 namespace astator
 {

@@ -22,10 +22,10 @@ public class ScriptTextView : AppCompatTextView, IControl
         switch (key)
         {
             case "changed":
-            {
-                if (listener is TextWatcher temp) AddTextChangedListener(new ClassOfTextWatcher(this, temp));
-                break;
-            }
+                {
+                    if (listener is TextWatcher temp) AddTextChangedListener(new ClassOfTextWatcher(this, temp));
+                    break;
+                }
             default:
                 this.OnListener(key, listener);
                 break;

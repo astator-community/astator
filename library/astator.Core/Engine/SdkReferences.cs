@@ -1,10 +1,10 @@
-﻿using astator.Core.Script;
+﻿using System.Collections.Generic;
+using System.IO;
+using System.Threading.Tasks;
+using astator.Core.Script;
 using astator.NugetManager;
 using astator.TipsView;
 using Microsoft.CodeAnalysis;
-using System.Collections.Generic;
-using System.IO;
-using System.Threading.Tasks;
 
 namespace astator.Core.Engine;
 public static class SdkReferences
@@ -23,7 +23,7 @@ public static class SdkReferences
             if (string.IsNullOrEmpty(SdkDir))
             {
                 var id = "astator.Sdk";
-                var version = await NugetCommands.ParseVersion(id, "0.2.1");
+                var version = await NugetCommands.ParseVersion(id, "0.2.*");
                 var dir = Path.Combine(NugetCommands.NugetDirectory, id, version.ToString());
                 if (!Directory.Exists(dir))
                 {

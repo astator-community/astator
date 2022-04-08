@@ -1,11 +1,12 @@
-﻿using Android.App;
+﻿using System;
+using System.Collections.Generic;
+using Android.App;
 using astator.Core.Engine;
 using astator.Core.Threading;
 using astator.Core.UI;
 using astator.Core.UI.Base;
 using astator.Core.UI.Floaty;
-using System;
-using System.Collections.Generic;
+using NLog;
 
 namespace astator.Core.Script;
 
@@ -176,7 +177,7 @@ public class ScriptRuntime
     /// </summary>
     /// <param name="callback"></param>
     /// <returns>回调的key</returns>
-    public string AddLoggerCallback(Action<LogArgs> callback)
+    public string AddLoggerCallback(Action<LogLevel, DateTime, string> callback)
     {
         return ScriptLogger.AddCallback(this.ScriptId, callback);
     }
@@ -230,9 +231,9 @@ public class ScriptRuntime
                 }
                 if (this.IsExitAppOnStoped && Application.Context.PackageName != Globals.AstatorPackageName)
                 {
+                    (Globals.AppContext as Activity).Finish();
                     Java.Lang.JavaSystem.Exit(0);
                 }
-
 
                 this.engine.UnExecute();
                 ScriptLogger.Log("脚本停止运行: " + this.ScriptId);

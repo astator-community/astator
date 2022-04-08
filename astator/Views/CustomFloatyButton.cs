@@ -1,6 +1,6 @@
 ﻿namespace astator.Views
 {
-    class CustomFloatyButton : ImageButton
+    internal class CustomFloatyButton : ImageButton
     {
 
         protected override void OnHandlerChanged()

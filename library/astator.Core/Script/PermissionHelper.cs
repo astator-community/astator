@@ -1,4 +1,5 @@
-﻿using Android.App;
+﻿using System;
+using Android.App;
 using Android.Content;
 using Android.Media.Projection;
 using Android.OS;
@@ -7,7 +8,6 @@ using AndroidX.Activity.Result;
 using astator.Core.Accessibility;
 using astator.Core.Graphics;
 using astator.Core.UI.Base;
-using System;
 
 namespace astator.Core.Script;
 
@@ -131,7 +131,7 @@ public class PermissionHelper
     }
 
     /// <summary>
-    /// 申请无障碍服务
+    /// 启动无障碍服务
     /// </summary>
     public void ReqAccessibility(Action<bool> callback)
     {

@@ -1,12 +1,12 @@
-﻿using Android.Content;
+﻿using System.Collections.Concurrent;
+using System.Reflection;
+using Android.Content;
 using Android.OS;
 using Android.Views;
 using astator.Core.Engine;
 using astator.Core.Script;
 using astator.Core.UI.Base;
 using astator.TipsView;
-using System.Collections.Concurrent;
-using System.Reflection;
 using Application = Android.App.Application;
 
 namespace astator.Modules;
@@ -112,17 +112,17 @@ public class ScriptManager
                  var activity = await StartScriptActivity(id);
                  runtime = new ScriptRuntime(id, engine, activity, rootDir);
 
-                 Device.BeginInvokeOnMainThread(() =>
-                 {
-                     try
-                     {
-                         ScriptEngine.Execute(method, runtime);
-                     }
-                     catch (Exception ex)
-                     {
-                         ScriptLogger.Error(ex);
-                     }
-                 });
+                 _ = Globals.InvokeOnMainThreadAsync(() =>
+                  {
+                      try
+                      {
+                          ScriptEngine.Execute(method, runtime);
+                      }
+                      catch (Exception ex)
+                      {
+                          ScriptLogger.Error(ex);
+                      }
+                  });
              }
              else
              {
@@ -236,8 +236,7 @@ public class ScriptManager
     {
         return await Task.Run(async () =>
         {
-            TipsViewImpl.Show();
-            TipsViewImpl.ChangeTipsText("正在初始化...");
+            ScriptLogger.Log("正在初始化...");
             var id = "project";
             GetId(ref id);
 
@@ -246,11 +245,8 @@ public class ScriptManager
             if (!engine.LoadAssemblyFromPath())
             {
                 ScriptLogger.Error("加载dll失败!");
-                TipsViewImpl.Hide();
                 return null;
             }
-
-            TipsViewImpl.Hide();
 
             var method = engine.GetProjectEntryMethodInfo();
             if (method is null)
@@ -269,7 +265,7 @@ public class ScriptManager
                 var activity = await StartScriptActivity(id);
                 runtime = new ScriptRuntime(id, engine, activity, rootDir);
 
-                Device.BeginInvokeOnMainThread(() =>
+                _ = Globals.InvokeOnMainThreadAsync(() =>
                 {
                     try
                     {
@@ -300,7 +296,8 @@ public class ScriptManager
     private static async Task<TemplateActivity> StartScriptActivity(string id)
     {
         ContextWrapper context = new ContextThemeWrapper(Application.Context, Resource.Style.AppTheme_NoActionBar);
-        var intent = new Intent(context, typeof(TemplateActivity)).AddFlags(ActivityFlags.NewTask);
+        var intent = new Intent(context, typeof(TemplateActivity));
+        intent.AddFlags(ActivityFlags.NewTask);
 
         var bundle = new Bundle();
         bundle.PutString("id", id);

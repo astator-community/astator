@@ -1,8 +1,8 @@
-﻿using Android.Content.Res;
+﻿using System;
+using Android.Content.Res;
 using Android.Graphics;
 using Android.Widget;
 using astator.Core.UI.Base;
-using System;
 using static Android.Views.ViewGroup;
 using Attribute = Android.Resource.Attribute;
 
@@ -52,28 +52,28 @@ public class ScriptSwitch : Switch, IControl
         switch (key)
         {
             case "checked":
-            {
-                this.Checked = Convert.ToBoolean(value);
-                break;
-            }
+                {
+                    this.Checked = Convert.ToBoolean(value);
+                    break;
+                }
             case "color":
-            {
-                if (value is string temp)
                 {
-                    this.color = Color.ParseColor(temp);
+                    if (value is string temp)
+                    {
+                        this.color = Color.ParseColor(temp);
+                    }
+                    else if (value is Color color)
+                    {
+                        this.color = color;
+                    }
+                    this.ThumbDrawable?.SetColorFilter(new PorterDuffColorFilter(this.color, PorterDuff.Mode.Multiply));
+                    break;
                 }
-                else if (value is Color color)
-                {
-                    this.color = color;
-                }
-                this.ThumbDrawable?.SetColorFilter(new PorterDuffColorFilter(this.color, PorterDuff.Mode.Multiply));
-                break;
-            }
             default:
-            {
-                Util.SetAttr(this, key, value);
-                break;
-            }
+                {
+                    Util.SetAttr(this, key, value);
+                    break;
+                }
         }
     }
     public object GetAttr(string key)
@@ -91,14 +91,14 @@ public class ScriptSwitch : Switch, IControl
         switch (key)
         {
             case "checkedChange":
-            {
-                if (listener is OnCheckedChangeListener temp)
                 {
-                    SetOnCheckedChangeListener(temp);
-                }
+                    if (listener is OnCheckedChangeListener temp)
+                    {
+                        SetOnCheckedChangeListener(temp);
+                    }
 
-                break;
-            }
+                    break;
+                }
             default:
                 this.OnListener(key, listener);
                 break;

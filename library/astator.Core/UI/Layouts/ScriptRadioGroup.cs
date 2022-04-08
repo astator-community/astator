@@ -1,7 +1,7 @@
-﻿using Android.Views;
+﻿using System;
+using Android.Views;
 using Android.Widget;
 using astator.Core.UI.Base;
-using System;
 
 namespace astator.Core.UI.Layouts;
 
@@ -36,34 +36,34 @@ public class ScriptRadioGroup : RadioGroup, ILayout
         switch (key)
         {
             case "position":
-            {
-                this.position = Convert.ToInt32(value);
-                break;
-            }
+                {
+                    this.position = Convert.ToInt32(value);
+                    break;
+                }
             case "orientation":
-            {
-                try
                 {
-                    if (value is string temp)
+                    try
                     {
-                        this.Orientation = (Orientation)int.Parse(temp);
+                        if (value is string temp)
+                        {
+                            this.Orientation = (Orientation)int.Parse(temp);
+                        }
+                        else if (value is int i32)
+                        {
+                            this.Orientation = (Orientation)i32;
+                        }
                     }
-                    else if (value is int i32)
+                    catch
                     {
-                        this.Orientation = (Orientation)i32;
+                        this.Orientation = Util.EnumParse<Orientation>(value);
                     }
+                    break;
                 }
-                catch
-                {
-                    this.Orientation = Util.EnumParse<Orientation>(value);
-                }
-                break;
-            }
             default:
-            {
-                Util.SetAttr(this, key, value);
-                break;
-            }
+                {
+                    Util.SetAttr(this, key, value);
+                    break;
+                }
         }
     }
     public object GetAttr(string key)
@@ -80,14 +80,14 @@ public class ScriptRadioGroup : RadioGroup, ILayout
         switch (key)
         {
             case "Changed":
-            {
-                if (callback is RadioGroupOnCheckedChangeListener temp)
                 {
-                    SetOnCheckedChangeListener(temp);
-                }
+                    if (callback is RadioGroupOnCheckedChangeListener temp)
+                    {
+                        SetOnCheckedChangeListener(temp);
+                    }
 
-                break;
-            }
+                    break;
+                }
             default:
                 this.OnListener(key, callback);
                 break;

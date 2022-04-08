@@ -1,10 +1,10 @@
-﻿using Android.App;
+﻿using System;
+using System.Collections.Generic;
+using Android.App;
 using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using AndroidX.AppCompat.App;
-using System;
-using System.Collections.Generic;
 
 namespace astator.Core.UI.Base;
 

@@ -1,9 +1,9 @@
-﻿using Android.Graphics;
+﻿using System.IO.Compression;
+using Android.Graphics;
 using astator.ApkBuilder.Arsc;
 using astator.ApkBuilder.Axml;
 using astator.ApkBuilder.Signer;
 using astator.TipsView;
-using System.IO.Compression;
 using Path = System.IO.Path;
 
 namespace astator.ApkBuilder;
@@ -78,14 +78,8 @@ public class ApkBuilder
                         else if (entry.FullName.StartsWith("res/mipmap-xxhdpi-v4")) size = 144;
                         else if (entry.FullName.StartsWith("res/mipmap-xxxhdpi-v4")) size = 192;
 
-                        var bitmap = BitmapFactory.DecodeFile(iconPath);
-                        var newBitmap = Bitmap.CreateScaledBitmap(bitmap, size, size, true);
-                        var bytes = newBitmap.AsImageBytes(Bitmap.CompressFormat.Png, 100);
-                        bitmap.Recycle();
-                        newBitmap.Recycle();
-
+                        var bytes = GetScrBitmapBytes(iconPath, size);
                         using var stream = entry.Open();
-                        stream.Position = 0;
                         stream.Write(new byte[stream.Length]);
                         stream.Position = 0;
                         stream.Write(bytes);
@@ -102,14 +96,8 @@ public class ApkBuilder
                         else if (entry.FullName.StartsWith("res/mipmap-xxhdpi-v4")) size = 324;
                         else if (entry.FullName.StartsWith("res/mipmap-xxxhdpi-v4")) size = 432;
 
-                        var bitmap = BitmapFactory.DecodeFile(iconPath);
-                        var newBitmap = Bitmap.CreateScaledBitmap(bitmap, size, size, true);
-                        var bytes = newBitmap.AsImageBytes(Bitmap.CompressFormat.Png, 100);
-                        bitmap.Recycle();
-                        newBitmap.Recycle();
-
+                        var bytes = GetScrBitmapBytes(iconPath, size);
                         using var stream = entry.Open();
-                        stream.Position = 0;
                         stream.Write(new byte[stream.Length]);
                         stream.Position = 0;
                         stream.Write(bytes);
@@ -183,6 +171,16 @@ public class ApkBuilder
         }
     }
 
+    private static byte[] GetScrBitmapBytes(string path, int size)
+    {
+        var bitmap = BitmapFactory.DecodeFile(path);
+        var newBitmap = Bitmap.CreateScaledBitmap(bitmap, size, size, true);
+        using var ms = new MemoryStream();
+        newBitmap.Compress(Bitmap.CompressFormat.Png, 100, ms);
+        newBitmap.Recycle();
+        bitmap.Recycle();
+        return ms.ToArray();
+    }
 
     private static byte[] GetTemplateBytes()
     {

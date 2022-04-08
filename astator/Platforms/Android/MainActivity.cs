@@ -1,4 +1,5 @@
-﻿using Android.App;
+﻿using System.IO.Compression;
+using Android.App;
 using Android.Content.PM;
 using Android.OS;
 using Android.Views;
@@ -20,7 +21,6 @@ public class MainActivity : MauiAppCompatActivity, IActivity
 
     protected override void OnCreate(Bundle savedInstanceState)
     {
-
         Instance = this;
         Globals.AppContext = this;
         TipsView.TipsViewImpl.AppContext = this;
@@ -29,7 +29,6 @@ public class MainActivity : MauiAppCompatActivity, IActivity
         this.Window.AddFlags(WindowManagerFlags.DrawsSystemBarBackgrounds);
         this.Window.SetStatusBarColor(((Color)Microsoft.Maui.Controls.Application.Current.Resources["PrimaryColor"]).ToPlatform());
         this.Window.DecorView.SystemUiVisibility = (StatusBarVisibility)SystemUiFlags.LightStatusBar;
-
 
         this.LifecycleObserver = new LifecycleObserver(this);
         this.Lifecycle.AddObserver(this.LifecycleObserver);
@@ -41,14 +40,12 @@ public class MainActivity : MauiAppCompatActivity, IActivity
         Platform.Init(this, savedInstanceState);
     }
 
-
     protected override void OnResume()
     {
         base.OnResume();
     }
 
     private DateTime latestTime;
-
 
     public override void OnBackPressed()
     {
@@ -72,6 +69,7 @@ public class MainActivity : MauiAppCompatActivity, IActivity
             var time = DateTime.Now;
             if (time.Subtract(this.latestTime).TotalMilliseconds < 1000)
             {
+                this.Finish();
                 Java.Lang.JavaSystem.Exit(0);
             }
             else
