@@ -1,9 +1,9 @@
-using System.IO.Compression;
 using AndroidX.AppCompat.App;
 using astator.Core.Script;
 using astator.Modules;
 using astator.Views;
 using NLog;
+using System.IO.Compression;
 
 namespace astator.Pages;
 
@@ -131,7 +131,7 @@ public partial class LogPage : ContentPage
         }
     }
 
-    public void AddLogText(LogLevel logLevel,DateTime time, string msg)
+    public void AddLogText(LogLevel logLevel, DateTime time, string msg)
     {
         Globals.InvokeOnMainThreadAsync(() =>
         {

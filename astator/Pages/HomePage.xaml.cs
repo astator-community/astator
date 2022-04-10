@@ -1,6 +1,4 @@
-﻿using System.IO.Compression;
-using System.Xml.Linq;
-using Android;
+﻿using Android;
 using Android.Content;
 using Android.Views;
 using astator.Core.Script;
@@ -10,6 +8,8 @@ using astator.NugetManager;
 using astator.TipsView;
 using astator.Views;
 using Microsoft.Maui.Platform;
+using System.IO.Compression;
+using System.Xml.Linq;
 
 namespace astator.Pages;
 

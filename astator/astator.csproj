@@ -18,8 +18,8 @@
 		<ApplicationId Condition="'$(Configuration)' == 'Release'">com.astator.astator</ApplicationId>
 
 		<!-- Versions -->
-		<Version>0.3.1</Version>
-		<ApplicationVersion>220331</ApplicationVersion>
+		<Version>0.3.3</Version>
+		<ApplicationVersion>220410</ApplicationVersion>
 
 		<!-- Required for C# Hot Reload -->
 		<UseInterpreter Condition="'$(Configuration)' == 'Debug'">True</UseInterpreter>
@@ -50,6 +50,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="MQTTnet" Version="3.1.2" />
 		<PackageReference Include="System.Collections.Concurrent" Version="4.3.0" />
 	</ItemGroup>
 

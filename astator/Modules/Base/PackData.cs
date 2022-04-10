@@ -1,7 +1,7 @@
 ﻿using System.Text;
 
 namespace astator.Modules.Base;
-public struct PackData
+public class PackData
 {
     public string Key { get; set; }
 
@@ -40,34 +40,43 @@ public struct PackData
 
     public static PackData Parse(byte[] bytes)
     {
-        var result = new PackData();
-        using var ms = new MemoryStream(bytes);
+        if (bytes is null) return null;
 
-        var keySize = ms.ReadInt32();
-        var keyBytes = new byte[keySize];
-        ms.Read(keyBytes);
-        var key = Encoding.UTF8.GetString(keyBytes);
-        result.Key = key;
-
-        ms.Position = 4 + 256;
-        var descSize = ms.ReadInt32();
-        if (descSize > 0)
+        try
         {
-            var descBytes = new byte[descSize];
-            ms.Read(descBytes);
-            var desc = Encoding.UTF8.GetString(descBytes);
-            result.Description = desc;
-        }
+            var result = new PackData();
+            using var ms = new MemoryStream(bytes);
+            ms.Position = 4;
+            var keySize = ms.ReadInt32();
+            var keyBytes = new byte[keySize];
+            ms.Read(keyBytes, 0, keySize);
+            var key = Encoding.UTF8.GetString(keyBytes);
+            result.Key = key;
 
-        ms.Position = 4 + 256 + 4 + 256;
-        var bufferSize = ms.ReadInt32();
-        if (bufferSize > 0)
+            ms.Position = 4 + 4 + 256;
+            var descSize = ms.ReadInt32();
+            if (descSize > 0)
+            {
+                var descBytes = new byte[descSize];
+                ms.Read(descBytes, 0, descSize);
+                var desc = Encoding.UTF8.GetString(descBytes);
+                result.Description = desc;
+            }
+
+            ms.Position = 4 + 4 + 256 + 4 + 256;
+            var bufferSize = ms.ReadInt32();
+            if (bufferSize > 0)
+            {
+                var buffer = new byte[bufferSize];
+                ms.Read(buffer, 0, buffer.Length);
+                result.Buffer = buffer;
+            }
+
+            return result;
+        }
+        catch
         {
-            var buffer = new byte[bufferSize];
-            ms.Read(buffer, 0, buffer.Length);
-            result.Buffer = buffer;
+            return null;
         }
-
-        return result;
     }
 }

@@ -2,7 +2,6 @@
 
 public static class Stick
 {
-
     public static byte[] MakePackData(string key, byte[] buffer)
     {
         var pack = new PackData
@@ -38,40 +37,6 @@ public static class Stick
         var data = pack.ToBytes();
         return data;
     }
-
-
-    public static async Task<PackData> ReadPackAsync(Stream stream, CancellationToken cancelToken)
-    {
-        try
-        {
-            var header = new byte[4];
-
-            var offset = 0;
-            while (offset < 4)
-            {
-                offset += await stream.ReadAsync(header.AsMemory(offset, 4 - offset), cancelToken);
-            }
-
-            var len = header.ToInt32();
-            var data = new byte[len];
-
-            offset = 0;
-            while (offset < len)
-            {
-                offset += await stream.ReadAsync(data.AsMemory(offset, len - offset), cancelToken);
-            }
-
-            var result = PackData.Parse(data);
-
-            return result;
-        }
-        catch (Exception)
-        {
-            throw;
-        }
-    }
-
-
 
     public static byte[] ToBytes(this int number)
     {

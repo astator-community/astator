@@ -1,9 +1,4 @@
-﻿using System.Collections.ObjectModel;
-using System.IO.Compression;
-using System.Net;
-using System.Net.Sockets;
-using System.Text;
-using Android.App;
+﻿using Android.App;
 using Android.Content;
 using Android.OS;
 using Android.Runtime;
@@ -14,8 +9,13 @@ using astator.Core.Accessibility;
 using astator.Core.Graphics;
 using astator.Core.Script;
 using astator.Modules.Base;
+using MQTTnet;
+using MQTTnet.Client;
+using MQTTnet.Server;
 using Newtonsoft.Json;
-using OperationCanceledException = System.OperationCanceledException;
+using System.Collections.ObjectModel;
+using System.IO.Compression;
+using System.Text;
 
 namespace astator.Modules;
 
@@ -51,25 +51,74 @@ internal class DebugService : Service, IDisposable
         throw new NotImplementedException();
     }
 
-    private TcpListener tcpListener;
-    private readonly CancellationTokenSource cancelTokenSource = new();
+    private IMqttServer server;
 
     public async void StartServer(string ip)
     {
         try
         {
-            this.tcpListener = new TcpListener(IPAddress.Parse(ip), 1024);
-            this.tcpListener.Start();
+            var mqttFactory = new MqttFactory();
+            var mqttServerOptions = new MqttServerOptionsBuilder()
+                .WithDefaultEndpointPort(1024)
+                .Build();
+
+            this.server = mqttFactory.CreateMqttServer();
+
             ScriptLogger.Log($"开启调试服务: {ip}");
-            while (true)
+
+            this.server.UseClientConnectedHandler(async (e) =>
             {
-                var client = await this.tcpListener.AcceptTcpClientAsync(this.cancelTokenSource.Token);
-                ConnectAsync(client, this.cancelTokenSource.Token);
-            }
-        }
-        catch (OperationCanceledException)
-        {
-            ScriptLogger.Log("停止调试服务");
+                await this.server.SubscribeAsync(e.ClientId,
+                    new MqttTopicFilter
+                    {
+                        Topic = "client/init"
+                    },
+                    new MqttTopicFilter
+                    {
+                        Topic = "client/run-project"
+                    },
+                    new MqttTopicFilter
+                    {
+                        Topic = "client/run-script"
+                    },
+                    new MqttTopicFilter
+                    {
+                        Topic = "client/save-project"
+                    },
+                    new MqttTopicFilter
+                    {
+                        Topic = "client/screen-shot"
+                    },
+                    new MqttTopicFilter
+                    {
+                        Topic = "client/layout-dump"
+                    });
+
+                ScriptLogger.AddCallback("debug-service", (level, time, msg) =>
+                {
+                    this.server.PublishAsync(new MqttApplicationMessage
+                    {
+                        Topic = "server/logging",
+                        Payload = Stick.MakePackData(time.ToString("HH:mm:ss.fff"), Encoding.UTF8.GetBytes(msg))
+                    });
+                });
+            });
+
+            this.server.UseClientDisconnectedHandler(async (e) =>
+            {
+                ScriptLogger.RemoveCallback("debug-service");
+                await this.server.UnsubscribeAsync(e.ClientId,
+                    "client/run-project",
+                    "client/run-script",
+                    "client/save-project",
+                    "client/screen-shot",
+                    "client/layout-dump");
+                this.server.Dispose();
+            });
+
+            this.server.UseApplicationMessageReceivedHandler(ApplicationMessageReceivedAsync);
+
+            await this.server.StartAsync(mqttServerOptions);
         }
         catch (Exception ex)
         {
@@ -78,17 +127,77 @@ internal class DebugService : Service, IDisposable
         }
     }
 
-    public void ConnectServer(string ip)
+    private IMqttClient client;
+    private bool isConnected;
+
+    public async void ConnectServer(string ip)
     {
         try
         {
-            var client = new TcpClient(ip, 1025);
-            ScriptLogger.Log($"连接到电脑: {ip}");
-            ConnectAsync(client, this.cancelTokenSource.Token);
-        }
-        catch (OperationCanceledException)
-        {
-            ScriptLogger.Log("停止调试服务");
+            var mqttClientOptions = new MqttClientOptionsBuilder()
+                   .WithTcpServer(ip, 1024)
+                   .WithKeepAlivePeriod(TimeSpan.FromMinutes(6))
+                   .Build();
+
+            var mqttFactory = new MqttFactory();
+            client = mqttFactory.CreateMqttClient();
+
+            client.UseConnectedHandler(async (e) =>
+            {
+                isConnected = true;
+                await client.SubscribeAsync(
+                    new MqttTopicFilter
+                    {
+                        Topic = "client/init"
+                    },
+                    new MqttTopicFilter
+                    {
+                        Topic = "client/run-project"
+                    },
+                    new MqttTopicFilter
+                    {
+                        Topic = "client/run-script"
+                    },
+                    new MqttTopicFilter
+                    {
+                        Topic = "client/save-project"
+                    },
+                    new MqttTopicFilter
+                    {
+                        Topic = "client/screen-shot"
+                    },
+                    new MqttTopicFilter
+                    {
+                        Topic = "client/layout-dump"
+                    });
+
+                ScriptLogger.AddCallback("debug-service", (level, time, msg) =>
+                {
+                    this.client.PublishAsync(new MqttApplicationMessage
+                    {
+                        Topic = "server/logging",
+                        Payload = Stick.MakePackData(time.ToString("HH:mm:ss.fff"), Encoding.UTF8.GetBytes(msg))
+                    });
+                });
+
+                var pack = Stick.MakePackData(Devices.Brand, Devices.Model);
+                await this.client.PublishAsync(new MqttApplicationMessage
+                {
+                    Topic = "server/init",
+                    Payload = pack
+                });
+            });
+            this.client.UseDisconnectedHandler(async (e) =>
+            {
+                ScriptLogger.RemoveCallback("debug-service");
+                await client.UnsubscribeAsync("server/init", "server/logging");
+                client.Dispose();
+                isConnected = false;
+            });
+
+            client.UseApplicationMessageReceivedHandler(ApplicationMessageReceivedAsync);
+
+            await this.client.ConnectAsync(mqttClientOptions, CancellationToken.None);
         }
         catch (Exception ex)
         {
@@ -97,165 +206,187 @@ internal class DebugService : Service, IDisposable
         }
     }
 
-    private static void ConnectAsync(TcpClient client, CancellationToken cancelToken)
+    private async Task ApplicationMessageReceivedAsync(MqttApplicationMessageReceivedEventArgs e)
     {
-        _ = Task.Run(async () =>
+        var data = PackData.Parse(e.ApplicationMessage.Payload);
+        if (data is null && e.ApplicationMessage.Topic != "client/init") return;
+
+        switch (e.ApplicationMessage.Topic)
         {
-            var stream = client.GetStream();
-            var info = $"{Devices.Brand} {Devices.Model}";
-            await stream.WriteAsync(Stick.MakePackData("init", info));
-
-            var key = ScriptLogger.AddCallback("debugServer", async (logLevel, time, msg) =>
+            case "client/init":
             {
-                var pack = Stick.MakePackData("showMessage", Encoding.UTF8.GetBytes($"{time:HH:mm:ss.fff}: {msg}"));
-                await stream.WriteAsync(pack);
-            });
-
-            try
-            {
-                while (!cancelToken.IsCancellationRequested)
+                var pack = Stick.MakePackData(Devices.Brand, Devices.Model);
+                await this.server.PublishAsync(new MqttApplicationMessage
                 {
-                    Thread.Sleep(50);
-                    var data = await Stick.ReadPackAsync(stream, cancelToken);
+                    Topic = "server/init",
+                    Payload = pack
+                });
+                break;
+            }
+            case "client/run-project":
+            {
+                using var zipStream = new MemoryStream(data.Buffer);
+                var directory = Path.Combine(MauiApplication.Current.ExternalCacheDir.ToString(), data.Key);
+                ClearProject(directory);
 
-                    switch (data.Key)
+                using (var archive = new ZipArchive(zipStream))
+                {
+                    archive.ExtractToDirectory(directory, true);
+                }
+
+                _ = ScriptManager.Instance.RunProject(directory);
+
+                break;
+            }
+            case "client/run-script":
+            {
+                using var zipStream = new MemoryStream(data.Buffer);
+                var directory = Path.Combine(MauiApplication.Current.ExternalCacheDir.ToString(), data.Key);
+                ClearProject(directory);
+
+                using (var archive = new ZipArchive(zipStream))
+                {
+                    archive.ExtractToDirectory(directory, true);
+                }
+                _ = ScriptManager.Instance.RunScript(Path.Combine(directory, data.Description));
+                break;
+            }
+            case "client/save-project":
+            {
+                try
+                {
+                    var astatorDir = Android.OS.Environment.GetExternalStoragePublicDirectory("astator").ToString();
+                    var directory = Path.Combine(astatorDir, "脚本");
+
+                    using var zipStream = new MemoryStream(data.Buffer);
+                    var saveDirectory = Path.Combine(directory, data.Key);
+                    ClearProject(saveDirectory);
+
+                    using (var archive = new ZipArchive(zipStream))
                     {
-                        case "runProject":
-                            {
-                                using var zipStream = new MemoryStream(data.Buffer);
-                                var directory = Path.Combine(MauiApplication.Current.ExternalCacheDir.ToString(), data.Description);
-                                ClearProject(directory);
+                        archive.ExtractToDirectory(saveDirectory, true);
+                    }
+                    Globals.Toast($"项目已保存至{saveDirectory}");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                }
+                break;
+            }
+            case "client/screen-shot":
+            {
+                byte[] pack;
 
-                                using (var archive = new ZipArchive(zipStream))
-                                {
-                                    archive.ExtractToDirectory(directory, true);
-                                }
+                if (PermissionHelperer.CheckScreenCap())
+                {
+                    try
+                    {
+                        var img = await ScreenCapturer.Instance.AcquireLatestBitmapOnCurrentOrientation();
 
-                                _ = ScriptManager.Instance.RunProject(directory);
+                        var ms = new MemoryStream();
+                        img.Compress(Android.Graphics.Bitmap.CompressFormat.Png, 100, ms);
+                        var bytes = ms.ToArray();
 
-                                break;
-                            }
-                        case "runScript":
-                            {
-                                using var zipStream = new MemoryStream(data.Buffer);
-                                var description = data.Description.Split("|");
-                                var directory = Path.Combine(MauiApplication.Current.ExternalCacheDir.ToString(), description[0]);
-                                ClearProject(directory);
-
-                                using (var archive = new ZipArchive(zipStream))
-                                {
-                                    archive.ExtractToDirectory(directory, true);
-                                }
-
-                                _ = ScriptManager.Instance.RunScript(Path.Combine(directory, description[1]));
-
-                                break;
-                            }
-                        case "saveProject":
-                            {
-                                var astatorDir = Android.OS.Environment.GetExternalStoragePublicDirectory("astator").ToString();
-                                var directory = Path.Combine(astatorDir, "脚本");
-                                if (Directory.Exists(directory))
-                                {
-                                    Directory.CreateDirectory(directory);
-                                }
-
-                                using var zipStream = new MemoryStream(data.Buffer);
-                                var saveDirectory = Path.Combine(directory, data.Description);
-                                ClearProject(saveDirectory);
-
-                                using var archive = new ZipArchive(zipStream);
-                                archive.ExtractToDirectory(saveDirectory, true);
-                                Globals.Toast($"项目已保存至{saveDirectory}");
-                                break;
-                            }
-                        case "screenShot":
-                            {
-                                byte[] pack;
-
-                                if (PermissionHelperer.CheckScreenCap())
-                                {
-                                    try
-                                    {
-                                        var img = await ScreenCapturer.Instance.AcquireLatestBitmapOnCurrentOrientation();
-
-                                        var ms = new MemoryStream();
-                                        img.Compress(Android.Graphics.Bitmap.CompressFormat.Png, 100, ms);
-                                        var bytes = ms.ToArray();
-
-                                        pack = Stick.MakePackData("screenShot_success", bytes);
-                                    }
-                                    catch (Exception)
-                                    {
-                                        pack = Stick.MakePackData("screenShot_fail", "获取截图失败!");
-                                    }
-                                }
-                                else
-                                {
-                                    pack = Stick.MakePackData("screenShot_fail", "截图服务未开启!");
-                                }
-                                await stream.WriteAsync(pack);
-                                break;
-                            }
-                        case "layoutDump":
-                            {
-                                byte[] pack;
-
-                                if (PermissionHelperer.CheckScreenCap() && PermissionHelperer.CheckAccessibility())
-                                {
-                                    try
-                                    {
-                                        var img = await ScreenCapturer.Instance.AcquireLatestBitmapOnCurrentOrientation();
-                                        var imgStream = new MemoryStream();
-                                        img.Compress(Android.Graphics.Bitmap.CompressFormat.Png, 100, imgStream);
-                                        var imgBytes = imgStream.ToArray();
-
-                                        var layoutInfo = LayoutDump();
-                                        var js = JsonConvert.SerializeObject(layoutInfo);
-                                        var jsBytes = Encoding.UTF8.GetBytes(js);
-
-                                        var size = 4 + imgBytes.Length + 4 + jsBytes.Length;
-                                        using var ms = new MemoryStream(size);
-                                        ms.WriteInt32(imgBytes.Length);
-                                        ms.Write(imgBytes);
-                                        ms.WriteInt32(jsBytes.Length);
-                                        ms.Write(jsBytes);
-                                        var bytes = ms.GetBuffer();
-
-                                        pack = Stick.MakePackData("LayoutDump_success", bytes);
-                                    }
-                                    catch (Exception)
-                                    {
-                                        pack = Stick.MakePackData("LayoutDump_fail", "布局获取失败!");
-                                    }
-                                }
-                                else
-                                {
-                                    pack = Stick.MakePackData("LayoutDump_fail", "截图服务或无障碍服务未开启!");
-                                }
-
-
-                                await stream.WriteAsync(pack);
-                                break;
-                            }
-                        case "heartBeat":
-                            {
-                                var pack = Stick.MakePackData("heartBeat");
-                                await stream.WriteAsync(pack);
-                                break;
-                            }
-                        default:
-                            break;
+                        pack = Stick.MakePackData("successed", bytes);
+                    }
+                    catch (Exception)
+                    {
+                        pack = Stick.MakePackData("failed", "获取截图失败!");
                     }
                 }
+                else
+                {
+                    pack = Stick.MakePackData("failed", "截图服务未开启!");
+                }
+
+                if (this.server.IsStarted)
+                {
+                    _ = this.server.PublishAsync(new MqttApplicationMessage
+                    {
+                        Topic = "server/screen-shot",
+                        Payload = pack
+                    });
+                }
+
+                if (this.client.IsConnected && isConnected)
+                {
+                    _ = this.client.PublishAsync(new MqttApplicationMessage
+                    {
+                        Topic = "server/screen-shot",
+                        Payload = pack
+                    });
+                }
+
+                break;
             }
-            catch { }
-            finally
+            case "client/layout-dump":
             {
-                client.Close();
-                ScriptLogger.RemoveCallback(key);
+                byte[] pack;
+
+                if (PermissionHelperer.CheckScreenCap() && PermissionHelperer.CheckAccessibility())
+                {
+                    try
+                    {
+                        var img = await ScreenCapturer.Instance.AcquireLatestBitmapOnCurrentOrientation();
+                        var imgStream = new MemoryStream();
+                        img.Compress(Android.Graphics.Bitmap.CompressFormat.Png, 100, imgStream);
+                        var imgBytes = imgStream.ToArray();
+
+                        var layoutInfo = LayoutDump();
+                        var js = JsonConvert.SerializeObject(layoutInfo);
+                        var jsBytes = Encoding.UTF8.GetBytes(js);
+
+                        var size = 4 + imgBytes.Length + 4 + jsBytes.Length;
+                        using var ms = new MemoryStream(size);
+                        ms.WriteInt32(imgBytes.Length);
+                        ms.Write(imgBytes);
+                        ms.WriteInt32(jsBytes.Length);
+                        ms.Write(jsBytes);
+                        var bytes = ms.GetBuffer();
+
+                        pack = Stick.MakePackData("successed", bytes);
+                    }
+                    catch (Exception)
+                    {
+                        pack = Stick.MakePackData("failed", "布局获取失败!");
+                    }
+                }
+                else
+                {
+                    pack = Stick.MakePackData("failed", "截图服务或无障碍服务未开启!");
+                }
+
+                await this.server.PublishAsync(new MqttApplicationMessage
+                {
+                    Topic = "server/layout-dump",
+                    Payload = pack
+                });
+
+                if (this.server.IsStarted)
+                {
+                    _ = this.server.PublishAsync(new MqttApplicationMessage
+                    {
+                        Topic = "server/layout-dump",
+                        Payload = pack
+                    });
+                }
+
+                if (this.client.IsConnected && isConnected)
+                {
+                    _ = this.client.PublishAsync(new MqttApplicationMessage
+                    {
+                        Topic = "server/layout-dump",
+                        Payload = pack
+                    });
+                }
+
+                break;
             }
-        }, cancelToken);
+            default:
+                break;
+        }
+
     }
 
     private static MoveCategory LayoutDump(AccessibilityNodeInfo node = null)
@@ -350,9 +481,10 @@ internal class DebugService : Service, IDisposable
         {
             if (disposing)
             {
-                this.cancelTokenSource?.Cancel();
-                this.tcpListener?.Stop();
-                this.tcpListener = null;
+                ScriptLogger.RemoveCallback("debug-service");
+                this.server?.StopAsync();
+                this.server?.Dispose();
+                this.client?.Dispose();
                 this.disposedValue = true;
                 StopSelf();
                 Instance = null;

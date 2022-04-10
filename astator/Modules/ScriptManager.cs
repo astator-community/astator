@@ -1,12 +1,12 @@
-﻿using System.Collections.Concurrent;
-using System.Reflection;
-using Android.Content;
+﻿using Android.Content;
 using Android.OS;
 using Android.Views;
 using astator.Core.Engine;
 using astator.Core.Script;
 using astator.Core.UI.Base;
 using astator.TipsView;
+using System.Collections.Concurrent;
+using System.Reflection;
 using Application = Android.App.Application;
 
 namespace astator.Modules;

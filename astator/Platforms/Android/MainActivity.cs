@@ -1,5 +1,4 @@
-﻿using System.IO.Compression;
-using Android.App;
+﻿using Android.App;
 using Android.Content.PM;
 using Android.OS;
 using Android.Views;
@@ -69,7 +68,7 @@ public class MainActivity : MauiAppCompatActivity, IActivity
             var time = DateTime.Now;
             if (time.Subtract(this.latestTime).TotalMilliseconds < 1000)
             {
-                this.Finish();
+                Finish();
                 Java.Lang.JavaSystem.Exit(0);
             }
             else
