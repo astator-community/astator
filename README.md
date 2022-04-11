@@ -14,7 +14,8 @@ astator的目标是使用c#作为脚本的安卓自动化软件, 支持andorid 7
 - [x] 独立apk打包
 - [x] 代码编辑器 (简陋实现)
 - [x] nuget包引用
-- [x] vscode插件
+- [x] vs扩展
+- [x] vscode扩展
 - [ ] 其他
 
 <br/>
