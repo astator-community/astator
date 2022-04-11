@@ -11,6 +11,7 @@ using astator.Core.Script;
 using astator.Modules.Base;
 using MQTTnet;
 using MQTTnet.Client;
+using MQTTnet.Client.Options;
 using MQTTnet.Server;
 using Newtonsoft.Json;
 using System.Collections.ObjectModel;
@@ -59,7 +60,6 @@ internal class DebugService : Service, IDisposable
         {
             var mqttFactory = new MqttFactory();
             var mqttServerOptions = new MqttServerOptionsBuilder()
-                .WithDefaultEndpointPort(1024)
                 .Build();
 
             this.server = mqttFactory.CreateMqttServer();
@@ -135,7 +135,11 @@ internal class DebugService : Service, IDisposable
         try
         {
             var mqttClientOptions = new MqttClientOptionsBuilder()
-                   .WithTcpServer(ip, 1024)
+                   .WithTcpServer((op) =>
+                   {
+                       op.Server = ip;
+                       op.BufferSize = 1024 * 1024 * 10;
+                   })
                    .WithKeepAlivePeriod(TimeSpan.FromMinutes(6))
                    .Build();
 

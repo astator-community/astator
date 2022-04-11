@@ -93,7 +93,7 @@ public partial class LogPage : ContentPage
         var logList = new List<string>();
         if (File.Exists(path))
         {
-            var lines = File.ReadAllText(path).Split("loger*/");
+            var lines = File.ReadAllText(path).Split("logger*/");
             var maxLen = lines.Length;
             for (var i = maxLen > 100 ? maxLen - 100 : 0; i < maxLen; i++)
             {

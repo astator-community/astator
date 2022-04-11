@@ -9,7 +9,6 @@ public partial class SetDebugMode : Grid
 {
     public Action DismissCallback { get; set; }
 
-
     public SetDebugMode()
     {
         InitializeComponent();
@@ -21,12 +20,11 @@ public partial class SetDebugMode : Grid
         if (e.Value)
         {
             this.Address.IsReadOnly = false;
-            this.Address.Text = "10.0.2.2";
+            this.Address.Text = Core.Script.Preferences.Get("latestServerIp",String.Empty,"astator");
             this.HintMsg.Text = "填入VSCode所在电脑的ip地址连接到VSCode, 模拟器请填入10.0.2.2";
         }
         else
         {
-
             this.Address.IsReadOnly = true;
             this.Address.Text = GetLocalHostAddress();
             this.HintMsg.Text = "在VSCode插件中输入以下ip地址连接到astator";
@@ -59,6 +57,11 @@ public partial class SetDebugMode : Grid
 
     private void Connect_Clicked(object sender, EventArgs e)
     {
+        if (ClientMode.IsChecked)
+        {
+            Core.Script.Preferences.Set("latestServerIp", this.Address.Text, "astator");
+        }
+
         var intent = new Intent(Globals.AppContext, typeof(DebugService));
         intent.PutExtra("mode", this.ServiceMode.IsChecked ? 0 : 1);
         intent.PutExtra("ip", this.Address.Text);
