@@ -5,7 +5,8 @@
 				 android:icon="@mipmap/appicon"
 				 android:roundIcon="@mipmap/appicon_round"
 				 android:supportsRtl="true"
-				 android:requestLegacyExternalStorage="true">
+				 android:requestLegacyExternalStorage="true"
+				 android:usesCleartextTraffic="true">
 
 	</application>
 

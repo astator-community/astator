@@ -472,4 +472,9 @@ public class UiManager : IManager
     {
         (this.context as TemplateActivity).OnKeyDownCallback = callback;
     }
+
+    public void OnBackPressedCallback(Action callback)
+    {
+        (this.context as TemplateActivity).OnBackPressedCallback = callback;
+    }
 }

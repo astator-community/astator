@@ -20,7 +20,7 @@ public partial class SetDebugMode : Grid
         if (e.Value)
         {
             this.Address.IsReadOnly = false;
-            this.Address.Text = Core.Script.Preferences.Get("latestServerIp",String.Empty,"astator");
+            this.Address.Text = Core.Script.Preferences.Get("latestServerIp", string.Empty, "astator");
             this.HintMsg.Text = "填入VSCode所在电脑的ip地址连接到VSCode, 模拟器请填入10.0.2.2";
         }
         else

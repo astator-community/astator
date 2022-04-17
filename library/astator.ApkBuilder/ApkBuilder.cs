@@ -13,7 +13,7 @@ public class ApkBuilder
     private static readonly string templatePath = Path.Combine(Android.App.Application.Context.GetExternalFilesDir("template").ToString(), "template.apk");
 
     //注意: 在debug模式下打包的apk是无法打开的
-    public static bool Build(string outputDir, string projectPath, string versionName, string packageName, string labelName, string iconPath, bool useOcr, bool isX86)
+    public static bool Build(string outputDir, string projectDir, string versionName, string packageName, string labelName, string iconPath, bool useOcr, bool isX86)
     {
         var apkPath = Path.Combine(outputDir, $"{labelName}_{versionName}{(isX86 ? "_x86" : string.Empty)}.apk");
         var alignedPath = Path.Combine(outputDir, $"{labelName}_{versionName}{(isX86 ? "_x86" : string.Empty)}-aligned.apk");
@@ -35,7 +35,12 @@ public class ApkBuilder
 
             using var zip = new ZipArchive(fs, ZipArchiveMode.Update);
 
-            zip.CreateEntryFromFile(projectPath, "assets/Resources/project.zip");
+            var files = Directory.GetFiles(projectDir,"*", SearchOption.AllDirectories);
+            foreach (var f in files)
+            {
+                var entryPath = $"assets/Resources/{Path.GetRelativePath(projectDir,f)}";
+                zip.CreateEntryFromFile(f, entryPath);
+            }
 
             var entries = zip.Entries.ToList();
 

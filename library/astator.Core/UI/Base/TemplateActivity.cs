@@ -17,6 +17,7 @@ public class TemplateActivity : AppCompatActivity, IActivity
     public Action OnFinishedCallback { get; set; }
     public Action OnResumeCallback { get; set; }
     public Func<Keycode, KeyEvent, bool> OnKeyDownCallback { get; set; }
+    public Action OnBackPressedCallback { get; set; }
 
     private string scriptId = string.Empty;
 
@@ -43,6 +44,12 @@ public class TemplateActivity : AppCompatActivity, IActivity
     {
         base.OnResume();
         this.OnResumeCallback?.Invoke();
+    }
+
+    public override void OnBackPressed()
+    {
+        if (OnBackPressedCallback is not null) OnBackPressedCallback.Invoke();
+        else base.OnBackPressed();
     }
 
     public override bool OnKeyDown([GeneratedEnum] Keycode keyCode, KeyEvent e)

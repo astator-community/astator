@@ -97,17 +97,11 @@ public static class Automator
                           where node.PackageName == pkgName
                           select node;
 
-        AccessibilityNodeInfo result = null;
+        AccessibilityNodeInfo result = filterNodes.FirstOrDefault();
+
         foreach (var node in filterNodes)
         {
-            if (result is not null)
-            {
-                if (node.GetBounds().GetHeight() > result.GetBounds().GetHeight())
-                {
-                    result = node;
-                }
-            }
-            else
+            if (node.GetBounds().Height > result.GetBounds().Height)
             {
                 result = node;
             }
@@ -129,7 +123,7 @@ public static class Automator
         }
         else
         {
-            return Service.RootInActiveWindow;
+            return Service.RootInActiveWindow ?? GetWindowRoots().FirstOrDefault();
         }
     }
 

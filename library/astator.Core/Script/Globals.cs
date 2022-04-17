@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Android.App.Usage;
 using Android.Content;
@@ -71,20 +72,24 @@ public class Globals
     {
         var usageStatsManager = (UsageStatsManager)AppContext.GetSystemService("usagestats");
         var endTime = Java.Lang.JavaSystem.CurrentTimeMillis();
-        var beginTime = endTime - 10 * 60000;
-        var usageEvents = usageStatsManager.QueryEvents(beginTime, endTime);
+        var beginTime = endTime - 60000 * 60 * 12;
+        var usageStatsList = usageStatsManager.QueryUsageStats(UsageStatsInterval.Best, beginTime, endTime);
 
-        UsageEvents.Event latestEvent = null;
-        while (usageEvents.HasNextEvent)
+        UsageStats usageStats = null;
+        if (usageStatsList.Any())
         {
-            var _event = new UsageEvents.Event();
-            usageEvents.GetNextEvent(_event);
-            if (_event.EventType == UsageEventType.MoveToForeground)
+            foreach (var stats in usageStatsList)
             {
-                latestEvent = _event;
+                if (usageStats is null
+                    || usageStats.LastTimeUsed < stats.LastTimeUsed)
+                {
+                    usageStats = stats;
+                }
             }
         }
-        return latestEvent?.PackageName ?? null;
+        if (usageStats is null) ScriptLogger.Error("获取前台应用包名失败, 请检查使用情况访问权限是否打开!");
+
+        return usageStats?.PackageName ?? null;
     }
 
     /// <summary>

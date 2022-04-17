@@ -74,17 +74,23 @@ public partial class LogPage : ContentPage
     private static void ReleaseProject()
     {
         var outputDir = Android.App.Application.Context.GetExternalFilesDir("project").ToString();
-        using var stream = Android.App.Application.Context.Assets.Open(Path.Combine("Resources/project.zip"));
-        using var zip = new ZipArchive(stream);
+        var apkPath = Android.App.Application.Context.PackageManager.GetApplicationInfo(Android.App.Application.Context.PackageName, 0).SourceDir;
 
-        if (Directory.Exists(outputDir))
+        if (File.Exists(apkPath))
         {
-            Directory.Delete(outputDir, true);
+            using var fs = new FileStream(apkPath, FileMode.Open, FileAccess.Read);
+            using var zip = new ZipArchive(fs, ZipArchiveMode.Read);
+            foreach (var entry in zip.Entries)
+            {
+                if (entry.FullName.StartsWith("assets/Resources/"))
+                {
+                    var path = Path.Combine(outputDir, entry.FullName.Remove(0, 17));
+                    var dir = Path.GetDirectoryName(path);
+                    if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
+                    entry.ExtractToFile(path, true);
+                }
+            }
         }
-        Directory.CreateDirectory(outputDir);
-        zip.ExtractToDirectory(outputDir, true);
-
-        File.WriteAllText(Path.Combine(outputDir, "lastUpdateTime.txt"), Java.Lang.JavaSystem.CurrentTimeMillis().ToString());
     }
 
     private void InitLogList()

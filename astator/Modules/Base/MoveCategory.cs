@@ -1,9 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 
-
 namespace astator.Modules.Base;
-
-
 
 public class MoveCategory
 {

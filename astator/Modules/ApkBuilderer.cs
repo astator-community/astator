@@ -22,7 +22,7 @@ public class ApkBuilderer
 
     private readonly string dllPath;
 
-    private readonly string projectPath;
+    private readonly string projectDir;
 
     public ApkBuilderer(string rootDir)
     {
@@ -31,7 +31,7 @@ public class ApkBuilderer
         this.assetsDir = Path.Combine(rootDir, "assets");
         this.csprojPath = Directory.GetFiles(rootDir, "*.csproj", SearchOption.AllDirectories).First();
         this.dllPath = Path.Combine(this.outputDir, "compile.dll");
-        this.projectPath = Path.Combine(this.outputDir, "project.zip");
+        this.projectDir = Path.Combine(this.outputDir, "project");
         this.refDir = Path.Combine(this.outputDir, "ref");
     }
 
@@ -73,14 +73,14 @@ public class ApkBuilderer
                     return false;
                 }
 
-                if (!ZipProject())
+                if (!CopyProject())
                 {
                     return false;
                 }
 
                 var iconPath = Path.Combine(this.assetsDir, "appicon.png");
 
-                if (!ApkBuilder.ApkBuilder.Build(this.outputDir, this.projectPath, versionName, packageName, labelName, iconPath, useOCR, false))
+                if (!ApkBuilder.ApkBuilder.Build(this.outputDir, this.projectDir, versionName, packageName, labelName, iconPath, useOCR, false))
                 {
                     ScriptLogger.Error($"打包apk失败!");
                     return false;
@@ -88,7 +88,7 @@ public class ApkBuilderer
 
                 if (buildX86)
                 {
-                    if (!ApkBuilder.ApkBuilder.Build(this.outputDir, this.projectPath, versionName, packageName, labelName, iconPath, useOCR, true))
+                    if (!ApkBuilder.ApkBuilder.Build(this.outputDir, this.projectDir, versionName, packageName, labelName, iconPath, useOCR, true))
                     {
                         ScriptLogger.Error($"打包apk失败!");
                         return false;
@@ -108,43 +108,47 @@ public class ApkBuilderer
                 TipsViewImpl.Hide();
                 if (Directory.Exists(this.refDir)) Directory.Delete(this.refDir, true);
                 if (File.Exists(this.dllPath)) File.Delete(this.dllPath);
-                if (File.Exists(this.projectPath)) File.Delete(this.projectPath);
+                if (Directory.Exists(this.projectDir)) Directory.Delete(this.projectDir, true);
             }
         });
     }
 
-    public bool ZipProject()
+    public bool CopyProject()
     {
         try
         {
             TipsViewImpl.ChangeTipsText("正在打包项目...");
-            using var fs = new FileStream(this.projectPath, FileMode.Create);
-            using var zip = new ZipArchive(fs, ZipArchiveMode.Update);
-
-            zip.CreateEntryFromFile(this.dllPath, "compile.dll");
+            if (!Directory.Exists(this.projectDir)) Directory.CreateDirectory(this.projectDir);
+            File.Copy(this.dllPath, Path.Combine(this.projectDir, "compile.dll"));
 
             if (Directory.Exists(this.assetsDir))
             {
-                var files = Directory.GetFiles(this.assetsDir);
+                var files = Directory.GetFiles(this.assetsDir, "*", SearchOption.AllDirectories);
                 if (files.Any())
                 {
                     foreach (var file in files)
                     {
                         var entryName = Path.GetRelativePath(this.rootDir, file);
-                        zip.CreateEntryFromFile(file, entryName);
+                        var path = Path.Combine(this.projectDir, entryName);
+                        var dir = Path.GetDirectoryName(path);
+                        if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
+                        File.Copy(file, path);
                     }
                 }
             }
 
             if (Directory.Exists(this.refDir))
             {
-                var refs = Directory.GetFiles(this.refDir);
+                var refs = Directory.GetFiles(this.refDir, "*", SearchOption.AllDirectories);
                 if (refs.Any())
                 {
                     foreach (var r in refs)
                     {
                         var entryName = Path.GetRelativePath(this.outputDir, r);
-                        zip.CreateEntryFromFile(r, entryName);
+                        var path = Path.Combine(this.projectDir, entryName);
+                        var dir = Path.GetDirectoryName(path);
+                        if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
+                        File.Copy(r, path);
                     }
                 }
             }
@@ -155,10 +159,7 @@ public class ApkBuilderer
             ScriptLogger.Error(ex);
             return false;
         }
-
     }
-
-
 
     public async Task<bool> CompileDll(bool createTipsView = true)
     {
@@ -209,7 +210,7 @@ public class ApkBuilderer
                 var rootRefDir = Path.Combine(this.rootDir, "ref");
                 if (Directory.Exists(rootRefDir))
                 {
-                    var refs = Directory.EnumerateFiles(rootRefDir, "*.dll", SearchOption.AllDirectories);
+                    var refs = Directory.GetFiles(rootRefDir, "*.dll", SearchOption.AllDirectories);
                     if (refs.Any())
                     {
                         foreach (var r in refs)

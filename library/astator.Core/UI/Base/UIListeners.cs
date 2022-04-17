@@ -3,11 +3,13 @@ using Android.Runtime;
 using Android.Text;
 using Android.Views;
 using Android.Widget;
+using astator.Core.Script;
 using Java.Lang;
 using static Android.Views.View;
 using static Android.Widget.AdapterView;
 using static Android.Widget.CompoundButton;
 using static AndroidX.ViewPager.Widget.ViewPager;
+using Exception = System.Exception;
 
 namespace astator.Core.UI.Base;
 
@@ -20,7 +22,14 @@ public class OnClickListener : Java.Lang.Object, IOnClickListener
     }
     public void OnClick(View v)
     {
-        this.callBack.Invoke(v);
+        try
+        {
+            this.callBack.Invoke(v);
+        }
+        catch (Exception ex)
+        {
+            ScriptLogger.Error(ex);
+        }
     }
 }
 
@@ -77,7 +86,10 @@ public class OnCheckedChangeListener : Java.Lang.Object, IOnCheckedChangeListene
         {
             this.callBack.Invoke(v, isChecked);
         }
-        catch { }
+        catch (Exception ex)
+        {
+            ScriptLogger.Error(ex);
+        }
     }
 }
 
@@ -93,8 +105,15 @@ public class RadioGroupOnCheckedChangeListener : Java.Lang.Object, RadioGroup.IO
     {
         if (group is not null)
         {
-            var position = group.IndexOfChild(group.FindViewById(checkedId));
-            this.callBack.Invoke(group, position);
+            try
+            {
+                var position = group.IndexOfChild(group.FindViewById(checkedId));
+                this.callBack.Invoke(group, position);
+            }
+            catch (Exception ex)
+            {
+                ScriptLogger.Error(ex);
+            }
         }
 
     }
@@ -121,7 +140,14 @@ internal class ClassOfTextWatcher : Java.Lang.Object, ITextWatcher
 
     public void AfterTextChanged(IEditable s)
     {
-        this.callBack.Invoke(this.view, s);
+        try
+        {
+            this.callBack.Invoke(this.view, s);
+        }
+        catch (Exception ex)
+        {
+            ScriptLogger.Error(ex);
+        }
     }
 
     public void BeforeTextChanged(ICharSequence s, int start, int count, int after)
@@ -211,7 +237,14 @@ public class OnMenuItemClickListener : Java.Lang.Object, AndroidX.AppCompat.Widg
     }
     public bool OnMenuItemClick(IMenuItem item)
     {
-        return this.callBack.Invoke(item);
+        try
+        {
+            return this.callBack.Invoke(item);
+        }
+        catch
+        {
+            return false;
+        }
     }
 }
 
@@ -224,7 +257,11 @@ public class OnPageChangeListener : Java.Lang.Object, IOnPageChangeListener
     }
     public void OnPageSelected(int position)
     {
-        this.callBack.Invoke(position);
+        try
+        {
+            this.callBack.Invoke(position);
+        }
+        catch { }
     }
     public void OnPageScrolled(int position, float positionOffset, int positionOffsetPixels)
     {

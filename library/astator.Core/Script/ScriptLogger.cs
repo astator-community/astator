@@ -81,7 +81,7 @@ public class ScriptLogger
         var fileTarget = new FileTarget
         {
             FileName = path,
-            Layout = @"loger*/${level}*/${date::universalTime=false:format=MM-dd HH\:mm\:ss\.fff}*/: ${message}",
+            Layout = @"logger*/${level}*/${date::universalTime=false:format=MM-dd HH\:mm\:ss\.fff}*/: ${message}",
         };
         config.LoggingRules.Add(new LoggingRule("*", LogLevel.Warn, fileTarget));
 

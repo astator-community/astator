@@ -5,6 +5,10 @@ public struct Rect
     public int Top { get; set; }
     public int Right { get; set; }
     public int Bottom { get; set; }
+    public int Width { get; set; }
+    public int Height { get; set; }
+
+
 
     public Rect(int left, int top, int right, int bottom)
     {
@@ -12,6 +16,8 @@ public struct Rect
         this.Top = top;
         this.Right = right;
         this.Bottom = bottom;
+        this.Width = right - left;
+        this.Height = bottom - top;
     }
 
     public int GetCenterX()
@@ -22,16 +28,6 @@ public struct Rect
     public int GetCenterY()
     {
         return (this.Bottom - this.Top) / 2 + this.Top;
-    }
-
-    public int GetWidth()
-    {
-        return this.Right - this.Left;
-    }
-
-    public int GetHeight()
-    {
-        return this.Bottom - this.Top;
     }
 
     public override string ToString()
