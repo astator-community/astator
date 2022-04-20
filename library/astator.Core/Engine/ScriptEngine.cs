@@ -1,4 +1,12 @@
-﻿using System;
+﻿using astator.Core.Script;
+using astator.NugetManager;
+using astator.TipsView;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Emit;
+using Newtonsoft.Json;
+using NuGet.Versioning;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -8,14 +16,6 @@ using System.Runtime.Loader;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-using astator.Core.Script;
-using astator.NugetManager;
-using astator.TipsView;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.Emit;
-using Newtonsoft.Json;
-using NuGet.Versioning;
 
 namespace astator.Core.Engine
 {
@@ -142,7 +142,7 @@ namespace astator.Core.Engine
         /// 编译
         /// </summary>
         /// <returns></returns>
-        public EmitResult Compile()
+        public EmitResult Compile(bool allowUnsafe = false)
         {
             TipsViewImpl.ChangeTipsText("正在编译...");
             var assemblyName = Path.GetRandomFileName();
@@ -150,7 +150,7 @@ namespace astator.Core.Engine
                 assemblyName,
                 references: References.Concat(this.scriptReferences).ToList(),
                 syntaxTrees: this.trees,
-                options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary, optimizationLevel: OptimizationLevel.Debug));
+                options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary, optimizationLevel: OptimizationLevel.Debug, allowUnsafe: allowUnsafe));
 
             using var dll = new MemoryStream();
             using var pdb = new MemoryStream();
@@ -171,7 +171,7 @@ namespace astator.Core.Engine
         /// </summary>
         /// <param name="outputPath"></param>
         /// <returns></returns>
-        public EmitResult Compile(string outputPath)
+        public EmitResult Compile(string outputPath, bool allowUnsafe = false)
         {
             TipsViewImpl.ChangeTipsText("正在编译...");
 
@@ -180,7 +180,7 @@ namespace astator.Core.Engine
                 assemblyName,
                 references: References.Concat(this.scriptReferences).ToList(),
                 syntaxTrees: this.trees,
-                options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary, optimizationLevel: OptimizationLevel.Release));
+                options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary, optimizationLevel: OptimizationLevel.Release, allowUnsafe: allowUnsafe));
 
             using var dll = new MemoryStream();
             var result = compilation.Emit(dll);
