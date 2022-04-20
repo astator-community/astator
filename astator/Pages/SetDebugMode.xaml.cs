@@ -57,7 +57,7 @@ public partial class SetDebugMode : Grid
 
     private void Connect_Clicked(object sender, EventArgs e)
     {
-        if (ClientMode.IsChecked)
+        if (this.ClientMode.IsChecked)
         {
             Core.Script.Preferences.Set("latestServerIp", this.Address.Text, "astator");
         }

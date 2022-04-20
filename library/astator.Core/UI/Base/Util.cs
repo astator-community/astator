@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Android.Graphics;
+﻿using Android.Graphics;
 using Android.Graphics.Drawables;
 using Android.Text.Util;
 using Android.Views;
@@ -8,6 +6,8 @@ using Android.Widget;
 using astator.Core.Exceptions;
 using astator.Core.Script;
 using astator.Core.UI.Controls;
+using System;
+using System.Collections.Generic;
 using static Android.Text.TextUtils;
 using static Android.Views.ViewGroup;
 
@@ -86,25 +86,25 @@ public static class Util
         switch (key)
         {
             case "click":
-                {
-                    if (listener is OnClickListener temp) v.SetOnClickListener(temp);
-                    break;
-                }
+            {
+                if (listener is OnClickListener temp) v.SetOnClickListener(temp);
+                break;
+            }
             case "longClick":
-                {
-                    if (listener is OnLongClickListener temp) v.SetOnLongClickListener(temp);
-                    break;
-                }
+            {
+                if (listener is OnLongClickListener temp) v.SetOnLongClickListener(temp);
+                break;
+            }
             case "touch":
-                {
-                    if (listener is OnTouchListener temp) v.SetOnTouchListener(temp);
-                    break;
-                }
+            {
+                if (listener is OnTouchListener temp) v.SetOnTouchListener(temp);
+                break;
+            }
             case "created":
-                {
-                    if (listener is OnCreatedListener temp) view.OnCreatedListener = temp;
-                    break;
-                }
+            {
+                if (listener is OnCreatedListener temp) view.OnCreatedListener = temp;
+                break;
+            }
             default: throw new AttributeNotExistException(key);
         }
     }
@@ -114,10 +114,10 @@ public static class Util
         switch (key)
         {
             case "scrollChange":
-                {
-                    if (listener is OnScrollChangeListener temp) v.SetOnScrollChangeListener(temp);
-                    break;
-                }
+            {
+                if (listener is OnScrollChangeListener temp) v.SetOnScrollChangeListener(temp);
+                break;
+            }
             default:
                 var iView = view as IView;
                 iView.OnListener(key, listener);
@@ -132,93 +132,93 @@ public static class Util
             switch (key)
             {
                 case "w":
-                    {
-                        tv.SetWidth(Dp2Px(value));
-                        return;
-                    }
+                {
+                    tv.SetWidth(Dp2Px(value));
+                    return;
+                }
                 case "h":
-                    {
-                        tv.SetHeight(Dp2Px(value));
-                        return;
-                    }
+                {
+                    tv.SetHeight(Dp2Px(value));
+                    return;
+                }
                 case "text":
-                    {
-                        tv.Text = value.ToString();
-                        return;
-                    }
+                {
+                    tv.Text = value.ToString();
+                    return;
+                }
                 case "paintFlags":
-                    {
-                        tv.PaintFlags = EnumParse<PaintFlags>(value);
-                        return;
-                    }
+                {
+                    tv.PaintFlags = EnumParse<PaintFlags>(value);
+                    return;
+                }
                 case "textSize":
-                    {
-                        tv.SetTextSize(Android.Util.ComplexUnitType.Dip, Convert.ToInt32(value));
-                        return;
-                    }
+                {
+                    tv.SetTextSize(Android.Util.ComplexUnitType.Dip, Convert.ToInt32(value));
+                    return;
+                }
                 case "textColor":
-                    {
-                        if (value is string temp) tv.SetTextColor(Color.ParseColor(temp));
-                        else if (value is Color color) tv.SetTextColor(color);
-                        return;
-                    }
+                {
+                    if (value is string temp) tv.SetTextColor(Color.ParseColor(temp));
+                    else if (value is Color color) tv.SetTextColor(color);
+                    return;
+                }
                 case "lines":
-                    {
-                        tv.SetLines(Convert.ToInt32(value));
-                        return;
-                    }
+                {
+                    tv.SetLines(Convert.ToInt32(value));
+                    return;
+                }
                 case "maxLines":
-                    {
-                        tv.SetMaxLines(Convert.ToInt32(value));
-                        return;
-                    }
+                {
+                    tv.SetMaxLines(Convert.ToInt32(value));
+                    return;
+                }
                 case "typeface":
+                {
+                    if (value is string path)
                     {
-                        if (value is string path)
-                        {
-                            var tf = Typeface.CreateFromFile(new Java.IO.File(path));
-                            var style = tv.Typeface?.Style ?? tf.Style;
-                            tv.SetTypeface(tf, style);
-                        }
-                        else if (value is Typeface tf)
-                        {
-                            var style = tv.Typeface?.Style ?? tf.Style;
-                            tv.SetTypeface(tf, style);
-                        }
-                        return;
+                        var tf = Typeface.CreateFromFile(new Java.IO.File(path));
+                        var style = tv.Typeface?.Style ?? tf.Style;
+                        tv.SetTypeface(tf, style);
                     }
+                    else if (value is Typeface tf)
+                    {
+                        var style = tv.Typeface?.Style ?? tf.Style;
+                        tv.SetTypeface(tf, style);
+                    }
+                    return;
+                }
                 case "textStyle":
-                    {
-                        tv.SetTypeface(tv.Typeface, EnumParse<TypefaceStyle>(value));
-                        return;
-                    }
+                {
+                    tv.SetTypeface(tv.Typeface, EnumParse<TypefaceStyle>(value));
+                    return;
+                }
                 case "ems":
-                    {
-                        tv.SetEms(Convert.ToInt32(value));
-                        return;
-                    }
+                {
+                    tv.SetEms(Convert.ToInt32(value));
+                    return;
+                }
                 case "autoLink":
+                {
+                    if (value is string temp)
                     {
-                        if (value is string temp)
-                        {
-                            if (temp == "web") tv.AutoLinkMask = MatchOptions.WebUrls;
-                            else if (temp == "email") tv.AutoLinkMask = MatchOptions.EmailAddresses;
-                            else if (temp == "phone") tv.AutoLinkMask = MatchOptions.PhoneNumbers;
-                            else if (temp == "map") tv.AutoLinkMask = MatchOptions.MapAddresses;
-                            else if (temp == "all") tv.AutoLinkMask = MatchOptions.All;
-                        }
-                        return;
+                        if (temp == "web") tv.AutoLinkMask = MatchOptions.WebUrls;
+                        else if (temp == "email") tv.AutoLinkMask = MatchOptions.EmailAddresses;
+                        else if (temp == "phone") tv.AutoLinkMask = MatchOptions.PhoneNumbers;
+                        else if (temp == "map") tv.AutoLinkMask = MatchOptions.MapAddresses;
+                        else if (temp == "all") tv.AutoLinkMask = MatchOptions.All;
                     }
+                    return;
+                }
                 case "ellipsize":
-                    {
-                        if (value is string temp) tv.Ellipsize = TruncateAt.ValueOf(temp);
-                        return;
-                    }
+                {
+                    if (value is string temp) tv.Ellipsize = TruncateAt.ValueOf(temp);
+                    return;
+                }
                 case "gravity":
-                    {
-                        tv.Gravity = EnumParse<GravityFlags>(value);
-                        return;
-                    }
+                {
+                    tv.Gravity = EnumParse<GravityFlags>(value);
+                    return;
+                }
             }
         }
 
@@ -230,165 +230,165 @@ public static class Util
         switch (key)
         {
             case "id":
-                {
-                    if (value is string temp) view.CustomId = temp;
-                    break;
-                }
+            {
+                if (value is string temp) view.CustomId = temp;
+                break;
+            }
             case "w":
-                {
-                    lp.Width = Dp2Px(value);
-                    v.LayoutParameters = lp;
-                    break;
-                }
+            {
+                lp.Width = Dp2Px(value);
+                v.LayoutParameters = lp;
+                break;
+            }
             case "h":
-                {
-                    lp.Height = Dp2Px(value);
-                    v.LayoutParameters = lp;
-                    break;
-                }
+            {
+                lp.Height = Dp2Px(value);
+                v.LayoutParameters = lp;
+                break;
+            }
             case "minWidth":
-                {
-                    v.SetMinimumWidth(Dp2Px(value));
-                    break;
-                }
+            {
+                v.SetMinimumWidth(Dp2Px(value));
+                break;
+            }
             case "minHeight":
-                {
-                    v.SetMinimumHeight(Dp2Px(value));
-                    break;
-                }
+            {
+                v.SetMinimumHeight(Dp2Px(value));
+                break;
+            }
             case "weight":
-                {
-                    var _lp = v.LayoutParameters as LinearLayout.LayoutParams ?? new(v.LayoutParameters as MarginLayoutParams ?? new(LayoutParams.WrapContent, LayoutParams.WrapContent));
-                    _lp.Weight = Convert.ToInt32(value);
-                    v.LayoutParameters = _lp;
-                    break;
-                }
+            {
+                var _lp = v.LayoutParameters as LinearLayout.LayoutParams ?? new(v.LayoutParameters as MarginLayoutParams ?? new(LayoutParams.WrapContent, LayoutParams.WrapContent));
+                _lp.Weight = Convert.ToInt32(value);
+                v.LayoutParameters = _lp;
+                break;
+            }
             case "margin":
+            {
+                var margin = new int[4];
+                if (value is int i32) margin[0] = margin[1] = margin[2] = margin[3] = i32;
+                else if (value is int[] arr)
                 {
-                    var margin = new int[4];
-                    if (value is int i32) margin[0] = margin[1] = margin[2] = margin[3] = i32;
-                    else if (value is int[] arr)
-                    {
-                        margin[0] = Dp2Px(arr[0]);
-                        margin[1] = Dp2Px(arr[1]);
-                        margin[2] = Dp2Px(arr[2]);
-                        margin[3] = Dp2Px(arr[3]);
-                    }
-                    else if (value is string str)
-                    {
-                        var strArr = str.Split(",");
-                        if (strArr.Length == 1)
-                        {
-                            var temp = Dp2Px(strArr[0]);
-                            margin[0] = margin[1] = margin[2] = margin[3] = temp;
-                        }
-                        else if (strArr.Length == 2)
-                        {
-                            margin[0] = margin[2] = Dp2Px(strArr[0]);
-                            margin[1] = margin[3] = Dp2Px(strArr[1]);
-                        }
-                        else if (strArr.Length == 4)
-                        {
-                            margin[0] = Dp2Px(strArr[0]);
-                            margin[1] = Dp2Px(strArr[1]);
-                            margin[2] = Dp2Px(strArr[2]);
-                            margin[3] = Dp2Px(strArr[3]);
-                        }
-                    }
-                    lp.SetMargins(margin[0], margin[1], margin[2], margin[3]);
-                    v.LayoutParameters = lp;
-                    break;
+                    margin[0] = Dp2Px(arr[0]);
+                    margin[1] = Dp2Px(arr[1]);
+                    margin[2] = Dp2Px(arr[2]);
+                    margin[3] = Dp2Px(arr[3]);
                 }
+                else if (value is string str)
+                {
+                    var strArr = str.Split(",");
+                    if (strArr.Length == 1)
+                    {
+                        var temp = Dp2Px(strArr[0]);
+                        margin[0] = margin[1] = margin[2] = margin[3] = temp;
+                    }
+                    else if (strArr.Length == 2)
+                    {
+                        margin[0] = margin[2] = Dp2Px(strArr[0]);
+                        margin[1] = margin[3] = Dp2Px(strArr[1]);
+                    }
+                    else if (strArr.Length == 4)
+                    {
+                        margin[0] = Dp2Px(strArr[0]);
+                        margin[1] = Dp2Px(strArr[1]);
+                        margin[2] = Dp2Px(strArr[2]);
+                        margin[3] = Dp2Px(strArr[3]);
+                    }
+                }
+                lp.SetMargins(margin[0], margin[1], margin[2], margin[3]);
+                v.LayoutParameters = lp;
+                break;
+            }
             case "layoutGravity":
-                {
-                    lp.Gravity = EnumParse<GravityFlags>(value);
-                    v.LayoutParameters = lp;
-                    break;
-                }
+            {
+                lp.Gravity = EnumParse<GravityFlags>(value);
+                v.LayoutParameters = lp;
+                break;
+            }
             case "padding":
+            {
+                var padding = new int[4];
+                if (value is int i32) padding[0] = padding[1] = padding[2] = padding[3] = i32;
+                else if (value is int[] arr)
                 {
-                    var padding = new int[4];
-                    if (value is int i32) padding[0] = padding[1] = padding[2] = padding[3] = i32;
-                    else if (value is int[] arr)
-                    {
-                        padding[0] = Dp2Px(arr[0]);
-                        padding[1] = Dp2Px(arr[1]);
-                        padding[2] = Dp2Px(arr[2]);
-                        padding[3] = Dp2Px(arr[3]);
-                    }
-                    else if (value is string str)
-                    {
-                        var strArr = str.Split(",");
-                        if (strArr.Length == 1)
-                        {
-                            var temp = Dp2Px(strArr[0]);
-                            padding[0] = padding[1] = padding[2] = padding[3] = temp;
-                        }
-                        else if (strArr.Length == 2)
-                        {
-                            padding[0] = padding[2] = Dp2Px(strArr[0]);
-                            padding[1] = padding[3] = Dp2Px(strArr[1]);
-                        }
-                        else if (strArr.Length == 4)
-                        {
-                            padding[0] = Dp2Px(strArr[0]);
-                            padding[1] = Dp2Px(strArr[1]);
-                            padding[2] = Dp2Px(strArr[2]);
-                            padding[3] = Dp2Px(strArr[3]);
-                        }
-                    }
-                    v.SetPadding(padding[0], padding[1], padding[2], padding[3]);
-                    break;
+                    padding[0] = Dp2Px(arr[0]);
+                    padding[1] = Dp2Px(arr[1]);
+                    padding[2] = Dp2Px(arr[2]);
+                    padding[3] = Dp2Px(arr[3]);
                 }
+                else if (value is string str)
+                {
+                    var strArr = str.Split(",");
+                    if (strArr.Length == 1)
+                    {
+                        var temp = Dp2Px(strArr[0]);
+                        padding[0] = padding[1] = padding[2] = padding[3] = temp;
+                    }
+                    else if (strArr.Length == 2)
+                    {
+                        padding[0] = padding[2] = Dp2Px(strArr[0]);
+                        padding[1] = padding[3] = Dp2Px(strArr[1]);
+                    }
+                    else if (strArr.Length == 4)
+                    {
+                        padding[0] = Dp2Px(strArr[0]);
+                        padding[1] = Dp2Px(strArr[1]);
+                        padding[2] = Dp2Px(strArr[2]);
+                        padding[3] = Dp2Px(strArr[3]);
+                    }
+                }
+                v.SetPadding(padding[0], padding[1], padding[2], padding[3]);
+                break;
+            }
             case "alpha":
-                {
-                    v.Alpha = Convert.ToSingle(value);
-                    break;
-                }
+            {
+                v.Alpha = Convert.ToSingle(value);
+                break;
+            }
             case "bg":
-                {
-                    if (value is string temp) v.SetBackgroundColor(Color.ParseColor(temp));
-                    if (value is Color color) v.SetBackgroundColor(color);
-                    break;
-                }
+            {
+                if (value is string temp) v.SetBackgroundColor(Color.ParseColor(temp));
+                if (value is Color color) v.SetBackgroundColor(color);
+                break;
+            }
             case "fg":
-                {
-                    if (value is string temp) v.Foreground = new ColorDrawable(Color.ParseColor(temp.Trim()));
-                    if (value is Color color) v.Foreground = new ColorDrawable(color);
-                    break;
-                }
+            {
+                if (value is string temp) v.Foreground = new ColorDrawable(Color.ParseColor(temp.Trim()));
+                if (value is Color color) v.Foreground = new ColorDrawable(color);
+                break;
+            }
             case "visibility":
-                {
-                    v.Visibility = EnumParse<ViewStates>(value);
-                    break;
-                }
+            {
+                v.Visibility = EnumParse<ViewStates>(value);
+                break;
+            }
             case "rotation":
-                {
-                    v.Rotation = Dp2Px<float>(value);
-                    break;
-                }
+            {
+                v.Rotation = Dp2Px<float>(value);
+                break;
+            }
             case "transformPivotX":
-                {
-                    v.TranslationX = Dp2Px<float>(value);
-                    break;
-                }
+            {
+                v.TranslationX = Dp2Px<float>(value);
+                break;
+            }
             case "transformPivotY":
-                {
-                    v.TranslationY = Dp2Px<float>(value);
-                    break;
-                }
+            {
+                v.TranslationY = Dp2Px<float>(value);
+                break;
+            }
             case "radius":
-                {
-                    v.ClipToOutline = true;
-                    v.OutlineProvider = new RadiusOutlineProvider(Dp2Px<float>(value));
-                    break;
-                }
+            {
+                v.ClipToOutline = true;
+                v.OutlineProvider = new RadiusOutlineProvider(Dp2Px<float>(value));
+                break;
+            }
             case "tag":
-                {
-                    if (value is string temp) v.Tag = temp;
-                    if (value is int i32) v.Tag = i32;
-                    break;
-                }
+            {
+                if (value is string temp) v.Tag = temp;
+                if (value is int i32) v.Tag = i32;
+                break;
+            }
             default:
                 throw new AttributeNotExistException(key);
         }

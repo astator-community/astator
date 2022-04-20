@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Threading;
+
 namespace astator.Core.Graphics
 {
     /// <summary>
@@ -146,6 +147,54 @@ namespace astator.Core.Graphics
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// 获取WrapImage对象
+        /// </summary>
+        /// <returns></returns>
+        public WrapImage GetImage()
+        {
+            return GetImage(0, 0, this.width - 1, this.height - 1);
+        }
+
+        /// <summary>
+        /// 获取WrapImage对象
+        /// </summary>
+        /// <returns></returns>
+        public WrapImage GetImage(Rect bounds)
+        {
+            return GetImage(bounds.Left, bounds.Top, bounds.Right, bounds.Bottom);
+        }
+
+        /// <summary>
+        /// 获取WrapImage对象
+        /// </summary>
+        /// <returns></returns>
+        public WrapImage GetImage(int left, int top, int right, int bottom)
+        {
+            left = Math.Max(left, 0);
+            top = Math.Max(top, 0);
+            right = Math.Min(right, this.width - 1);
+            bottom = Math.Min(bottom, this.height - 1);
+            var width = right - left;
+            var height = bottom - top;
+            var data = new byte[width * height * 4];
+            var site = 0;
+            for (var i = top; i < bottom; i++)
+            {
+                var location = left * this.pxFormat + i * this.rowStride;
+                for (var j = left; j < right; j++)
+                {
+                    data[site] = this.screenData[location];
+                    data[site + 1] = this.screenData[location + 1];
+                    data[site + 2] = this.screenData[location + 2];
+                    data[site + 3] = 255;
+                    location += this.pxFormat;
+                    site += 4;
+                }
+            }
+            return WrapImage.CreateFromBytes(data, width, height, this.pxFormat, this.rowStride);
         }
 
         /// <summary>
@@ -401,10 +450,8 @@ namespace astator.Core.Graphics
 
         private bool CompareMultiColor(int[][] description, int x, int y, int offsetLength)
         {
-            foreach (var temp in description)
+            foreach (var array in description)
             {
-                var array = new int[9];
-                Array.Copy(temp, array, 9);
                 if (!CompareColor(array, x, y, offsetLength))
                 {
                     return false;
@@ -579,9 +626,7 @@ namespace astator.Core.Graphics
         /// <param name="isOffset">是否偏移查找</param>
         /// <returns></returns>
         public Point FindMultiColor(Rect bounds, int[][] description, int sim, bool isOffset)
-        {
-            return FindMultiColor(bounds.Left, bounds.Top, bounds.Right, bounds.Bottom, description, sim, isOffset);
-        }
+            => FindMultiColor(bounds.Left, bounds.Top, bounds.Right, bounds.Bottom, description, sim, isOffset);
 
         /// <summary>
         /// 条件循环多点找色
@@ -641,9 +686,7 @@ namespace astator.Core.Graphics
         /// <param name="sign">跳出条件,true为找色成功时返回,false为找色失败时返回</param>
         /// <returns></returns>
         public Point FindMultiColorLoop(Rect bounds, int[][] description, int sim, bool isOffset, int timeout, int timelag, bool sign)
-        {
-            return FindMultiColorLoop(bounds.Left, bounds.Top, bounds.Right, bounds.Bottom, description, sim, isOffset, timeout, timelag, sign);
-        }
+            => FindMultiColorLoop(bounds.Left, bounds.Top, bounds.Right, bounds.Bottom, description, sim, isOffset, timeout, timelag, sign);
 
         private unsafe List<Point> FindMultiColorEx(int left, int top, int right, int bottom, int[] firstDescription, int[][] offsetDescription)
         {
@@ -787,9 +830,70 @@ namespace astator.Core.Graphics
         /// <param name="filterNum">过滤半径, 默认-1, 去除重叠区域</param>
         /// <returns>返回所有坐标</returns>
         public List<Point> FindMultiColorEx(Rect bounds, int[][] description, int sim, int filterNum = -1)
-        {
-            return FindMultiColorEx(bounds.Left, bounds.Top, bounds.Right, bounds.Bottom, description, sim, filterNum);
-        }
+            => FindMultiColorEx(bounds.Left, bounds.Top, bounds.Right, bounds.Bottom, description, sim, filterNum);
+
+        /// <summary>
+        /// 找图
+        /// </summary>
+        /// <param name="image">目标图像</param>
+        /// <param name="sim">相似度</param>
+        /// <returns></returns>
+        public Point FindImage(int left, int top, int right, int bottom, WrapImage image, int sim)
+            => FindMultiColor(left, top, right, bottom, image.GetDescription(), sim, false);
+
+        /// <summary>
+        /// 找图
+        /// </summary>
+        /// <param name="bounds">查找范围</param>
+        /// <param name="image">目标图像</param>
+        /// <param name="sim">相似度</param>
+        /// <returns></returns>
+        public Point FindImage(Rect bounds, WrapImage image, int sim)
+            => FindMultiColor(bounds, image.GetDescription(), sim, false);
+
+        /// <summary>
+        /// 条件循环找图
+        /// </summary>
+        /// <param name="image">目标图像</param>
+        /// <param name="sim">相似度</param>
+        /// <param name="timeout">超时时间</param>
+        /// <param name="timelag">间隔时间</param>
+        /// <param name="sign">跳出条件,true为找图成功时返回,false为找图失败时返回</param>
+        /// <returns></returns>
+        public Point FindImageLoop(int left, int top, int right, int bottom, WrapImage image, int sim, int timeout, int timelag, bool sign)
+            => FindMultiColorLoop(left, top, right, bottom, image.GetDescription(), sim, false, timeout, timelag, sign);
+
+        /// <summary>
+        /// 条件循环找图
+        /// </summary>
+        /// <param name="bounds">查找范围</param>
+        /// <param name="image">目标图像</param>
+        /// <param name="sim">相似度</param>
+        /// <param name="timeout">超时时间</param>
+        /// <param name="timelag">间隔时间</param>
+        /// <param name="sign">跳出条件,true为找图成功时返回,false为找图失败时返回</param>
+        /// <returns></returns>
+        public Point FindImageLoop(Rect bounds, WrapImage image, int sim, int timeout, int timelag, bool sign)
+        => FindMultiColorLoop(bounds, image.GetDescription(), sim, false, timeout, timelag, sign);
+
+        /// <summary>
+        /// 找图ex
+        /// </summary>
+        /// <param name="image">目标图像</param>
+        /// <param name="sim">相似度</param>
+        /// <returns>返回所有坐标</returns>
+        public List<Point> FindImageEx(int left, int top, int right, int bottom, WrapImage image, int sim)
+            => FindMultiColorEx(left, top, right, bottom, image.GetDescription(), sim);
+
+        /// <summary>
+        /// 找图ex
+        /// </summary>
+        /// <param name="bounds">查找范围</param>
+        /// <param name="image">目标图像</param>
+        /// <param name="sim">相似度</param>
+        /// <returns>返回所有坐标</returns>
+        public List<Point> FindImageEx(Rect bounds, WrapImage image, int sim)
+            => FindMultiColorEx(bounds, image.GetDescription(), sim);
 
     }
 }

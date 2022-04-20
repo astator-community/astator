@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using astator.Core.Graphics;
+﻿using astator.Core.Graphics;
+using System.Collections.Generic;
 
 namespace astator.Core.Accessibility;
 

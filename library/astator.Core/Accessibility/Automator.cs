@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Android.AccessibilityServices;
+﻿using Android.AccessibilityServices;
 using Android.Graphics;
 using Android.Views.Accessibility;
 using astator.Core.Script;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace astator.Core.Accessibility;
 
@@ -97,7 +97,7 @@ public static class Automator
                           where node.PackageName == pkgName
                           select node;
 
-        AccessibilityNodeInfo result = filterNodes.FirstOrDefault();
+        var result = filterNodes.FirstOrDefault();
 
         foreach (var node in filterNodes)
         {

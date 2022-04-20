@@ -28,29 +28,29 @@ public class ScriptLinearLayout : LinearLayout, ILayout
         switch (key)
         {
             case "orientation":
+            {
+                try
                 {
-                    try
+                    if (value is int v)
                     {
-                        if (value is int v)
-                        {
-                            this.Orientation = (Orientation)v;
-                        }
-                        else if (value is string temp)
-                        {
-                            this.Orientation = (Orientation)int.Parse(temp);
-                        }
+                        this.Orientation = (Orientation)v;
                     }
-                    catch
+                    else if (value is string temp)
                     {
-                        this.Orientation = Util.EnumParse<Orientation>(value);
+                        this.Orientation = (Orientation)int.Parse(temp);
                     }
-                    break;
                 }
+                catch
+                {
+                    this.Orientation = Util.EnumParse<Orientation>(value);
+                }
+                break;
+            }
             default:
-                {
-                    Util.SetAttr(this, key, value);
-                    break;
-                }
+            {
+                Util.SetAttr(this, key, value);
+                break;
+            }
         }
     }
     public object GetAttr(string key)

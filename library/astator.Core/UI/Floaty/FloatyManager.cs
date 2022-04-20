@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
-using Android.Content;
+﻿using Android.Content;
 using Android.Views;
 using astator.Core.Exceptions;
 using astator.Core.UI.Base;
 using astator.Core.UI.Controls;
 using astator.Core.UI.Layouts;
+using System.Collections.Generic;
 
 namespace astator.Core.UI.Floaty
 {

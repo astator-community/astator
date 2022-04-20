@@ -26,10 +26,10 @@ public class ScriptButton : AppCompatButton, IControl
         switch (key)
         {
             default:
-                {
-                    Util.SetAttr(this, key, value);
-                    break;
-                }
+            {
+                Util.SetAttr(this, key, value);
+                break;
+            }
         }
     }
 

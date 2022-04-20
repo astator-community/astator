@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
-using Android.Graphics;
+﻿using astator.Core.Graphics;
 using Com.Baidu.Paddle.Lite.Ocr;
+using System.Collections.Generic;
 
 namespace astator.Core.ThirdParty
 {
@@ -112,9 +112,12 @@ namespace astator.Core.ThirdParty
             this.predictor.Init(this.ModelDir, this.LabelPath, this.ThreadNum, this.PowerMode);
         }
 
-        public string OCR(Bitmap bitmap)
+        public string OCR(WrapImage image)
         {
+            var bitmap = image.GetBitmap();
             var results = this.predictor.RunModel(bitmap);
+            bitmap.Recycle();
+            bitmap.Dispose();
             if (results is not null)
             {
                 var result = new List<string>();

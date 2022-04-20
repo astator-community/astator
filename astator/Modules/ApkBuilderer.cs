@@ -4,7 +4,6 @@ using astator.Core.ThirdParty;
 using astator.NugetManager;
 using astator.TipsView;
 using Newtonsoft.Json;
-using System.IO.Compression;
 using System.Xml.Linq;
 
 namespace astator.Modules;

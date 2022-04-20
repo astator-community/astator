@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using Android.App;
+﻿using Android.App;
 using astator.Core.Engine;
 using astator.Core.Threading;
 using astator.Core.UI;
 using astator.Core.UI.Base;
 using astator.Core.UI.Floaty;
 using NLog;
+using System;
+using System.Collections.Generic;
 
 namespace astator.Core.Script;
 

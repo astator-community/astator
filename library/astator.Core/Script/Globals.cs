@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Android.App.Usage;
+﻿using Android.App.Usage;
 using Android.Content;
 using Android.Widget;
 using Microsoft.Maui.Controls;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Application = Android.App.Application;
 
 namespace astator.Core.Script;

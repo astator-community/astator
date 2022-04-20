@@ -1,5 +1,4 @@
-﻿using System;
-using Android.App;
+﻿using Android.App;
 using Android.Content;
 using Android.Media.Projection;
 using Android.OS;
@@ -8,6 +7,7 @@ using AndroidX.Activity.Result;
 using astator.Core.Accessibility;
 using astator.Core.Graphics;
 using astator.Core.UI.Base;
+using System;
 
 namespace astator.Core.Script;
 

@@ -1,10 +1,10 @@
-﻿using System;
-using Android.Runtime;
+﻿using Android.Runtime;
 using Android.Text;
 using Android.Views;
 using Android.Widget;
 using astator.Core.Script;
 using Java.Lang;
+using System;
 using static Android.Views.View;
 using static Android.Widget.AdapterView;
 using static Android.Widget.CompoundButton;

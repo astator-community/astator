@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using Android.Content;
+﻿using Android.Content;
 using Android.Graphics;
 using Android.Views;
 using Android.Widget;
 using astator.Core.UI.Base;
 using astator.Core.UI.Controls;
+using System;
+using System.Collections.Generic;
 
 namespace astator.Core.UI.Layouts;
 public class ScriptTabbedPage : FrameLayout, ILayout

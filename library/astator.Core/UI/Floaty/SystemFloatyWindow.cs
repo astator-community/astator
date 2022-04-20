@@ -1,9 +1,9 @@
-﻿using System;
-using Android.Content;
+﻿using Android.Content;
 using Android.Graphics;
 using Android.Runtime;
 using Android.Views;
 using astator.Core.UI.Base;
+using System;
 using static Android.Views.ViewGroup;
 
 namespace astator.Core.UI.Floaty;

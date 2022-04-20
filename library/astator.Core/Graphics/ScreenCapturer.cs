@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using Android.App;
+﻿using Android.App;
 using Android.Content;
 using Android.Content.PM;
 using Android.Graphics;
@@ -14,6 +12,8 @@ using AndroidX.Core.App;
 using AndroidX.Core.Graphics.Drawable;
 using astator.Core.Script;
 using Java.Nio;
+using System;
+using System.Threading.Tasks;
 
 namespace astator.Core.Graphics;
 
@@ -22,14 +22,13 @@ public class ScreenCapturer : Service, IDisposable
 {
     public static ScreenCapturer Instance { get; set; }
 
+    private static readonly object locker = new();
 
     private MediaProjection mediaProjection;
 
     private ImageReader imageReader;
 
     private VirtualDisplay virtualDisplay;
-
-    private static readonly object locker = new();
 
     public Image AcquireLatestImage()
     {

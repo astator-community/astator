@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Runtime.Versioning;
-using Android.App;
+﻿using Android.App;
 using Android.OS;
 using Android.Runtime;
 using Android.Util;
 using Android.Views;
+using System;
+using System.Collections.Generic;
+using System.Runtime.Versioning;
 
 namespace astator.Core.Script;
 public static class Devices

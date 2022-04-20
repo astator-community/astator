@@ -14,7 +14,9 @@ public static class MauiProgram
             .ConfigureFonts(fonts =>
             {
                 fonts.AddFont("CascadiaCode-SemiLight.ttf", "CascadiaCode");
-            }).ConfigureMauiHandlers(handler =>
+            })
+            //.UseMauiCompatibility()
+            .ConfigureMauiHandlers(handler =>
             {
                 handler.AddCompatibilityRenderer(typeof(CustomLabelButton), typeof(CustomLabelButtonRenderer));
                 handler.AddHandler(typeof(CustomSpinner), typeof(CustomSpinnerHandler));

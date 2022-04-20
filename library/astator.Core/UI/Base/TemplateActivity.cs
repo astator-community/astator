@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using Android.App;
+﻿using Android.App;
 using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using AndroidX.AppCompat.App;
+using System;
+using System.Collections.Generic;
 
 namespace astator.Core.UI.Base;
 
@@ -48,7 +48,7 @@ public class TemplateActivity : AppCompatActivity, IActivity
 
     public override void OnBackPressed()
     {
-        if (OnBackPressedCallback is not null) OnBackPressedCallback.Invoke();
+        if (this.OnBackPressedCallback is not null) this.OnBackPressedCallback.Invoke();
         else base.OnBackPressed();
     }
 

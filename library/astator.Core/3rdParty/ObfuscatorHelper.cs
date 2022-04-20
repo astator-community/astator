@@ -1,8 +1,8 @@
-﻿using System;
-using System.IO;
-using astator.Core.Engine;
+﻿using astator.Core.Engine;
 using astator.Core.Script;
 using Obfuscar;
+using System;
+using System.IO;
 
 namespace astator.Core.ThirdParty
 {

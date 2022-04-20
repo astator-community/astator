@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Android.Graphics;
+﻿using Android.Graphics;
 using Android.Views;
 using Android.Widget;
 using AndroidX.AppCompat.Widget;
 using astator.Core.UI.Base;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace astator.Core.UI.Controls;
 
@@ -101,55 +101,55 @@ public class ScriptSpinner : AppCompatSpinner, IControl
         switch (key)
         {
             case "position":
-                {
-                    this.position = Convert.ToInt32(value);
-                    if (this.Adapter is not null) SetSelection(this.position);
-                    break;
-                }
+            {
+                this.position = Convert.ToInt32(value);
+                if (this.Adapter is not null) SetSelection(this.position);
+                break;
+            }
             case "entries":
+            {
+                if (value is string temp)
                 {
-                    if (value is string temp)
+                    this.entries = temp;
+                    var list = temp.Split("|").ToList();
+                    this.Adapter = new SpinnerAdapter<string>(this.Context, Android.Resource.Layout.SimpleSpinnerDropDownItem, list)
                     {
-                        this.entries = temp;
-                        var list = temp.Split("|").ToList();
-                        this.Adapter = new SpinnerAdapter<string>(this.Context, Android.Resource.Layout.SimpleSpinnerDropDownItem, list)
-                        {
-                            TextColor = textColor,
-                            BackgroundColor = backgroundColor,
-                            TextSize = textSize,
-                        };
-                        SetSelection(this.position);
-                    }
-                    break;
+                        TextColor = textColor,
+                        BackgroundColor = backgroundColor,
+                        TextSize = textSize,
+                    };
+                    SetSelection(this.position);
                 }
+                break;
+            }
             case "textColor":
-                {
-                    if (value is string temp) this.textColor = Color.ParseColor(temp);
-                    else if (value is Color color) this.textColor = color;
-                    break;
-                }
+            {
+                if (value is string temp) this.textColor = Color.ParseColor(temp);
+                else if (value is Color color) this.textColor = color;
+                break;
+            }
             case "textSize":
-                {
-                    if (value is string temp) this.textSize = int.Parse(temp);
-                    else if (value is int i32) this.textSize = i32;
-                    break;
-                }
+            {
+                if (value is string temp) this.textSize = int.Parse(temp);
+                else if (value is int i32) this.textSize = i32;
+                break;
+            }
             case "gravity":
-                {
-                    SetGravity(Util.EnumParse<GravityFlags>(value));
-                    break;
-                }
+            {
+                SetGravity(Util.EnumParse<GravityFlags>(value));
+                break;
+            }
             case "bg":
-                {
-                    if (value is string temp) this.backgroundColor = Color.ParseColor(temp);
-                    else if (value is Color color) this.backgroundColor = color;
-                    break;
-                }
+            {
+                if (value is string temp) this.backgroundColor = Color.ParseColor(temp);
+                else if (value is Color color) this.backgroundColor = color;
+                break;
+            }
             default:
-                {
-                    Util.SetAttr(this, key, value);
-                    break;
-                }
+            {
+                Util.SetAttr(this, key, value);
+                break;
+            }
         }
     }
     public object GetAttr(string key)
@@ -171,14 +171,14 @@ public class ScriptSpinner : AppCompatSpinner, IControl
         switch (key)
         {
             case "selected":
+            {
+                if (listener is OnItemSelectedListener temp)
                 {
-                    if (listener is OnItemSelectedListener temp)
-                    {
-                        this.OnItemSelectedListener = temp;
-                    }
-
-                    break;
+                    this.OnItemSelectedListener = temp;
                 }
+
+                break;
+            }
             default:
                 this.OnListener(key, listener);
                 break;

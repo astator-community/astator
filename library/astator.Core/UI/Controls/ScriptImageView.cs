@@ -1,6 +1,6 @@
-﻿using System.IO;
-using AndroidX.AppCompat.Widget;
+﻿using AndroidX.AppCompat.Widget;
 using astator.Core.UI.Base;
+using System.IO;
 
 namespace astator.Core.UI.Controls;
 
@@ -27,32 +27,32 @@ public class ScriptImageView : AppCompatImageView, IControl
         switch (key)
         {
             case "src":
+            {
+                if (value is string temp)
                 {
-                    if (value is string temp)
+                    var path = temp;
+                    if (!path.StartsWith("/"))
                     {
-                        var path = temp;
-                        if (!path.StartsWith("/"))
-                        {
-                            path = Path.Combine(this.workDir, "assets", path);
-                        }
-                        if (!File.Exists(path))
-                        {
-                            throw new FileNotFoundException(path + ": open failed! (No such file or directory)");
-                        }
-                        SetImageURI(Android.Net.Uri.FromFile(new Java.IO.File(path)));
+                        path = Path.Combine(this.workDir, "assets", path);
                     }
-                    break;
+                    if (!File.Exists(path))
+                    {
+                        throw new FileNotFoundException(path + ": open failed! (No such file or directory)");
+                    }
+                    SetImageURI(Android.Net.Uri.FromFile(new Java.IO.File(path)));
                 }
+                break;
+            }
             case "scaleType":
-                {
-                    SetScaleType(Util.TypeParse<ScaleType>(value));
-                    break;
-                }
+            {
+                SetScaleType(Util.TypeParse<ScaleType>(value));
+                break;
+            }
             default:
-                {
-                    Util.SetAttr(this, key, value);
-                    break;
-                }
+            {
+                Util.SetAttr(this, key, value);
+                break;
+            }
         }
     }
     public object GetAttr(string key)

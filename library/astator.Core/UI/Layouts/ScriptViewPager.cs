@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using Android.Views;
+﻿using Android.Views;
 using AndroidX.ViewPager.Widget;
 using astator.Core.UI.Base;
+using System;
+using System.Collections.Generic;
 
 namespace astator.Core.UI.Layouts;
 
@@ -65,14 +65,14 @@ public class ScriptViewPager : ViewPager, ILayout
         switch (key)
         {
             case "currentItem":
-                {
-                    this.CurrentItem = Convert.ToInt32(value); break;
-                }
+            {
+                this.CurrentItem = Convert.ToInt32(value); break;
+            }
             default:
-                {
-                    Util.SetAttr(this, key, value);
-                    break;
-                }
+            {
+                Util.SetAttr(this, key, value);
+                break;
+            }
         }
     }
     public object GetAttr(string key)
@@ -88,15 +88,15 @@ public class ScriptViewPager : ViewPager, ILayout
         switch (key)
         {
             case "pageChange":
-                {
-                    AddOnPageChangeListener((OnPageChangeListener)listener);
-                    break;
-                }
+            {
+                AddOnPageChangeListener((OnPageChangeListener)listener);
+                break;
+            }
             default:
-                {
-                    this.OnListener(key, listener);
-                    return;
-                }
+            {
+                this.OnListener(key, listener);
+                return;
+            }
         }
 
     }

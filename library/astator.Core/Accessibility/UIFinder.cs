@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Android.Views.Accessibility;
+﻿using Android.Views.Accessibility;
 using astator.Core.Graphics;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace astator.Core.Accessibility;
 

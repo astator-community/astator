@@ -8,7 +8,7 @@ namespace astator.Core.Graphics
     /// </summary>
     public class AnchorGraphicHelper
     {
-        private readonly GraphicHelper baseGraphicHelper;
+        private readonly GraphicHelper baseHelper;
         private readonly double multiple;
         private readonly int left, top, right, bottom, center, devWidth, devHeight;
 
@@ -25,7 +25,7 @@ namespace astator.Core.Graphics
         public static AnchorGraphicHelper Create(int devWidth, int devHeight, int left, int top, int right, int bottom)
         {
             var helper = new AnchorGraphicHelper(devWidth, devHeight, left, top, right, bottom);
-            if (helper.baseGraphicHelper is not null)
+            if (helper.baseHelper is not null)
             {
                 return helper;
             }
@@ -34,7 +34,7 @@ namespace astator.Core.Graphics
 
         private AnchorGraphicHelper(int devWidth, int devHeight, int left, int top, int right, int bottom)
         {
-            this.baseGraphicHelper = GraphicHelper.Create();
+            this.baseHelper = GraphicHelper.Create();
             this.devWidth = devWidth;
             this.devHeight = devHeight;
             this.left = left;
@@ -50,17 +50,19 @@ namespace astator.Core.Graphics
         /// </summary>
         /// <param name="sign">是否需要调用多点找色</param>
         /// <returns></returns>
-        public bool KeepScreen(bool sign)
-        {
-            return this.baseGraphicHelper.KeepScreen(sign);
-        }
+        public bool KeepScreen(bool sign) => this.baseHelper.KeepScreen(sign);
 
         /// <summary>
         /// 更新r值映射集合, 用于多点找色
         /// </summary>
-        public void UpdateRedList()
+        public void UpdateRedList() => this.baseHelper.UpdateRedList();
+
+        public WrapImage GetImage() => this.baseHelper.GetImage();
+
+        public WrapImage GetImage(int left, int top, int right, int bottom, params AnchorMode[] mode)
         {
-            this.baseGraphicHelper.UpdateRedList();
+            var bounds = GetBounds(left, top, right, bottom, mode);
+            return this.baseHelper.GetImage(bounds);
         }
 
         /// <summary>
@@ -144,7 +146,7 @@ namespace astator.Core.Graphics
         public int[] GetPixel(int x, int y, AnchorMode mode)
         {
             var point = GetPoint(x, y, mode);
-            return this.baseGraphicHelper.GetPixel(point.X, point.Y);
+            return this.baseHelper.GetPixel(point.X, point.Y);
         }
 
         /// <summary>
@@ -157,7 +159,7 @@ namespace astator.Core.Graphics
         public string GetPixelString(int x, int y, AnchorMode mode)
         {
             var point = GetPoint(x, y, mode);
-            return this.baseGraphicHelper.GetPixelStr(point.X, point.Y);
+            return this.baseHelper.GetPixelStr(point.X, point.Y);
         }
 
         /// <summary>
@@ -170,7 +172,7 @@ namespace astator.Core.Graphics
         public int GetPixelHex(int x, int y, AnchorMode mode)
         {
             var point = GetPoint(x, y, mode);
-            return this.baseGraphicHelper.GetPixelHex(point.X, point.Y);
+            return this.baseHelper.GetPixelHex(point.X, point.Y);
         }
 
         /// <summary>
@@ -333,10 +335,7 @@ namespace astator.Core.Graphics
         /// <param name="sim">相似度, 0~100</param>
         /// <param name="isOffset">是否偏移查找</param>
         /// <returns></returns>
-        public bool CompareColor(int[] description, int sim, bool isOffset)
-        {
-            return this.baseGraphicHelper.CompareColor(description, sim, isOffset);
-        }
+        public bool CompareColor(int[] description, int sim, bool isOffset) => this.baseHelper.CompareColor(description, sim, isOffset);
 
         /// <summary>
         /// 多点比色
@@ -346,9 +345,7 @@ namespace astator.Core.Graphics
         /// <param name="isOffset">是否偏移查找</param>
         /// <returns></returns>
         public bool CompareMultiColor(int[][] description, int sim, bool isOffset)
-        {
-            return this.baseGraphicHelper.CompareMultiColor(description, sim, isOffset);
-        }
+            => this.baseHelper.CompareMultiColor(description, sim, isOffset);
 
         /// <summary>
         /// 条件循环多点比色
@@ -361,9 +358,7 @@ namespace astator.Core.Graphics
         /// <param name="sign">跳出条件,true为找色成功时返回,false为找色失败时返回</param>
         /// <returns></returns>
         public bool CompareMultiColorLoop(int[][] description, int sim, bool isOffset, int timeout, int timelag, bool sign)
-        {
-            return this.baseGraphicHelper.CompareMultiColorLoop(description, sim, isOffset, timeout, timelag, sign);
-        }
+            => this.baseHelper.CompareMultiColorLoop(description, sim, isOffset, timeout, timelag, sign);
 
         /// <summary>
         /// 多点找色
@@ -373,9 +368,7 @@ namespace astator.Core.Graphics
         /// <param name="isOffset">是否偏移查找</param>
         /// <returns></returns>
         public Point FindMultiColor(int left, int top, int right, int bottom, int[][] description, int sim, bool isOffset)
-        {
-            return this.baseGraphicHelper.FindMultiColor(left, top, right, bottom, description, sim, isOffset);
-        }
+            => this.baseHelper.FindMultiColor(left, top, right, bottom, description, sim, isOffset);
 
         /// <summary>
         /// 多点找色
@@ -386,9 +379,7 @@ namespace astator.Core.Graphics
         /// <param name="isOffset">是否偏移查找</param>
         /// <returns></returns>
         public Point FindMultiColor(Rect bounds, int[][] description, int sim, bool isOffset)
-        {
-            return this.baseGraphicHelper.FindMultiColor(bounds, description, sim, isOffset);
-        }
+            => this.baseHelper.FindMultiColor(bounds, description, sim, isOffset);
 
         /// <summary>
         /// 条件循环多点找色
@@ -401,9 +392,7 @@ namespace astator.Core.Graphics
         /// <param name="sign">跳出条件,true为找色成功时返回,false为找色失败时返回</param>
         /// <returns></returns>
         public Point FindMultiColorLoop(int left, int top, int right, int bottom, int[][] description, int sim, bool isOffset, int timeout, int timelag, bool sign)
-        {
-            return this.baseGraphicHelper.FindMultiColorLoop(left, top, right, bottom, description, sim, isOffset, timeout, timelag, sign);
-        }
+            => this.baseHelper.FindMultiColorLoop(left, top, right, bottom, description, sim, isOffset, timeout, timelag, sign);
 
         /// <summary>
         /// 条件循环多点找色
@@ -417,9 +406,7 @@ namespace astator.Core.Graphics
         /// <param name="sign">跳出条件,true为找色成功时返回,false为找色失败时返回</param>
         /// <returns></returns>
         public Point FindMultiColorLoop(Rect bounds, int[][] description, int sim, bool isOffset, int timeout, int timelag, bool sign)
-        {
-            return this.baseGraphicHelper.FindMultiColorLoop(bounds, description, sim, isOffset, timeout, timelag, sign);
-        }
+            => this.baseHelper.FindMultiColorLoop(bounds, description, sim, isOffset, timeout, timelag, sign);
 
         /// <summary>
         /// 多点找色ex
@@ -429,9 +416,7 @@ namespace astator.Core.Graphics
         /// <param name="filterNum">过滤半径, 默认-1, 去除重叠区域</param>
         /// <returns>返回所有坐标</returns>
         public List<Point> FindMultiColorEx(int left, int top, int right, int bottom, int[][] description, int sim, int filterNum = -1)
-        {
-            return this.baseGraphicHelper.FindMultiColorEx(left, top, right, bottom, description, sim, filterNum);
-        }
+            => this.baseHelper.FindMultiColorEx(left, top, right, bottom, description, sim, filterNum);
 
         /// <summary>
         /// 多点找色ex
@@ -442,9 +427,70 @@ namespace astator.Core.Graphics
         /// <param name="filterNum">过滤半径, 默认-1, 去除重叠区域</param>
         /// <returns>返回所有坐标</returns>
         public List<Point> FindMultiColorEx(Rect bounds, int[][] description, int sim, int filterNum = -1)
-        {
-            return this.baseGraphicHelper.FindMultiColorEx(bounds, description, sim, filterNum);
-        }
+            => this.baseHelper.FindMultiColorEx(bounds, description, sim, filterNum);
 
+
+        /// <summary>
+        /// 找图, 注意: 没有分辨率适配支持
+        /// </summary>
+        /// <param name="image">目标图像</param>
+        /// <param name="sim">相似度</param>
+        /// <returns></returns>
+        public Point FindImage(int left, int top, int right, int bottom, WrapImage image, int sim)
+            => this.baseHelper.FindMultiColor(left, top, right, bottom, image.GetDescription(), sim, false);
+
+        /// <summary>
+        /// 找图, 注意: 没有分辨率适配支持
+        /// </summary>
+        /// <param name="bounds">查找范围</param>
+        /// <param name="image">目标图像</param>
+        /// <param name="sim">相似度</param>
+        /// <returns></returns>
+        public Point FindImage(Rect bounds, WrapImage image, int sim)
+            => this.baseHelper.FindMultiColor(bounds, image.GetDescription(), sim, false);
+
+        /// <summary>
+        /// 条件循环找图, 注意: 没有分辨率适配支持
+        /// </summary>
+        /// <param name="image">目标图像</param>
+        /// <param name="sim">相似度</param>
+        /// <param name="timeout">超时时间</param>
+        /// <param name="timelag">间隔时间</param>
+        /// <param name="sign">跳出条件,true为找图成功时返回,false为找图失败时返回</param>
+        /// <returns></returns>
+        public Point FindImageLoop(int left, int top, int right, int bottom, WrapImage image, int sim, int timeout, int timelag, bool sign)
+            => this.baseHelper.FindMultiColorLoop(left, top, right, bottom, image.GetDescription(), sim, false, timeout, timelag, sign);
+
+        /// <summary>
+        /// 条件循环找图, 注意: 没有分辨率适配支持
+        /// </summary>
+        /// <param name="bounds">查找范围</param>
+        /// <param name="image">目标图像</param>
+        /// <param name="sim">相似度</param>
+        /// <param name="timeout">超时时间</param>
+        /// <param name="timelag">间隔时间</param>
+        /// <param name="sign">跳出条件,true为找图成功时返回,false为找图失败时返回</param>
+        /// <returns></returns>
+        public Point FindImageLoop(Rect bounds, WrapImage image, int sim, int timeout, int timelag, bool sign)
+        => this.baseHelper.FindMultiColorLoop(bounds, image.GetDescription(), sim, false, timeout, timelag, sign);
+
+        /// <summary>
+        /// 找图ex, 注意: 没有分辨率适配支持
+        /// </summary>
+        /// <param name="image">目标图像</param>
+        /// <param name="sim">相似度</param>
+        /// <returns>返回所有坐标</returns>
+        public List<Point> FindImageEx(int left, int top, int right, int bottom, WrapImage image, int sim)
+            => this.baseHelper.FindMultiColorEx(left, top, right, bottom, image.GetDescription(), sim);
+
+        /// <summary>
+        /// 找图ex, 注意: 没有分辨率适配支持
+        /// </summary>
+        /// <param name="bounds">查找范围</param>
+        /// <param name="image">目标图像</param>
+        /// <param name="sim">相似度</param>
+        /// <returns>返回所有坐标</returns>
+        public List<Point> FindImageEx(Rect bounds, WrapImage image, int sim)
+            => this.baseHelper.FindMultiColorEx(bounds, image.GetDescription(), sim);
     }
 }

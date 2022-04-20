@@ -144,12 +144,12 @@ internal class DebugService : Service, IDisposable
                    .Build();
 
             var mqttFactory = new MqttFactory();
-            client = mqttFactory.CreateMqttClient();
+            this.client = mqttFactory.CreateMqttClient();
 
-            client.UseConnectedHandler(async (e) =>
+            this.client.UseConnectedHandler(async (e) =>
             {
-                isConnected = true;
-                await client.SubscribeAsync(
+                this.isConnected = true;
+                await this.client.SubscribeAsync(
                     new MqttTopicFilter
                     {
                         Topic = "client/init"
@@ -194,12 +194,12 @@ internal class DebugService : Service, IDisposable
             this.client.UseDisconnectedHandler(async (e) =>
             {
                 ScriptLogger.RemoveCallback("debug-service");
-                await client.UnsubscribeAsync("server/init", "server/logging");
-                client.Dispose();
-                isConnected = false;
+                await this.client.UnsubscribeAsync("server/init", "server/logging");
+                this.client.Dispose();
+                this.isConnected = false;
             });
 
-            client.UseApplicationMessageReceivedHandler(ApplicationMessageReceivedAsync);
+            this.client.UseApplicationMessageReceivedHandler(ApplicationMessageReceivedAsync);
 
             await this.client.ConnectAsync(mqttClientOptions, CancellationToken.None);
         }
@@ -313,7 +313,7 @@ internal class DebugService : Service, IDisposable
                     });
                 }
 
-                if (this.client.IsConnected && isConnected)
+                if (this.client.IsConnected && this.isConnected)
                 {
                     _ = this.client.PublishAsync(new MqttApplicationMessage
                     {
@@ -376,7 +376,7 @@ internal class DebugService : Service, IDisposable
                     });
                 }
 
-                if (this.client.IsConnected && isConnected)
+                if (this.client.IsConnected && this.isConnected)
                 {
                     _ = this.client.PublishAsync(new MqttApplicationMessage
                     {

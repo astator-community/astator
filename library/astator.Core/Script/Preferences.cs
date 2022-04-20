@@ -1,5 +1,5 @@
-﻿using System;
-using astator.Core.Exceptions;
+﻿using astator.Core.Exceptions;
+using System;
 using MauiPreferences = Microsoft.Maui.Essentials.Preferences;
 
 namespace astator.Core.Script;
@@ -58,44 +58,44 @@ public class Preferences
             switch (value)
             {
                 case string s:
-                    {
-                        MauiPreferences.Set(key, s);
-                        break;
-                    }
+                {
+                    MauiPreferences.Set(key, s);
+                    break;
+                }
                 case bool b:
-                    {
-                        MauiPreferences.Set(key, b);
-                        break;
-                    }
+                {
+                    MauiPreferences.Set(key, b);
+                    break;
+                }
                 case int i:
-                    {
-                        MauiPreferences.Set(key, i);
-                        break;
-                    }
+                {
+                    MauiPreferences.Set(key, i);
+                    break;
+                }
                 case double d:
-                    {
-                        MauiPreferences.Set(key, d);
-                        break;
-                    }
+                {
+                    MauiPreferences.Set(key, d);
+                    break;
+                }
                 case float f:
-                    {
-                        MauiPreferences.Set(key, f);
-                        break;
-                    }
+                {
+                    MauiPreferences.Set(key, f);
+                    break;
+                }
                 case long l:
-                    {
-                        MauiPreferences.Set(key, l);
-                        break;
-                    }
+                {
+                    MauiPreferences.Set(key, l);
+                    break;
+                }
                 case DateTime dt:
-                    {
-                        MauiPreferences.Set(key, dt);
-                        break;
-                    }
+                {
+                    MauiPreferences.Set(key, dt);
+                    break;
+                }
                 default:
-                    {
-                        throw new TypeNotSupportedException(value.GetType().Name);
-                    }
+                {
+                    throw new TypeNotSupportedException(value.GetType().Name);
+                }
             };
         }
         else
@@ -103,44 +103,44 @@ public class Preferences
             switch (value)
             {
                 case string s:
-                    {
-                        MauiPreferences.Set(key, s, sharedName);
-                        break;
-                    }
+                {
+                    MauiPreferences.Set(key, s, sharedName);
+                    break;
+                }
                 case bool b:
-                    {
-                        MauiPreferences.Set(key, b, sharedName);
-                        break;
-                    }
+                {
+                    MauiPreferences.Set(key, b, sharedName);
+                    break;
+                }
                 case int i:
-                    {
-                        MauiPreferences.Set(key, i, sharedName);
-                        break;
-                    }
+                {
+                    MauiPreferences.Set(key, i, sharedName);
+                    break;
+                }
                 case double d:
-                    {
-                        MauiPreferences.Set(key, d, sharedName);
-                        break;
-                    }
+                {
+                    MauiPreferences.Set(key, d, sharedName);
+                    break;
+                }
                 case float f:
-                    {
-                        MauiPreferences.Set(key, f, sharedName);
-                        break;
-                    }
+                {
+                    MauiPreferences.Set(key, f, sharedName);
+                    break;
+                }
                 case long l:
-                    {
-                        MauiPreferences.Set(key, l, sharedName);
-                        break;
-                    }
+                {
+                    MauiPreferences.Set(key, l, sharedName);
+                    break;
+                }
                 case DateTime dt:
-                    {
-                        MauiPreferences.Set(key, dt, sharedName);
-                        break;
-                    }
+                {
+                    MauiPreferences.Set(key, dt, sharedName);
+                    break;
+                }
                 default:
-                    {
-                        throw new TypeNotSupportedException(value.GetType().Name);
-                    }
+                {
+                    throw new TypeNotSupportedException(value.GetType().Name);
+                }
             };
         }
     }
@@ -223,44 +223,44 @@ public class Preferences
         switch (value)
         {
             case string s:
-                {
-                    MauiPreferences.Set(key, s, this.sharedName);
-                    break;
-                }
+            {
+                MauiPreferences.Set(key, s, this.sharedName);
+                break;
+            }
             case bool b:
-                {
-                    MauiPreferences.Set(key, b, this.sharedName);
-                    break;
-                }
+            {
+                MauiPreferences.Set(key, b, this.sharedName);
+                break;
+            }
             case int i:
-                {
-                    MauiPreferences.Set(key, i, this.sharedName);
-                    break;
-                }
+            {
+                MauiPreferences.Set(key, i, this.sharedName);
+                break;
+            }
             case double d:
-                {
-                    MauiPreferences.Set(key, d, this.sharedName);
-                    break;
-                }
+            {
+                MauiPreferences.Set(key, d, this.sharedName);
+                break;
+            }
             case float f:
-                {
-                    MauiPreferences.Set(key, f, this.sharedName);
-                    break;
-                }
+            {
+                MauiPreferences.Set(key, f, this.sharedName);
+                break;
+            }
             case long l:
-                {
-                    MauiPreferences.Set(key, l, this.sharedName);
-                    break;
-                }
+            {
+                MauiPreferences.Set(key, l, this.sharedName);
+                break;
+            }
             case DateTime dt:
-                {
-                    MauiPreferences.Set(key, dt, this.sharedName);
-                    break;
-                }
+            {
+                MauiPreferences.Set(key, dt, this.sharedName);
+                break;
+            }
             default:
-                {
-                    throw new TypeNotSupportedException(value.GetType().Name);
-                }
+            {
+                throw new TypeNotSupportedException(value.GetType().Name);
+            }
         };
     }
 

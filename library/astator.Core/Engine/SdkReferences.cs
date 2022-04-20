@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using System.Threading.Tasks;
-using astator.Core.Script;
+﻿using astator.Core.Script;
 using astator.NugetManager;
 using astator.TipsView;
 using Microsoft.CodeAnalysis;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace astator.Core.Engine;
 public static class SdkReferences

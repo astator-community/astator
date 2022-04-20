@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Android.App;
+﻿using Android.App;
 using Android.Graphics;
 using Android.Views;
 using astator.Core.Exceptions;
@@ -8,6 +6,8 @@ using astator.Core.Script;
 using astator.Core.UI.Base;
 using astator.Core.UI.Controls;
 using astator.Core.UI.Layouts;
+using System;
+using System.Collections.Generic;
 using Activity = Android.App.Activity;
 using View = Android.Views.View;
 
