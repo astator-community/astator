@@ -183,9 +183,15 @@ public class ApkBuilderer
                 {
                     return false;
                 }
-
                 engine.ParseAllCS();
-                var emitResult = engine.Compile(this.dllPath);
+
+                var xd = XDocument.Load(this.csprojPath);
+                var propertyGroup = xd.Descendants("PropertyGroup");
+                var allowUnsafeBlocks = Convert.ToBoolean(propertyGroup.Select(x => x.Element("AllowUnsafeBlocks")).First()?.Value);
+                var config = xd.Descendants("ProjectExtensions");
+                var isObfuscate = Convert.ToBoolean(config.Select(x => x.Element("IsObfuscate")).First()?.Value);
+
+                var emitResult = engine.Compile(this.dllPath, allowUnsafeBlocks);
 
                 if (!emitResult.Success)
                 {
@@ -230,10 +236,6 @@ public class ApkBuilderer
                         }
                     }
                 }
-
-                var xd = XDocument.Load(this.csprojPath);
-                var config = xd.Descendants("ProjectExtensions");
-                var isObfuscate = Convert.ToBoolean(config.Select(x => x.Element("IsObfuscate")).First()?.Value);
 
                 if (isObfuscate)
                 {

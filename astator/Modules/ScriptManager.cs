@@ -7,6 +7,7 @@ using astator.Core.UI.Base;
 using astator.TipsView;
 using System.Collections.Concurrent;
 using System.Reflection;
+using System.Xml.Linq;
 using Application = Android.App.Application;
 
 namespace astator.Modules;
@@ -82,7 +83,12 @@ public class ScriptManager
 
              engine.ParseAllCS();
 
-             var emitResult = engine.Compile();
+             var csprojPath = Directory.GetFiles(rootDir, "*.csproj", SearchOption.AllDirectories).First();
+             var xd = XDocument.Load(csprojPath);
+             var propertyGroup = xd.Descendants("PropertyGroup");
+             var allowUnsafeBlocks = Convert.ToBoolean(propertyGroup.Select(x => x.Element("AllowUnsafeBlocks")).First()?.Value);
+
+             var emitResult = engine.Compile(allowUnsafeBlocks);
 
              TipsViewImpl.Hide();
 
@@ -173,7 +179,11 @@ public class ScriptManager
 
             engine.ParseAllCS();
 
-            var emitResult = engine.Compile();
+            var xd = XDocument.Load(csprojPath);
+            var propertyGroup = xd.Descendants("PropertyGroup");
+            var allowUnsafeBlocks = Convert.ToBoolean(propertyGroup.Select(x => x.Element("AllowUnsafeBlocks")).First()?.Value);
+
+            var emitResult = engine.Compile(allowUnsafeBlocks);
 
             TipsViewImpl.Hide();
 
