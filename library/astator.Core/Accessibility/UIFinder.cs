@@ -15,6 +15,10 @@ public static partial class NodeInfoExtension
     /// <returns></returns>
     public static List<AccessibilityNodeInfo> Find(this AccessibilityNodeInfo nodeInfo, SearcherArgs args)
     {
+        if (nodeInfo == null)
+        {
+            return new List<AccessibilityNodeInfo>();
+        }
         var enabledArgs = args.GetEnabledArgs();
         return Find(new List<AccessibilityNodeInfo>() { nodeInfo }, enabledArgs);
     }
@@ -27,6 +31,10 @@ public static partial class NodeInfoExtension
     /// <returns></returns>
     public static AccessibilityNodeInfo FindOne(this AccessibilityNodeInfo nodeInfo, SearcherArgs args)
     {
+        if (nodeInfo == null)
+        {
+            return null;
+        }
         var enabledArgs = args.GetEnabledArgs();
 
         return FindOne(new List<AccessibilityNodeInfo>() { nodeInfo }, enabledArgs);
@@ -38,8 +46,12 @@ public static partial class NodeInfoExtension
 
         var childs = new List<AccessibilityNodeInfo>();
 
-        foreach (var nodeInfo in nodeInfos)
+        foreach (var nodeInfo in nodeInfos ?? new List<AccessibilityNodeInfo>())
         {
+            if (nodeInfo == null)
+            {
+                continue;
+            }
             if (nodeInfo.Match(args))
             {
                 result.Add(nodeInfo);
@@ -62,8 +74,12 @@ public static partial class NodeInfoExtension
     {
         var childs = new List<AccessibilityNodeInfo>();
 
-        foreach (var nodeInfo in nodeInfos)
+        foreach (var nodeInfo in nodeInfos ?? new List<AccessibilityNodeInfo>())
         {
+            if (nodeInfo == null)
+            {
+                continue;
+            }
             if (nodeInfo.Match(args))
             {
                 return nodeInfo;
@@ -88,6 +104,10 @@ public static partial class NodeInfoExtension
         foreach (var arg in args)
         {
             var attr = nodeInfo.GetAttr(arg.Key);
+            if (attr == null)
+            {
+                return false;
+            }
             if (arg.Key == "Bounds")
             {
                 var left = (Rect)attr;
@@ -129,6 +149,10 @@ public static partial class NodeInfoExtension
 
     private static dynamic GetAttr(this AccessibilityNodeInfo nodeInfo, string key)
     {
+        if (nodeInfo == null)
+        {
+            return null;
+        }
         return key switch
         {
             "Id" => nodeInfo.GetId(),
