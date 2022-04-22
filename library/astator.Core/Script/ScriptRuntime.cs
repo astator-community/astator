@@ -4,7 +4,7 @@ using astator.Core.Threading;
 using astator.Core.UI;
 using astator.Core.UI.Base;
 using astator.Core.UI.Floaty;
-using NLog;
+using astator.LoggerProvider;
 using System;
 using System.Collections.Generic;
 
@@ -179,7 +179,7 @@ public class ScriptRuntime
     /// <returns>回调的key</returns>
     public string AddLoggerCallback(Action<LogLevel, DateTime, string> callback)
     {
-        return ScriptLogger.AddCallback(this.ScriptId, callback);
+        return LoggerProvider.AstatorLogger.AddCallback(this.ScriptId, callback);
     }
 
     /// <summary>
@@ -188,7 +188,7 @@ public class ScriptRuntime
     /// <param name="key">回调的key, 当key为空时移除当前runtime添加的所有回调</param>
     public void RemoveLoggerCallback(string key = null)
     {
-        ScriptLogger.RemoveCallback(key ?? this.ScriptId);
+        LoggerProvider.AstatorLogger.RemoveCallback(key ?? this.ScriptId);
     }
 
 
@@ -236,7 +236,7 @@ public class ScriptRuntime
                 }
 
                 this.engine.UnExecute();
-                ScriptLogger.Log("脚本停止运行: " + this.ScriptId);
+                Logger.Log("脚本停止运行: " + this.ScriptId);
             }
             catch { }
             finally

@@ -1,5 +1,6 @@
 ﻿using astator.Core.Engine;
 using astator.Core.Script;
+using astator.LoggerProvider;
 using Obfuscar;
 using System;
 using System.IO;
@@ -131,7 +132,7 @@ namespace astator.Core.ThirdParty
             }
             catch (Exception ex)
             {
-                ScriptLogger.Error(ex);
+                Logger.Error(ex);
                 return false;
             }
         }

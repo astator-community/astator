@@ -1,6 +1,7 @@
 ﻿using Android.App.Usage;
 using Android.Content;
 using Android.Widget;
+using astator.LoggerProvider;
 using Microsoft.Maui.Controls;
 using System;
 using System.Collections.Generic;
@@ -87,7 +88,7 @@ public class Globals
                 }
             }
         }
-        if (usageStats is null) ScriptLogger.Error("获取前台应用包名失败, 请检查使用情况访问权限是否打开!");
+        if (usageStats is null) Logger.Error("获取前台应用包名失败, 请检查使用情况访问权限是否打开!");
 
         return usageStats?.PackageName ?? null;
     }

@@ -6,7 +6,7 @@ using Action = Android.Views.Accessibility.Action;
 
 namespace astator.Core.Accessibility;
 
-public static partial class NodeInfoExtension
+public static partial class NodeInfoExtensions
 {
     /// <summary>
     /// 获取Id

@@ -1,4 +1,5 @@
 using astator.Core.Script;
+using astator.LoggerProvider;
 
 namespace astator
 {
@@ -30,7 +31,7 @@ namespace astator
             }
             catch (Exception ex)
             {
-                ScriptLogger.Log(ex.ToString());
+                Logger.Log(ex.ToString());
                 Globals.Toast("ÎÄ¼þ±£´æÊ§°Ü: " + ex.ToString());
             }
         }

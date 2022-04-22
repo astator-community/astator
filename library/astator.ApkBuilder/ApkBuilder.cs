@@ -3,6 +3,7 @@ using Android.Graphics;
 using astator.ApkBuilder.Arsc;
 using astator.ApkBuilder.Axml;
 using astator.ApkBuilder.Signer;
+using astator.LoggerProvider;
 using astator.TipsView;
 using Path = System.IO.Path;
 
@@ -23,7 +24,7 @@ public class ApkBuilder
             CheckTemplateApk();
             if (!File.Exists(templatePath))
             {
-                Console.WriteLine("模板apk不存在!");
+                AstatorLogger.Error("模板apk不存在!");
                 return false;
             }
 
@@ -167,7 +168,7 @@ public class ApkBuilder
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            AstatorLogger.Error(ex);
             return false;
         }
         finally

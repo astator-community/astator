@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace astator.Core.Accessibility;
 
-public static partial class NodeInfoExtension
+public static partial class NodeInfoExtensions
 {
     /// <summary>
     /// 在给定的节点查找符合条件的所有节点

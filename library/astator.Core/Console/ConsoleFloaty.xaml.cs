@@ -29,7 +29,7 @@ public partial class ConsoleFloaty : Grid
     }
 
     private SystemFloatyWindow floaty;
-    private string logKey = string.Empty;
+    private readonly string logKey = string.Empty;
 
     public ConsoleFloaty(string title, int width, int height)
     {

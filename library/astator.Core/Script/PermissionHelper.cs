@@ -119,6 +119,10 @@ public class PermissionHelper
                 callback.Invoke(CheckFloaty());
             });
         }
+        else
+        {
+            callback.Invoke(true);
+        }
     }
 
     /// <summary>

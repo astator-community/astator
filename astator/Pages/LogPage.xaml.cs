@@ -1,9 +1,10 @@
 using AndroidX.AppCompat.App;
 using astator.Core.Script;
+using astator.LoggerProvider;
 using astator.Modules;
 using astator.Views;
-using NLog;
 using System.IO.Compression;
+using AstatorLogger = astator.LoggerProvider.AstatorLogger;
 
 namespace astator.Pages;
 
@@ -12,9 +13,7 @@ public partial class LogPage : ContentPage
     public LogPage()
     {
         InitializeComponent();
-
-        ScriptLogger.AddCallback("logPage", AddLogText);
-
+        AstatorLogger.AddCallback("logPage", AddLogText);
         InitLogList();
     }
 
@@ -67,7 +66,7 @@ public partial class LogPage : ContentPage
         }
         catch (Exception ex)
         {
-            ScriptLogger.Error(ex);
+            AstatorLogger.Error(ex);
         }
     }
 
@@ -110,26 +109,26 @@ public partial class LogPage : ContentPage
 
                     logList.Add($"logger*/{line}");
                     var message = line.Split("*/");
-                    var Level = LogLevel.FromString(message[0]) ?? LogLevel.Debug;
+                    var level = AstatorLogger.Parse(message[0]);
 
                     var label = new Label
                     {
                         Text = $"{message[1]} {message[2].Trim(':')}"
                     };
 
-                    if (Level == LogLevel.Warn)
-                    {
-                        label.TextColor = Color.FromRgb(0xf0, 0xdc, 0x0c);
-                    }
-                    else if (Level == LogLevel.Error || Level == LogLevel.Fatal)
+                    if (level >= LogLevel.Error) 
                     {
                         label.TextColor = Colors.Red;
+                    }
+                    else if (level >= LogLevel.Warn)
+                    {
+                        label.TextColor = Color.FromRgb(0xf0, 0xdc, 0x0c);
                     }
                     this.LogLayout.Add(label);
                 }
                 catch (Exception ex)
                 {
-                    ScriptLogger.Error(ex);
+                    AstatorLogger.Error(ex);
                 }
             }
             File.WriteAllLines(path, logList);
@@ -145,13 +144,13 @@ public partial class LogPage : ContentPage
             {
                 Text = $"{time:MM-dd HH:mm:ss.fff}  {msg}"
             };
-            if (logLevel == LogLevel.Warn)
-            {
-                label.TextColor = Color.FromRgb(0xf0, 0xdc, 0x0c);
-            }
-            else if (logLevel == LogLevel.Error || logLevel == LogLevel.Fatal)
+            if (logLevel >= LogLevel.Error)
             {
                 label.TextColor = Colors.Red;
+            }
+            else if (logLevel >= LogLevel.Warn)
+            {
+                label.TextColor = Color.FromRgb(0xf0, 0xdc, 0x0c);
             }
             this.LogLayout.Add(label);
             this.LogScrollView.ScrollToAsync(0, this.LogLayout.Height, false);

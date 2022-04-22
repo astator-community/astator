@@ -1,5 +1,6 @@
 ﻿
 using astator.Core.Script;
+using astator.LoggerProvider;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -36,7 +37,7 @@ namespace astator.Core.Threading
                 }
                 catch (Exception ex)
                 {
-                    ScriptLogger.Error(ex);
+                    Logger.Error(ex);
                     if (!this.ScriptExitSignal)
                     {
                         throw;

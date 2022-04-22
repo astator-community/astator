@@ -1,5 +1,6 @@
 ﻿using Android.Content;
 using astator.Core.Script;
+using astator.LoggerProvider;
 using System;
 using System.Collections.Concurrent;
 
@@ -64,7 +65,7 @@ public class ScriptBroadcastReceiver : BroadcastReceiver
                     }
                     catch (Exception ex)
                     {
-                        ScriptLogger.Error(ex);
+                        Logger.Error(ex);
                     }
                 }
             }

@@ -63,7 +63,7 @@ public class ScriptManager
                  if (string.IsNullOrEmpty(SdkReferences.SdkDir))
                  {
                      TipsViewImpl.Hide();
-                     ScriptLogger.Error("获取sdk失败!");
+                     Logger.Error("获取sdk失败!");
                      return null;
                  }
              }
@@ -96,7 +96,7 @@ public class ScriptManager
              {
                  foreach (var item in emitResult.Diagnostics)
                  {
-                     ScriptLogger.Error("编译失败: " + item.ToString());
+                     Logger.Error("编译失败: " + item.ToString());
                  }
                  return null;
              }
@@ -104,12 +104,12 @@ public class ScriptManager
              var method = engine.GetScriptEntryMethodInfo(Path.GetFileName(path));
              if (method is null)
              {
-                 ScriptLogger.Error("未找到入口方法!");
+                 Logger.Error("未找到入口方法!");
                  return null;
              }
              var isUiMode = method.GetCustomAttribute<ScriptEntryMethod>().IsUIMode;
 
-             ScriptLogger.Log("脚本开始运行: " + id);
+             Logger.Log("脚本开始运行: " + id);
 
              ScriptRuntime runtime;
 
@@ -126,7 +126,7 @@ public class ScriptManager
                       }
                       catch (Exception ex)
                       {
-                          ScriptLogger.Error(ex);
+                          Logger.Error(ex);
                       }
                   });
              }
@@ -134,9 +134,9 @@ public class ScriptManager
              {
                  runtime = new ScriptRuntime(id, engine, rootDir);
 
-                 runtime.Threads.Start(() =>
+                 _ = runtime.Tasks.Run((_) =>
                  {
-                     ScriptEngine.Execute(method, runtime);
+                     ScriptEngine.ExecuteAsync(method, runtime);
                  });
              }
 
@@ -159,7 +159,7 @@ public class ScriptManager
                 if (string.IsNullOrEmpty(SdkReferences.SdkDir))
                 {
                     TipsViewImpl.Hide();
-                    ScriptLogger.Error("获取sdk失败!");
+                    Logger.Error("获取sdk失败!");
                     return null;
                 }
             }
@@ -191,7 +191,7 @@ public class ScriptManager
             {
                 foreach (var item in emitResult.Diagnostics)
                 {
-                    ScriptLogger.Error("编译失败: " + item.ToString());
+                    Logger.Error("编译失败: " + item.ToString());
                 }
                 return null;
             }
@@ -199,12 +199,12 @@ public class ScriptManager
             var method = engine.GetProjectEntryMethodInfo();
             if (method is null)
             {
-                ScriptLogger.Error("未找到入口方法!");
+                Logger.Error("未找到入口方法!");
                 return null;
             }
             var isUiMode = method.GetCustomAttribute<ProjectEntryMethod>().IsUIMode;
 
-            ScriptLogger.Log("脚本开始运行: " + id);
+            Logger.Log("脚本开始运行: " + id);
 
             ScriptRuntime runtime;
 
@@ -221,7 +221,7 @@ public class ScriptManager
                       }
                       catch (Exception ex)
                       {
-                          ScriptLogger.Error(ex);
+                          Logger.Error(ex);
                           runtime.SetStop();
                       }
                   });
@@ -230,9 +230,9 @@ public class ScriptManager
             {
                 runtime = new ScriptRuntime(id, engine, rootDir);
 
-                runtime.Threads.Start(() =>
+                _ = runtime.Tasks.Run((_) =>
                 {
-                    ScriptEngine.Execute(method, runtime);
+                    ScriptEngine.ExecuteAsync(method, runtime);
                 });
             }
 
@@ -246,7 +246,7 @@ public class ScriptManager
     {
         return await Task.Run(async () =>
         {
-            ScriptLogger.Log("正在初始化...");
+            Logger.Log("正在初始化...");
             var id = "project";
             GetId(ref id);
 
@@ -254,19 +254,19 @@ public class ScriptManager
 
             if (!engine.LoadAssemblyFromPath())
             {
-                ScriptLogger.Error("加载dll失败!");
+                Logger.Error("加载dll失败!");
                 return null;
             }
 
             var method = engine.GetProjectEntryMethodInfo();
             if (method is null)
             {
-                ScriptLogger.Error("未找到入口方法!");
+                Logger.Error("未找到入口方法!");
                 return null;
             }
             var isUiMode = method.GetCustomAttribute<ProjectEntryMethod>().IsUIMode;
 
-            ScriptLogger.Log("脚本开始运行: " + id);
+            Logger.Log("脚本开始运行: " + id);
 
             ScriptRuntime runtime;
 
@@ -283,7 +283,7 @@ public class ScriptManager
                     }
                     catch (Exception ex)
                     {
-                        ScriptLogger.Error(ex);
+                        Logger.Error(ex);
                     }
                 });
             }
@@ -291,9 +291,9 @@ public class ScriptManager
             {
                 runtime = new ScriptRuntime(id, engine, rootDir);
 
-                runtime.Threads.Start(() =>
+                _ = runtime.Tasks.Run((_) =>
                 {
-                    ScriptEngine.Execute(method, runtime);
+                    ScriptEngine.ExecuteAsync(method, runtime);
                 });
             }
 

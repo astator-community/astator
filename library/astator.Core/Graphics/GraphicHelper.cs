@@ -562,8 +562,8 @@ namespace astator.Core.Graphics
                         }
                     }
                 }
-                return new Point(-1, -1);
             }
+            return new Point(-1, -1);
         }
 
         /// <summary>
@@ -673,34 +673,43 @@ namespace astator.Core.Graphics
         private unsafe List<Point> FindMultiColorEx(int left, int top, int right, int bottom, int[] firstDescription, int[][] offsetDescription)
         {
             var result = new List<Point>();
-            var red = firstDescription[2];
-            fixed (short* ptr = &this.redList[this.starts[red * 2]])
+
+            var minRed = Math.Max(firstDescription[2] - firstDescription[5], 0);
+            var maxRed = Math.Min(firstDescription[2] + firstDescription[5], 255);
+
+            fixed (short* ptr = &this.redList[0])
             {
-                for (int i = 0, end = this.starts[red * 2 + 1] - this.starts[red * 2]; i < end; i += 2)
+                for (var j = minRed; j <= maxRed; j++)
                 {
-                    var x = ptr[i];
-                    var y = ptr[i + 1];
-                    if (x >= left && x <= right && y >= top && y <= bottom)
+                    var start = this.starts[j];
+                    var end = this.ends[j];
+
+                    for (var i = start; i < end; i += 2)
                     {
-                        var location = y * this.rowStride + x * this.pxFormat;
-                        if (Math.Abs((this.screenData[location + 1] & 0xff) - firstDescription[3]) <= firstDescription[6])
+                        var x = ptr[i];
+                        var y = ptr[i + 1];
+                        if (x >= left && x <= right && y >= top && y <= bottom)
                         {
-                            if (Math.Abs((this.screenData[location + 2] & 0xff) - firstDescription[4]) <= firstDescription[7])
+                            var location = y * this.rowStride + x * this.pxFormat;
+                            if (Math.Abs(this.screenData[location + 1] - firstDescription[3]) <= firstDescription[6])
                             {
-                                if (CompareMultiColor(offsetDescription, x, y, 1))
+                                if (Math.Abs(this.screenData[location + 2] - firstDescription[4]) <= firstDescription[7])
                                 {
-                                    result.Add(new Point(this.redList[i], this.redList[i + 1]));
+                                    if (CompareMultiColor(offsetDescription, x, y, 1))
+                                    {
+                                        result.Add(new Point(x, y));
+                                    }
                                 }
                             }
                         }
-                    }
-                    else if (x > right && y > bottom)
-                    {
-                        break;
+                        else if (x > right && y > bottom)
+                        {
+                            break;
+                        }
                     }
                 }
-                return result;
             }
+            return result;
         }
 
         /// <summary>

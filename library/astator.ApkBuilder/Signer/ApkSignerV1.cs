@@ -2,6 +2,7 @@
 using System.IO.Compression;
 using System.Security.Cryptography;
 using System.Text;
+using astator.LoggerProvider;
 using Java.Security;
 
 namespace astator.ApkBuilder.Signer;
@@ -19,7 +20,7 @@ public class ApkSignerV1
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.ToString());
+            AstatorLogger.Error(ex);
             return false;
         }
     }

@@ -3,6 +3,7 @@ using Android.Content;
 using Android.Views;
 using astator.Core.Script;
 using astator.Core.UI.Floaty;
+using astator.LoggerProvider;
 using astator.Modules;
 using astator.NugetManager;
 using astator.TipsView;
@@ -278,7 +279,7 @@ public partial class HomePage : ContentPage
             {
                 if (!await NugetCommands.DownLoadPackageAsync("astator.Examples", version))
                 {
-                    ScriptLogger.Error("下载示例文件失败!");
+                    Logger.Error("下载示例文件失败!");
                     return;
                 }
             }
@@ -298,7 +299,7 @@ public partial class HomePage : ContentPage
         }
         catch (Exception ex)
         {
-            ScriptLogger.Error(ex);
+            Logger.Error(ex);
         }
         finally
         {

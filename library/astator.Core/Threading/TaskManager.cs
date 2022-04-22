@@ -110,7 +110,7 @@ namespace astator.Core.Threading
                 {
                     action.Invoke(source.Token);
                 }
-                catch (Exception)
+                catch
                 {
                     if (!this.ScriptExitSignal)
                     {

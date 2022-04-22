@@ -1,4 +1,6 @@
-﻿using astator.Core.Script;
+﻿
+using astator.Core.Script;
+using astator.Modules.Base;
 using astator.Pages;
 
 namespace astator;
@@ -8,7 +10,7 @@ public partial class App : Application
     public App()
     {
         InitializeComponent();
-        Console.SetOut(new ScriptConsole());
+        System.Console.SetOut(new ConsoleOut());
     }
 
     protected override Window CreateWindow(IActivationState activationState)
@@ -16,7 +18,6 @@ public partial class App : Application
         if (this.MainPage == null)
         {
             InitializeMainPage();
-
         }
         return base.CreateWindow(activationState);
     }

@@ -1,6 +1,7 @@
 ﻿using astator.Core.Engine;
 using astator.Core.Script;
 using astator.Core.ThirdParty;
+using astator.LoggerProvider;
 using astator.NugetManager;
 using astator.TipsView;
 using Newtonsoft.Json;
@@ -45,7 +46,7 @@ public class ApkBuilderer
             {
                 if (this.csprojPath is null)
                 {
-                    ScriptLogger.Error("*.csproj不存在!");
+                    Logger.Error("*.csproj不存在!");
                     return false;
                 }
 
@@ -59,7 +60,7 @@ public class ApkBuilderer
                 || string.IsNullOrEmpty(packageName)
                 || string.IsNullOrEmpty(versionName))
                 {
-                    ScriptLogger.Error($"打包参数不完整! 应用名: {labelName}, 包名: {packageName}, 版本号: {versionName}");
+                    Logger.Error($"打包参数不完整! 应用名: {labelName}, 包名: {packageName}, 版本号: {versionName}");
                     return false;
                 }
 
@@ -81,7 +82,7 @@ public class ApkBuilderer
 
                 if (!ApkBuilder.ApkBuilder.Build(this.outputDir, this.projectDir, versionName, packageName, labelName, iconPath, useOCR, false))
                 {
-                    ScriptLogger.Error($"打包apk失败!");
+                    Logger.Error($"打包apk失败!");
                     return false;
                 }
 
@@ -89,17 +90,17 @@ public class ApkBuilderer
                 {
                     if (!ApkBuilder.ApkBuilder.Build(this.outputDir, this.projectDir, versionName, packageName, labelName, iconPath, useOCR, true))
                     {
-                        ScriptLogger.Error($"打包apk失败!");
+                        Logger.Error($"打包apk失败!");
                         return false;
                     }
                 }
 
-                ScriptLogger.Log($"打包apk成功, 输出文件夹: {this.outputDir}");
+                Logger.Log($"打包apk成功, 输出文件夹: {this.outputDir}");
                 return true;
             }
             catch (Exception ex)
             {
-                ScriptLogger.Error(ex);
+                Logger.Error(ex);
                 return false;
             }
             finally
@@ -155,7 +156,7 @@ public class ApkBuilderer
         }
         catch (Exception ex)
         {
-            ScriptLogger.Error(ex);
+            Logger.Error(ex);
             return false;
         }
     }
@@ -173,7 +174,7 @@ public class ApkBuilderer
                     if (string.IsNullOrEmpty(SdkReferences.SdkDir))
                     {
                         if (createTipsView) TipsViewImpl.Hide();
-                        ScriptLogger.Error("获取sdk失败!");
+                        Logger.Error("获取sdk失败!");
                         return false;
                     }
                 }
@@ -197,7 +198,7 @@ public class ApkBuilderer
                 {
                     foreach (var item in emitResult.Diagnostics)
                     {
-                        ScriptLogger.Error("编译失败: " + item.ToString());
+                        Logger.Error("编译失败: " + item.ToString());
                     }
                     return false;
                 }
@@ -260,7 +261,7 @@ public class ApkBuilderer
             }
             catch (Exception ex)
             {
-                ScriptLogger.Error(ex);
+                Logger.Error(ex);
                 return false;
             }
             finally

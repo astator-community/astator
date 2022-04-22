@@ -1,4 +1,5 @@
-﻿using Java.Nio;
+﻿using astator.LoggerProvider;
+using Java.Nio;
 using Java.Security;
 using Java.Security.Cert;
 using ApkSignerV2Binding = Com.Android.Signapk.ApkSignerV2;
@@ -44,7 +45,7 @@ internal class ApkSignerV2
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.ToString());
+            AstatorLogger.Error(ex);
             return false;
         }
     }

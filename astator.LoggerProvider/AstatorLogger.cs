@@ -9,19 +9,19 @@ using System.Linq;
 using System.Text;
 using NLogger = NLog.Logger;
 
-namespace astator.Core.Script;
+namespace astator.LoggerProvider;
 
-public class ScriptLogger
+public class AstatorLogger
 {
-    private static ScriptLogger instance;
+    private static AstatorLogger instance;
 
-    public static ScriptLogger Instance
+    public static AstatorLogger Instance
     {
         get
         {
             if (instance is null)
             {
-                instance = new ScriptLogger();
+                instance = new AstatorLogger();
             }
             return instance;
         }
@@ -61,7 +61,7 @@ public class ScriptLogger
         }
     }
 
-    public ScriptLogger()
+    public AstatorLogger()
     {
         var config = new LoggingConfiguration();
         var methodCallTarget = new MethodCallTarget("AddMessage", (logEvent, parameters) =>
@@ -70,12 +70,12 @@ public class ScriptLogger
             {
                 try
                 {
-                    action.Invoke(logEvent.Level, DateTime.Now, logEvent.FormattedMessage);
+                    action.Invoke((LogLevel)logEvent.Level.Ordinal, DateTime.Now, logEvent.FormattedMessage);
                 }
                 catch { }
             }
         });
-        config.LoggingRules.Add(new LoggingRule("*", LogLevel.Trace, methodCallTarget));
+        config.LoggingRules.Add(new LoggingRule("*", NLog.LogLevel.Trace, methodCallTarget));
 
         var path = Path.Combine(Android.App.Application.Context.GetExternalFilesDir("log").ToString(), "log.txt");
         var fileTarget = new FileTarget
@@ -83,7 +83,7 @@ public class ScriptLogger
             FileName = path,
             Layout = @"logger*/${level}*/${date::universalTime=false:format=MM-dd HH\:mm\:ss\.fff}*/: ${message}",
         };
-        config.LoggingRules.Add(new LoggingRule("*", LogLevel.Warn, fileTarget));
+        config.LoggingRules.Add(new LoggingRule("*", NLog.LogLevel.Warn, fileTarget));
 
         this.logger = LogManager.Setup()
             .SetupExtensions(s => s.AutoLoadAssemblies(true))
@@ -91,87 +91,45 @@ public class ScriptLogger
             .GetCurrentClassLogger();
     }
 
-    public static void Log(string msg)
-    {
-        Instance.logger.Trace(msg);
-    }
-    public static void Debug(string msg)
-    {
-        Instance.logger.Debug(msg);
-    }
-
-    public static void Info(string msg)
-    {
-        Instance.logger.Info(msg);
-    }
-
-    public static void Error(string msg)
-    {
-        Instance.logger.Error(msg);
-    }
-
-    public static void Warn(string msg)
-    {
-        Instance.logger.Warn(msg);
-    }
-
-    public static void Trace(string msg)
-    {
-        Instance.logger.Trace(msg);
-    }
-
-    public static void Fatal(string msg)
-    {
-        Instance.logger.Fatal(msg);
-    }
-
-    public static void Log(params object[] items)
-    {
-        Instance.logger.Trace(GetMessage(items));
-    }
-
-    public static void Debug(params object[] items)
-    {
-        Instance.logger.Debug(GetMessage(items));
-    }
-
-    public static void Info(params object[] items)
-    {
-        Instance.logger.Info(GetMessage(items));
-    }
-
-    public static void Error(params object[] items)
-    {
-        Instance.logger.Error(GetMessage(items));
-    }
-
-    public static void Warn(params object[] items)
-    {
-        Instance.logger.Warn(GetMessage(items));
-    }
-
-    public static void Trace(params object[] items)
-    {
-        Instance.logger.Trace(GetMessage(items));
-    }
-
-    public static void Fatal(params object[] items)
-    {
-        Instance.logger.Fatal(GetMessage(items));
-    }
+    public static void Log(string msg) => Instance.logger.Trace(msg);
+    public static void Trace(string msg) => Instance.logger.Trace(msg);
+    public static void Debug(string msg) => Instance.logger.Debug(msg);
+    public static void Info(string msg) => Instance.logger.Info(msg);
+    public static void Error(string msg) => Instance.logger.Error(msg);
+    public static void Warn(string msg) => Instance.logger.Warn(msg);
+    public static void Fatal(string msg) => Instance.logger.Fatal(msg);
+    public static void Log(params object[] items) => Instance.logger.Trace(GetMessage(items));
+    public static void Trace(params object[] items) => Instance.logger.Trace(GetMessage(items));
+    public static void Debug(params object[] items) => Instance.logger.Debug(GetMessage(items));
+    public static void Info(params object[] items) => Instance.logger.Info(GetMessage(items));
+    public static void Error(params object[] items) => Instance.logger.Error(GetMessage(items));
+    public static void Warn(params object[] items) => Instance.logger.Warn(GetMessage(items));
+    public static void Fatal(params object[] items) => Instance.logger.Fatal(GetMessage(items));
 
     private static StringBuilder GetMessage(params object[] items)
     {
         var message = new StringBuilder();
         for (var i = 0; i < items.Length; i++)
         {
-            if (i > 0)
-            {
-                message.Append(' ');
-            }
+            if (i > 0) message.Append(' ');
 
             message.Append(items[i].ToString());
         }
         return message;
+    }
+
+    public static LogLevel Parse(string level)
+    {
+        return level switch
+        {
+            "Trace" => LogLevel.Trace,
+            "Debug" => LogLevel.Debug,
+            "Info" => LogLevel.Info,
+            "Warn" => LogLevel.Warn,
+            "Error" => LogLevel.Error,
+            "Fatal" => LogLevel.Fatal,
+            "Off" => LogLevel.Off,
+            _ => LogLevel.Trace
+        };
     }
 }

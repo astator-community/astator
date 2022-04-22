@@ -15,6 +15,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\..\astator.LoggerProvider\astator.LoggerProvider.csproj" />
 	  <ProjectReference Include="..\astator.TipsView\astator.TipsView.csproj" />
 	</ItemGroup>
 

@@ -3,6 +3,7 @@ using Android.Text;
 using Android.Views;
 using Android.Widget;
 using astator.Core.Script;
+using astator.LoggerProvider;
 using Java.Lang;
 using System;
 using static Android.Views.View;
@@ -28,7 +29,7 @@ public class OnClickListener : Java.Lang.Object, IOnClickListener
         }
         catch (Exception ex)
         {
-            ScriptLogger.Error(ex);
+            Logger.Error(ex);
         }
     }
 }
@@ -88,7 +89,7 @@ public class OnCheckedChangeListener : Java.Lang.Object, IOnCheckedChangeListene
         }
         catch (Exception ex)
         {
-            ScriptLogger.Error(ex);
+            Logger.Error(ex);
         }
     }
 }
@@ -112,7 +113,7 @@ public class RadioGroupOnCheckedChangeListener : Java.Lang.Object, RadioGroup.IO
             }
             catch (Exception ex)
             {
-                ScriptLogger.Error(ex);
+                Logger.Error(ex);
             }
         }
 
@@ -146,7 +147,7 @@ internal class ClassOfTextWatcher : Java.Lang.Object, ITextWatcher
         }
         catch (Exception ex)
         {
-            ScriptLogger.Error(ex);
+            Logger.Error(ex);
         }
     }
 

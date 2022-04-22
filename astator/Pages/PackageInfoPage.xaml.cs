@@ -1,4 +1,5 @@
 using astator.Core.Script;
+using astator.LoggerProvider;
 using astator.NugetManager;
 using astator.Views;
 using NuGet.Protocol.Core.Types;
@@ -148,7 +149,7 @@ namespace astator
                     {
                         if (!await NugetCommands.DownLoadPackageAsync(dependence.Key, dependence.Value))
                         {
-                            ScriptLogger.Error($"下载nuget包: {dependence.Key}失败!");
+                            Logger.Error($"下载nuget包: {dependence.Key}失败!");
                             return;
                         }
                     }

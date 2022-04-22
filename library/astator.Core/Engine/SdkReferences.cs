@@ -1,4 +1,5 @@
 ﻿using astator.Core.Script;
+using astator.LoggerProvider;
 using astator.NugetManager;
 using astator.TipsView;
 using Microsoft.CodeAnalysis;
@@ -30,7 +31,7 @@ public static class SdkReferences
                     TipsViewImpl.ChangeTipsText("正在下载sdk引用包...");
                     if (!await NugetCommands.DownLoadPackageAsync(id, version))
                     {
-                        ScriptLogger.Error("下载sdk失败!");
+                        Logger.Error("下载sdk失败!");
                         return null;
                     }
                 }

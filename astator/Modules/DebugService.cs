@@ -8,6 +8,7 @@ using AndroidX.Core.Graphics.Drawable;
 using astator.Core.Accessibility;
 using astator.Core.Graphics;
 using astator.Core.Script;
+using astator.LoggerProvider;
 using astator.Modules.Base;
 using MQTTnet;
 using MQTTnet.Client;
@@ -64,7 +65,7 @@ internal class DebugService : Service, IDisposable
 
             this.server = mqttFactory.CreateMqttServer();
 
-            ScriptLogger.Log($"开启调试服务: {ip}");
+            Logger.Log($"开启调试服务: {ip}");
 
             this.server.UseClientConnectedHandler(async (e) =>
             {
@@ -94,7 +95,7 @@ internal class DebugService : Service, IDisposable
                         Topic = "client/layout-dump"
                     });
 
-                ScriptLogger.AddCallback("debug-service", (level, time, msg) =>
+                AstatorLogger.AddCallback("debug-service", (level, time, msg) =>
                 {
                     this.server.PublishAsync(new MqttApplicationMessage
                     {
@@ -106,7 +107,7 @@ internal class DebugService : Service, IDisposable
 
             this.server.UseClientDisconnectedHandler(async (e) =>
             {
-                ScriptLogger.RemoveCallback("debug-service");
+                AstatorLogger.RemoveCallback("debug-service");
                 await this.server.UnsubscribeAsync(e.ClientId,
                     "client/run-project",
                     "client/run-script",
@@ -122,7 +123,7 @@ internal class DebugService : Service, IDisposable
         }
         catch (Exception ex)
         {
-            ScriptLogger.Error(ex);
+            Logger.Error(ex);
             Dispose();
         }
     }
@@ -175,7 +176,7 @@ internal class DebugService : Service, IDisposable
                         Topic = "client/layout-dump"
                     });
 
-                ScriptLogger.AddCallback("debug-service", (level, time, msg) =>
+                AstatorLogger.AddCallback("debug-service", (level, time, msg) =>
                 {
                     this.client.PublishAsync(new MqttApplicationMessage
                     {
@@ -193,7 +194,7 @@ internal class DebugService : Service, IDisposable
             });
             this.client.UseDisconnectedHandler(async (e) =>
             {
-                ScriptLogger.RemoveCallback("debug-service");
+                AstatorLogger.RemoveCallback("debug-service");
                 await this.client.UnsubscribeAsync("server/init", "server/logging");
                 this.client.Dispose();
                 this.isConnected = false;
@@ -205,7 +206,7 @@ internal class DebugService : Service, IDisposable
         }
         catch (Exception ex)
         {
-            ScriptLogger.Error(ex);
+            Logger.Error(ex);
             Dispose();
         }
     }
@@ -274,7 +275,7 @@ internal class DebugService : Service, IDisposable
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex);
+                    Logger.Error(ex);
                 }
                 break;
             }
@@ -287,7 +288,6 @@ internal class DebugService : Service, IDisposable
                     try
                     {
                         var img = await ScreenCapturer.Instance.AcquireLatestBitmapOnCurrentOrientation();
-
                         var ms = new MemoryStream();
                         img.Compress(Android.Graphics.Bitmap.CompressFormat.Png, 100, ms);
                         var bytes = ms.ToArray();
@@ -485,7 +485,7 @@ internal class DebugService : Service, IDisposable
         {
             if (disposing)
             {
-                ScriptLogger.RemoveCallback("debug-service");
+                AstatorLogger.RemoveCallback("debug-service");
                 this.server?.StopAsync();
                 this.server?.Dispose();
                 this.client?.Dispose();

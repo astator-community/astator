@@ -1,4 +1,5 @@
 ﻿using astator.Core.Script;
+using astator.LoggerProvider;
 using astator.NugetManager;
 using astator.TipsView;
 using Microsoft.CodeAnalysis;
@@ -109,12 +110,12 @@ namespace astator.Core.Engine
             }
             if (!path.EndsWith(".dll"))
             {
-                ScriptLogger.Error($"加载dll失败, 非dll文件: {path}");
+                Logger.Error($"加载dll失败, 非dll文件: {path}");
                 return false;
             }
             if (!File.Exists(path))
             {
-                ScriptLogger.Error($"加载dll失败, 文件不存在: {path}");
+                Logger.Error($"加载dll失败, 文件不存在: {path}");
                 return false;
             }
             var ReferencesIsAdd = Android.App.Application.Context.PackageName.Equals(Globals.AstatorPackageName);
@@ -209,7 +210,7 @@ namespace astator.Core.Engine
                 var dllPath = Path.Combine(this.rootDir, "compile.dll");
                 if (!File.Exists(dllPath))
                 {
-                    ScriptLogger.Error($"dll路径不存在: {dllPath}");
+                    Logger.Error($"dll路径不存在: {dllPath}");
                     return false;
                 }
 
@@ -237,7 +238,7 @@ namespace astator.Core.Engine
             }
             catch (Exception ex)
             {
-                ScriptLogger.Error(ex);
+                Logger.Error(ex);
                 return false;
             }
 
@@ -251,6 +252,17 @@ namespace astator.Core.Engine
         public static void Execute(MethodInfo method, dynamic runtime)
         {
             method.Invoke(null, new object[] { runtime });
+        }
+
+        /// <summary>
+        /// 执行异步方法
+        /// </summary>
+        /// <param name="method">入口方法</param>
+        /// <param name="runtime"></param>
+        public static void ExecuteAsync(MethodInfo method, dynamic runtime)
+        {
+            dynamic reuslt = method.Invoke(null, new object[] { runtime });
+            reuslt.Wait();
         }
 
         /// <summary>
@@ -281,7 +293,7 @@ namespace astator.Core.Engine
             }
             catch (Exception ex)
             {
-                ScriptLogger.Error(ex);
+                Logger.Error(ex);
             }
 
             return null;
@@ -318,7 +330,7 @@ namespace astator.Core.Engine
             }
             catch (Exception ex)
             {
-                ScriptLogger.Error(ex);
+                Logger.Error(ex);
             }
 
             return null;
@@ -360,7 +372,7 @@ namespace astator.Core.Engine
             }
             catch (Exception ex)
             {
-                ScriptLogger.Error(ex);
+                Logger.Error(ex);
                 return false;
             }
         }
