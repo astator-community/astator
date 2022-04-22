@@ -18,7 +18,8 @@ namespace astator.Core.Graphics
         private byte[] screenData;
 
         private short[] redList;
-        private readonly int[] marks = new int[512];
+        private readonly int[] starts = new int[256];
+        private readonly int[] ends = new int[256];
 
         /// <summary>
         /// 静态构造函数
@@ -117,33 +118,33 @@ namespace astator.Core.Graphics
             fixed (byte* ptr = &this.screenData[0])
             {
                 var lens = new int[256];
-                for (var i = 0; i < this.height; i++)
+                for (var y = 0; y < this.height; y++)
                 {
-                    var location = this.rowStride * i;
-                    for (var j = 0; j < this.width; j++, location += this.pxFormat)
+                    var location = this.rowStride * y;
+                    for (var x = 0; x < this.width; x++, location += this.pxFormat)
                     {
-                        var k = ptr[location];
-                        lens[k]++;
+                        var r = ptr[location];
+                        lens[r]++;
                     }
                 }
 
                 var mark = 0;
                 for (var i = 0; i < 256; i++)
                 {
-                    this.marks[i * 2] = mark;
-                    this.marks[i * 2 + 1] = mark;
+                    this.starts[i] = mark;
+                    this.ends[i] = mark;
                     mark += lens[i] * 2;
                 }
 
-                for (short i = 0; i < this.height; i++)
+                for (short y = 0; y < this.height; y++)
                 {
-                    var location = this.rowStride * i;
-                    for (short j = 0; j < this.width; j++, location += this.pxFormat)
+                    var location = this.rowStride * y;
+                    for (short x = 0; x < this.width; x++, location += this.pxFormat)
                     {
-                        var k = ptr[location];
-                        this.redList[this.marks[k * 2 + 1]] = j;
-                        this.redList[this.marks[k * 2 + 1] + 1] = i;
-                        this.marks[k * 2 + 1] += 2;
+                        var r = ptr[location];
+                        this.redList[this.ends[r]] = x;
+                        this.redList[this.ends[r] + 1] = y;
+                        this.ends[r] += 2;
                     }
                 }
             }
@@ -405,11 +406,11 @@ namespace astator.Core.Graphics
                 if (_x >= 0 && _x < this.width && _y >= 0 && _y < this.height)
                 {
                     var location = _y * this.rowStride + _x * this.pxFormat;
-                    if (Math.Abs((this.screenData[location] & 0xff) - description[2]) <= description[5])
+                    if (Math.Abs(this.screenData[location] - description[2]) <= description[5])
                     {
-                        if (Math.Abs((this.screenData[location + 1] & 0xff) - description[3]) <= description[6])
+                        if (Math.Abs(this.screenData[location + 1] - description[3]) <= description[6])
                         {
-                            if (Math.Abs((this.screenData[location + 2] & 0xff) - description[4]) <= description[7])
+                            if (Math.Abs(this.screenData[location + 2] - description[4]) <= description[7])
                             {
                                 return description[8] == 0;
                             }
@@ -527,30 +528,38 @@ namespace astator.Core.Graphics
 
         private unsafe Point FindMultiColor(int left, int top, int right, int bottom, int[] firstDescription, int[][] offsetDescription, int offsetLength)
         {
-            var red = firstDescription[2];
-            fixed (short* ptr = &this.redList[this.marks[red * 2]])
+            var minRed = Math.Max(firstDescription[2] - firstDescription[5], 0);
+            var maxRed = Math.Min(firstDescription[2] + firstDescription[5], 255);
+
+            fixed (short* ptr = &this.redList[0])
             {
-                for (int i = 0, end = this.marks[red * 2 + 1] - this.marks[red * 2]; i < end; i += 2)
+                for (var j = minRed; j <= maxRed; j++)
                 {
-                    var x = ptr[i];
-                    var y = ptr[i + 1];
-                    if (x >= left && x <= right && y >= top && y <= bottom)
+                    var start = this.starts[j];
+                    var end = this.ends[j];
+
+                    for (var i = start; i < end; i += 2)
                     {
-                        var location = y * this.rowStride + x * this.pxFormat;
-                        if (Math.Abs((this.screenData[location + 1] & 0xff) - firstDescription[3]) <= firstDescription[6])
+                        var x = ptr[i];
+                        var y = ptr[i + 1];
+                        if (x >= left && x <= right && y >= top && y <= bottom)
                         {
-                            if (Math.Abs((this.screenData[location + 2] & 0xff) - firstDescription[4]) <= firstDescription[7])
+                            var location = y * this.rowStride + x * this.pxFormat;
+                            if (Math.Abs(this.screenData[location + 1] - firstDescription[3]) <= firstDescription[6])
                             {
-                                if (CompareMultiColor(offsetDescription, x, y, offsetLength))
+                                if (Math.Abs(this.screenData[location + 2] - firstDescription[4]) <= firstDescription[7])
                                 {
-                                    return new Point(x, y);
+                                    if (CompareMultiColor(offsetDescription, x, y, offsetLength))
+                                    {
+                                        return new Point(x, y);
+                                    }
                                 }
                             }
                         }
-                    }
-                    else if (x > right && y > bottom)
-                    {
-                        break;
+                        else if (x > right && y > bottom)
+                        {
+                            break;
+                        }
                     }
                 }
                 return new Point(-1, -1);
@@ -586,35 +595,8 @@ namespace astator.Core.Graphics
                 offsetDescription[j][7] = similarity + description[j + 1][7];
             }
             var offsetLength = isOffset ? 9 : 1;
-            var step = true;
-            for (var i = 0; i < firstDescription[5]; i++)
-            {
-                int num;
-                if (step)
-                {
-                    num = description[0][2] + i;
-                    if (i != 0)
-                    {
-                        i--;
-                        step = false;
-                    }
-                }
-                else
-                {
-                    num = description[0][2] - i;
-                    step = true;
-                }
-                if (num < 256 && num > -1)
-                {
-                    firstDescription[2] = num;
-                    var point = FindMultiColor(left, top, right, bottom, firstDescription, offsetDescription, offsetLength);
-                    if (point.X != -1)
-                    {
-                        return point;
-                    }
-                }
-            }
-            return new Point(-1, -1);
+
+            return FindMultiColor(left, top, right, bottom, firstDescription, offsetDescription, offsetLength);
         }
 
         /// <summary>
@@ -692,9 +674,9 @@ namespace astator.Core.Graphics
         {
             var result = new List<Point>();
             var red = firstDescription[2];
-            fixed (short* ptr = &this.redList[this.marks[red * 2]])
+            fixed (short* ptr = &this.redList[this.starts[red * 2]])
             {
-                for (int i = 0, end = this.marks[red * 2 + 1] - this.marks[red * 2]; i < end; i += 2)
+                for (int i = 0, end = this.starts[red * 2 + 1] - this.starts[red * 2]; i < end; i += 2)
                 {
                     var x = ptr[i];
                     var y = ptr[i + 1];
