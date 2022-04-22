@@ -1,6 +1,5 @@
 using AndroidX.AppCompat.App;
 using astator.Core.Script;
-using astator.LoggerProvider;
 using astator.Modules;
 using astator.Views;
 using System.IO.Compression;
@@ -116,7 +115,7 @@ public partial class LogPage : ContentPage
                         Text = $"{message[1]} {message[2].Trim(':')}"
                     };
 
-                    if (level >= LogLevel.Error) 
+                    if (level >= LogLevel.Error)
                     {
                         label.TextColor = Colors.Red;
                     }

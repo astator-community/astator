@@ -1,7 +1,6 @@
 ﻿using Android.App.Usage;
 using Android.Content;
 using Android.Widget;
-using astator.LoggerProvider;
 using Microsoft.Maui.Controls;
 using System;
 using System.Collections.Generic;

@@ -1,7 +1,7 @@
 ﻿
-using System.Text;
 using astator.ApkBuilder.Axml.Chunks;
 using astator.ApkBuilder.Axml.Chunks.Base;
+using System.Text;
 
 namespace astator.ApkBuilder.Axml;
 

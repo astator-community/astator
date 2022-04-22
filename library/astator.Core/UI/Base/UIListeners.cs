@@ -3,7 +3,6 @@ using Android.Text;
 using Android.Views;
 using Android.Widget;
 using astator.Core.Script;
-using astator.LoggerProvider;
 using Java.Lang;
 using System;
 using static Android.Views.View;

@@ -1,6 +1,5 @@
 using AndroidX.AppCompat.App;
 using astator.Core.Script;
-using astator.LoggerProvider;
 using astator.Modules;
 using Microsoft.Maui.Platform;
 

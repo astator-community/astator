@@ -1,13 +1,4 @@
 ﻿using Android.Views;
-using astator.Core.UI.Base;
-using astator.Core.UI.Controls;
-using astator.Core.UI.Floaty;
-using Microsoft.Maui.Controls;
-using Microsoft.Maui.Platform;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 

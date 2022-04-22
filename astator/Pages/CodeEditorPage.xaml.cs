@@ -1,5 +1,4 @@
 using astator.Core.Script;
-using astator.LoggerProvider;
 
 namespace astator
 {

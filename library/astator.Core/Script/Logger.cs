@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ALogger = astator.LoggerProvider.AstatorLogger;
+﻿using ALogger = astator.LoggerProvider.AstatorLogger;
 
 namespace astator.Core.Script;
 

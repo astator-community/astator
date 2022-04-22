@@ -1,6 +1,5 @@
 ﻿using astator.Core.Engine;
 using astator.Core.Script;
-using astator.LoggerProvider;
 using Obfuscar;
 using System;
 using System.IO;

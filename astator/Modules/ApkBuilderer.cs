@@ -1,7 +1,6 @@
 ﻿using astator.Core.Engine;
 using astator.Core.Script;
 using astator.Core.ThirdParty;
-using astator.LoggerProvider;
 using astator.NugetManager;
 using astator.TipsView;
 using Newtonsoft.Json;

@@ -8,7 +8,6 @@ using AndroidX.Core.Graphics.Drawable;
 using astator.Core.Accessibility;
 using astator.Core.Graphics;
 using astator.Core.Script;
-using astator.LoggerProvider;
 using astator.Modules.Base;
 using MQTTnet;
 using MQTTnet.Client;

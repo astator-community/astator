@@ -1,10 +1,10 @@
-﻿using System.IO.Compression;
-using Android.Graphics;
+﻿using Android.Graphics;
 using astator.ApkBuilder.Arsc;
 using astator.ApkBuilder.Axml;
 using astator.ApkBuilder.Signer;
 using astator.LoggerProvider;
 using astator.TipsView;
+using System.IO.Compression;
 using Path = System.IO.Path;
 
 namespace astator.ApkBuilder;
@@ -36,10 +36,10 @@ public class ApkBuilder
 
             using var zip = new ZipArchive(fs, ZipArchiveMode.Update);
 
-            var files = Directory.GetFiles(projectDir,"*", SearchOption.AllDirectories);
+            var files = Directory.GetFiles(projectDir, "*", SearchOption.AllDirectories);
             foreach (var f in files)
             {
-                var entryPath = $"assets/Resources/{Path.GetRelativePath(projectDir,f)}";
+                var entryPath = $"assets/Resources/{Path.GetRelativePath(projectDir, f)}";
                 zip.CreateEntryFromFile(f, entryPath);
             }
 

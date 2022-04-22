@@ -1,5 +1,4 @@
 using astator.Core.Script;
-using astator.LoggerProvider;
 using astator.NugetManager;
 using astator.Views;
 using NuGet.Protocol.Core.Types;

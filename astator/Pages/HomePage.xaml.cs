@@ -3,7 +3,6 @@ using Android.Content;
 using Android.Views;
 using astator.Core.Script;
 using astator.Core.UI.Floaty;
-using astator.LoggerProvider;
 using astator.Modules;
 using astator.NugetManager;
 using astator.TipsView;

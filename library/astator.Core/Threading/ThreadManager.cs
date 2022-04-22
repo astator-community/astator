@@ -1,6 +1,5 @@
 ﻿
 using astator.Core.Script;
-using astator.LoggerProvider;
 using System;
 using System.Collections.Generic;
 using System.Threading;

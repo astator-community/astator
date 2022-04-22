@@ -1,5 +1,4 @@
 ﻿using astator.Core.Script;
-using astator.LoggerProvider;
 using astator.NugetManager;
 using astator.TipsView;
 using Microsoft.CodeAnalysis;
