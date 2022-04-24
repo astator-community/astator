@@ -35,7 +35,7 @@
 
 	<ItemGroup>
 		<!-- App Icon -->
-		<MauiIcon Include="Resources\appicon.png" ForegroundFile="Resources\appicon.png"/>
+		<MauiIcon Include="Resources\appicon.png" ForegroundFile="Resources\appicon.png" />
 
 		<!-- Splash Screen -->
 		<MauiSplashScreen Include="Resources\appiconfg.svg" Color="#8000ff" />
@@ -103,6 +103,7 @@
 	<ItemGroup>
 		<ProjectReference Include="..\library\astator.ApkBuilder\astator.ApkBuilder.csproj" />
 		<ProjectReference Include="..\library\astator.Core\astator.Core.csproj" />
+		<ProjectReference Include="..\library\astator.LoggerProvider\astator.LoggerProvider.csproj" />
 		<ProjectReference Include="..\library\astator.NugetManager\astator.NugetManager.csproj" />
 		<ProjectReference Include="..\library\astator.TipsView\astator.TipsView.csproj" />
 	</ItemGroup>

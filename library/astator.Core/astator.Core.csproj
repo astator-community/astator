@@ -32,9 +32,9 @@
 
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\astator.LoggerProvider\astator.LoggerProvider.csproj" />
 		<ProjectReference Include="..\3rdparty\Obfuscar\Obfuscar\Obfuscar.csproj">
 		</ProjectReference>
+		<ProjectReference Include="..\astator.LoggerProvider\astator.LoggerProvider.csproj" />
 		<ProjectReference Include="..\astator.NugetManager\astator.NugetManager.csproj">
 		</ProjectReference>
 		<ProjectReference Include="..\astator.TipsView\astator.TipsView.csproj" />

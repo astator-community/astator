@@ -19,7 +19,7 @@
         <Grid
             Grid.Row="1"
             Padding="0,5"
-            RowDefinitions="40,40,40,40,40,40"
+            RowDefinitions="40,40,40,40,40,40,40"
             VerticalOptions="End">
             <v:CustomCard
                 Grid.Row="0"
@@ -163,7 +163,6 @@
                     Text="关于"
                     VerticalOptions="Center" />
             </v:CustomCard>
-
         </Grid>
         <v:NavBarView Grid.Row="2" ActiveTab="settings" />
     </Grid>

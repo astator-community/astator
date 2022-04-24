@@ -35,7 +35,7 @@ public class WrapImage
     /// </summary>
     public byte[] Data { get; set; }
 
-    private int[][] description;
+    private short[][] findImageData;
 
     /// <summary>
     /// 从位图文件创建WrapImage对象
@@ -81,42 +81,28 @@ public class WrapImage
     /// 获取找图色组描述
     /// </summary>
     /// <returns></returns>
-    public int[][] GetDescription()
+    public short[][] GetFindImageData()
     {
-        if (this.description is null)
+        if (this.findImageData is null)
         {
-            var result = new int[this.Width * this.Height][];
+            var result = new short[this.Width * this.Height][];
             var position = 0;
-            var sx = -1;
-            var sy = -1;
-            for (var y = 0; y < this.Height; y++)
+            for (short y = 0; y < this.Height; y++)
             {
                 var location = y * this.RowStride;
-                for (var x = 0; x < this.Width; x++, location += this.PxFormat)
+                for (short x = 0; x < this.Width; x++, position++, location += this.PxFormat)
                 {
-                    //当a通道为0时表示透明颜色, 跳过
-                    if (this.Data[location + 3] != 0)
-                    {
-                        if (sx == -1 || sy == -1)
-                        {
-                            sx = x;
-                            sy = y;
-                        }
-
-                        result[position] = new int[9];
-                        result[position][0] = x - sx;
-                        result[position][1] = y - sy;
-                        result[position][2] = this.Data[location];
-                        result[position][3] = this.Data[location + 1];
-                        result[position][4] = this.Data[location + 2];
-                        result[position][5] = result[position][6] = result[position][7] = result[position][8] = 0;
-                        position++;
-                    }
+                    result[position] = new short[9];
+                    result[position][0] = this.Data[location];
+                    result[position][1] = this.Data[location + 1];
+                    result[position][2] = this.Data[location + 2];
+                    //当a通道为0时表示透明颜色
+                    result[position][3] = (short)(this.Data[location + 3] == 0 ? 1 : 0);
                 }
             }
-            this.description = result[0..position];
+            this.findImageData = result;
         }
-        return this.description;
+        return this.findImageData;
     }
 
     /// <summary>

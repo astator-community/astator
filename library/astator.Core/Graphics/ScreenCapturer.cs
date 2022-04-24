@@ -152,14 +152,14 @@ public class ScreenCapturer : Service, IDisposable
             var notificationManager = (NotificationManager)GetSystemService(NotificationService);
             NotificationChannel channel = new("1000", "截屏服务", NotificationImportance.Default);
             notificationManager.CreateNotificationChannel(channel);
-        }
 
-        var notification = new NotificationCompat.Builder(this, "1000")
+            var notification = new NotificationCompat.Builder(this, "1000")
               .SetContentTitle("截屏服务正在运行中")
               .SetSmallIcon(IconCompat.CreateWithResource(this, Android.Resource.Drawable.SymDefAppIcon))
               .Build();
 
-        StartForeground(1000, notification);
+            StartForeground(1000, notification);
+        }
     }
 
 

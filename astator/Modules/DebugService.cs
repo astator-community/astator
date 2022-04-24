@@ -8,6 +8,7 @@ using AndroidX.Core.Graphics.Drawable;
 using astator.Core.Accessibility;
 using astator.Core.Graphics;
 using astator.Core.Script;
+using astator.LoggerProvider;
 using astator.Modules.Base;
 using MQTTnet;
 using MQTTnet.Client;
@@ -66,6 +67,15 @@ internal class DebugService : Service, IDisposable
 
             Logger.Log($"开启调试服务: {ip}");
 
+            AstatorLogger.AddCallback("debug-service", (level, time, msg) =>
+            {
+                this.server.PublishAsync(new MqttApplicationMessage
+                {
+                    Topic = "server/logging",
+                    Payload = Stick.MakePackData(time.ToString("HH:mm:ss.fff"), Encoding.UTF8.GetBytes(msg))
+                });
+            });
+
             this.server.UseClientConnectedHandler(async (e) =>
             {
                 await this.server.SubscribeAsync(e.ClientId,
@@ -93,15 +103,6 @@ internal class DebugService : Service, IDisposable
                     {
                         Topic = "client/layout-dump"
                     });
-
-                AstatorLogger.AddCallback("debug-service", (level, time, msg) =>
-                {
-                    this.server.PublishAsync(new MqttApplicationMessage
-                    {
-                        Topic = "server/logging",
-                        Payload = Stick.MakePackData(time.ToString("HH:mm:ss.fff"), Encoding.UTF8.GetBytes(msg))
-                    });
-                });
             });
 
             this.server.UseClientDisconnectedHandler(async (e) =>
@@ -459,14 +460,14 @@ internal class DebugService : Service, IDisposable
             var notificationManager = (NotificationManager)GetSystemService(NotificationService);
             NotificationChannel channel = new("1002", "调试服务", NotificationImportance.Default);
             notificationManager.CreateNotificationChannel(channel);
+
+            var notification = new NotificationCompat.Builder(this, "1002")
+                .SetContentTitle("调试服务正在运行中")
+                .SetSmallIcon(IconCompat.CreateWithResource(this, Android.Resource.Drawable.SymDefAppIcon))
+                .Build();
+
+            StartForeground(1002, notification);
         }
-
-        var notification = new NotificationCompat.Builder(this, "1002")
-          .SetContentTitle("调试服务正在运行中")
-          .SetSmallIcon(IconCompat.CreateWithResource(this, Android.Resource.Drawable.SymDefAppIcon))
-          .Build();
-
-        StartForeground(1002, notification);
     }
 
     public override void OnTaskRemoved(Intent rootIntent)

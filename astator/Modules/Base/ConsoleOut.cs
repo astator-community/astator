@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using astator.LoggerProvider;
+using System.Text;
 
 namespace astator.Modules.Base;
 

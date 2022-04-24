@@ -45,6 +45,7 @@ public class MainActivity : MauiAppCompatActivity, IActivity
     }
 
     private DateTime latestTime;
+    private int backPressedCount = 0;
 
     public override void OnBackPressed()
     {
@@ -68,13 +69,14 @@ public class MainActivity : MauiAppCompatActivity, IActivity
             var time = DateTime.Now;
             if (time.Subtract(this.latestTime).TotalMilliseconds < 1000)
             {
-                Finish();
-                Java.Lang.JavaSystem.Exit(0);
+                backPressedCount++;
+                if (backPressedCount >= 3) Java.Lang.JavaSystem.Exit(0);
+                else this.latestTime = time;
             }
             else
             {
                 this.latestTime = time;
-                Globals.Toast("再按一次返回退出应用");
+                Globals.Toast("再按3次返回退出应用");
             }
         }
     }

@@ -11,15 +11,15 @@ namespace astator.Core.Accessibility;
 [Service(Label = "astator", Enabled = true, Exported = true, Permission = "android.permission.BIND_ACCESSIBILITY_SERVICE")]
 [IntentFilter(new string[] { "android.accessibilityservice.AccessibilityService" })]
 [MetaData("android.accessibilityservice", Resource = "@xml/accessibilityservice")]
-public class ScriptAccessibilityService : AccessibilityService, IDisposable
+public class ScriptAccessibilityService : AccessibilityService
 {
     public static ScriptAccessibilityService Instance { get; set; }
 
     protected override void OnServiceConnected()
     {
         Instance = this;
-        StartNotification();
         base.OnServiceConnected();
+        StartNotification();
     }
 
     private void StartNotification()
@@ -29,14 +29,14 @@ public class ScriptAccessibilityService : AccessibilityService, IDisposable
             var notificationManager = (NotificationManager)GetSystemService(NotificationService);
             NotificationChannel channel = new("1001", "无障碍服务", NotificationImportance.Default);
             notificationManager.CreateNotificationChannel(channel);
+
+            var notification = new NotificationCompat.Builder(this, "1001")
+              .SetContentTitle("无障碍服务正在运行中")
+              .SetSmallIcon(IconCompat.CreateWithResource(this, Android.Resource.Drawable.SymDefAppIcon))
+              .Build();
+
+            StartForeground(1001, notification);
         }
-
-        var notification = new NotificationCompat.Builder(this, "1001")
-          .SetContentTitle("无障碍服务正在运行中")
-          .SetSmallIcon(IconCompat.CreateWithResource(this, Android.Resource.Drawable.SymDefAppIcon))
-          .Build();
-
-        StartForeground(1001, notification);
     }
 
     public override void OnAccessibilityEvent(AccessibilityEvent e)
@@ -45,38 +45,11 @@ public class ScriptAccessibilityService : AccessibilityService, IDisposable
 
     public override void OnInterrupt()
     {
-        Dispose();
     }
 
     public override void OnDestroy()
     {
-        Dispose();
+        Instance = null;
         base.OnDestroy();
-    }
-
-
-    private bool disposedValue;
-    protected new virtual void Dispose(bool disposing)
-    {
-        if (!this.disposedValue)
-        {
-            if (disposing)
-            {
-                DisableSelf();
-                Instance = null;
-                this.disposedValue = true;
-            }
-        }
-    }
-
-    ~ScriptAccessibilityService()
-    {
-        Dispose(disposing: false);
-    }
-
-    public new void Dispose()
-    {
-        Dispose(disposing: true);
-        GC.SuppressFinalize(this);
     }
 }

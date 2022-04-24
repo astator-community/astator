@@ -1,5 +1,6 @@
 using AndroidX.AppCompat.App;
 using astator.Core.Script;
+using astator.LoggerProvider;
 using astator.Modules;
 using astator.Views;
 using System.IO.Compression;
