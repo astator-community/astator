@@ -1,4 +1,5 @@
-﻿using System;
+﻿using astator.Core.Script;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Threading;
@@ -569,7 +570,7 @@ public class GraphicHelper
                     {
                         var x = redXPtr[i];
                         var y = redYPtr[i];
-                        if (x >= left && x <= right && y >= top && y <= bottom)
+                        if (x >= left && x < right && y >= top && y < bottom)
                         {
                             var location = y * this.rowStride + x * this.pxFormat;
                             if (Math.Abs(screenDataPtr[location] - firstData[2]) <= firstData[5])
@@ -586,7 +587,7 @@ public class GraphicHelper
                                 }
                             }
                         }
-                        else if (x > right && y > bottom)
+                        else if (x >= right && y >= bottom)
                         {
                             break;
                         }
@@ -735,7 +736,7 @@ public class GraphicHelper
                     {
                         var x = redXPtr[i];
                         var y = redYPtr[i];
-                        if (x >= left && x <= right && y >= top && y <= bottom)
+                        if (x >= left && x < right && y >= top && y < bottom)
                         {
                             var location = y * this.rowStride + x * this.pxFormat;
                             if (Math.Abs(screenDataPtr[location] - firstData[2]) <= firstData[5])
@@ -752,7 +753,7 @@ public class GraphicHelper
                                 }
                             }
                         }
-                        else if (x > right && y > bottom)
+                        else if (x >= right && y >= bottom)
                         {
                             break;
                         }
@@ -844,11 +845,11 @@ public class GraphicHelper
                 var location = y * this.rowStride + offsetX * this.pxFormat;
                 for (var x = offsetX; x < offsetWidth; x++, position++, location += this.pxFormat)
                 {
-                    if (data[position][3] == 1) continue;
+                    if (data[position][5] == 1) continue;
 
-                    if (Math.Abs(screenDataPtr[location] - data[position][0]) > similarity
-                        || Math.Abs(screenDataPtr[location + 1] - data[position][1]) > similarity
-                        || Math.Abs(screenDataPtr[location + 2] - data[position][2]) > similarity)
+                    if (Math.Abs(screenDataPtr[location] - data[position][2]) > similarity
+                        || Math.Abs(screenDataPtr[location + 1] - data[position][3]) > similarity
+                        || Math.Abs(screenDataPtr[location + 2] - data[position][4]) > similarity)
                     {
                         return false;
                     }
@@ -871,7 +872,24 @@ public class GraphicHelper
         right = Math.Min(right, this.width);
         bottom = Math.Min(bottom, this.height);
         var data = image.GetFindImageData();
-        var red = data[0][0];
+        var red = -1;
+        var findStartIndex = -1;
+
+        for (var i = 0; i < data.Length; i++)
+        {
+            if (data[i][5] != 1)
+            {
+                red = data[i][2];
+                findStartIndex = i;
+                break;
+            }
+        }
+        if (red == -1)
+        {
+            Logger.Error("找图失败, 未获取到有效数据!");
+            return new Point(-1, -1);
+        }
+
         var similarity = Round(255 - 255 * (sim / 100.0));
         fixed (byte* screenDataPtr = &this.screenData[0])
         {
@@ -901,15 +919,15 @@ public class GraphicHelper
                         if (x >= left && x < right && y >= top && y < bottom)
                         {
                             var location = y * this.rowStride + x * this.pxFormat;
-                            if (Math.Abs(screenDataPtr[location] - data[0][0]) <= similarity)
+                            if (Math.Abs(screenDataPtr[location] - red) <= similarity)
                             {
-                                if (Math.Abs(screenDataPtr[location + 1] - data[0][1]) <= similarity)
+                                if (Math.Abs(screenDataPtr[location + 1] - data[findStartIndex][3]) <= similarity)
                                 {
-                                    if (Math.Abs(screenDataPtr[location + 2] - data[0][2]) <= similarity)
+                                    if (Math.Abs(screenDataPtr[location + 2] - data[findStartIndex][4]) <= similarity)
                                     {
-                                        if (CompareImage(image, x, y, similarity))
+                                        if (CompareImage(image, x - data[findStartIndex][0], y - data[findStartIndex][1], similarity))
                                         {
-                                            return new Point(x, y);
+                                            return new Point(x - data[findStartIndex][0], y - data[findStartIndex][1]);
                                         }
                                     }
                                 }
@@ -1009,7 +1027,24 @@ public class GraphicHelper
         right = Math.Min(right, this.width);
         bottom = Math.Min(bottom, this.height);
         var data = image.GetFindImageData();
-        var red = data[0][0];
+        var red = -1;
+        var findStartIndex = -1;
+
+        for (var i = 0; i < data.Length; i++)
+        {
+            if (data[i][5] != 1)
+            {
+                red = data[i][2];
+                findStartIndex = i;
+                break;
+            }
+        }
+        if (red == -1)
+        {
+            Logger.Error("找图失败, 未获取到有效数据!");
+            return result;
+        }
+
         var similarity = Round(255 - 255 * (sim / 100.0));
         fixed (byte* screenDataPtr = &this.screenData[0])
         {
@@ -1039,15 +1074,15 @@ public class GraphicHelper
                         if (x >= left && x < right && y >= top && y < bottom)
                         {
                             var location = y * this.rowStride + x * this.pxFormat;
-                            if (Math.Abs(screenDataPtr[location] - data[0][0]) <= similarity)
+                            if (Math.Abs(screenDataPtr[location] - red) <= similarity)
                             {
-                                if (Math.Abs(screenDataPtr[location + 1] - data[0][1]) <= similarity)
+                                if (Math.Abs(screenDataPtr[location + 1] - data[findStartIndex][3]) <= similarity)
                                 {
-                                    if (Math.Abs(screenDataPtr[location + 2] - data[0][2]) <= similarity)
+                                    if (Math.Abs(screenDataPtr[location + 2] - data[findStartIndex][4]) <= similarity)
                                     {
-                                        if (CompareImage(image, x, y, similarity))
+                                        if (CompareImage(image, x - data[findStartIndex][0], y - data[findStartIndex][1], similarity))
                                         {
-                                            result.Add(new Point(x, y));
+                                            result.Add(new Point(x - data[findStartIndex][0], y - data[findStartIndex][1]));
                                         }
                                     }
                                 }

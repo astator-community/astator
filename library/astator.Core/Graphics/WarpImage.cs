@@ -93,17 +93,21 @@ public class WrapImage
                 for (short x = 0; x < this.Width; x++, position++, location += this.PxFormat)
                 {
                     result[position] = new short[9];
-                    result[position][0] = this.Data[location];
-                    result[position][1] = this.Data[location + 1];
-                    result[position][2] = this.Data[location + 2];
+                    result[position][0] = x;
+                    result[position][1] = y;
+                    result[position][2] = this.Data[location];
+                    result[position][3] = this.Data[location + 1];
+                    result[position][4] = this.Data[location + 2];
                     //当a通道为0时表示透明颜色
-                    result[position][3] = (short)(this.Data[location + 3] == 0 ? 1 : 0);
+                    result[position][5] = (short)(this.Data[location + 3] == 0 ? 1 : 0);
                 }
             }
             this.findImageData = result;
         }
         return this.findImageData;
     }
+
+    //internal 
 
     /// <summary>
     /// 获取bitmap对象
