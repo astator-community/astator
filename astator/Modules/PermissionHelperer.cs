@@ -69,6 +69,6 @@ internal static class PermissionHelperer
 
     public static void IgnoringBatteryOptimizations(Action<bool> callback)
     {
-        Instance.IgnoringBatteryOptimizations(callback);
+        Instance.ReqIgnoringBatteryOptimizations(callback);
     }
 }
