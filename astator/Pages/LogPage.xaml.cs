@@ -92,7 +92,7 @@ public partial class LogPage : ContentPage
         }
     }
 
-    private void InitLogList()
+    private async void InitLogList()
     {
         var path = Path.Combine(MauiApplication.Current.GetExternalFilesDir("log").ToString(), "log.txt");
         var logList = new List<string>();
@@ -132,13 +132,14 @@ public partial class LogPage : ContentPage
                 }
             }
             File.WriteAllLines(path, logList);
-            this.LogScrollView.ScrollToAsync(0, this.LogLayout.Height, false);
+            await Task.Delay(20);
+            _ = this.LogScrollView.ScrollToAsync(0, this.LogLayout.Height, false);
         }
     }
 
     public void AddLogText(LogLevel logLevel, DateTime time, string msg)
     {
-        Globals.InvokeOnMainThreadAsync(() =>
+        Globals.InvokeOnMainThreadAsync(async () =>
         {
             var label = new Label
             {
@@ -153,7 +154,8 @@ public partial class LogPage : ContentPage
                 label.TextColor = Color.FromRgb(0xf0, 0xdc, 0x0c);
             }
             this.LogLayout.Add(label);
-            this.LogScrollView.ScrollToAsync(0, this.LogLayout.Height, false);
+            await Task.Delay(20);
+            _ = this.LogScrollView.ScrollToAsync(0, this.LogLayout.Height, false);
         });
     }
 

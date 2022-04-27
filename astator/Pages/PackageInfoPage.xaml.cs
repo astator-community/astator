@@ -47,7 +47,7 @@ namespace astator
                 this.License.TextType = TextType.Text;
                 this.License.TextDecorations = TextDecorations.None;
                 this.License.TextColor = (Color)Application.Current.Resources["SecondaryColor"];
-                this.License.Clicked -= Uri_Clicked;
+                this.License.Clicked += Uri_Clicked;
             }
             else if (pkg.LicenseUrl is not null)
             {
@@ -56,7 +56,7 @@ namespace astator
                 this.License.TextType = TextType.Html;
                 this.License.TextDecorations = TextDecorations.Underline;
                 this.License.TextColor = Color.Parse("#56c2ec");
-                this.License.Clicked += Uri_Clicked;
+                this.License.Clicked -= Uri_Clicked;
             }
 
             this.PublishDate.Text = pkg.Published.Value.ToString("d");
@@ -175,7 +175,7 @@ namespace astator
             this.Refresh.IsRefreshing = false;
         }
 
-        private void Uri_Clicked(object sender, EventArgs e)
+        private void Uri_Clicked(object sender,EventArgs e)
         {
             var view = sender as CustomLabel;
             if (!string.IsNullOrEmpty(view.Tag?.ToString()))

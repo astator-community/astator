@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<toolkit:Popup
+    x:Class="astator.Popups.FileOptions"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    HorizontalOptions="Start"
+    Opened="Popup_Opened"
+    VerticalOptions="Start"
+    Color="Transparent">
+    <VerticalStackLayout
+        x:Name="Items"
+        BackgroundColor="{DynamicResource PrimaryColor}"
+        WidthRequest="190">
+        <VerticalStackLayout.Resources>
+            <Style TargetType="Label">
+                <Setter Property="WidthRequest" Value="160" />
+                <Setter Property="Padding" Value="15,10" />
+                <Setter Property="FontSize" Value="14" />
+                <Setter Property="FontAttributes" Value="Bold" />
+                <Setter Property="FontFamily" Value="CascadiaCode" />
+                <Setter Property="BackgroundColor" Value="Transparent" />
+                <Setter Property="HorizontalOptions" Value="Start" />
+            </Style>
+        </VerticalStackLayout.Resources>
+    </VerticalStackLayout>
+</toolkit:Popup>

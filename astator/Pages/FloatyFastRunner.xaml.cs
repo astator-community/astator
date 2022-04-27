@@ -53,7 +53,6 @@ namespace astator.Pages
                     TypeImageSource = "folder.png",
                 };
                 card.Clicked += Dir_Clicked;
-
                 this.FilesLayout.Children.Add(card);
             }
 
@@ -78,12 +77,11 @@ namespace astator.Pages
                     TypeImageSource = $"file{icon}.png",
                 };
                 card.Clicked += File_Clicked;
-
                 this.FilesLayout.Children.Add(card);
             }
         }
 
-        private void File_Clicked(object sender, EventArgs e)
+        private void File_Clicked(object sender,EventArgs e)
         {
             var card = sender as PathCard;
             var filePath = card.Tag as string;
@@ -166,7 +164,6 @@ namespace astator.Pages
         protected override void OnHandlerChanged()
         {
             base.OnHandlerChanged();
-
             var view = this.Handler.PlatformView as LayoutViewGroup;
             view.ClipToOutline = true;
             view.OutlineProvider = new RadiusOutlineProvider(35);

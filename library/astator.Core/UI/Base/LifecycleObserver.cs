@@ -4,6 +4,7 @@ using AndroidX.Activity.Result;
 using AndroidX.Activity.Result.Contract;
 using AndroidX.AppCompat.App;
 using AndroidX.Lifecycle;
+using astator.Core.Script;
 using System;
 
 namespace astator.Core.UI.Base;
@@ -40,7 +41,14 @@ public class LifecycleObserver : Java.Lang.Object, ILifecycleObserver
             new ActivityResultContracts.RequestPermission(),
             new ActivityResultCallback(result =>
             {
-                this.permissionCallback?.Invoke((bool)result);
+                try
+                {
+                    this.permissionCallback?.Invoke((bool)result);
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error(ex);
+                }
             }));
 
         this.startActivityLauncher = this.registry.Register("startActivity",
@@ -48,7 +56,14 @@ public class LifecycleObserver : Java.Lang.Object, ILifecycleObserver
             new ActivityResultContracts.StartActivityForResult(),
             new ActivityResultCallback(result =>
             {
-                this.startActivityCallback?.Invoke(result.JavaCast<ActivityResult>());
+                try
+                {
+                    this.startActivityCallback?.Invoke(result.JavaCast<ActivityResult>());
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error(ex);
+                }
             }));
     }
 

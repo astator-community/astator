@@ -1,6 +1,7 @@
 ﻿
 using astator.Pages;
 using astator.Views;
+using CommunityToolkit.Maui;
 using Microsoft.Maui.Controls.Compatibility;
 
 namespace astator;
@@ -15,6 +16,7 @@ public static class MauiProgram
             {
                 fonts.AddFont("CascadiaCode-SemiLight.ttf", "CascadiaCode");
             })
+            .UseMauiCommunityToolkit()
             //.UseMauiCompatibility()
             .ConfigureMauiHandlers(handler =>
             {

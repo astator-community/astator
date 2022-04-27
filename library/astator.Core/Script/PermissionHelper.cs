@@ -4,10 +4,12 @@ using Android.Media.Projection;
 using Android.OS;
 using Android.Provider;
 using AndroidX.Activity.Result;
+using AndroidX.Core.App;
 using astator.Core.Accessibility;
 using astator.Core.Graphics;
 using astator.Core.UI.Base;
 using System;
+using System.Threading.Tasks;
 
 namespace astator.Core.Script;
 
@@ -61,7 +63,7 @@ public class PermissionHelper
         if (CheckScreenCap())
         {
             ScreenCapturer.Instance.ResetOrientation(isLandscape);
-            callback?.Invoke(true);
+            InvokeCallback(callback, true);
             return;
         }
 
@@ -85,7 +87,28 @@ public class PermissionHelper
                     this.activity.StartService(intent);
                 }
             }
-            callback?.Invoke(isEnabled);
+            InvokeCallback(callback, isEnabled);
+        });
+    }
+
+    public async Task<bool> ReqScreenCapAsync(bool isLandscape)
+    {
+        var isBack = false;
+        var isEnabled = false;
+
+        ReqScreenCap(isLandscape, (result) =>
+        {
+            isEnabled = result;
+            isBack = true;
+        });
+
+        return await Task.Run(async () =>
+        {
+            while (!isBack)
+            {
+                await Task.Delay(100);
+            }
+            return isEnabled;
         });
     }
 
@@ -111,18 +134,42 @@ public class PermissionHelper
     /// </summary>
     public void ReqFloaty(Action<bool> callback)
     {
-        if (!CheckFloaty())
+        if (CheckFloaty())
         {
-            var intent = new Intent(Settings.ActionManageOverlayPermission, Android.Net.Uri.Parse("package:" + this.activity.PackageName));
-            StartActivityForResult(intent, (_) =>
+            InvokeCallback(callback, true);
+            return;
+        }
+
+        var intent = new Intent(Settings.ActionManageOverlayPermission, Android.Net.Uri.Parse("package:" + this.activity.PackageName));
+        StartActivityForResult(intent, (_) =>
+        {
+            InvokeCallback(callback, CheckFloaty());
+        });
+    }
+
+    /// <summary>
+    /// 申请悬浮窗权限并返回结果
+    /// </summary>
+    /// <returns></returns>
+    public async Task<bool> ReqFloatyAsync()
+    {
+        var isBack = false;
+        var isEnabled = false;
+
+        ReqFloaty((result) =>
+        {
+            isEnabled = result;
+            isBack = true;
+        });
+
+        return await Task.Run(async () =>
+        {
+            while (!isBack)
             {
-                callback.Invoke(CheckFloaty());
-            });
-        }
-        else
-        {
-            callback.Invoke(true);
-        }
+                await Task.Delay(100);
+            }
+            return isEnabled;
+        });
     }
 
     /// <summary>
@@ -148,17 +195,41 @@ public class PermissionHelper
                 Settings.Secure.PutString(Globals.AppContext.ContentResolver, Settings.Secure.EnabledAccessibilityServices, req);
                 Settings.Secure.PutInt(Globals.AppContext.ContentResolver, Settings.Secure.AccessibilityEnabled, 1);
             }
-            callback.Invoke(true);
+            InvokeCallback(callback, true);
         }
         catch
         {
             var intent = new Intent(Settings.ActionAccessibilitySettings);
             StartActivityForResult(intent, (_) =>
             {
-                callback.Invoke(CheckAccessibility());
+                InvokeCallback(callback, CheckAccessibility());
             });
         }
+    }
 
+    /// <summary>
+    /// 启动无障碍服务并返回结果
+    /// </summary>
+    /// <returns></returns>
+    public async Task<bool> ReqAccessibilityAsync()
+    {
+        var isBack = false;
+        var isEnabled = false;
+
+        ReqAccessibility((result) =>
+        {
+            isEnabled = result;
+            isBack = true;
+        });
+
+        return await Task.Run(async () =>
+        {
+            while (!isBack)
+            {
+                await Task.Delay(100);
+            }
+            return isEnabled;
+        });
     }
 
     /// <summary>
@@ -180,20 +251,48 @@ public class PermissionHelper
     }
 
     /// <summary>
-    /// 忽略电池优化
+    /// 申请忽略电池优化
     /// </summary>
-    public void IgnoringBatteryOptimizations(Action<bool> callback)
+    public void ReqIgnoringBatteryOptimizations(Action<bool> callback)
     {
         var isIgnored = IsIgnoringBatteryOptimizations();
-        if (!isIgnored)
+        if (isIgnored)
         {
-            var intent = new Intent("android.settings.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS");
-            intent.SetData(Android.Net.Uri.Parse($"package:{this.activity.PackageName}"));
-            StartActivityForResult(intent, (_) =>
-            {
-                callback.Invoke(IsIgnoringBatteryOptimizations());
-            });
+            InvokeCallback(callback, isIgnored);
+            return;
         }
+
+        var intent = new Intent("android.settings.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS");
+        intent.SetData(Android.Net.Uri.Parse($"package:{this.activity.PackageName}"));
+        StartActivityForResult(intent, (_) =>
+        {
+            InvokeCallback(callback, IsIgnoringBatteryOptimizations());
+        });
+    }
+
+    /// <summary>
+    /// 申请忽略电池优化并返回结果
+    /// </summary>
+    /// <returns></returns>
+    public async Task<bool> ReqIgnoringBatteryOptimizationsAsync()
+    {
+        var isBack = false;
+        var isEnabled = false;
+
+        ReqIgnoringBatteryOptimizations((result) =>
+        {
+            isEnabled = result;
+            isBack = true;
+        });
+
+        return await Task.Run(async () =>
+        {
+            while (!isBack)
+            {
+                await Task.Delay(100);
+            }
+            return isEnabled;
+        });
     }
 
     /// <summary>
@@ -210,14 +309,104 @@ public class PermissionHelper
     /// </summary>
     public void ReqUsageStats(Action<bool> callback)
     {
-        if (!CheckUsageStats())
+        if (CheckUsageStats())
         {
-            var intent = new Intent(Android.Provider.Settings.ActionUsageAccessSettings);
-            StartActivityForResult(intent, (_) =>
-            {
-                callback.Invoke(CheckUsageStats());
-            });
+            InvokeCallback(callback, true);
+            return;
         }
+
+        var intent = new Intent(Android.Provider.Settings.ActionUsageAccessSettings);
+        StartActivityForResult(intent, (_) =>
+        {
+            InvokeCallback(callback, CheckUsageStats());
+        });
+    }
+
+    /// <summary>
+    /// 申请使用情况统计权限并返回结果
+    /// </summary>
+    /// <returns></returns>
+    public async Task<bool> ReqUsageStatsAsync()
+    {
+        var isBack = false;
+        var isEnabled = false;
+
+        ReqUsageStats((result) =>
+        {
+            isEnabled = result;
+            isBack = true;
+        });
+
+        return await Task.Run(async () =>
+        {
+            while (!isBack)
+            {
+                await Task.Delay(100);
+            }
+            return isEnabled;
+        });
+    }
+
+    /// <summary>
+    /// 检查通知权限是否开启
+    /// </summary>
+    /// <returns></returns>
+    public bool CheckNotification()
+    {
+        var notificationManager = (NotificationManager)this.activity.GetSystemService(Context.NotificationService);
+        return notificationManager.AreNotificationsEnabled();
+    }
+
+    /// <summary>
+    /// 申请通知权限
+    /// </summary>
+    /// <param name="callback"></param>
+    public void ReqNotification(Action<bool> callback)
+    {
+        if (CheckNotification())
+        {
+            InvokeCallback(callback, true);
+            return;
+        }
+
+        var intent = new Intent();
+        intent.SetAction("android.settings.APP_NOTIFICATION_SETTINGS");
+        intent.PutExtra("app_package", this.activity.PackageName);
+        intent.PutExtra("app_uid", this.activity.ApplicationInfo.Uid);
+        if (OperatingSystem.IsAndroidVersionAtLeast(26))
+        {
+            intent.PutExtra("android.provider.extra.APP_PACKAGE", this.activity.PackageName);
+        }
+
+        StartActivityForResult(intent, (_) =>
+        {
+            InvokeCallback(callback, CheckNotification());
+        });
+    }
+
+    /// <summary>
+    /// 申请通知权限并返回结果
+    /// </summary>
+    /// <returns></returns>
+    public async Task<bool> ReqNotificationAsync()
+    {
+        var isBack = false;
+        var isEnabled = false;
+
+        ReqNotification((result) =>
+        {
+            isEnabled = result;
+            isBack = true;
+        });
+
+        return await Task.Run(async () =>
+        {
+            while (!isBack)
+            {
+                await Task.Delay(100);
+            }
+            return isEnabled;
+        });
     }
 
     /// <summary>
@@ -239,13 +428,50 @@ public class PermissionHelper
     }
 
     /// <summary>
-    /// 动态权限申请
+    /// 申请动态权限
     /// </summary>
     /// <param name="permission">权限值</param>
     /// <param name="callback">申请结果回调</param>
     public void ReqPermission(string permission, Action<bool> callback)
     {
         this.lifecycleObserver?.ReqPermission(permission, callback);
+    }
+
+    /// <summary>
+    /// 申请动态权限并返回结果
+    /// </summary>
+    /// <returns></returns>
+    public async Task<bool> ReqPermissionAsync(string permission)
+    {
+        var isBack = false;
+        var isEnabled = false;
+
+        ReqPermission(permission ,(result) =>
+        {
+            isEnabled = result;
+            isBack = true;
+        });
+
+        return await Task.Run(async () =>
+        {
+            while (!isBack)
+            {
+                await Task.Delay(100);
+            }
+            return isEnabled;
+        });
+    }
+
+    private static void InvokeCallback(Action<bool> callback, bool isEnabled)
+    {
+        try
+        {
+            callback.Invoke(isEnabled);
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex);
+        }
     }
 }
 

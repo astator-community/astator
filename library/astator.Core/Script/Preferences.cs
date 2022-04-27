@@ -4,7 +4,6 @@ using MauiPreferences = Microsoft.Maui.Essentials.Preferences;
 
 namespace astator.Core.Script;
 
-
 public class Preferences
 {
     /// <summary>

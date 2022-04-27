@@ -2,11 +2,6 @@ namespace astator.Views
 {
     public partial class PackageInfoCard : CustomCard
     {
-
-        // private Uri defaultIconUri =Uri. Android.App.Application.Context.Resources.Assets.;
-
-
-
         public static readonly BindableProperty IconUriBindableProperty = BindableProperty.Create(nameof(IconUri), typeof(Uri), typeof(PackageInfoCard));
         public Uri IconUri
         {
@@ -16,7 +11,7 @@ namespace astator.Views
                 if (value is not null)
                 {
                     SetValue(IconUriBindableProperty, value);
-                    this.Icon.Source = value;
+                    this.Icon.Source = ImageSource.FromUri(value);
                 }
             }
         }

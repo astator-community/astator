@@ -20,8 +20,8 @@ namespace astator.Pages
 
             var pkgs = await NugetCommands.SearchPkgAsync(this.SearchEditor.Text);
 
-            var cards = await Task.Run(() =>
-            {
+            //var cards = await Task.Run(() =>
+            //{
                 var result = new List<PackageInfoCard>();
                 if (pkgs is not null)
                 {
@@ -41,10 +41,10 @@ namespace astator.Pages
                         result.Add(card);
                     }
                 }
-                return result;
-            });
+                //return result;
+            //});
 
-            foreach (var card in cards)
+            foreach (var card in result)
             {
                 card.Clicked += PkgCard_Clicked;
                 this.PkgLayout.Add(card);

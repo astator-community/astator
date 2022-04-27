@@ -1,148 +1,162 @@
+using Android.Content;
 using AndroidX.AppCompat.App;
 using astator.Core.Script;
 using astator.Modules;
+using astator.Popups;
+using CommunityToolkit.Maui.Views;
 using Microsoft.Maui.Platform;
 
-namespace astator.Pages
+namespace astator.Pages;
+
+public partial class SettingsPage : ContentPage
 {
-    public partial class SettingsPage : ContentPage
+    public SettingsPage()
     {
-        public SettingsPage()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
+    }
 
-        private void AccessibilityService_Toggled(object sender, ToggledEventArgs e)
+    private void AccessibilityService_Toggled(object sender, ToggledEventArgs e)
+    {
+        if (e.Value)
         {
-            if (e.Value)
+            if (!PermissionHelperer.CheckAccessibility())
             {
-                if (!PermissionHelperer.CheckAccessibility())
+                PermissionHelperer.ReqAccessibility((enabled) =>
                 {
-                    PermissionHelperer.ReqAccessibility((enabled) =>
+                    if (!enabled)
                     {
-                        if (!enabled)
-                        {
-                            this.AccessibilityService.IsToggled = false;
-                        }
-                    });
-                }
+                        this.AccessibilityService.IsToggled = false;
+                    }
+                });
+            }
+        }
+        else
+        {
+            PermissionHelperer.CloseAccessibility();
+        }
+    }
+
+    private void CaptureService_Toggled(object sender, ToggledEventArgs e)
+    {
+        if (e.Value)
+        {
+            if (!PermissionHelperer.CheckScreenCap())
+            {
+                PermissionHelperer.ReqScreenCap(false, result =>
+                {
+                    if (!result)
+                    {
+                        this.CaptureService.IsToggled = false;
+                    }
+                });
+            }
+        }
+        else
+        {
+            PermissionHelperer.CloseScreenCap();
+        }
+    }
+
+    private void Floaty_Toggled(object sender, ToggledEventArgs e)
+    {
+        if (e.Value)
+        {
+            if (!PermissionHelperer.CheckFloaty())
+            {
+                PermissionHelperer.ReqFloaty((enabled) =>
+                {
+                    if (!enabled)
+                    {
+                        this.Floaty.IsToggled = false;
+                    }
+                });
             }
             else
             {
-                PermissionHelperer.CloseAccessibility();
+                FloatyManager.Instance?.Show();
             }
         }
-
-
-        private void CaptureService_Toggled(object sender, ToggledEventArgs e)
+        else
         {
-            if (e.Value)
-            {
-                if (!PermissionHelperer.CheckScreenCap())
-                {
-                    PermissionHelperer.ReqScreenCap(false, result =>
-                    {
-                        if (!result)
-                        {
-                            this.CaptureService.IsToggled = false;
-                        }
-                    });
-                }
-            }
-            else
-            {
-                PermissionHelperer.CloseScreenCap();
-            }
+            FloatyManager.Instance?.Remove();
+        }
+    }
+
+    private async void Debug_Toggled(object sender, ToggledEventArgs e)
+    {
+        if (!e.Value)
+        {
+            DebugService.Instance?.Dispose();
+            return;
         }
 
-        private void Floaty_Toggled(object sender, ToggledEventArgs e)
+        try
         {
-            if (e.Value)
+            this.Debug.IsEnabled = false;
+            var debugOptions = new DebugOptions();
+            var result = await this.ShowPopupAsync(debugOptions);
+            if (result is not null)
             {
-                if (!PermissionHelperer.CheckFloaty())
+                var (mode, ip) = ((int, string))result;
+                var intent = new Intent(Globals.AppContext, typeof(DebugService));
+                intent.PutExtra("mode", mode);
+                intent.PutExtra("ip", ip);
+                if (OperatingSystem.IsAndroidVersionAtLeast(26))
                 {
-                    PermissionHelperer.ReqFloaty((enabled) =>
-                    {
-                        if (!enabled)
-                        {
-                            this.Floaty.IsToggled = false;
-                        }
-                    });
+                    Globals.AppContext.StartForegroundService(intent);
                 }
                 else
                 {
-                    FloatyManager.Instance?.Show();
+                    Globals.AppContext.StartService(intent);
+                }
+                await Task.Delay(200);
+                if (DebugService.Instance is null)
+                {
+                    this.Debug.IsToggled = false;
                 }
             }
             else
             {
-                FloatyManager.Instance?.Remove();
+                this.Debug.IsToggled = false;
             }
         }
-
-        private void Debug_Toggled(object sender, ToggledEventArgs e)
+        catch (Exception ex)
         {
-            if (e.Value)
-            {
-                try
-                {
-                    var setDebugMode = new SetDebugMode();
-                    var view = setDebugMode.ToPlatform(this.Handler.MauiContext);
-                    var builder = new AlertDialog.Builder(Globals.AppContext).SetView(view);
-                    var dialog = builder.Show();
-                    setDebugMode.DismissCallback += () =>
-                    {
-                        dialog.Dismiss();
-                    };
-
-                    dialog.DismissEvent += async (s, e) =>
-                    {
-                        await Task.Delay(200);
-                        if (DebugService.Instance is null)
-                        {
-                            this.Debug.IsToggled = false;
-                        }
-                    };
-                }
-                catch (Exception ex)
-                {
-                    Logger.Error(ex);
-                }
-            }
-            else
-            {
-                DebugService.Instance?.Dispose();
-            }
+            Logger.Error(ex);
         }
-
-        private void AccessibilityService_Clicked(object sender, EventArgs e)
+        finally
         {
-            this.AccessibilityService.IsToggled = !this.AccessibilityService.IsToggled;
+            this.Debug.IsEnabled = true;
         }
+    }
 
-        private void CaptureService_Clicked(object sender, EventArgs e)
-        {
-            this.CaptureService.IsToggled = !this.CaptureService.IsToggled;
-        }
+    private void AccessibilityService_Clicked(object sender, EventArgs e)
+    {
+        this.AccessibilityService.IsToggled = !this.AccessibilityService.IsToggled;
+    }
 
-        private void Floaty_Clicked(object sender, EventArgs e)
-        {
-            this.CaptureService.IsToggled = !this.CaptureService.IsToggled;
-        }
+    private void CaptureService_Clicked(object sender, EventArgs e)
+    {
+        this.CaptureService.IsToggled = !this.CaptureService.IsToggled;
+    }
 
-        private void Debug_Clicked(object sender, EventArgs e)
-        {
-            this.Debug.IsToggled = !this.Debug.IsToggled;
-        }
+    private void Floaty_Clicked(object sender, EventArgs e)
+    {
+        this.CaptureService.IsToggled = !this.CaptureService.IsToggled;
+    }
 
-        private async void NugetManage_Clicked(object sender, EventArgs e)
-        {
-            await this.Navigation.PushModalAsync(new NugetPage());
-        }
+    private void Debug_Clicked(object sender, EventArgs e)
+    {
+        this.Debug.IsToggled = !this.Debug.IsToggled;
+    }
 
-        private async void About_Clicked(object sender, EventArgs e)
-        {
-            await this.Navigation.PushModalAsync(new AboutPage());
-        }
+    private async void NugetManage_Clicked(object sender, EventArgs e)
+    {
+        await this.Navigation.PushModalAsync(new NugetPage());
+    }
+
+    private async void About_Clicked(object sender, EventArgs e)
+    {
+        await this.Navigation.PushModalAsync(new AboutPage());
     }
 }

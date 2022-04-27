@@ -1,19 +1,16 @@
-using Android.Content;
-using astator.Core.Script;
-using astator.Modules;
+using astator.Core.UI.Base;
+using CommunityToolkit.Maui.Views;
 using Java.Net;
+using Microsoft.Maui.Platform;
 
-namespace astator.Pages;
+namespace astator.Popups;
 
-public partial class SetDebugMode : Grid
+public partial class DebugOptions : Popup
 {
-    public Action DismissCallback { get; set; }
-
-    public SetDebugMode()
-    {
-        InitializeComponent();
-        this.Address.Text = GetLocalHostAddress();
-    }
+	public DebugOptions()
+	{
+		InitializeComponent();
+	}
 
     private void ClientMode_CheckedChanged(object sender, CheckedChangedEventArgs e)
     {
@@ -21,13 +18,13 @@ public partial class SetDebugMode : Grid
         {
             this.Address.IsReadOnly = false;
             this.Address.Text = Core.Script.Preferences.Get("latestServerIp", string.Empty, "astator");
-            this.HintMsg.Text = "填入VSCode所在电脑的ip地址连接到VSCode, 模拟器请填入10.0.2.2";
+            this.HintMsg.Text = "填入ide的ip地址连接到VSCode, 模拟器请填入10.0.2.2";
         }
         else
         {
             this.Address.IsReadOnly = true;
             this.Address.Text = GetLocalHostAddress();
-            this.HintMsg.Text = "在VSCode插件中输入以下ip地址连接到astator";
+            this.HintMsg.Text = "在ide扩展中输入以下ip地址连接到astator";
         }
     }
 
@@ -52,7 +49,7 @@ public partial class SetDebugMode : Grid
 
     private void Cancel_Clicked(object sender, EventArgs e)
     {
-        this.DismissCallback?.Invoke();
+        Close();
     }
 
     private void Connect_Clicked(object sender, EventArgs e)
@@ -61,19 +58,7 @@ public partial class SetDebugMode : Grid
         {
             Core.Script.Preferences.Set("latestServerIp", this.Address.Text, "astator");
         }
-
-        var intent = new Intent(Globals.AppContext, typeof(DebugService));
-        intent.PutExtra("mode", this.ServiceMode.IsChecked ? 0 : 1);
-        intent.PutExtra("ip", this.Address.Text);
-        if (OperatingSystem.IsAndroidVersionAtLeast(26))
-        {
-            Globals.AppContext.StartForegroundService(intent);
-        }
-        else
-        {
-            Globals.AppContext.StartService(intent);
-        }
-        this.DismissCallback?.Invoke();
+        Close((this.ServiceMode.IsChecked ? 0 : 1, this.Address.Text));
     }
 
     private void Address_TextChanged(object sender, TextChangedEventArgs e)
@@ -82,5 +67,20 @@ public partial class SetDebugMode : Grid
             this.Connect.IsEnabled = false;
         else
             this.Connect.IsEnabled = true;
+    }
+
+    private void Popup_Opened(object sender, CommunityToolkit.Maui.Core.PopupOpenedEventArgs e)
+    {
+        this.Size = new Size(this.Content.Width, this.Content.Height);
+        this.Content.Scale = 0;
+        this.Content.ScaleTo(1, 250);
+    }
+
+    protected override void OnHandlerChanged()
+    {
+        base.OnHandlerChanged();
+        var view = this.Content.Handler.PlatformView as LayoutViewGroup;
+        view.ClipToOutline = true;
+        view.OutlineProvider = new RadiusOutlineProvider(10);
     }
 }

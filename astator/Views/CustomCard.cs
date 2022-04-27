@@ -14,6 +14,7 @@ public class CustomCard : Grid
     }
 
     public event EventHandler Clicked;
+    public event EventHandler LongClicked;
 
     protected override void OnHandlerChanged()
     {
@@ -35,7 +36,13 @@ public class CustomCard : Grid
 
         view.SetOnClickListener(new OnClickListener((v) =>
         {
-            Clicked?.Invoke(this, null);
+            this.Clicked?.Invoke(this, null);
+        }));
+
+        view.SetOnLongClickListener(new OnLongClickListener((v) =>
+        {
+            this.LongClicked?.Invoke(this, null);
+            return true;
         }));
     }
 }

@@ -9,7 +9,7 @@
         <Grid
             Grid.Row="0"
             Padding="15,5"
-            ColumnDefinitions="*,auto"
+            ColumnDefinitions="*,45"
             HorizontalOptions="FillAndExpand">
             <Label
                 x:Name="Header"
@@ -19,16 +19,14 @@
                 HorizontalOptions="Start"
                 Text="日志"
                 VerticalOptions="Center" />
-            <v:CustomImageButton
+            <v:CustomCard
                 Grid.Column="1"
                 Padding="10,6"
-                BackgroundColor="Transparent"
                 Clicked="Delete_Clicked"
-                HeightRequest="45"
                 HorizontalOptions="End"
-                Source="delete.png"
-                VerticalOptions="Center"
-                WidthRequest="45" />
+                VerticalOptions="Center">
+                <Image Source="delete.png" />
+            </v:CustomCard>
         </Grid>
 
         <ScrollView

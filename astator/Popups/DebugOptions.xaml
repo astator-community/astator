@@ -1,0 +1,66 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<toolkit:Popup
+    x:Class="astator.Popups.DebugOptions"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:v="clr-namespace:astator.Views"
+    Opened="Popup_Opened"
+    Color="Transparent">
+    <Grid
+        Padding="20,15,20,5"
+        BackgroundColor="{DynamicResource PrimaryColor}"
+        RowDefinitions="auto,auto,auto,auto,auto,auto"
+        RowSpacing="10">
+        <Label
+            FontAttributes="Bold"
+            FontSize="20"
+            HorizontalOptions="Start"
+            Text="模式配置"
+            VerticalOptions="Center" />
+        <RadioButton
+            x:Name="ServiceMode"
+            Grid.Row="1"
+            BackgroundColor="{DynamicResource PrimaryColor}"
+            Content="服务器模式"
+            FontSize="16"
+            GroupName="Modes"
+            IsChecked="True" />
+        <RadioButton
+            x:Name="ClientMode"
+            Grid.Row="2"
+            BackgroundColor="{DynamicResource PrimaryColor}"
+            CheckedChanged="ClientMode_CheckedChanged"
+            Content="客户端模式"
+            FontSize="16"
+            GroupName="Modes" />
+        <Label
+            x:Name="HintMsg"
+            Grid.Row="3"
+            FontSize="16"
+            Text="在VSCode插件中输入以下ip地址连接到astator"
+            TextColor="#666666" />
+        <Editor
+            x:Name="Address"
+            Grid.Row="4"
+            FontSize="16"
+            IsReadOnly="True"
+            TextChanged="Address_TextChanged" />
+        <HorizontalStackLayout Grid.Row="5" HorizontalOptions="End">
+            <v:CustomLabelButton
+                Padding="16,10"
+                BackgroundColor="{DynamicResource PrimaryColor}"
+                Clicked="Cancel_Clicked"
+                FontSize="15"
+                Text="取消" />
+            <v:CustomLabelButton
+                x:Name="Connect"
+                Margin="5,0,0,0"
+                Padding="16,10"
+                BackgroundColor="{DynamicResource PrimaryColor}"
+                Clicked="Connect_Clicked"
+                FontSize="15"
+                Text="确定" />
+        </HorizontalStackLayout>
+    </Grid>
+</toolkit:Popup>

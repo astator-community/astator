@@ -5,8 +5,10 @@ using astator.Core.Script;
 using astator.Core.UI.Floaty;
 using astator.Modules;
 using astator.NugetManager;
+using astator.Popups;
 using astator.TipsView;
 using astator.Views;
+using CommunityToolkit.Maui.Views;
 using Microsoft.Maui.Platform;
 using System.IO.Compression;
 using System.Xml.Linq;
@@ -100,9 +102,7 @@ public partial class HomePage : ContentPage
                 PathInfo = info,
                 TypeImageSource = "folder.png",
             };
-
             card.Clicked += Dir_Clicked;
-
             this.FilesLayout.Add(card);
         }
 
@@ -126,9 +126,9 @@ public partial class HomePage : ContentPage
                 PathName = name,
                 PathInfo = info,
                 TypeImageSource = $"file{icon}.png",
-                IsAddMenu = true
             };
             card.Clicked += File_Clicked;
+            card.LongClicked += File_LongClicked;
             this.FilesLayout.Add(card);
         }
     }
@@ -184,6 +184,94 @@ public partial class HomePage : ContentPage
     {
         var dir = sender as CustomLabelButton;
         UpdateDirTbs(dir.Tag as string);
+    }
+
+    private async void File_LongClicked(object sender, EventArgs e)
+    {
+        var card = sender as PathCard;
+        var fileOptions = new Popups.FileOptions(card);
+        var item = await this.ShowPopupAsync(fileOptions) as string;
+        if (string.IsNullOrEmpty(item)) return;
+        var fileName = card.Tag.ToString();
+        switch (item)
+        {
+            case "运行项目":
+                _ = ScriptManager.Instance.RunProject(Path.GetDirectoryName(fileName));
+                break;
+            case "运行脚本":
+                _ = ScriptManager.Instance.RunScript(fileName);
+                break;
+            case "打包apk":
+            {
+                var apkbuilderer = new ApkBuilderer(Path.GetDirectoryName(fileName));
+                _ = apkbuilderer.Build();
+                break;
+            }
+            case "编译dll":
+            {
+                var apkbuilderer = new ApkBuilderer(Path.GetDirectoryName(fileName));
+                _ = apkbuilderer.CompileDll();
+                break;
+            }
+            case "重命名":
+                var pathRename = new PathRename();
+                var newName = await this.ShowPopupAsync(pathRename) as string;
+                if (!string.IsNullOrEmpty(newName))
+                {
+                    File.Move(fileName, Path.Combine(Path.GetDirectoryName(fileName), newName));
+                    var refreshView = card.Parent?.Parent?.Parent?.Parent as RefreshView;
+                    if (refreshView is not null)
+                    {
+                        refreshView.IsRefreshing = true;
+                    };
+                };
+                break;
+            case "删除":
+            {
+                var alert = new AndroidX.AppCompat.App.AlertDialog
+                    .Builder(Globals.AppContext)
+                    .SetTitle("删除文件")
+                    .SetMessage($"确认删除 \"{fileName}\" 吗?")
+                    .SetPositiveButton("确认", (s, e) =>
+                    {
+                        File.Delete(fileName);
+                        var refreshView = card.Parent?.Parent?.Parent?.Parent as RefreshView;
+                        if (refreshView is not null)
+                        {
+                            refreshView.IsRefreshing = true;
+                        }
+                    })
+                    .SetNegativeButton("取消", (s, e) => { });
+                alert.Show();
+                break;
+            }
+            case "分享":
+            {
+                var intent = new Intent(Intent.ActionSend);
+                var contentType = new FileResult(fileName).ContentType;
+                var uri = AndroidX.Core.Content.FileProvider.GetUriForFile(Android.App.Application.Context,
+                    Android.App.Application.Context.PackageName + ".fileProvider",
+                    new Java.IO.File(fileName));
+                intent.SetType(contentType);
+                intent.PutExtra(Intent.ExtraStream, uri);
+                intent.AddFlags(ActivityFlags.GrantReadUriPermission);
+                Globals.AppContext.StartActivity(intent);
+                break;
+            }
+            case "其他应用打开":
+            {
+                var intent = new Intent(Intent.ActionView);
+                intent.AddFlags(ActivityFlags.NewTask);
+                var contentType = new FileResult(fileName).ContentType;
+                var uri = AndroidX.Core.Content.FileProvider.GetUriForFile(Android.App.Application.Context,
+                    Android.App.Application.Context.PackageName + ".fileProvider",
+                    new Java.IO.File(fileName));
+                intent.AddFlags(ActivityFlags.GrantReadUriPermission | ActivityFlags.GrantWriteUriPermission);
+                intent.SetDataAndType(uri, contentType);
+                Globals.AppContext.StartActivity(intent);
+                break;
+            }
+        };
     }
 
 

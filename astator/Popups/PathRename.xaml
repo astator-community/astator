@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<toolkit:Popup
+    x:Class="astator.Popups.PathRename"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:v="clr-namespace:astator.Views"
+    Opened="Popup_Opened"
+    Color="Transparent">
+
+    <Grid
+        Padding="20,15,20,5"
+        RowDefinitions="auto,auto,auto"
+        RowSpacing="10">
+        <Label
+            FontAttributes="Bold"
+            FontSize="20"
+            HorizontalOptions="Start"
+            Text="重命名文件"
+            VerticalOptions="Center" />
+        <Editor
+            x:Name="NameEditor"
+            Grid.Row="1"
+            FontSize="16"
+            Placeholder="输入新文件名"
+            WidthRequest="250" />
+        <HorizontalStackLayout
+            Grid.Row="2"
+            HorizontalOptions="End"
+            Spacing="5">
+            <v:CustomLabelButton
+                Padding="16,10"
+                BackgroundColor="{DynamicResource PrimaryColor}"
+                Clicked="Cancel_Clicked"
+                FontSize="15"
+                Text="取消" />
+            <v:CustomLabelButton
+                Grid.Column="1"
+                Padding="16,10"
+                BackgroundColor="{DynamicResource PrimaryColor}"
+                Clicked="Confirm_Clicked"
+                FontSize="15"
+                Text="确认" />
+        </HorizontalStackLayout>
+    </Grid>
+
+</toolkit:Popup>
