@@ -37,10 +37,14 @@ public partial class ConsoleFloaty : Grid
         this.WidthRequest = width;
         this.HeightRequest = height;
         this.Title.Text = title;
+
+        width = Math.Min(width, (int)(Devices.Width / Devices.Dp));
+        height = Math.Min(height, (int)(Devices.Height / Devices.Dp));
+
         this.RowDefinitions = new RowDefinitionCollection
         {
-            new RowDefinition { Height = 55 },
-            new RowDefinition { Height = height - 105 },
+            new RowDefinition { Height = 50 },
+            new RowDefinition { Height = height - 100 },
             new RowDefinition { Height = 50 },
         };
         this.ColumnDefinitions = new ColumnDefinitionCollection
@@ -49,8 +53,8 @@ public partial class ConsoleFloaty : Grid
         };
         this.InputGrid.ColumnDefinitions = new ColumnDefinitionCollection
         {
-            new ColumnDefinition { Width = width - 100 },
-            new ColumnDefinition { Width =  100 },
+            new ColumnDefinition { Width = width - 80 },
+            new ColumnDefinition { Width =  60 },
         };
 
         this.logKey = AstatorLogger.AddCallback("logPage", AddLogText);

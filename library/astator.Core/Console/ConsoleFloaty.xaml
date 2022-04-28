@@ -37,7 +37,7 @@
         <Editor
             x:Name="Input"
             AutoSize="TextChanges"
-            FontSize="18"
+            FontSize="16"
             PlaceholderColor="#2F88FF"
             TextChanged="Input_TextChanged"
             TextColor="{DynamicResource SecondaryColor}"
@@ -47,7 +47,8 @@
             Grid.Column="1"
             BackgroundColor="Transparent"
             Clicked="Send_Clicked"
-            FontSize="16"
+            FontAttributes="Bold"
+            FontSize="14"
             IsEnabled="False"
             Text="发送"
             TextColor="{DynamicResource SecondaryColor}" />
