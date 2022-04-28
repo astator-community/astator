@@ -67,6 +67,7 @@ public class GraphicHelper
             byteBuf.Get(this.screenData, 0, this.rowStride * this.height);
             this.redXList = new short[this.width * this.height];
             this.redYList = new short[this.width * this.height];
+            UpdateRedList();
             image.Close();
             return true;
         }
@@ -838,8 +839,14 @@ public class GraphicHelper
         fixed (byte* screenDataPtr = &this.screenData[0])
         {
             var position = 0;
-            var offsetWidth = Math.Min(image.Width + offsetX, this.width);
-            var offsetHeight = Math.Min(image.Height + offsetY, this.height);
+            var offsetWidth = image.Width + offsetX;
+            var offsetHeight = image.Height + offsetY;
+
+            if (offsetWidth >= this.width || offsetHeight >= this.height)
+            {
+                return false;
+            }
+
             for (var y = offsetY; y < offsetHeight; y++)
             {
                 var location = y * this.rowStride + offsetX * this.pxFormat;
