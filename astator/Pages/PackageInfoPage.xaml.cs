@@ -175,7 +175,7 @@ namespace astator
             this.Refresh.IsRefreshing = false;
         }
 
-        private void Uri_Clicked(object sender,EventArgs e)
+        private void Uri_Clicked(object sender, EventArgs e)
         {
             var view = sender as CustomLabel;
             if (!string.IsNullOrEmpty(view.Tag?.ToString()))

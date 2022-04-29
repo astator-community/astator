@@ -179,7 +179,10 @@ public class ScriptRuntime
     /// <returns>回调的key</returns>
     public string AddLoggerCallback(Action<LogLevel, DateTime, string> callback)
     {
-        return LoggerProvider.AstatorLogger.AddCallback(this.ScriptId, callback);
+        return AstatorLogger.AddCallback(this.ScriptId, (level, time, msg) =>
+        {
+            callback.Invoke((LogLevel)level, time, msg);
+        });
     }
 
     /// <summary>
@@ -188,7 +191,7 @@ public class ScriptRuntime
     /// <param name="key">回调的key, 当key为空时移除当前runtime添加的所有回调</param>
     public void RemoveLoggerCallback(string key = null)
     {
-        LoggerProvider.AstatorLogger.RemoveCallback(key ?? this.ScriptId);
+        AstatorLogger.RemoveCallback(key ?? this.ScriptId);
     }
 
 

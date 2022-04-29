@@ -8,7 +8,7 @@ public static class Console
     private static ConsoleFloaty consoleFloaty;
 
     /// <summary>
-    /// 启动控制台悬浮窗
+    /// 启动一个控制台悬浮窗
     /// </summary>
     /// <param name="title">控制台标题</param>
     /// <param name="width">控制台宽度</param>
@@ -25,6 +25,9 @@ public static class Console
     public static void Hide() => consoleFloaty?.Hide();
     public static void Clear() => consoleFloaty?.ClearOutput();
     public static void SetTitle(string title) => consoleFloaty?.SetTitle(title);
+    public static void SetLogLevelColors(string trace = "#4a4a4d", string debug = "#4a4a4d", string info = "#4a4a4d",
+        string wran = "#f0dc0c", string error = "red", string fatal = "red")
+        => consoleFloaty?.SetLogLevelColors(trace, debug, info, wran, error, fatal);
 
     private static bool HasInput = false;
     private static string InputValue = string.Empty;
@@ -55,7 +58,7 @@ public static class Console
     {
         InputValue = value;
         HasInput = true;
-        Logger.Warn(value);
+        Logger.Trace(value);
     }
 
     public static void Write(string value) => Logger.Trace(value);
@@ -68,6 +71,8 @@ public static class Console
     public static void Trace(params object[] items) => Logger.Trace(items);
     public static void Debug(string value) => Logger.Debug(value);
     public static void Debug(params object[] items) => Logger.Debug(items);
+    public static void Info(string value) => Logger.Info(value);
+    public static void Info(params object[] items) => Logger.Info(items);
     public static void Warn(string value) => Logger.Warn(value);
     public static void Warn(params object[] items) => Logger.Warn(items);
     public static void Error(string value) => Logger.Error(value);

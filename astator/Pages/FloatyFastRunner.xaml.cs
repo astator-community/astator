@@ -81,7 +81,7 @@ namespace astator.Pages
             }
         }
 
-        private void File_Clicked(object sender,EventArgs e)
+        private void File_Clicked(object sender, EventArgs e)
         {
             var card = sender as PathCard;
             var filePath = card.Tag as string;

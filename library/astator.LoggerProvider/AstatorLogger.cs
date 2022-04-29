@@ -125,7 +125,6 @@ public class AstatorLogger
             "Warn" => LogLevel.Warn,
             "Error" => LogLevel.Error,
             "Fatal" => LogLevel.Fatal,
-            "Off" => LogLevel.Off,
             _ => LogLevel.Trace
         };
     }

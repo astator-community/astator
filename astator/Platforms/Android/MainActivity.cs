@@ -69,8 +69,8 @@ public class MainActivity : MauiAppCompatActivity, IActivity
             var time = DateTime.Now;
             if (time.Subtract(this.latestTime).TotalMilliseconds < 1000)
             {
-                backPressedCount++;
-                if (backPressedCount >= 3) Java.Lang.JavaSystem.Exit(0);
+                this.backPressedCount++;
+                if (this.backPressedCount >= 3) Java.Lang.JavaSystem.Exit(0);
                 else this.latestTime = time;
             }
             else

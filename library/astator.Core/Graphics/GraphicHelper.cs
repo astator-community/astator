@@ -160,7 +160,7 @@ public class GraphicHelper
     /// <returns></returns>
     public WrapImage GetImage()
     {
-        return GetImage(0, 0, this.width - 1, this.height - 1);
+        return GetImage(0, 0, this.width, this.height);
     }
 
     /// <summary>
@@ -404,6 +404,9 @@ public class GraphicHelper
     {
         var x = data[0] + offsetX;
         var y = data[1] + offsetY;
+
+        if (x < 0 || x >= this.width || y < 0 || y >= this.height) return false;
+
         var offsetPoint = new Point[]
         {
             new Point(x, y),

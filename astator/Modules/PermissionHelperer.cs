@@ -64,7 +64,7 @@ internal static class PermissionHelperer
 
     public static bool IsIgnoringBatteryOptimizations()
     {
-        return Instance.IsIgnoringBatteryOptimizations();
+        return Instance.CheckIgnoringBatteryOptimizations();
     }
 
     public static void IgnoringBatteryOptimizations(Action<bool> callback)

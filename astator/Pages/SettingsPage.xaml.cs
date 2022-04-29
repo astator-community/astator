@@ -1,10 +1,8 @@
 using Android.Content;
-using AndroidX.AppCompat.App;
 using astator.Core.Script;
 using astator.Modules;
 using astator.Popups;
 using CommunityToolkit.Maui.Views;
-using Microsoft.Maui.Platform;
 
 namespace astator.Pages;
 

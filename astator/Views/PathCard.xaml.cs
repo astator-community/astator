@@ -1,10 +1,3 @@
-using Android.Content;
-using Android.Views;
-using astator.Core.Script;
-using astator.Core.UI.Base;
-using astator.Modules;
-using Microsoft.Maui.Platform;
-
 namespace astator.Views
 {
     public partial class PathCard : CustomCard

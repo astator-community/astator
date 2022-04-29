@@ -38,7 +38,7 @@ public class WrapImage
     private short[][] findImageData;
 
     /// <summary>
-    /// 从位图文件创建WrapImage对象
+    /// 从文件路径创建WrapImage对象
     /// </summary>
     /// <param name="path"></param>
     /// <returns></returns>
@@ -78,7 +78,7 @@ public class WrapImage
     }
 
     /// <summary>
-    /// 获取找图色组描述
+    /// 获取找图色组数据
     /// </summary>
     /// <returns></returns>
     public short[][] GetFindImageData()

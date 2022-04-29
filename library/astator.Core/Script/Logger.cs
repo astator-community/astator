@@ -2,6 +2,16 @@
 
 namespace astator.Core.Script;
 
+public enum LogLevel
+{
+    Trace,
+    Debug,
+    Info,
+    Warn,
+    Error,
+    Fatal
+}
+
 public static class Logger
 {
     public static void Log(string msg) => ALogger.Trace(msg);

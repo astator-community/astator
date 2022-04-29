@@ -22,26 +22,26 @@ namespace astator.Pages
 
             //var cards = await Task.Run(() =>
             //{
-                var result = new List<PackageInfoCard>();
-                if (pkgs is not null)
+            var result = new List<PackageInfoCard>();
+            if (pkgs is not null)
+            {
+                foreach (var pkg in pkgs)
                 {
-                    foreach (var pkg in pkgs)
+                    var card = new PackageInfoCard
                     {
-                        var card = new PackageInfoCard
-                        {
-                            IconUri = pkg.IconUrl is not null
-                                ? new Uri(pkg.IconUrl.ToString().Replace("api.nuget.org", "nuget.cdn.azure.cn"))
-                                : null,
+                        IconUri = pkg.IconUrl is not null
+                            ? new Uri(pkg.IconUrl.ToString().Replace("api.nuget.org", "nuget.cdn.azure.cn"))
+                            : null,
 
-                            PkgId = pkg.Identity.Id,
-                            Version = "v" + pkg.Identity.Version.ToString(),
-                            Description = pkg.Description
-                        };
+                        PkgId = pkg.Identity.Id,
+                        Version = "v" + pkg.Identity.Version.ToString(),
+                        Description = pkg.Description
+                    };
 
-                        result.Add(card);
-                    }
+                    result.Add(card);
                 }
-                //return result;
+            }
+            //return result;
             //});
 
             foreach (var card in result)

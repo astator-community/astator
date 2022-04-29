@@ -7,10 +7,11 @@ namespace astator.Popups;
 
 public partial class DebugOptions : Popup
 {
-	public DebugOptions()
-	{
-		InitializeComponent();
-	}
+    public DebugOptions()
+    {
+        InitializeComponent();
+        this.Address.Text = GetLocalHostAddress();
+    }
 
     private void ClientMode_CheckedChanged(object sender, CheckedChangedEventArgs e)
     {

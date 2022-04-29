@@ -1,8 +1,6 @@
 ﻿using Android.Content;
-using astator.Core.UI.Base;
 using Microsoft.Maui.Controls.Compatibility.Platform.Android.AppCompat;
 using Microsoft.Maui.Controls.Platform;
-using Microsoft.Maui.Handlers;
 
 namespace astator.Views;
 

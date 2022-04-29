@@ -8,7 +8,9 @@ using Microsoft.Maui.Controls;
 using Microsoft.Maui.Graphics;
 using Microsoft.Maui.Platform;
 using System;
+using System.Collections.Concurrent;
 using System.Threading.Tasks;
+using LogLevel = astator.LoggerProvider.LogLevel;
 
 namespace astator.Core;
 
@@ -30,6 +32,15 @@ public partial class ConsoleFloaty : Grid
 
     private SystemFloatyWindow floaty;
     private readonly string logKey = string.Empty;
+    private ConcurrentDictionary<string, Color> logLevelColors = new()
+    {
+        ["trace"] = Color.Parse("#4a4a4d"),
+        ["debug"] = Color.Parse("#4a4a4d"),
+        ["info"] = Color.Parse("#4a4a4d"),
+        ["wran"] = Color.Parse("#f0dc0c"),
+        ["error"] = Colors.Red,
+        ["fatal"] = Colors.Red,
+    };
 
     public ConsoleFloaty(string title, int width, int height)
     {
@@ -68,16 +79,20 @@ public partial class ConsoleFloaty : Grid
             {
                 Text = $"{time:MM-dd HH:mm:ss.fff}  {msg}"
             };
-            if (logLevel >= LogLevel.Error)
+
+            label.TextColor = logLevel switch
             {
-                label.TextColor = Colors.Red;
-            }
-            else if (logLevel >= LogLevel.Warn)
-            {
-                label.TextColor = Color.FromRgb(0xf0, 0xdc, 0x0c);
-            }
+                LogLevel.Trace => this.logLevelColors["trace"],
+                LogLevel.Debug => this.logLevelColors["debug"],
+                LogLevel.Info => this.logLevelColors["info"],
+                LogLevel.Warn => this.logLevelColors["wran"],
+                LogLevel.Error => this.logLevelColors["error"],
+                LogLevel.Fatal => this.logLevelColors["fatal"],
+                _ => this.logLevelColors["fatal"]
+            };
+
             this.OutputLayout.Add(label);
-            await Task.Delay(50);
+            await Task.Delay(20);
             _ = this.OutputScrollView.ScrollToAsync(0, this.OutputLayout.Height, false);
         });
     }
@@ -90,6 +105,16 @@ public partial class ConsoleFloaty : Grid
     public void Hide() => Globals.InvokeOnMainThreadAsync(() => this.floaty?.Hide());
     public void ClearOutput() => Globals.InvokeOnMainThreadAsync(() => this.OutputLayout.Clear());
     public void SetTitle(string title) => Globals.InvokeOnMainThreadAsync(() => this.Title.Text = title);
+    public void SetLogLevelColors(string trace = "#4a4a4d", string debug = "#4a4a4d", string info = "#4a4a4d",
+        string wran = "#f0dc0c", string error = "red", string fatal = "red")
+    {
+        this.logLevelColors.TryUpdate("trace", Color.Parse(trace), this.logLevelColors["trace"]);
+        this.logLevelColors.TryUpdate("debug", Color.Parse(debug), this.logLevelColors["debug"]);
+        this.logLevelColors.TryUpdate("info", Color.Parse(info), this.logLevelColors["info"]);
+        this.logLevelColors.TryUpdate("wran", Color.Parse(wran), this.logLevelColors["wran"]);
+        this.logLevelColors.TryUpdate("error", Color.Parse(error), this.logLevelColors["error"]);
+        this.logLevelColors.TryUpdate("fatal", Color.Parse(fatal), this.logLevelColors["fatal"]);
+    }
 
     private void Send_Clicked(object sender, EventArgs e)
     {

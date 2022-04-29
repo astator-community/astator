@@ -4,7 +4,6 @@ using Android.Media.Projection;
 using Android.OS;
 using Android.Provider;
 using AndroidX.Activity.Result;
-using AndroidX.Core.App;
 using astator.Core.Accessibility;
 using astator.Core.Graphics;
 using astator.Core.UI.Base;
@@ -241,10 +240,10 @@ public class PermissionHelper
     }
 
     /// <summary>
-    /// 获取是否已忽略电池优化
+    /// 检查忽略电池优化是否开启
     /// </summary>
     /// <returns></returns>
-    public bool IsIgnoringBatteryOptimizations()
+    public bool CheckIgnoringBatteryOptimizations()
     {
         var powerManager = (PowerManager)this.activity.GetSystemService(Context.PowerService);
         return powerManager.IsIgnoringBatteryOptimizations(this.activity.PackageName);
@@ -255,7 +254,7 @@ public class PermissionHelper
     /// </summary>
     public void ReqIgnoringBatteryOptimizations(Action<bool> callback)
     {
-        var isIgnored = IsIgnoringBatteryOptimizations();
+        var isIgnored = CheckIgnoringBatteryOptimizations();
         if (isIgnored)
         {
             InvokeCallback(callback, isIgnored);
@@ -266,7 +265,7 @@ public class PermissionHelper
         intent.SetData(Android.Net.Uri.Parse($"package:{this.activity.PackageName}"));
         StartActivityForResult(intent, (_) =>
         {
-            InvokeCallback(callback, IsIgnoringBatteryOptimizations());
+            InvokeCallback(callback, CheckIgnoringBatteryOptimizations());
         });
     }
 
@@ -315,9 +314,11 @@ public class PermissionHelper
             return;
         }
 
-        var intent = new Intent(Android.Provider.Settings.ActionUsageAccessSettings);
-        StartActivityForResult(intent, (_) =>
+        var intent = new Intent(Settings.ActionUsageAccessSettings);
+        StartActivityForResult(intent, async (_) =>
         {
+            //开启权限后立刻获取是否成功可能会返回false, 所以这里等待1秒
+            await Task.Delay(1000);
             InvokeCallback(callback, CheckUsageStats());
         });
     }
@@ -446,7 +447,7 @@ public class PermissionHelper
         var isBack = false;
         var isEnabled = false;
 
-        ReqPermission(permission ,(result) =>
+        ReqPermission(permission, (result) =>
         {
             isEnabled = result;
             isBack = true;

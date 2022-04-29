@@ -18,8 +18,8 @@
 		<ApplicationId Condition="'$(Configuration)' == 'Release'">com.astator.astator</ApplicationId>
 
 		<!-- Versions -->
-		<Version>0.3.3</Version>
-		<ApplicationVersion>220412</ApplicationVersion>
+		<Version>0.4.0</Version>
+		<ApplicationVersion>220429</ApplicationVersion>
 
 		<!-- Required for C# Hot Reload -->
 		<UseInterpreter Condition="'$(Configuration)' == 'Debug'">True</UseInterpreter>
