@@ -285,9 +285,9 @@ public class NugetCommands
 
     public static readonly string NugetDirectory = Path.Combine(Android.OS.Environment.GetExternalStoragePublicDirectory("astator").ToString(), "nuget");
 
-    public const string NugetSource = "https://nuget.cdn.azure.cn/v3/index.json";
+    //public const string NugetSource = "https://nuget.cdn.azure.cn/v3/index.json";
 
-    //public const string NugetSource = "https://api.nuget.org/v3/index.json";
+    public const string NugetSource = "https://api.nuget.org/v3/index.json";
 
     static NugetCommands()
     {

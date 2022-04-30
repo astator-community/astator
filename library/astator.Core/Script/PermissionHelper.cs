@@ -55,7 +55,7 @@ public class PermissionHelper
     }
 
     /// <summary>
-    /// 申请截图权限
+    /// 申请截图权限及服务
     /// </summary>
     public void ReqScreenCap(bool isLandscape, Action<bool> callback)
     {
@@ -90,6 +90,11 @@ public class PermissionHelper
         });
     }
 
+    /// <summary>
+    /// 申请截图权限及服务并返回结果
+    /// </summary>
+    /// <param name="isLandscape"></param>
+    /// <returns></returns>
     public async Task<bool> ReqScreenCapAsync(bool isLandscape)
     {
         var isBack = false;

@@ -5,6 +5,7 @@ using astator.Modules;
 using astator.Views;
 using System.IO.Compression;
 using AstatorLogger = astator.LoggerProvider.AstatorLogger;
+using LogLevel = astator.LoggerProvider.LogLevel;
 
 namespace astator.Pages;
 
