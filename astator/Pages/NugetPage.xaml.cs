@@ -5,20 +5,30 @@ namespace astator.Pages
 {
     public partial class NugetPage : ContentPage
     {
+        private readonly List<string> sourceNames;
+        private readonly List<string> sourceUris;
         public NugetPage()
         {
             InitializeComponent();
-            SearchPkg();
+
+            var nugetCommands = new NugetCommands();
+            var sourceRepositories = nugetCommands.GetRepositories();
+            this.sourceNames = sourceRepositories.Select(x => x.PackageSource.Name).ToList();
+            this.sourceUris = sourceRepositories.Select(x => x.PackageSource.Source).ToList();
+            this.SourceItems.Items = string.Join(",", this.sourceNames);
+            var source = Core.Script.Preferences.Get("NugetSource", string.Empty, "astator");
+            this.SourceItems.SelectedItem = this.sourceNames.IndexOf(source);
         }
 
         private async void SearchPkg()
         {
+            if (this.SourceItems.SelectedItem == -1) return;
             this.SearchBtn.IsEnabled = false;
             this.SearchBtn.Source = "search_disable.png";
             this.Refresh.IsRefreshing = true;
             this.PkgLayout.Clear();
 
-            var pkgs = await NugetCommands.SearchPkgAsync(this.SearchEditor.Text);
+            var pkgs = await NugetCommands.SearchPkgAsync(this.SearchEditor.Text, this.sourceUris[this.SourceItems.SelectedItem]);
 
             //var cards = await Task.Run(() =>
             //{
@@ -64,7 +74,7 @@ namespace astator.Pages
         {
             var card = sender as PackageInfoCard;
 
-            var page = new PackageInfoPage(card.PkgId);
+            var page = new PackageInfoPage(card.PkgId, this.sourceUris[this.SourceItems.SelectedItem]);
             this.Navigation.PushModalAsync(page);
 
         }
@@ -84,6 +94,11 @@ namespace astator.Pages
             {
                 SearchPkg();
             }
+        }
+
+        private void SourceItems_SelectionChanged(object sender, SelectedItemChangedEventArgs e)
+        {
+            Core.Script.Preferences.Set("NugetSource", this.sourceNames[this.SourceItems.SelectedItem], "astator");
         }
     }
 }

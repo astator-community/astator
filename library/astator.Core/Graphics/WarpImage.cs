@@ -23,7 +23,7 @@ public class WrapImage
     /// <summary>
     /// 一行所占的字节数
     /// </summary>
-    public int RowStride { get; set; }
+    internal int RowStride { get; set; }
 
     /// <summary>
     /// 像素通道数
@@ -35,7 +35,7 @@ public class WrapImage
     /// </summary>
     public byte[] Data { get; set; }
 
-    private short[][] findImageData;
+    private int[][] findImageData;
 
     /// <summary>
     /// 从文件路径创建WrapImage对象
@@ -81,18 +81,18 @@ public class WrapImage
     /// 获取找图色组数据
     /// </summary>
     /// <returns></returns>
-    public short[][] GetFindImageData()
+    public int[][] GetFindImageData()
     {
         if (this.findImageData is null)
         {
-            var result = new short[this.Width * this.Height][];
+            var result = new int[this.Width * this.Height][];
             var position = 0;
             for (short y = 0; y < this.Height; y++)
             {
                 var location = y * this.RowStride;
                 for (short x = 0; x < this.Width; x++, position++, location += this.PxFormat)
                 {
-                    result[position] = new short[9];
+                    result[position] = new int[9];
                     result[position][0] = x;
                     result[position][1] = y;
                     result[position][2] = this.Data[location];

@@ -142,7 +142,7 @@
                     Margin="5,0"
                     FontAttributes="Bold"
                     FontSize="16"
-                    Text="nuget包管理"
+                    Text="程序包管理"
                     VerticalOptions="Center" />
             </v:CustomCard>
             <v:CustomCard

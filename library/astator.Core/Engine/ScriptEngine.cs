@@ -380,7 +380,7 @@ namespace astator.Core.Engine
         {
             foreach (var info in infos)
             {
-                foreach (var p in info.Paths)
+                foreach (var p in info.Compile)
                 {
                     if (!LoadReference(p))
                     {
@@ -411,8 +411,8 @@ namespace astator.Core.Engine
 
         private async Task<List<PackageInfo>> RestorePackage(IEnumerable<XElement> itemGroup)
         {
+            var nugetCommands = new NugetCommands(Path.Combine(this.rootDir, "nuget.config"));
             var restorePath = Path.Combine(this.rootDir, "obj", "project.packages.json");
-
             var packageReferenceItemGroups = from element in itemGroup.Elements()
                                              where element.Name == "PackageReference"
                                              select element.Attributes();
@@ -421,7 +421,7 @@ namespace astator.Core.Engine
             foreach (var group in packageReferenceItemGroups)
             {
                 var pkgId = group.Where(x => x.Name == "Include").Select(x => x.Value).FirstOrDefault();
-                var version = await NugetCommands.ParseVersion(pkgId,
+                var version = await nugetCommands.ParseVersionAsync(pkgId,
                     group.Where(x => x.Name == "Version").Select(x => x.Value).FirstOrDefault() ?? "*");
                 if (version is null)
                 {
@@ -433,13 +433,11 @@ namespace astator.Core.Engine
             if (!File.Exists(restorePath))
             {
                 if (!Directory.Exists(Path.GetDirectoryName(restorePath)))
-                {
                     Directory.CreateDirectory(Path.GetDirectoryName(restorePath));
-                }
                 using var fs = File.Create(restorePath);
             }
 
-            var storeInfos = JsonConvert.DeserializeObject<List<PackageInfo>>(File.ReadAllText(restorePath));
+            var storeInfos = JsonConvert.DeserializeObject<List<PackageInfo>>(File.ReadAllText(restorePath)) ?? new();
 
             var isNeedRestore = false;
             var notStorePackageReferences = new Dictionary<string, NuGetVersion>();
@@ -454,14 +452,12 @@ namespace astator.Core.Engine
                 foreach (var r in notStorePackageReferences)
                 {
                     if (PackageInfo.Exists(storeInfos, r))
-                    {
                         notStorePackageReferences.Remove(r.Key);
-                    }
                 }
 
                 foreach (var info in storeInfos)
                 {
-                    foreach (var path in info.Paths)
+                    foreach (var path in info.Compile)
                     {
                         if (!File.Exists(path))
                         {
@@ -470,25 +466,21 @@ namespace astator.Core.Engine
                         }
                     }
 
-                    if (isNeedRestore)
-                    {
-                        break;
-                    }
+                    if (isNeedRestore) break;
                 }
 
-                if (packageReferences.Count != storeInfos.Count)
-                {
-                    isNeedRestore = true;
-                }
+                if (packageReferences.Count != storeInfos.Count) isNeedRestore = true;
             }
 
             if (notStorePackageReferences.Any() || isNeedRestore)
             {
-                var transitiveDependences = await NugetCommands.ListPackageTransitiveDependenceAsync(packageReferences);
-                storeInfos = await NugetCommands.GetPackageInfosAsync(transitiveDependences);
+                storeInfos.Clear();
+                foreach (var packageReference in packageReferences)
+                {
+                    storeInfos.Add(await nugetCommands.RestorePackageAsync(packageReference.Key, packageReference.Value));
+                }
                 File.WriteAllText(restorePath, JsonConvert.SerializeObject(storeInfos, Formatting.Indented));
             }
-
             return storeInfos;
         }
 

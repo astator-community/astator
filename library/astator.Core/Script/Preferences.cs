@@ -1,6 +1,6 @@
 ﻿using astator.Core.Exceptions;
 using System;
-using MauiPreferences = Microsoft.Maui.Essentials.Preferences;
+using MauiPreferences = Microsoft.Maui.Storage.Preferences;
 
 namespace astator.Core.Script;
 

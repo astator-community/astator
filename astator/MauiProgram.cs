@@ -2,7 +2,7 @@
 using astator.Pages;
 using astator.Views;
 using CommunityToolkit.Maui;
-using Microsoft.Maui.Controls.Compatibility;
+using Microsoft.Maui.Controls.Compatibility.Hosting;
 
 namespace astator;
 public static class MauiProgram
@@ -17,7 +17,7 @@ public static class MauiProgram
                 fonts.AddFont("CascadiaCode-SemiLight.ttf", "CascadiaCode");
             })
             .UseMauiCommunityToolkit()
-            //.UseMauiCompatibility()
+            .UseMauiCompatibility()
             .ConfigureMauiHandlers(handler =>
             {
                 handler.AddCompatibilityRenderer(typeof(CustomLabelButton), typeof(CustomLabelButtonRenderer));

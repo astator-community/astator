@@ -45,9 +45,9 @@ public class MoveCategory
         {
             if (this.Id == null)
             {
-                return $"{ this.ClassName?[(this.ClassName.LastIndexOf(".") + 1)..] }";
+                return $"{this.ClassName?[(this.ClassName.LastIndexOf(".") + 1)..]}";
             }
-            return $"{ this.ClassName?[(this.ClassName.LastIndexOf(".") + 1)..] }  [id: { this.Id }]";
+            return $"{this.ClassName?[(this.ClassName.LastIndexOf(".") + 1)..]}  [id: {this.Id}]";
 
         }
     }

@@ -23,12 +23,13 @@ public static class SdkReferences
             if (string.IsNullOrEmpty(SdkDir))
             {
                 var id = "astator.Sdk";
-                var version = await NugetCommands.ParseVersion(id, "0.2.*");
-                var dir = Path.Combine(NugetCommands.NugetDirectory, id, version.ToString());
+                var nugetCommands = new NugetCommands();
+                var version = await nugetCommands.ParseVersionAsync(id, "0.2.*");
+                var dir = NugetCommands.GetInstalledDir(id, version);
                 if (!Directory.Exists(dir))
                 {
                     TipsViewImpl.ChangeTipsText("正在下载sdk引用包...");
-                    if (!await NugetCommands.DownLoadPackageAsync(id, version))
+                    if (!await nugetCommands.InstallPackageAsync(id, version))
                     {
                         Logger.Error("下载sdk失败!");
                         return null;

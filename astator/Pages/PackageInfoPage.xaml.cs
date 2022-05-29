@@ -9,11 +9,14 @@ namespace astator
 {
     public partial class PackageInfoPage : ContentPage
     {
-        public PackageInfoPage(string PkgId)
+        private readonly NugetCommands nugetCommands;
+        private readonly string nugetSource;
+        public PackageInfoPage(string PkgId, string nugetSource)
         {
             InitializeComponent();
-
             Initialize(PkgId);
+            this.nugetSource = nugetSource;
+            this.nugetCommands = new NugetCommands(nugetSource);
         }
 
         private List<IPackageSearchMetadata> packages;
@@ -22,7 +25,7 @@ namespace astator
         {
             this.PkgId.Text = PkgId;
 
-            this.packages = await NugetCommands.GetPackagesMetadataAsync(PkgId);
+            this.packages = await NugetCommands.GetPackagesMetadataAsync(PkgId,this.nugetSource);
 
             var versions = new List<string>();
             foreach (var pkg in this.packages)
@@ -37,7 +40,6 @@ namespace astator
         private void ShowPkgInfo(int index)
         {
             var pkg = this.packages[index];
-
             this.Description.Text = pkg.Description ?? default;
             this.Version.Text = pkg.Identity.Version.ToString();
             this.Authors.Text = pkg.Authors;
@@ -63,24 +65,24 @@ namespace astator
             this.ProjectUrl.Text = pkg.ProjectUrl?.ToString() ?? default;
             this.ProjectUrl.Tag = pkg.ProjectUrl?.ToString() ?? default;
 
-            var dir = Path.Combine(NugetCommands.NugetDirectory, this.PkgId.Text, this.Version.Text);
+            var dir = NugetCommands.GetInstalledDir(this.PkgId.Text, pkg.Identity.Version);
             if (Directory.Exists(dir))
             {
-                this.AttribBtn.Tag = "delete";
-                this.AttribBtn.Source = "delete.png";
+                this.StateBtn.Tag = "delete";
+                this.StateBtn.Source = "delete.png";
             }
             else
             {
-                this.AttribBtn.Tag = "download";
-                this.AttribBtn.Source = "download.png";
+                this.StateBtn.Tag = "install";
+                this.StateBtn.Source = "install.png";
             }
 
 
             this.DependencyList.Clear();
+            var framework = NugetCommands.GetNearestFramework(pkg.DependencySets.Select(x => x.TargetFramework));
+            var group = pkg.DependencySets.Where(x => x.TargetFramework.Equals(framework)).First();
 
-            var group = NugetCommands.GetNearestFrameworkDependencyGroup(pkg.DependencySets);
-
-            if (group is null)
+            if (framework is null)
             {
                 var dPkgLabel = new Label
                 {
@@ -95,7 +97,7 @@ namespace astator
 
             var targetLabel = new Label
             {
-                Text = group.TargetFramework.GetShortFolderName()
+                Text = framework.GetShortFolderName()
             };
 
             this.DependencyList.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
@@ -130,42 +132,24 @@ namespace astator
             }
         }
 
-        private async void AttribBtn_Clicked(object sender, EventArgs e)
+        private async void StateBtn_Clicked(object sender, EventArgs e)
         {
             this.Refresh.IsRefreshing = true;
 
             var id = this.PkgId.Text;
-            var version = NuGetVersion.Parse(this.Version.Text);
-            if (this.AttribBtn.Tag?.ToString() == "download")
+            if (this.StateBtn.Tag?.ToString() == "install")
             {
-                var dependences = await NugetCommands.ListPackageTransitiveDependenceAsync(id, version);
-
-                foreach (var dependence in dependences)
-                {
-                    var dir = Path.Combine(NugetCommands.NugetDirectory, dependence.Key, dependence.Value.ToString());
-
-                    if (!Directory.Exists(dir))
-                    {
-                        if (!await NugetCommands.DownLoadPackageAsync(dependence.Key, dependence.Value))
-                        {
-                            Logger.Error($"下载nuget包: {dependence.Key}失败!");
-                            return;
-                        }
-                    }
-                }
+                var result = await this.nugetCommands.InstallPackageAsync(id, NuGetVersion.Parse(this.Version.Text));
+                if (!result) Logger.Error($"安装nuget包: {id}失败!");
             }
             else
             {
-                var dir = Path.Combine(NugetCommands.NugetDirectory, id, this.Version.Text);
-                if (Directory.Exists(dir))
-                {
-                    Directory.Delete(dir, true);
-                }
+                var dir = NugetCommands.GetInstalledDir(id, NuGetVersion.Parse(this.Version.Text));
+                if (!string.IsNullOrEmpty(dir)) Directory.Delete(dir, true);
             }
 
             ShowPkgInfo(this.VersionItems.SelectedItem);
             this.Refresh.IsRefreshing = false;
-
         }
 
         private void VersionItems_SelectionChanged(object sender, SelectedItemChangedEventArgs e)

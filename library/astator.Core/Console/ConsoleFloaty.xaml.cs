@@ -32,7 +32,7 @@ public partial class ConsoleFloaty : Grid
 
     private SystemFloatyWindow floaty;
     private readonly string logKey = string.Empty;
-    private ConcurrentDictionary<string, Color> logLevelColors = new()
+    private readonly ConcurrentDictionary<string, Color> logLevelColors = new()
     {
         ["trace"] = Color.Parse("#4a4a4d"),
         ["debug"] = Color.Parse("#4a4a4d"),

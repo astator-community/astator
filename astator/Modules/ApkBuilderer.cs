@@ -229,7 +229,7 @@ public class ApkBuilderer
                 {
                     foreach (var info in storeInfos)
                     {
-                        var paths = info.Paths;
+                        var paths = info.Compile;
                         foreach (var path in paths)
                         {
                             File.Copy(path, Path.Combine(this.refDir, Path.GetFileName(path)));

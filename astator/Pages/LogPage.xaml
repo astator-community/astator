@@ -19,14 +19,13 @@
                 HorizontalOptions="Start"
                 Text="日志"
                 VerticalOptions="Center" />
-            <v:CustomCard
+            <v:CustomImageButton
                 Grid.Column="1"
-                Padding="10,6"
+                Padding="4"
                 Clicked="Delete_Clicked"
                 HorizontalOptions="End"
-                VerticalOptions="Center">
-                <Image Source="delete.png" />
-            </v:CustomCard>
+                Source="delete.png"
+                VerticalOptions="Center" />
         </Grid>
 
         <ScrollView

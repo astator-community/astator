@@ -275,14 +275,14 @@ public class GraphicHelper
         return (result[0] & 0xff) << 16 | (result[1] & 0xff) << 8 | (result[2] & 0xff);
     }
 
-    public short[] GetCmpColorData(int x, int y, int color)
+    public int[] GetCmpColorData(int x, int y, int color)
     {
-        var result = new short[9];
-        result[0] = (short)x;
-        result[1] = (short)y;
-        result[2] = (short)((color & 0xff0000) >> 16);
-        result[3] = (short)((color & 0xff00) >> 8);
-        result[4] = (short)(color & 0xff);
+        var result = new int[9];
+        result[0] = x;
+        result[1] = y;
+        result[2] = (color & 0xff0000) >> 16;
+        result[3] = (color & 0xff00) >> 8;
+        result[4] = color & 0xff;
         result[5] = result[6] = result[7] = result[8] = 0;
         return result;
     }
@@ -292,30 +292,30 @@ public class GraphicHelper
     /// </summary>
     /// <param name="str">色组字符串</param>
     /// <returns></returns>
-    public short[][] ParseCmpColorString(string str)
+    public int[][] ParseCmpColorString(string str)
     {
         var desc = str.Split(",");
-        var result = new short[desc.Length][];
+        var result = new int[desc.Length][];
         for (var i = 0; i < desc.Length; i++)
         {
-            result[i] = new short[9];
+            result[i] = new int[9];
             var currentDesc = desc[i].Trim().Split("|");
-            result[i][0] = short.Parse(currentDesc[0]);
-            result[i][1] = short.Parse(currentDesc[1]);
+            result[i][0] = int.Parse(currentDesc[0]);
+            result[i][1] = int.Parse(currentDesc[1]);
 
             var color = Convert.ToInt32(currentDesc[2], 16);
-            result[i][2] = (short)((color & 0xff0000) >> 16);
-            result[i][3] = (short)((color & 0xff00) >> 8);
-            result[i][4] = (short)(color & 0xff);
+            result[i][2] = (color & 0xff0000) >> 16;
+            result[i][3] = (color & 0xff00) >> 8;
+            result[i][4] = color & 0xff;
             result[i][5] = result[i][6] = result[i][7] = result[i][8] = 0;
             if (currentDesc.Length >= 4)
             {
                 if (currentDesc[3].StartsWith("0x"))
                 {
                     var offsetColor = Convert.ToInt32(currentDesc[3], 16);
-                    result[i][5] = (short)((offsetColor & 0xff0000) >> 16);
-                    result[i][6] = (short)((offsetColor & 0xff00) >> 8);
-                    result[i][7] = (short)(offsetColor & 0xff);
+                    result[i][5] = (offsetColor & 0xff0000) >> 16;
+                    result[i][6] = (offsetColor & 0xff00) >> 8;
+                    result[i][7] = offsetColor & 0xff;
                 }
                 else
                 {
@@ -336,21 +336,21 @@ public class GraphicHelper
     /// </summary>
     /// <param name="str">色组字符串</param>
     /// <returns></returns>
-    public short[][] ParseFindColorString(string str)
+    public int[][] ParseFindColorString(string str)
     {
         var desc = str.Split(",");
-        var result = new short[desc.Length][];
+        var result = new int[desc.Length][];
 
         {
-            result[0] = new short[9];
+            result[0] = new int[9];
             var currentDesc = desc[0].Trim().Split("|");
-            result[0][0] = short.Parse(currentDesc[0]);
-            result[0][1] = short.Parse(currentDesc[1]);
+            result[0][0] = int.Parse(currentDesc[0]);
+            result[0][1] = int.Parse(currentDesc[1]);
 
             var color = Convert.ToInt32(currentDesc[2], 16);
-            result[0][2] = (short)((color & 0xff0000) >> 16);
-            result[0][3] = (short)((color & 0xff00) >> 8);
-            result[0][4] = (short)(color & 0xff);
+            result[0][2] = (color & 0xff0000) >> 16;
+            result[0][3] = (color & 0xff00) >> 8;
+            result[0][4] = color & 0xff;
             result[0][5] = result[0][6] = result[0][7] = result[0][8] = 0;
             if (currentDesc.Length >= 4)
             {
@@ -366,7 +366,7 @@ public class GraphicHelper
 
         for (var i = 1; i < desc.Length; i++)
         {
-            result[i] = new short[9];
+            result[i] = new int[9];
             var currentDesc = desc[i].Trim().Split("|");
             result[i][0] = (short)(short.Parse(currentDesc[0]) - result[0][0]);
             result[i][1] = (short)(short.Parse(currentDesc[1]) - result[0][1]);
@@ -400,7 +400,7 @@ public class GraphicHelper
     }
 
     #region 比色
-    private bool CompareColor(short[] data, int offsetX, int offsetY, int offsetLength)
+    private bool CompareColor(int[] data, int offsetX, int offsetY, int offsetLength)
     {
         var x = data[0] + offsetX;
         var y = data[1] + offsetY;
@@ -448,14 +448,14 @@ public class GraphicHelper
     /// <param name="sim">相似度, 0~100</param>
     /// <param name="isOffset">是否偏移查找</param>
     /// <returns></returns>
-    public bool CompareColor(short[] data, int sim, bool isOffset)
+    public bool CompareColor(int[] data, int sim, bool isOffset)
     {
         var offsetLength = isOffset ? 9 : 1;
         var similarity = Round(255 - 255 * (sim / 100.0));
-        var similarity_R = (short)(similarity + data[5]);
-        var similarity_G = (short)(similarity + data[6]);
-        var similarity_B = (short)(similarity + data[7]);
-        var temp = new short[]{
+        var similarity_R = similarity + data[5];
+        var similarity_G = similarity + data[6];
+        var similarity_B = similarity + data[7];
+        var temp = new int[]{
             data[0],
             data[1],
             data[2],
@@ -469,7 +469,7 @@ public class GraphicHelper
         return CompareColor(temp, 0, 0, offsetLength);
     }
 
-    private unsafe bool CompareMultiColor(short[][] data, int x, int y, int offsetLength)
+    private unsafe bool CompareMultiColor(int[][] data, int x, int y, int offsetLength)
     {
         foreach (var array in data)
         {
@@ -488,7 +488,7 @@ public class GraphicHelper
     /// <param name="sim">相似度, 0~100</param>
     /// <param name="isOffset">是否偏移查找</param>
     /// <returns></returns>
-    public bool CompareMultiColor(short[][] data, int sim, bool isOffset)
+    public bool CompareMultiColor(int[][] data, int sim, bool isOffset)
     {
         foreach (var array in data)
         {
@@ -510,7 +510,7 @@ public class GraphicHelper
     /// <param name="timelag">间隔时间</param>
     /// <param name="sign">跳出条件,true为找色成功时返回,false为找色失败时返回</param>
     /// <returns></returns>
-    public bool CompareMultiColorLoop(short[][] data, int sim, bool isOffset, int timeout, int timelag, bool sign)
+    public bool CompareMultiColorLoop(int[][] data, int sim, bool isOffset, int timeout, int timelag, bool sign)
     {
         var num = timeout / timelag;
         if (sign)
@@ -546,7 +546,7 @@ public class GraphicHelper
     #endregion
 
     #region 找色
-    private unsafe Point FindMultiColor(int left, int top, int right, int bottom, short[] firstData, short[][] offsetData, int offsetLength)
+    private unsafe Point FindMultiColor(int left, int top, int right, int bottom, int[] firstData, int[][] offsetData, int offsetLength)
     {
         var red = firstData[2];
         fixed (byte* screenDataPtr = &this.screenData[0])
@@ -602,22 +602,22 @@ public class GraphicHelper
         return new Point(-1, -1);
     }
 
-    private static (short[], short[][]) GetFindColorData(short[][] data, int sim)
+    private static (int[], int[][]) GetFindColorData(int[][] data, int sim)
     {
-        var firstData = new short[9];
+        var firstData = new int[9];
         Array.Copy(data[0], firstData, 9);
-        var offsetData = new short[data.Length - 1][];
+        var offsetData = new int[data.Length - 1][];
         var similarity = Round(255 - 255 * (sim / 100.0));
-        firstData[5] = (short)(similarity + data[0][5]);
-        firstData[6] = (short)(similarity + data[0][6]);
-        firstData[7] = (short)(similarity + data[0][7]);
+        firstData[5] = similarity + data[0][5];
+        firstData[6] = similarity + data[0][6];
+        firstData[7] = similarity + data[0][7];
         for (var j = 0; j < offsetData.Length; j++)
         {
-            offsetData[j] = new short[9];
+            offsetData[j] = new int[9];
             Array.Copy(data[j + 1], offsetData[j], 9);
-            offsetData[j][5] = (short)(similarity + data[j + 1][5]);
-            offsetData[j][6] = (short)(similarity + data[j + 1][6]);
-            offsetData[j][7] = (short)(similarity + data[j + 1][7]);
+            offsetData[j][5] = similarity + data[j + 1][5];
+            offsetData[j][6] = similarity + data[j + 1][6];
+            offsetData[j][7] = similarity + data[j + 1][7];
         }
         return (firstData, offsetData);
     }
@@ -629,7 +629,7 @@ public class GraphicHelper
     /// <param name="sim">相似度, 0~100</param>
     /// <param name="isOffset">是否偏移查找</param>
     /// <returns></returns>
-    public Point FindMultiColor(int left, int top, int right, int bottom, short[][] data, int sim, bool isOffset)
+    public Point FindMultiColor(int left, int top, int right, int bottom, int[][] data, int sim, bool isOffset)
     {
         left = Math.Max(left, 0);
         top = Math.Max(top, 0);
@@ -648,7 +648,7 @@ public class GraphicHelper
     /// <param name="sim">相似度, 0~100</param>
     /// <param name="isOffset">是否偏移查找</param>
     /// <returns></returns>
-    public Point FindMultiColor(Rect bounds, short[][] data, int sim, bool isOffset)
+    public Point FindMultiColor(Rect bounds, int[][] data, int sim, bool isOffset)
         => FindMultiColor(bounds.Left, bounds.Top, bounds.Right, bounds.Bottom, data, sim, isOffset);
 
     /// <summary>
@@ -661,7 +661,7 @@ public class GraphicHelper
     /// <param name="timelag">间隔时间</param>
     /// <param name="sign">跳出条件,true为找色成功时返回,false为找色失败时返回</param>
     /// <returns></returns>
-    public Point FindMultiColorLoop(int left, int top, int right, int bottom, short[][] data, int sim, bool isOffset, int timeout, int timelag, bool sign)
+    public Point FindMultiColorLoop(int left, int top, int right, int bottom, int[][] data, int sim, bool isOffset, int timeout, int timelag, bool sign)
     {
         var num = timeout / timelag;
         if (sign)
@@ -708,10 +708,10 @@ public class GraphicHelper
     /// <param name="timelag">间隔时间</param>
     /// <param name="sign">跳出条件,true为找色成功时返回,false为找色失败时返回</param>
     /// <returns></returns>
-    public Point FindMultiColorLoop(Rect bounds, short[][] data, int sim, bool isOffset, int timeout, int timelag, bool sign)
+    public Point FindMultiColorLoop(Rect bounds, int[][] data, int sim, bool isOffset, int timeout, int timelag, bool sign)
         => FindMultiColorLoop(bounds.Left, bounds.Top, bounds.Right, bounds.Bottom, data, sim, isOffset, timeout, timelag, sign);
 
-    private unsafe List<Point> FindMultiColorEx(int left, int top, int right, int bottom, short[] firstData, short[][] offsetData)
+    private unsafe List<Point> FindMultiColorEx(int left, int top, int right, int bottom, int[] firstData, int[][] offsetData)
     {
         var result = new List<Point>();
         var red = firstData[2];
@@ -775,7 +775,7 @@ public class GraphicHelper
     /// <param name="sim">相似度, 0~100</param>
     /// <param name="filterNum">过滤半径, 默认-1, 去除重叠区域</param>
     /// <returns>返回所有坐标</returns>
-    public List<Point> FindMultiColorEx(int left, int top, int right, int bottom, short[][] data, int sim, int filterNum = -1)
+    public List<Point> FindMultiColorEx(int left, int top, int right, int bottom, int[][] data, int sim, int filterNum = -1)
     {
         List<Point> result = new();
 
@@ -831,7 +831,7 @@ public class GraphicHelper
     /// <param name="sim">相似度, 0~100</param>
     /// <param name="filterNum">过滤半径, 默认-1, 去除重叠区域</param>
     /// <returns>返回所有坐标</returns>
-    public List<Point> FindMultiColorEx(Rect bounds, short[][] data, int sim, int filterNum = -1)
+    public List<Point> FindMultiColorEx(Rect bounds, int[][] data, int sim, int filterNum = -1)
         => FindMultiColorEx(bounds.Left, bounds.Top, bounds.Right, bounds.Bottom, data, sim, filterNum);
     #endregion
 

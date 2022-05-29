@@ -17,6 +17,8 @@
 		<ApplicationId Condition="'$(Configuration)' == 'Debug'">com.debug.astator</ApplicationId>
 		<ApplicationId Condition="'$(Configuration)' == 'Release'">com.astator.astator</ApplicationId>
 
+		<ApplicationIdGuid>6347E2DA-C3A3-4DC4-A488-8288B1F4E064</ApplicationIdGuid>
+		
 		<!-- Versions -->
 		<Version>0.4.0</Version>
 		<ApplicationVersion>220429</ApplicationVersion>
@@ -29,9 +31,9 @@
 
 	</PropertyGroup>
 	
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net6.0-android|AnyCPU'">
+	<!--<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net6.0-android|AnyCPU'">
 		<PublishTrimmed>False</PublishTrimmed>
-	</PropertyGroup>
+	</PropertyGroup>-->
 
 	<ItemGroup>
 		<!-- App Icon -->
@@ -50,7 +52,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="CommunityToolkit.Maui" Version="1.0.0-pre8" />
+	  <None Remove="Resources\Images\install.svg" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="CommunityToolkit.Maui" Version="1.0.0" />
 		<PackageReference Include="MQTTnet" Version="3.1.2" />
 		<PackageReference Include="System.Collections.Concurrent" Version="4.3.0" />
 	</ItemGroup>

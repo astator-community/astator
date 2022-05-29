@@ -11,8 +11,8 @@ public class PackageInfo
     [JsonProperty("version")]
     public string Version { get; set; } = string.Empty;
 
-    [JsonProperty("paths")]
-    public List<string> Paths { get; set; } = new();
+    [JsonProperty("compile")]
+    public List<string> Compile { get; set; } = new();
 
 
     public bool Exists(PackageInfo other)

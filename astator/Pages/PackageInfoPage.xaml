@@ -37,71 +37,78 @@
                     StrokeThickness="1.8" />
             </Grid>
             <v:CustomImageButton
-                x:Name="AttribBtn"
+                x:Name="StateBtn"
                 Grid.Column="1"
-                Padding="18,16,6,8"
+                Margin="10,5,0,0"
+                Padding="5"
                 BackgroundColor="{DynamicResource PrimaryColor}"
-                Clicked="AttribBtn_Clicked"
+                Clicked="StateBtn_Clicked"
                 HeightRequest="50"
                 VerticalOptions="Center"
                 WidthRequest="50" />
         </Grid>
-        <ScrollView Grid.Row="2">
 
-            <RefreshView
-                x:Name="Refresh"
-                IsRefreshing="True"
-                RefreshColor="#2F88FF">
-                <Grid Padding="20,10" RowDefinitions="auto,auto,auto,auto,auto,auto,auto,auto,auto">
-                    <Label
-                        FontAttributes="Bold"
-                        FontSize="14"
-                        Text="描述" />
-                    <Label
-                        x:Name="Description"
-                        Grid.Row="1"
-                        Margin="0,5" />
-                    <HorizontalStackLayout Grid.Row="2" Margin="0,5">
+        <RefreshView
+            x:Name="Refresh"
+            Grid.Row="2"
+            IsRefreshing="True"
+            RefreshColor="#2F88FF">
+            <Grid>
+                <ScrollView>
+                    <Grid
+                        Padding="20,10"
+                        HeightRequest="1000"
+                        RowDefinitions="auto,auto,auto,auto,auto,auto,auto,auto,auto">
                         <Label
                             FontAttributes="Bold"
                             FontSize="14"
-                            Text="版本:  " />
-                        <Label x:Name="Version" VerticalTextAlignment="End" />
-                    </HorizontalStackLayout>
-                    <HorizontalStackLayout Grid.Row="3" Margin="0,5">
+                            Text="描述" />
                         <Label
+                            x:Name="Description"
+                            Grid.Row="1"
+                            Margin="0,5" />
+                        <HorizontalStackLayout Grid.Row="2" Margin="0,5">
+                            <Label
+                                FontAttributes="Bold"
+                                FontSize="14"
+                                Text="版本:  " />
+                            <Label x:Name="Version" VerticalTextAlignment="End" />
+                        </HorizontalStackLayout>
+                        <HorizontalStackLayout Grid.Row="3" Margin="0,5">
+                            <Label
+                                FontAttributes="Bold"
+                                FontSize="14"
+                                Text="作者:  " />
+                            <Label x:Name="Authors" VerticalTextAlignment="End" />
+                        </HorizontalStackLayout>
+                        <HorizontalStackLayout Grid.Row="4" Margin="0,5">
+                            <Label FontAttributes="Bold" Text="许可证:  " />
+                            <v:CustomLabel x:Name="License" />
+                        </HorizontalStackLayout>
+                        <HorizontalStackLayout Grid.Row="5" Margin="0,5">
+                            <Label FontAttributes="Bold" Text="发布日期:  " />
+                            <Label x:Name="PublishDate" VerticalTextAlignment="End" />
+                        </HorizontalStackLayout>
+                        <HorizontalStackLayout Grid.Row="6" Margin="0,5">
+                            <Label FontAttributes="Bold" Text="项目地址:  " />
+                            <v:CustomLabel
+                                x:Name="ProjectUrl"
+                                Clicked="Uri_Clicked"
+                                FontSize="14"
+                                TextColor="#56c2ec"
+                                TextDecorations="Underline" />
+                        </HorizontalStackLayout>
+                        <Label
+                            Grid.Row="7"
+                            Margin="0,5"
                             FontAttributes="Bold"
                             FontSize="14"
-                            Text="作者:  " />
-                        <Label x:Name="Authors" VerticalTextAlignment="End" />
-                    </HorizontalStackLayout>
-                    <HorizontalStackLayout Grid.Row="4" Margin="0,5">
-                        <Label FontAttributes="Bold" Text="许可证:  " />
-                        <v:CustomLabel x:Name="License" />
-                    </HorizontalStackLayout>
-                    <HorizontalStackLayout Grid.Row="5" Margin="0,5">
-                        <Label FontAttributes="Bold" Text="发布日期:  " />
-                        <Label x:Name="PublishDate" VerticalTextAlignment="End" />
-                    </HorizontalStackLayout>
-                    <HorizontalStackLayout Grid.Row="6" Margin="0,5">
-                        <Label FontAttributes="Bold" Text="项目地址:  " />
-                        <v:CustomLabel
-                            x:Name="ProjectUrl"
-                            Clicked="Uri_Clicked"
-                            FontSize="14"
-                            TextColor="#56c2ec"
-                            TextDecorations="Underline" />
-                    </HorizontalStackLayout>
-                    <Label
-                        Grid.Row="7"
-                        Margin="0,5"
-                        FontAttributes="Bold"
-                        FontSize="14"
-                        Text="依赖项 " />
-                    <Grid x:Name="DependencyList" Grid.Row="8" />
-                </Grid>
-            </RefreshView>
-        </ScrollView>
+                            Text="依赖项 " />
+                        <Grid x:Name="DependencyList" Grid.Row="8" />
+                    </Grid>
+                </ScrollView>
+            </Grid>
+        </RefreshView>
 
     </Grid>
 </ContentPage>
